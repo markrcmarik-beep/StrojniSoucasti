@@ -53,23 +53,19 @@ function materialy(A::AbstractString; tisk::Bool=false)
     souborDat = "materialy.jld2"
     listname = "material"
     STRTradk = 3
-
     rozsah = sprdsheet2velkst(joinpath(cesta01, podslozka, soubor1), listname) # Celkový rozsah tabulky. např: A1:W90
     koncova_adresa = last(split(rozsah, ':')) # Koncová adresa. např: W90
     W1 = sprsheetRef(koncova_adresa) # Souřadnice poslední buňky [Y, X]. např: [90, 23]
     W1_nova = sprsheetRef([STRTradk, W1[2]]) # Poslední buňka nadpisu vlevo. např: W3
     rozsahNadpis = "A$(STRTradk):$W1_nova" # Rozsah nadpisu. např: A3:W3
     rozsahTabulka = "A5:$koncova_adresa" # Rozsah tabulky. např: A5:W90
-
     hdr_mat, _, raw_tbl = sprsheet2tabl(
         joinpath(cesta01, podslozka),
-        [soubor1, souborDat],
-        listname,
+        [soubor1, souborDat], listname,
         [rozsahNadpis, rozsahNadpis, rozsahTabulka]
-    )
-
-    headers = vec(hdr_mat)
-
+    ) # hdr_mat: Matice "Any". např: Any["CSN" "ISO" "DIN" "EN" "AISI" "znacka" "E" "G" "Re" "Re_max" "Rm" "Rm_max" "ny" "rho" "alfa" "popis" "stav" "vlastnosti a použití" "svaritelnost" "použití" "kalitelnost" nothing nothing]
+# raw_tbl: Matice "Any". např: Any["-" 5511 "-" "-" "-" "-" 210 81 500 "-" 700 "-" 0.3 7850 1.1e-5 "konstrukční ocel" "-" "-" "-" "-" nothing nothing nothing; "-" "8.8" "-" "-" "-" "-" 210 81 640
+    headers = vec(hdr_mat) # Převede na vektor. např: Any["CSN", "ISO", "DIN", "EN", "AISI", "znacka", "E", "G", "Re", "Re_max", "Rm", "Rm_max", "ny", "rho", "alfa", "popis",
     # sanitizace hlaviček
     function sanitize_header(s)
         s2 = replace(string(s), r"\s+" => "_")
@@ -82,16 +78,13 @@ function materialy(A::AbstractString; tisk::Bool=false)
         end
         return Symbol(s2)
     end
-
     col_syms = [sanitize_header(h) for h in headers]
-
     if ndims(raw_tbl) == 1
         raw_tbl = reshape(raw_tbl, :, 1)
     end
     nrows, ncols = size(raw_tbl)
     cols = [raw_tbl[:, j] for j in 1:ncols]
     TBL = (; Pair.(col_syms, cols)...)
-
     # hledání řádku podle materiálu
     function find_row_by_value(vec, val)
         for (i, x) in enumerate(vec)
@@ -102,7 +95,6 @@ function materialy(A::AbstractString; tisk::Bool=false)
         end
         return nothing
     end
-
     row = nothing
     for key in (:CSN, :ISO, :DIN, :EN, :znacka)
         if haskey(TBL, key)
@@ -113,12 +105,9 @@ function materialy(A::AbstractString; tisk::Bool=false)
             end
         end
     end
-
     row === nothing && error("Zadaný materiál '$A' nebyl nalezen.")
-
     # výstupní slovník jako Symbol → Any
     DATA = Dict{Symbol, Any}()
-
     function set_if_present(sym)
         if haskey(TBL, sym)
             val = TBL[sym][row]
@@ -127,12 +116,10 @@ function materialy(A::AbstractString; tisk::Bool=false)
             end
         end
     end
-
     for s in (:CSN, :ISO, :DIN, :EN, :znacka, :ny,
               :E, :G, :Re, :Rm, :rho, :alfa, :popis, :stav)
         set_if_present(s)
     end
-
     # převod na čísla
     function try_number(x)
         try
@@ -141,7 +128,6 @@ function materialy(A::AbstractString; tisk::Bool=false)
             return x
         end
     end
-
     # jednotky
     for (key, unit) in [
         (:E, u"GPa"),
@@ -155,10 +141,8 @@ function materialy(A::AbstractString; tisk::Bool=false)
             DATA[key] = try_number(DATA[key]) * unit
         end
     end
-
     # popis
     C = "Materiál: " * (get(DATA, :CSN, get(DATA, :znacka, A)))
-
     if tisk
         println("─── Materiál ───")
         for (k, v) in sort(collect(DATA))
