@@ -3,6 +3,7 @@ module StrojniSoucasti
 
 # Import implementací
 include("materialy.jl") # materiály
+include("materialytext.jl")
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl")

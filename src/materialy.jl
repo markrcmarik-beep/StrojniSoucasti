@@ -33,7 +33,7 @@
 #   vrátí vlastnosti materiálu "11 373" a textové shrnutí materiálu
 #  => B = Dict(:CSN=>"11 373", :E=>210 GPa, :Re=>235 MPa, ...), 
 #  => C = "Materiál: 11 373"
-# materialy("bronz"; tisk=true)
+# materialy("bronz")
 #   vrátí vlastnosti materiálu "bronz" a vytiskne je na obrazovku
 #  => B = Dict(:znacka=>"bronz", :E=>100 GPa, :Re=>200 MPa, ...), 
 #  => C = "Materiál: bronz"
@@ -46,7 +46,7 @@
 #
 using SpravaSouboru, Unitful
 
-function materialy(A::AbstractString; tisk::Bool=false)
+function materialy(A::AbstractString)
     cesta01 = dirname(@__FILE__)
     podslozka = "materialy"
     soubor1 = "materialy.ods"
@@ -116,8 +116,10 @@ function materialy(A::AbstractString; tisk::Bool=false)
             end
         end
     end
-    for s in (:CSN, :ISO, :DIN, :EN, :znacka, :ny,
-              :E, :G, :Re, :Rm, :rho, :alfa, :popis, :stav)
+    for s in (:CSN, :ISO, :DIN, :EN, :znacka,
+              :E, :G, :Re, :Re_max, :Rm, :Rm_max, :ny, :rho, :alfa, 
+              :popis, :stav, :vlastnosti, :svaritelnost, :pouziti, 
+              :kalitelnost, :Re_zu1, :Re_zu1_max, :A5)
         set_if_present(s)
     end
     # převod na čísla
@@ -133,22 +135,38 @@ function materialy(A::AbstractString; tisk::Bool=false)
         (:E, u"GPa"),
         (:G, u"GPa"),
         (:Re, u"MPa"),
+        (:Re_max, u"MPa"),
         (:Rm, u"MPa"),
+        (:Rm_max, u"MPa"),
         (:rho, u"kg/m^3"),
-        (:alfa, u"1/K")
+        (:alfa, u"1/K"),
+        (:Re_zu1, u"MPa"),
+        (:Re_zu1_max, u"MPa")
     ]
         if haskey(DATA, key) && try_number(DATA[key]) isa Real
             DATA[key] = try_number(DATA[key]) * unit
         end
     end
-    # popis
-    C = "Materiál: " * (get(DATA, :CSN, get(DATA, :znacka, A)))
-    if tisk
-        println("─── Materiál ───")
-        for (k, v) in sort(collect(DATA))
-            println(rpad(string(k), 12), " = ", v)
+    # Definice popisných informací k vybraným vlastnostem
+    info_map = [
+        (:E_info,  "Modul pružnosti v tahu (Youngův modul)"),
+        (:G_info,  "Modul pružnosti v krutu"),
+        (:Re_info, "Mez kluzu (tepelně nezpracovaný)"),
+        (:Rm_info, "Mez pevnosti")
+    ]
+
+    # Uložení informací do slovníku DATA, pokud je hlavní vlastnost přítomna
+    for (infokey, text) in info_map
+        # Získáme název základní vlastnosti odstraněním "_info" (např. :E_info -> :E)
+        basekey = Symbol(replace(string(infokey), "_info" => ""))
+        
+        # Informaci uložíme pouze v případě, že materiál danou vlastnost skutečně má
+        if haskey(DATA, basekey)
+            DATA[infokey] = text
         end
     end
-
-    return DATA, C
+    # popis
+    #C = "Materiál: " * (get(DATA, :CSN, get(DATA, :znacka, A)))
+    dispstr = StrojniSoucasti.materialytext(DATA)
+    return DATA, dispstr
 end

@@ -67,7 +67,6 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
-using Printf: @sprintf
 
 function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing, 
     S=nothing, tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 

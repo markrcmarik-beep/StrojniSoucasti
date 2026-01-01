@@ -6,10 +6,7 @@ using StrojniSoucasti, Test
 
     println("Test 1: '11 500'")
     B, C = materialy("11 500")
-    println("Schrnutí: ", C)
-    display(B)
-    println("E: ", B[:E])
-    println(B[:Re])
+    println(B)
     println(C)
 
     println("\nTest 2: '11373'")
