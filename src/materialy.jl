@@ -54,12 +54,12 @@ function materialy(A::AbstractString; tisk::Bool=false)
     listname = "material"
     STRTradk = 3
 
-    rozsah = sprdsheet2velkst(joinpath(cesta01, podslozka, soubor1), listname)
-    koncova_adresa = last(split(rozsah, ':'))
-    W1 = sprsheetRef(koncova_adresa)
-    W1_nova = sprsheetRef([STRTradk, W1[2]])
-    rozsahNadpis = "A$(STRTradk):$W1_nova"
-    rozsahTabulka = "A5:$koncova_adresa"
+    rozsah = sprdsheet2velkst(joinpath(cesta01, podslozka, soubor1), listname) # Celkový rozsah tabulky. např: A1:W90
+    koncova_adresa = last(split(rozsah, ':')) # Koncová adresa. např: W90
+    W1 = sprsheetRef(koncova_adresa) # Souřadnice poslední buňky [Y, X]. např: [90, 23]
+    W1_nova = sprsheetRef([STRTradk, W1[2]]) # Poslední buňka nadpisu vlevo. např: W3
+    rozsahNadpis = "A$(STRTradk):$W1_nova" # Rozsah nadpisu. např: A3:W3
+    rozsahTabulka = "A5:$koncova_adresa" # Rozsah tabulky. např: A5:W90
 
     hdr_mat, _, raw_tbl = sprsheet2tabl(
         joinpath(cesta01, podslozka),
