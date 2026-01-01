@@ -55,7 +55,6 @@
 #
 
 using Unitful
-using Printf: @sprintf
 
 function namahaniohyb(;
     Mo = nothing, Lo = nothing, E = nothing, Ix = nothing,

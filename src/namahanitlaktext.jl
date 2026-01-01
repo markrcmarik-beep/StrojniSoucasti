@@ -20,6 +20,8 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+using Printf: @sprintf
+
 function namahanitlaktext(VV::Dict{Symbol,Any})
     lines = String[]
     push!(lines, "Výpočet $(VV[:info])")

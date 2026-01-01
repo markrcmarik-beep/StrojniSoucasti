@@ -74,7 +74,6 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
-using Printf: @sprintf
 
 function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing, 
     E=nothing, Re=nothing, L0=nothing, mat=nothing, 

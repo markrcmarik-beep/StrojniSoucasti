@@ -149,17 +149,18 @@ function materialy(A::AbstractString)
     end
     # Definice popisných informací k vybraným vlastnostem
     info_map = [
-        (:E_info,  "Modul pružnosti v tahu (Youngův modul)"),
-        (:G_info,  "Modul pružnosti v krutu"),
-        (:Re_info, "Mez kluzu (tepelně nezpracovaný)"),
-        (:Rm_info, "Mez pevnosti")
+        (:E_info,       "Modul pružnosti v tahu (Youngův modul)"),
+        (:G_info,       "Modul pružnosti v krutu"),
+        (:Re_info,      "Mez kluzu (tepelně nezpracovaný)"),
+        (:Rm_info,      "Mez pevnosti"),
+        (:ny_info,      "Poissonův poměr"),
+        (:rho_info,     "hustota"),
+        (:alfa_info,    "Koeficient tepelné roztažnosti")
     ]
-
     # Uložení informací do slovníku DATA, pokud je hlavní vlastnost přítomna
     for (infokey, text) in info_map
         # Získáme název základní vlastnosti odstraněním "_info" (např. :E_info -> :E)
         basekey = Symbol(replace(string(infokey), "_info" => ""))
-        
         # Informaci uložíme pouze v případě, že materiál danou vlastnost skutečně má
         if haskey(DATA, basekey)
             DATA[infokey] = text
@@ -167,6 +168,6 @@ function materialy(A::AbstractString)
     end
     # popis
     #C = "Materiál: " * (get(DATA, :CSN, get(DATA, :znacka, A)))
-    dispstr = StrojniSoucasti.materialytext(DATA)
-    return DATA, dispstr
+
+    return DATA, StrojniSoucasti.materialytext(DATA)
 end

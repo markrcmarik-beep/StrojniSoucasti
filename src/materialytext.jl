@@ -42,10 +42,16 @@ function materialytext(VV::Dict{Symbol,Any})
     # Volitelně: přidání mechanických vlastností pro přehlednost
     if haskey(VV, :Re) 
         push!(lines, @sprintf("Re =  %g   %s", VV[:Re], VV[:Re_info]))
-    end # [cite: 1, 21]
+    end
     if haskey(VV, :Rm) 
         push!(lines, @sprintf("Rm =  %g   %s", VV[:Rm], VV[:Rm_info]))
-    end  # [cite: 1, 2, 21]
+    end
+    if haskey(VV, :E) 
+        push!(lines, @sprintf("E =  %g   %s", VV[:E], VV[:E_info]))
+    end
+    if haskey(VV, :G) 
+        push!(lines, @sprintf("G =  %g   %s", VV[:G], VV[:G_info]))
+    end
 
     return join(lines, "\n")
 end
