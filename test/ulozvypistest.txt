@@ -1,0 +1,58 @@
+Výpočet namáhání v krutu - ohybu
+----------------------------------------------------------------
+Výpočet namáhání v krutu
+----------------------------------------------------------------
+materiál: 16440
+profil: KR 30
+  D = 30 mm
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mk = 6000 m N   Krouticí moment
+Wk = π/16*D³ = 5301.44 mm^3   Průřezový modul v krutu
+Ip = π/32*D⁴ = 79521.6 mm^4   Polární moment setrvačnosti
+tauDk = 169.809 MPa   Dovolené napětí v krutu
+G = 81 GPa   Smykový modul
+-----------------------------------------------------------------
+výpočet:
+tau = Mk / Wk = 1131.77 MPa   Napětí v krutu
+theta = Mk / (G * Ip) = 0.931497 rad m^-1   Poměrné zkroucení
+theta = 53.3708 ° m^-1   Poměrné zkroucení
+k = tauDk / tau = 0.150039   Součinitel bezpečnosti
+Bezpečnost spoje:  Spoj není bezpečný!
+----------------------------------------------------------------
+Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 16440
+profil: KR 30
+  D = 30 mm
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 2650.72 mm^3   Průřezový modul v ohybu
+Ix = 39760.8 mm^4   Moment setrvačnosti
+Re = 500 MPa   Mez kluzu
+E = 210 GPa   Modul pružnosti
+sigmaDo = 333.333 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 226.354 MPa   Napětí v ohybu
+delta = Mo / (E * Ix) = 0.0718583 m^-1   Relativní průhyb
+k = sigmaDo / sigma = 1.47262   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást je na hranici bezpečnosti
+----------------------------------------------------------------
+kritérium: Huber-Mises-Hencky
+zatížení:  statický-statický
+----------------------------------------------------------------
+napětí:  krut-ohyb
+tauk = 1131.77 MPa   Výsledné napětí v krutu
+sigmao = 226.354 MPa   Výsledné napětí v ohybu
+----------------------------------------------------------------
+kombinace: krut-ohyb
+sigma_eq = sqrt(sigmao^2 + 3*tauk^2) = 1973.31 MPa   Ekvivalentní napětí
+sigmaD = 256.41 MPa   Dovolené napětí
+----------------------------------------------------------------
+k = sigmaD / sigma_eq = 0.129939   Součinitel bezpečnosti
+Závěr posouzení: Součást není bezpečná!

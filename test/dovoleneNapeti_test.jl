@@ -1,0 +1,23 @@
+# ver: 2025-12-23
+using StrojniSoucasti, Unitful, Unitful.DefaultSymbols
+
+A = dovoleneNapeti(250u"MPa", "tah", "statický")
+println(A)
+B = dovoleneNapeti(260MPa, "tah", "statický")
+println(B)
+C = dovoleneNapeti(300MPa, "ohyb", "pulzní")
+println(C)
+D = dovoleneNapeti(400MPa, "krut", "dynamický")
+println(D)
+E = dovoleneNapeti(500MPa, "tlak", "rázový")
+println(E)
+F = dovoleneNapeti(600MPa, "otlačení")
+println(F)
+G1 = dovoleneNapeti(500MPa, "tah-střih", "statický-statický")
+println(G1)
+G2 = dovoleneNapeti(500MPa, "tlak-střih", "statický-statický")
+println(G2)
+H1 = dovoleneNapeti(500MPa, "tah-střih", "statický-pulzní")
+println(H1)
+H2 = dovoleneNapeti(500MPa, "tlak-střih", "pulzní-statický")
+println(H2)
