@@ -52,6 +52,21 @@ function materialytext(VV::Dict{Symbol,Any})
     if haskey(VV, :G) 
         push!(lines, @sprintf("G =  %g   %s", VV[:G], VV[:G_info]))
     end
+    if haskey(VV, :ny) 
+        push!(lines, @sprintf("ny =  %g   %s", VV[:ny], VV[:ny_info]))
+    end
+    if haskey(VV, :rho) 
+        push!(lines, @sprintf("rho =  %g   %s", VV[:rho], VV[:rho_info]))
+    end
+    if haskey(VV, :alfa) 
+        push!(lines, @sprintf("alfa =  %g   %s", VV[:alfa], VV[:alfa_info]))
+    end
+    if haskey(VV, :svaritelnost) 
+        push!(lines, @sprintf("svaritelnost =  %s", VV[:svaritelnost]))
+    end
+    if haskey(VV, :kalitelnost) 
+        push!(lines, @sprintf("kalitelnost =  %s", VV[:kalitelnost]))
+    end
 
     return join(lines, "\n")
 end
