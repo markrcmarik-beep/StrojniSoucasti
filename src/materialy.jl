@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí vlastnosti hledaného materiálu dle tabulky
-# ver: 2025-12-12
+# ver: 2026-01-01
 ## Funkce: materialy()
 #
 ## Vzor:
