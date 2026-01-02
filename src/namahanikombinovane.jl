@@ -6,7 +6,7 @@
 # pomocí HMH nebo Tresca kritéria. Funkce využívá výstupy
 # z již existujících funkcí namáhání (namahanitah, namahanitlak,
 # namahanistrih, namahanikrut, namahaniohyb).
-# ver: 2025-12-28
+# ver: 2026-01-02
 ## Funkce: namahanikombinovane()
 #
 ## Vzor:
@@ -452,7 +452,7 @@ elseif namahanizkr == "krut-ohyb"
         error("Neznámé kriterium: $kriterium")
     end
 else
-    error("ekvivalentní napětí: $namahanizkr")
+    error("Nenalezeno ekvivalentní napětí: $namahanizkr")
 end
 sigma_eq = uconvert(u"MPa",sigma_eq)
 # ---------------------------------------------------------
@@ -474,7 +474,7 @@ elseif namahanizkr == "krut-ohyb"
     k_str = "sigmaD / sigma_eq"
     k = sigmaD / sigma_eq
 else
-    error("bezpečnost: $namahanizkr")
+    error("Nenalezena bezpečnost: $namahanizkr")
 end
 if k_uziv === nothing
     verdict =   if k >= 1.5
@@ -503,8 +503,10 @@ VV[:kriterium] = kriterium === :HMH ? "Huber-Mises-Hencky" : "Tresca"
 VV[:kriterium_info] = "Kriterium pro posouzení dovoleného napětí"
 VV[:zatizeni] = zatizeni
 VV[:zatizeni_info] = "Typ zatížení"
-VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
-VV[:k_info] = "Uživatelský požadavek bezpečnosti kombinovaného namáhání"
+if isa(k_uziv, Number)
+    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
+    VV[:k_info] = "Uživatelský požadavek bezpečnosti kombinovaného namáhání"
+end
 if @isdefined vsldkTah
     VV[:tah] = vsldkTah
     VV[:sigmat] = sigmat

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2025-12-29
+# ver: 2026-01-02
 ## Funkce: namahannamahanikombinovanetextitahtext()
 #
 ## Vzor:
@@ -51,8 +51,10 @@ function namahanikombinovanetext(VV::Dict{Symbol,Any})
     end
     push!(lines, "kritérium: $(VV[:kriterium])")
     push!(lines, "zatížení:  $(VV[:zatizeni])")
+    if haskey(VV, :k)
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
+    end
     end
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "napětí:  $(VV[:namahani])")
