@@ -11,7 +11,7 @@
 #
 ## Výstupní proměnné:
 #
-## Použité balíčky
+## Použité balíčky:
 #
 ## Použité uživatelské funkce:
 #
@@ -20,6 +20,8 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+using Printf: @sprintf
+
 function namahanikombinovanetext(VV::Dict{Symbol,Any})
     lines = String[]
     push!(lines, "Výpočet $(VV[:info])")

@@ -32,7 +32,6 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
-using Printf: @sprintf
 
 function namahanikombinovane(; 
     vysledky::Vector{Dict{Symbol,Any}},

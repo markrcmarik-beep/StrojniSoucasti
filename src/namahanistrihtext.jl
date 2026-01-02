@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2025-12-29
+# ver: 2026-01-02
 ## Funkce: namahanistrihtext()
 #
 ## Vzor:
@@ -20,6 +20,8 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+using Printf: @sprintf
+
 function namahanistrihtext(VV::Dict{Symbol,Any})
     lines = String[]
     push!(lines,"Výpočet $(VV[:info])")

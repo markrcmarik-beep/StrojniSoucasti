@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2025-12-29
+# ver: 2026-01-02
 ## Funkce: namahanistrih()
 #
 ## Vzor:
@@ -38,7 +38,6 @@
 #
 
 using Unitful
-using Printf: @sprintf
 
 function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     G=nothing, E=nothing, Re=nothing, mat=nothing,
