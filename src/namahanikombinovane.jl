@@ -474,7 +474,7 @@ elseif namahanizkr == "krut-ohyb"
     k_str = "sigmaD / sigma_eq"
     k = sigmaD / sigma_eq
 else
-    error("Nenalezena bezpečnost: $namahanizkr")
+    error("Nenalezeno bezpečnost: $namahanizkr")
 end
 if k_uziv === nothing
     verdict =   if k >= 1.5
