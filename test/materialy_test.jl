@@ -9,8 +9,8 @@ using StrojniSoucasti, Test
     println(B)
     println(C)
 
-    println("\nTest 2: '11373'")
-    B, C = materialy("11373")
+    println("\nTest 2: '11 448'")
+    B, C = materialy("11 448")
     println("Summary: ", C)
     display(B)
 
@@ -19,15 +19,15 @@ using StrojniSoucasti, Test
     println("Summary: ", C)
     display(B)
 
-    println("\nTest 4: 'bronz'")
-    B, C = materialy("bronz")
+    println("\nTest 4: '42CrMo4+Qt'")
+    B, C = materialy("42CrMo4+Qt")
     println("Summary: ", C)
     display(B)
 
-    println("\nTest 5: unknown 'bhronz' (should error)")
-    B, C = materialy("bhronz")
-        println("Unexpected success:")
-        display(B)
+    println("\nTest 5: 16 440 kaleno a popousteno")
+    B, C = materialy("16 440.4 zuslechteno")
+    println(B)
+    println(C)
 
 if abspath(PROGRAM_FILE) == @__FILE__
     materialy_test()

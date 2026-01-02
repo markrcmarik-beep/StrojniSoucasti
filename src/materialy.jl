@@ -67,9 +67,6 @@ function materialy(A::AbstractString)
 # raw_tbl: Matice "Any". např: Any["-" 5511 "-" "-" "-" "-" 210 81 500 "-" 700 "-" 0.3 7850 1.1e-5 "konstrukční ocel" "-" "-" "-" "-" nothing nothing nothing; "-" "8.8" "-" "-" "-" "-" 210 81 640
     headers = vec(hdr_mat) # Převede na vektor. např: Any["CSN", "ISO", "DIN", "EN", "AISI", "znacka", "E", "G", "Re", "Re_max", "Rm", "Rm_max", "ny", "rho", "alfa", "popis",
     # sanitizace hlaviček
-    kalitelnyLOG=false
-    kalenoLOG=false
-    popoustenoLOG=false
     function sanitize_header(s)
         s2 = replace(string(s), r"\s+" => "_")
         s2 = replace(s2, r"[^A-Za-z0-9_]" => "_")
@@ -151,20 +148,10 @@ function materialy(A::AbstractString)
         end
     end
     # Definice popisných informací k vybraným vlastnostem
-    if kalenoLOG==true && popoustenoLOG==true
-        if kalitelnyLOG==true
-        DATA[:Re] = DATA[:Re_zu1]
-        DATA[:Re_info] = "Mez kluzu (zušlechtěno (kaleno a popouštěno))"
-        else
-            error("Materiál je nekalitelný.")
-        end
-    else
-        DATA[:Re_info] = "Mez kluzu (tepelně nezpracovaný)"
-    end
     info_map = [
         (:E_info,       "Modul pružnosti v tahu (Youngův modul)"),
         (:G_info,       "Modul pružnosti v krutu"),
-        #(:Re_info,      "Mez kluzu (tepelně nezpracovaný)"),
+        (:Re_info,      "Mez kluzu"),
         (:Rm_info,      "Mez pevnosti"),
         (:ny_info,      "Poissonův poměr"),
         (:rho_info,     "hustota"),
