@@ -204,7 +204,8 @@ if namahanizkr == "tah-střih"
         if vsldkTah[:Re] == vsldkStrih[:Re]
             Re = vsldkTah[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tah: Re = $(vsldkTah[:Re]), střih: Re = $(vsldkStrih[:Re])")
         end
     end
 elseif namahanizkr == "tlak-střih"
@@ -218,7 +219,8 @@ elseif namahanizkr == "tlak-střih"
         if vsldkTlak[:Re] == vsldkStrih[:Re]
             Re = vsldkTlak[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tlak: Re = $(vsldkTlak[:Re]), střih: Re = $(vsldkStrih[:Re])")
         end
     end
 elseif namahanizkr == "tah-krut"
@@ -232,7 +234,8 @@ elseif namahanizkr == "tah-krut"
         if vsldkTah[:Re] == vsldkKrut[:Re]
             Re = vsldkTah[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tah: Re = $(vsldkTah[:Re]), krut: Re = $(vsldkKrut[:Re])")
         end
     end
 elseif namahanizkr == "tlak-krut"
@@ -246,7 +249,8 @@ elseif namahanizkr == "tlak-krut"
         if vsldkTlak[:Re] == vsldkKrut[:Re]
             Re = vsldkTlak[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tlak: Re = $(vsldkTlak[:Re]), krut: Re = $(vsldkKrut[:Re])")
         end
     end
 elseif namahanizkr == "tah-ohyb"
@@ -260,7 +264,8 @@ elseif namahanizkr == "tah-ohyb"
         if vsldkTah[:Re] == vsldkOhyb[:Re]
             Re = vsldkTah[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tah: Re = $(vsldkTah[:Re]), ohyb: Re = $(vsldkOhyb[:Re])")
         end
     end
 elseif namahanizkr == "tlak-ohyb"
@@ -274,7 +279,8 @@ elseif namahanizkr == "tlak-ohyb"
         if vsldkTlak[:Re] == vsldkOhyb[:Re]
             Re = vsldkTlak[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                tlak: Re = $(vsldkTlak[:Re]), ohyb: Re = $(vsldkOhyb[:Re])")
         end
     end
 elseif namahanizkr == "střih-krut"
@@ -288,7 +294,8 @@ elseif namahanizkr == "střih-krut"
         if vsldkStrih[:Re] == vsldkKrut[:Re]
             Re = vsldkStrih[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                střih: Re = $(vsldkStrih[:Re]), krut: Re = $(vsldkKrut[:Re])")
         end
     end
 elseif namahanizkr == "střih-ohyb"
@@ -302,7 +309,8 @@ elseif namahanizkr == "střih-ohyb"
         if vsldkStrih[:Re] == vsldkOhyb[:Re]
             Re = vsldkStrih[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                střih: Re = $(vsldkStrih[:Re]), ohyb: Re = $(vsldkOhyb[:Re])")
         end
     end
 elseif namahanizkr == "krut-ohyb"
@@ -316,11 +324,12 @@ elseif namahanizkr == "krut-ohyb"
         if vsldkKrut[:Re] == vsldkOhyb[:Re]
             Re = vsldkKrut[:Re]
         else
-            error("Hodnoty Re z jednotlivých namáhání se liší.")
+            error("Hodnoty Re z namáhání $namahanizkr se liší. 
+                krut: Re = $(vsldkKrut[:Re]), ohyb: Re = $(vsldkOhyb[:Re])")
         end
     end
 else
-    error("Kombinace $namahanizkr zatím není implementována.")
+    error("Kombinace $namahanizkr není implementována.")
 end
 # ---------------------------------------------------------
 # dovolené napětí
