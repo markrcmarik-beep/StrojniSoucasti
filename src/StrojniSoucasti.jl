@@ -8,7 +8,7 @@ include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
-include("hrana.jl") #
+#include("hrana.jl") #
 include("namahanitah.jl") # namáhání tahem
 include("namahanitahtext.jl")
 include("namahanitlak.jl") # namáhání tlakem

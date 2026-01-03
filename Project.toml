@@ -1,6 +1,6 @@
 name = "StrojniSoucasti"
 uuid = "10255254-1473-4e7e-b938-74a6d2bcadf3"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Martin"]
 
 [deps]
