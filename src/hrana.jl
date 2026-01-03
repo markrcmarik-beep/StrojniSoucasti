@@ -35,18 +35,15 @@
 #
 # B = hrana("R5", π/2, "out")
 #
-
-
 ###############################################################
 ## Použité proměnné vnitřní:
 #
 using Unitful, Unitful.DefaultSymbols
-const π = pi # Pro zkrácení zápisu π místo pi v kódu
 
 function hrana(rozmer::String, uhel::Real=π/2, smer::String="out")
+    const π = pi # Pro zkrácení zápisu π místo pi v kódu
     # Inicializace výstupní struktury
     hodn = Dict{String, Any}()
-
     # Rozdělení rozměru na části
     if occursin("x", rozmer)
         casti = split(rozmer, "x") # Např. "2x45deg" => ["2", "45deg"]
@@ -58,7 +55,6 @@ function hrana(rozmer::String, uhel::Real=π/2, smer::String="out")
     else
         error("Neplatný formát rozměru: $rozmer") # Očekává se formát "hodnota1xhodnota2"
     end
-
     if endswith(cast2, "deg")
         uhel_hrany = parse(Float64, replace(cast2, "deg" => "")) * (π / 180) # Převod na radiany
     elseif startswith(cast2, "R")
@@ -68,7 +64,6 @@ function hrana(rozmer::String, uhel::Real=π/2, smer::String="out")
         hodnota2 = parse(Float64, cast2) # Poloměr zaoblení
         uhel_hrany = cast2 # Předpokládáme, že je to úhel v radiantech
     end
-
     # Výpočet plochy a alternativních hodnot
     if smer == "in"
         if endswith(cast2, "deg")
@@ -91,5 +86,4 @@ function hrana(rozmer::String, uhel::Real=π/2, smer::String="out")
     end
 
     return hodn
-    
 end
