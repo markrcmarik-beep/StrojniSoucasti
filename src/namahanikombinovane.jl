@@ -52,13 +52,12 @@ function namahanikombinovane(;
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
-            error("Chybně zadáno k: $k_uziv")
+            error("Chybně zadáno uživatelské k: $k_uziv")
         end
     end
     # ---------------------------------------------------------
     # sběr napětí
     # ---------------------------------------------------------
-    #Re = nothing
     # -- tah-střih --
 if ((vysledky[1][:info] == "namáhání v tahu" &&
     vysledky[2][:info] == "namáhání ve střihu") ||
