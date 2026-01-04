@@ -1,6 +1,6 @@
 name = "StrojniSoucasti"
 uuid = "10255254-1473-4e7e-b938-74a6d2bcadf3"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Martin"]
 
 [deps]
@@ -19,15 +19,20 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 XLSX = "fdbf4ff8-1666-58a4-91e7-1b58723a45e0"
 
 [compat]
-Dates = "1.11.0"
-FileIO = "1.17.1"
-FilePathsBase = "0.9.24"
-JLD2 = "0.6.3"
-OdsIO = "0.6.3"
-Plots = "1.41.1"
-Printf = "1.11.0"
-Revise = "3.13.0"
-Tables = "1.12.1"
-Test = "1.11.0"
-Unitful = "1.27.0"
-XLSX = "0.10.4"
+julia = "1.11, 1.12"
+
+Dates = "1"
+Printf = "1"
+Test = "1"
+
+FileIO = "1.17"
+FilePathsBase = "0.9"
+JLD2 = "0.6"
+OdsIO = "0.6"
+Plots = "1.41"
+Revise = "3"
+Tables = "1.12"
+Unitful = "1.27"
+XLSX = "0.10"
+
+SpravaSouboru = "0.1"
