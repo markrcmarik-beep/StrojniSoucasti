@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2025-12-29
+# ver: 2026-01-07
 ## Funkce: namahanikrut()
 #
 ## Vzor:
@@ -164,7 +164,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         # ostatní rozměry (a,b,t,...)
         for k in keys(tv)
             if k ∉ (:Wk, :Wk_str, :Ip, :Ip_str)
-                profil_info[k] = tv[k] # převzetí dalších rozměrů
+                profil_info[:k] = tv[k] # převzetí dalších rozměrů
             end
         end
     end

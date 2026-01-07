@@ -1,8 +1,10 @@
+# ver: 2026-01-07
 # --- Julia specifické soubory ---
 *.ji
 *.cov
 *.mem
 *.tmp
+*.jld2
 Manifest.toml
 
 # Složka pro artefakty (pokud používáte Pkg.Artifacts)
@@ -22,6 +24,9 @@ plots/
 *.png
 *.pdf
 
+deps/build/
+*.log
+
 # Poznámka: Pokud chcete nějaký specifický PDF výkres verzovat, 
 # můžete ho vynutit příkazem 'git add -f nazev.pdf', 
 # i když je zde ignorován.
@@ -29,3 +34,5 @@ plots/
 # --- Systémové soubory Windows ---
 Thumbs.db
 Desktop.ini
+# OS
+.DS_Store
