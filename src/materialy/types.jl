@@ -1,9 +1,9 @@
 
-module Material2Types
+module MaterialTypes
 
-export Material2
+export Material
 
-struct Material2
+struct Material
     name::String
     standard::String
     Re::Float64 # MPa

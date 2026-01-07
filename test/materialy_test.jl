@@ -1,7 +1,7 @@
 
 using StrojniSoucasti
 
-a = materialy2("S235JR+N")
+a = materialy("S235JR+N")
 println(a.name)
 println(a.Re)
 

@@ -4,9 +4,9 @@ module StrojniSoucasti
 # Import implementací
 include("materialy3.jl") # materiály
 include("materialy3text.jl") #
-include("materialy2/types.jl") #
-include("materialy2/database.jl") #
-include("materialy2.jl") #
+include("materialy/types.jl") #
+include("materialy/database.jl") #
+include("materialy.jl") #
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl") #
@@ -31,9 +31,9 @@ include("namahaniotl.jl") # namáhání otlačením
 include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
-using .Materialy2
+using .Materialy
 # Export funkcí
-export materialy3, materialy2, dovoleneNapeti, mezUnavy,
+export materialy3, materialy, dovoleneNapeti, mezUnavy,
 tvarprofilu, namahanitah, namahanitlak, namahanikrut,
 namahanistrih, namahanikombinovane, namahaniohyb, ulozvypis, 
 zavity, namahaniotl
