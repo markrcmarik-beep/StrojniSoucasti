@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2025-12-29
+# ver: 2026-01-07
 ## Funkce: namahanitah()
 #
 ## Vzor:
@@ -59,7 +59,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy, dovoleneNapeti, tvarprofilu
+# materialy3, dovoleneNapeti, tvarprofilu
 ## Příklad:
 # namahanitah(F=1000u"N", S=50u"mm^2", mat="11373")
 #  vrátí dict s výsledky a textový výpis výpočtu
@@ -126,10 +126,10 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if !isdefined(Main, :materialy3)
+            error("Funkce materialy3(mat) není definována.")
         end
-        raw = materialy(mat)
+        raw = materialy3(mat)
         matinfo = isa(raw, Tuple) ? raw[1] : raw
         haskey(matinfo, :Re) && (Re = matinfo[:Re]) # mez kluzu
         haskey(matinfo, :E) && (E = matinfo[:E]) # modul pružnosti

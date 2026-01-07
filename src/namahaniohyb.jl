@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2025-12-29
+# ver: 2026-01-07
 ## Funkce: namahaniohyb()
 #
 ## Vzor:
@@ -39,7 +39,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
+# materialy3(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
 ## Příklad:
 # Mo = 500.0 * u"N*m"
 # mat = "11 373"
@@ -104,10 +104,10 @@ function namahaniohyb(;
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if !isdefined(Main, :materialy3)
+            error("Funkce materialy3(mat) není definována.")
         end
-        raw = materialy(mat)
+        raw = materialy3(mat)
         matinfo = isa(raw, Tuple) ? raw[1] : raw
         haskey(matinfo, :Re) && (Re = matinfo[:Re]) # mez kluzu
         haskey(matinfo, :E) && (E = matinfo[:E]) # modul pružnosti

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-01-02
+# ver: 2026-01-07
 ## Funkce: namahanistrih()
 #
 ## Vzor:
@@ -24,7 +24,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
+# materialy3(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
 ## Příklad:
 # F = 10000.0 * u"N"
 # mat = "11 373"
@@ -90,10 +90,10 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if !isdefined(Main, :materialy3)
+            error("Funkce materialy3(mat) není definována.")
         end
-        raw = materialy(mat)
+        raw = materialy3(mat)
         matinfo = isa(raw, Tuple) ? raw[1] : raw
         haskey(matinfo, :Re) && (Re = matinfo[:Re]) # mez kluzu
         haskey(matinfo, :G) && (G = matinfo[:G]) # modul pružnosti

@@ -51,7 +51,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# dovoleneNapeti(), tvarprofilu(), materialy()
+# dovoleneNapeti(), tvarprofilu(), materialy3()
 ## Příklad:
 # Mk = 500.0 * u"N*m"
 # Wk = 2000.0 * u"mm^3"
@@ -118,10 +118,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if !isdefined(Main, :materialy3)
+            error("Funkce materialy3(mat) není definována.")
         end
-        raw = materialy(mat)
+        raw = materialy3(mat)
         matinfo = isa(raw, Tuple) ? raw[1] : raw
         haskey(matinfo, :Re) && (Re = matinfo[:Re]) # mez kluzu
         haskey(matinfo, :G) && (G = matinfo[:G]) # modul pružnosti
