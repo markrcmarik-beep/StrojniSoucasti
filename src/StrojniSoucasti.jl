@@ -6,6 +6,9 @@ include("materialy3.jl") # materiály
 include("materialy3text.jl") #
 include("materialy/types.jl") #
 include("materialy/database.jl") #
+include("materialy/request.jl")
+include("materialy/select.jl")
+include("materialy/Materialy.jl")
 include("materialy.jl") #
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
@@ -33,7 +36,7 @@ include("profil_text_lines.jl") #
 
 using .Materialy
 # Export funkcí
-export materialy3, materialy, dovoleneNapeti, mezUnavy,
+export materialy3, materialy, dovoleneNapeti, mezUnavy, select_material, MaterialRequest
 tvarprofilu, namahanitah, namahanitlak, namahanikrut,
 namahanistrih, namahanikombinovane, namahaniohyb, ulozvypis, 
 zavity, namahaniotl
