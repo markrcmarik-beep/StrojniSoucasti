@@ -3,6 +3,7 @@
 *.cov
 *.mem
 *.tmp
+Manifest.toml
 
 # Složka pro artefakty (pokud používáte Pkg.Artifacts)
 artifacts/
