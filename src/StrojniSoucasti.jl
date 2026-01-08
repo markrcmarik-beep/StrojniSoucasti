@@ -1,4 +1,4 @@
-# ver: 2026-01-03
+# ver: 2026-01-08
 module StrojniSoucasti
 
 # Import implementací

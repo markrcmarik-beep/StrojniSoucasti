@@ -1,4 +1,4 @@
-
+# ver: 2026-01-08
 module MaterialDatabase
 
 using ..MaterialTypes
@@ -17,6 +17,12 @@ const MATERIAL_DB = Dict{String,Material}(
         235.0, 360.0, 510.0,
         26.0, 27.0, -20.0,
         true, 200.0
+    ),
+    "16440" => Material(
+        "16 440", "",
+        340, 400, 460,
+        26, 27, -20,
+        true, 200
     )
 )
 end

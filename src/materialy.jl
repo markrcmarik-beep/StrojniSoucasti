@@ -1,4 +1,4 @@
-
+# ver: 2026-01-08
 module Materialy
 
 include("materialy/types.jl")
@@ -15,6 +15,7 @@ export materialy
 Vrátí materiál podle označení (např. "S235JR+N").
 """
 function materialy(name::AbstractString)
+    name = replace(strip(name), " " => "")
     haskey(MATERIAL_DB, name) ||
         error("Materiál $name není v databázi")
 
