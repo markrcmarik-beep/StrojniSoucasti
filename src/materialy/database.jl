@@ -18,9 +18,10 @@ const MATERIAL_DB = Dict{String,Material}(
         26.0, 27.0, -20.0,
         true, 200.0
     ),
+    
     "16440" => Material(
         "16 440", "",
-        340, 400, 460,
+        355, 750, 460,
         26, 27, -20,
         true, 200
     )
