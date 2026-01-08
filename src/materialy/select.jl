@@ -4,35 +4,26 @@ module MaterialSelect
 using ..MaterialTypes
 using ..MaterialDatabase
 using ..MaterialRequestDef
+using ..MaterialReduction
 
 export select_material
 
-"""
-    select_material(req::MaterialRequest) -> Material
-
-Vybere nejvhodnější materiál podle požadavků.
-"""
 function select_material(req::MaterialRequest)
 
     candidates = Material[]
 
     for m in values(MATERIAL_DB)
-
-        m.Re ≥ req.Re_req        || continue
-        m.T_KV ≤ req.Tmin        || continue
+        Re_eff(m, req.thickness) ≥ req.Re_req || continue
+        m.T_KV ≤ req.Tmin || continue
         (!req.welded || m.weldable) || continue
         m.thickness_max ≥ req.thickness || continue
-
         push!(candidates, m)
     end
 
     isempty(candidates) &&
-        error("Nenalezen žádný materiál splňující požadavky")
+        error("Nenalezen materiál vyhovující požadavkům")
 
-    # Optimalizační kritérium:
-    # nejnižší možná mez kluzu
-    sort!(candidates, by = m -> m.Re)
-
+    sort!(candidates, by = m -> Re_eff(m, req.thickness))
     return first(candidates)
 end
 
