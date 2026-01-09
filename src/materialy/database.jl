@@ -1,8 +1,4 @@
 # ver: 2026-01-08
-module MaterialDatabase
-
-using ..MaterialTypes
-export MATERIAL_DB
 
 const MATERIAL_DB = Dict{String,Material}(
 
@@ -31,4 +27,12 @@ const MATERIAL_DB = Dict{String,Material}(
     )
 )
 
-end
+"""
+    materialy(name::AbstractString)
+
+Vrátí materiál ze databáze podle jeho jména.
+"""
+materialy(name::AbstractString) =
+    haskey(MATERIAL_DB, name) ?
+        MATERIAL_DB[name] :
+        error("Materiál $name není v databázi")

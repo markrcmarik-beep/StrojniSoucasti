@@ -1,7 +1,4 @@
-
-module MaterialReductionTables
-
-export ThicknessBand, REDUCTION_TABLES
+# ver: 2026-01-08
 
 struct ThicknessBand
     t_min::Float64
@@ -34,5 +31,3 @@ const REDUCTION_TABLES = Dict{Float64,Vector{ThicknessBand}}(
         ThicknessBand(150,200,285,470,630,18)
     ]
 )
-
-end

@@ -1,13 +1,11 @@
+# ver: 2026-01-08
 
-module MaterialSelect
+"""
+    select_material(req::MaterialRequest)
 
-using ..MaterialTypes
-using ..MaterialDatabase
-using ..MaterialRequestDef
-using ..MaterialReduction
-
-export select_material
-
+Vybere vhodný materiál podle specifikovaných požadavků.
+Vrátí materiál s nejnižší pevností, který splňuje všechny požadavky.
+"""
 function select_material(req::MaterialRequest)
 
     candidates = Material[]
@@ -25,6 +23,4 @@ function select_material(req::MaterialRequest)
 
     sort!(candidates, by = m -> Re_eff(m, req.thickness))
     return first(candidates)
-end
-
 end

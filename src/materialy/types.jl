@@ -1,7 +1,4 @@
 # ver: 2026-01-08
-module MaterialTypes
-
-export Material
 
 struct Material
     name::String
@@ -14,6 +11,4 @@ struct Material
     T_KV::Float64        # teplota zkoušky [°C]
     weldable::Bool
     thickness_max::Float64
-end
-
 end

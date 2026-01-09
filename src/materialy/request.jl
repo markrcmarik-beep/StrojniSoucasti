@@ -1,7 +1,4 @@
-
-module MaterialRequestDef
-
-export MaterialRequest
+# ver: 2026-01-08
 
 """
     MaterialRequest
@@ -13,6 +10,4 @@ struct MaterialRequest
     Tmin::Float64         # minimální provozní teplota [°C]
     welded::Bool          # svařovaný spoj?
     thickness::Float64    # tloušťka [mm]
-end
-
 end

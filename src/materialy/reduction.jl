@@ -1,11 +1,10 @@
+# ver: 2026-01-08
 
-module MaterialReduction
+"""
+    thickness_band(mat::Material, thickness::Float64)
 
-using ..MaterialTypes
-using ..MaterialReductionTables
-
-export thickness_band, reduced_properties, Re_eff, Rm_eff, A_eff
-
+Vrátí třídu tloušťky materiálu podle jeho tloušťky.
+"""
 function thickness_band(mat::Material, thickness::Float64)
     haskey(REDUCTION_TABLES, mat.Re) ||
         error("Neexistuje redukční tabulka pro Re=$(mat.Re)")
@@ -19,6 +18,11 @@ function thickness_band(mat::Material, thickness::Float64)
     error("Tloušťka $thickness mm mimo normový rozsah")
 end
 
+"""
+    reduced_properties(mat::Material, thickness::Float64)
+
+Vrátí redukované vlastnosti materiálu podle tloušťky.
+"""
 function reduced_properties(mat::Material, thickness::Float64)
     b = thickness_band(mat, thickness)
     return (
@@ -29,9 +33,24 @@ function reduced_properties(mat::Material, thickness::Float64)
     )
 end
 
+"""
+    Re_eff(mat::Material, t::Float64)
+
+Vrátí efektivní mez kluzu pro danou tloušťku.
+"""
 Re_eff(mat::Material, t::Float64) = thickness_band(mat, t).Re
+
+"""
+    Rm_eff(mat::Material, t::Float64)
+
+Vrátí efektivní mez pevnosti (min, max) pro danou tloušťku.
+"""
 Rm_eff(mat::Material, t::Float64) =
     (thickness_band(mat, t).Rm_min, thickness_band(mat, t).Rm_max)
-A_eff(mat::Material, t::Float64)  = thickness_band(mat, t).A
 
-end
+"""
+    A_eff(mat::Material, t::Float64)
+
+Vrátí efektivní tažnost pro danou tloušťku.
+"""
+A_eff(mat::Material, t::Float64)  = thickness_band(mat, t).A

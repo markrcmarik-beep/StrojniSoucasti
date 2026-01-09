@@ -7,7 +7,7 @@ include("materialy3text.jl") #
 include("materialy/types.jl")
 include("materialy/database.jl")
 include("materialy/request.jl")
-include("materialy/reduction_tables.jl")
+include("materialy/reduction_table.jl")
 include("materialy/reduction.jl")
 include("materialy/select.jl")
 include("materialy/materialy.jl")
@@ -35,7 +35,6 @@ include("namahaniotl.jl") # namáhání otlačením
 include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
-using .Materialy
 # Export funkcí
 export materialy3, dovoleneNapeti, mezUnavy,
 tvarprofilu, namahanitah, namahanitlak, namahanikrut,
@@ -43,10 +42,15 @@ namahanistrih, namahanikombinovane, namahaniohyb, ulozvypis,
 zavity, namahaniotl,
     materialy,
     MaterialRequest,
+    Material,
     select_material,
     reduced_properties,
     Re_eff,
     Rm_eff,
-    A_eff
+    A_eff,
+    MATERIAL_DB,
+    REDUCTION_TABLES,
+    ThicknessBand,
+    thickness_band
 
 end # module StrojniSoucasti
