@@ -38,15 +38,17 @@ dims3 = tvarprofilu("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
 @test dims3[:t] == 5u"mm"
 @test dims3[:R] == 0u"mm"
 
-dims4 = tvarprofilu("4HR 50")
-@test haskey(dims4, :a)
-@test haskey(dims4, :b)
-@test haskey(dims4, :info)
-@test haskey(dims4, :R)
-@test dims4[:info] == "4HR"
-@test dims4[:a] == 50u"mm"
-@test dims4[:b] == 50u"mm"
-@test dims4[:R] == 0u"mm"
+@testset "tvarprofilu – tvar 4HR" begin
+    dims4 = tvarprofilu("4HR 50")
+    @test haskey(dims4, :a)
+    @test haskey(dims4, :b)
+    @test haskey(dims4, :info)
+    @test haskey(dims4, :R)
+    @test dims4[:info] == "4HR"
+    @test dims4[:a] == 50u"mm"
+    @test dims4[:b] == 50u"mm"
+    @test dims4[:R] == 0u"mm"
+end
 
 dims5 = tvarprofilu("KR 30", "S")
 @test haskey(dims5, :D)

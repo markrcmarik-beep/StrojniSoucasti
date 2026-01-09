@@ -5,9 +5,13 @@ using Test, Unitful, StrojniSoucasti
 
     include("tvarprofilu_test.jl")
 
+    
+
     # namahanitah: základní volání (bez textového výstupu)
     VV = namahanitah(F=1000u"N", S=200u"mm^2", sigmaDt=250u"MPa", return_text=false)
     @test isa(VV, Dict)
     @test haskey(VV, :sigma)
 
 end
+
+include("materialy_test.jl")
