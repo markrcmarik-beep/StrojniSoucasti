@@ -1,7 +1,7 @@
 # ver: 2026-01-08
 
 const MATERIAL_DB = Dict{String,Material}(
-
+    
     "S235JR+N" => Material(
         "S235JR+N", "EN 10025-2",
         235.0, 360.0, 510.0, 26.0,
@@ -26,13 +26,3 @@ const MATERIAL_DB = Dict{String,Material}(
         27.0, -20.0, true, 200.0
     )
 )
-
-"""
-    materialy(name::AbstractString)
-
-Vrátí materiál ze databáze podle jeho jména.
-"""
-materialy(name::AbstractString) =
-    haskey(MATERIAL_DB, name) ?
-        MATERIAL_DB[name] :
-        error("Materiál $name není v databázi")

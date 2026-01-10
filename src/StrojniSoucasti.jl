@@ -2,15 +2,15 @@
 module StrojniSoucasti
 
 # Import implementací
-include("materialy3.jl") # materiály
-include("materialy3text.jl") #
-include("materialy/types.jl")
-include("materialy/database.jl")
+# Nejdřív materialy aby byly dostupné typy a databáze
+include("materialy/materialy.jl")
 include("materialy/request.jl")
 include("materialy/reduction_table.jl")
 include("materialy/reduction.jl")
 include("materialy/select.jl")
-include("materialy/materialy.jl")
+
+include("materialy3.jl") # materiály - stará funkce
+include("materialy3text.jl") #
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl") #
