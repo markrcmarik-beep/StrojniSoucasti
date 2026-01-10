@@ -13,7 +13,6 @@ using StrojniSoucasti
     @test mat.thickness_max == 200.0
 end
 
-
 @testset "Materiály – redukce podle tloušťky (S235)" begin
 
     mat = materialy("S235JR+N")
@@ -32,7 +31,6 @@ end
     @test A_eff(mat, 90.0) == 22.0
 end
 
-
 @testset "Materiály – redukce podle tloušťky (S355)" begin
 
     mat = materialy("S355J2+N")
@@ -48,7 +46,6 @@ end
     @test A_eff(mat, 10.0) == 22.0
 end
 
-
 @testset "Materiály – sjednocený výstup reduced_properties()" begin
 
     mat = materialy("S235J2+N")
@@ -59,7 +56,6 @@ end
     @test props.Rm_max == 510.0
     @test props.A == 24.0
 end
-
 
 @testset "Materiály – automatická volba" begin
 
@@ -74,7 +70,6 @@ end
     @test mat.name == "S235J2+N"
 end
 
-
 @testset "Materiály – volba vyšší pevnosti" begin
 
     req = MaterialRequest(
@@ -87,7 +82,6 @@ end
     mat = select_material(req)
     @test mat.name == "S355J2+N"
 end
-
 
 @testset "Materiály – chybové stavy" begin
 
