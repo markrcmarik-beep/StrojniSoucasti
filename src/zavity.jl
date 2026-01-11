@@ -1,10 +1,14 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Načte informace o závitu podle jeho označení ze standardizované tabulky závitů.
 # Podporovány jsou metrické (M) a trapézové (Tr) závity.
-# ver: 2025-12-21
+# ver: 2026-01-11
 ## Funkce: zav, text = zavity(s::AbstractString)
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/zavity.jl
+#
 ## Vzor:
 # zav, text = zavity("M10x1.5")
 ## Vstupní proměnné:
