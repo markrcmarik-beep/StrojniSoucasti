@@ -1,4 +1,16 @@
-# ver: 2026-01-08
+## Balíček Julia v1.12
+###############################################################
+## Popis balíčku
+#
+# ver: 2026-01-11
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/StrojniSoucasti.jl
+#
+## Použité balíčky:
+#
+###############################################################
+## Použité proměnné vnitřní:
+#
 module StrojniSoucasti
 
 # Import implementací
