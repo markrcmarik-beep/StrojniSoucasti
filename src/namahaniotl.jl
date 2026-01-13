@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-01-07
+# ver: 2026-01-13
 ## Funkce: namahaniotl()
 #
 ## Vzor:
@@ -42,7 +42,7 @@
 ## Použité balíčky:
 # Unitful, Printf
 ## Použité uživatelské funkce:
-# materialy3(), dovoleneNapeti(), tvarprofilu()
+# materialy(), dovoleneNapeti(), tvarprofilu()
 ###############################################################
 ## Použité proměnné vnitřní:
 #
@@ -94,10 +94,11 @@ function namahaniotl(;
     # ----------------------------------------------------------
     # materiál
     if mat !== nothing
-        minfo = materialy3(mat)
-        isa(minfo, Tuple) && (minfo = minfo[1])
-
-        haskey(minfo, :Re) && (Re = minfo[:Re])
+        if !isdefined(Main, :materialy)
+            error("Funkce materialy(mat) není definována.")
+        end
+        matinfo = materialy(mat)
+        Re = (matinfo.Re)u"MPa" # mez kluzu
     end
     # dovolené napětí na otlačení
     if Re !== nothing

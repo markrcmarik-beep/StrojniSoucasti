@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-01-07
+# ver: 2026-01-13
 ## Funkce: namahanistrih()
 #
 ## Vzor:
@@ -90,13 +90,12 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy3)
-            error("Funkce materialy3(mat) není definována.")
+        if !isdefined(Main, :materialy)
+            error("Funkce materialy(mat) není definována.")
         end
-        raw = materialy3(mat)
-        matinfo = isa(raw, Tuple) ? raw[1] : raw
-        haskey(matinfo, :Re) && (Re = matinfo[:Re]) # mez kluzu
-        haskey(matinfo, :G) && (G = matinfo[:G]) # modul pružnosti
+        matinfo = materialy(mat)
+        Re = (matinfo.Re)u"MPa" # mez kluzu
+        G = (matinfo.G)u"GPa" # modul pružnosti
     end
     # ---------------------------------------------------------
     # dovolené smykové napětí

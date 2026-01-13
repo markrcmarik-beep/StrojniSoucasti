@@ -1,6 +1,13 @@
-# ver: 2026-01-12
+# ver: 2026-01-13
 
 const MATERIAL_DB = Dict{String,Material}(
+
+    "S235" => Material(
+        "S235", "EN 10025-2",
+        235.0, 360.0, 510.0, 26.0,
+        27.0, 20.0, true, 200.0,
+        210, 81, 0.3, 7850
+    ),
     
     "S235JR+N" => Material(
         "S235JR+N", "EN 10025-2",

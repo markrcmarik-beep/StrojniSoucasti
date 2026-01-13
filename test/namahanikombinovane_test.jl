@@ -1,7 +1,7 @@
 # ver: 2025-12-29
 using StrojniSoucasti, Unitful, Unitful.DefaultSymbols
 prof1 = "KR 25"
-mat1 = "16 440"
+mat1 = "16440"
 VVtah1, _ = namahanitah(F=20kN, profil=prof1, mat=mat1)
 VVtlak1, _ = namahanitlak(F=20kN, profil=prof1, mat=mat1)
 VVstrih1, _ = namahanistrih(F=10kN, profil=prof1, mat=mat1)

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis balíčku
 #
-# ver: 2026-01-11
+# ver: 2026-01-13
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
 #
@@ -20,9 +20,6 @@ include("materialy/request.jl")
 include("materialy/reduction_table.jl")
 include("materialy/reduction.jl")
 include("materialy/select.jl")
-
-include("materialy3.jl") # materiály - stará funkce
-include("materialy3text.jl") #
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl") #
@@ -48,18 +45,15 @@ include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
 # Export funkcí
-export materialy3, dovoleneNapeti, mezUnavy,
-tvarprofilu, namahanitah, namahanitlak, namahanikrut,
-namahanistrih, namahanikombinovane, namahaniohyb, ulozvypis,
-zavity, namahaniotl,
+export dovoleneNapeti, mezUnavy, tvarprofilu, 
+namahanitah, namahanitlak, namahanikrut, namahanistrih, 
+namahanikombinovane, namahaniohyb, ulozvypis, zavity, namahaniotl,
     materialy,
     MaterialRequest,
     Material,
     select_material,
     reduced_properties,
-    Re_eff,
-    Rm_eff,
-    A_eff,
+    Re_eff, Rm_eff, A_eff,
     MATERIAL_DB,
     REDUCTION_TABLES,
     ThicknessBand,

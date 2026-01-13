@@ -1,6 +1,6 @@
 name = "StrojniSoucasti"
 uuid = "10255254-1473-4e7e-b938-74a6d2bcadf3"
-version = "0.1.7"
+version = "0.1.8"
 authors = ["Martin"]
 
 [deps]
@@ -23,7 +23,6 @@ julia = "1.12"
 Dates = "1"
 Printf = "1"
 Test = "1"
-
 FileIO = "1.17"
 FilePathsBase = "0.9"
 JLD2 = "0.6"
@@ -32,5 +31,4 @@ Plots = "1.41"
 Tables = "1.12"
 Unitful = "1.27"
 XLSX = "0.10"
-
 SpravaSouboru = "0.1"
