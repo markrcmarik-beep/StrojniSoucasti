@@ -1,7 +1,7 @@
 # ver: 2026-01-08
 
-include("types.jl")
-include("database.jl")
+include("materialytypes.jl")
+include("materialydatabase.jl")
 
 """
     materialy(name::AbstractString)
