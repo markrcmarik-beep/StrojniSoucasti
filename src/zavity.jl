@@ -3,34 +3,29 @@
 ## Popis funkce:
 # Načte informace o závitu podle jeho označení ze standardizované tabulky závitů.
 # Podporovány jsou metrické (M) a trapézové (Tr) závity.
-# ver: 2026-01-11
-## Funkce: zav, text = zavity(s::AbstractString)
+# ver: 2026-01-14
+## Funkce:  = zavity(s::AbstractString)
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/zavity.jl
 #
 ## Vzor:
-# zav, text = zavity("M10x1.5")
+#
 ## Vstupní proměnné:
-# s - Řetězec označení závitu (např. "M10x1.5" nebo "Tr20x4").
+# s - Řetězec označení závitu (např. "M8", "M8x1", "M10x1.5", "Tr20x4").
 ## Výstupní proměnné:
-# zav  - Slovník s informacemi o závitu (typ, norma, rozměry).
-#   :typ - Typ závitu (např. "metrický" nebo "trapézový").
-#   :norma - Použitá norma závitu.
-#   :zavit - Normalizované označení závitu.
-#   :D - Jmenovitý průměr závitu (s jednotkou mm).
-#   :d - Malý průměr závitu (s jednotkou mm).
-#   :p - Stoupání závitu (s jednotkou mm).
-# text - Textový výpis informací o závitu.
+# 
 ## Použité balíčky:
-# Unitful
+#
 ## Použité uživatelské funkce:
-# sprdsheet2velkst(), sprsheetRef(), sprsheet2tabl()
+#
 ## Příklad:
-# zav, text = zavity("M10x1.5")
-#   vrátí slovník s informacemi o metrickém závitu M10x1.5 a textový výpis
-# => zav = Dict(:typ=>"metrický", :norma=>"ISO 68-1 / ISO 724", :zavit=>"M10x1.5", :D=>10mm, :d=>8.160mm, :p=>1.5mm, ...),
-# => text = "Závit: metrický ISO\nOznačení: M10x1.5\n..."
+# Z = StrojniSoucasti.zavity.zavity()
+# z = Z("M8")
+# z.name       # "M8x1.25"
+# z.stoupani   # 1.25
+# z.d          # 8.0
+# z.typ        # :metric
 ################################################################
 ## Použité proměnné vnitřní:
 #
