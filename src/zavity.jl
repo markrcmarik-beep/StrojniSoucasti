@@ -34,138 +34,134 @@
 ################################################################
 ## Použité proměnné vnitřní:
 #
-using SpravaSouboru, Unitful
+module zavity
 
-function zavity(s::AbstractString)
-    s = replace(strip(s), "," => ".")
-    text = IOBuffer()
-    cesta01 = dirname(@__FILE__) # Získá cestu k adresáři aktuálního souboru
-    podslozka = "zavity" # Podadresář s testovacími soubory
-    cesta = joinpath(cesta01, podslozka) # Úplná cesta k souboru
-    soubor1 = "zavity.ods" # Název testovacího souboru .ods
-    
-    # Zpracování zadaného označení závitu
-    # =========================================================================
+export ThreadSpec, zavity
 
-    # ================= METRICKÝ ZÁVIT =========================
-    if (m = match(r"^M(\d+)(x([\d\.]+))?$", s)) !== nothing
-        
-        if m.captures[3] === nothing
-            # Pokud není stoupání zadáno, použije se standardní hodnota
-            s = "M" * m.captures[1]
-        else
-            s = "M" * m.captures[1] * "x" * m.captures[3]
-        end
-        
-        list_nazev1 = "M" # Místo list{listCi}
-        souborDat1 = "zavity_M.jld2" # Změna na standardní Julia kešovací formát
-        zavitydata = nacti_zavity_data(cesta, soubor1, souborDat1, list_nazev1, s)
+"""
+    ThreadSpec
 
-        zav = Dict{Symbol,Any}()
-        zav[:typ] = "metrický"
-        zav[:typ_info] = "Typ závitu"
-        zav[:norma] = "ISO 68-1 / ISO 724"
-        zav[:norma_info] = "Použitá norma závitu"
-        zav[:zavit] = zavitydata[1]
-        zav[:zavit_info] = "Normalizované označení závitu"
-        zav[:D] = zavitydata[3]
-        zav[:D_info] = "Jmenovitý průměr závitu"
-        zav[:d] = zavitydata[6]
-        zav[:d_info] = "Malý (jádrový) průměr závitu"
-        zav[:d2] = zavitydata[4]
-        zav[:d2_info] = "Střední průměr závitu"
-        zav[:d1] = zavitydata[5]
-        zav[:d1_info] = "Velký průměr závitu"
-        zav[:P] = zavitydata[2]
-        zav[:P_info] = "Stoupání závitu"
-
-        println(text, zav[:typ], "   ", zav[:typ_info])
-        println(text, zav[:norma], "   ", zav[:norma_info])
-        println(text, zav[:zavit],"   ", zav[:zavit_info])
-        println(text, "D = ", zav[:D], "   ", zav[:D_info])
-        println(text, "d1 = ", zav[:d1], "   ", zav[:d1_info])
-        println(text, "d2 = ", zav[:d2], "   ", zav[:d2_info])
-        println(text, "d = ", zav[:d], "   ", zav[:d_info])
-        println(text, "P = ", zav[:P], "   ", zav[:P_info])
-
-        return zav, String(take!(text))
-
-    # ================= TRAPÉZOVÝ ZÁVIT ========================
-    elseif (m = match(r"^Tr(\d+)(x([\d\.]+))?$", s)) !== nothing
-        println(m[1]," ", m[2], " ", m[3])
-        #display(m.captures)
-        
-        if m.captures[3] === nothing
-            # Pokud není stoupání zadáno, použije se standardní hodnota
-            s = "Tr" * m.captures[1]
-        else
-            s = "Tr" * m.captures[1] * "x" * m.captures[3]
-        end
-        println(s)
-        list_nazev1 = "Tr" # Místo list{listCi}
-        souborDat1 = "zavity_Tr.jld2" # Změna na standardní Julia kešovací formát
-        zavitydata = nacti_zavity_data(cesta, soubor1, souborDat1, list_nazev1, s)
-
-        zav = Dict{Symbol,Any}()
-        zav[:typ] = "trapézový"
-        zav[:typ_info] = "Typ závitu"
-        zav[:norma] = "ISO 2901 / ISO 2902"
-        zav[:norma_info] = "Použitá norma závitu"
-        zav[:zavit] = zavitydata[1]
-        zav[:zavit_info] = "Normalizované označení závitu"
-        zav[:D] = zavitydata[3]
-        zav[:D_info] = "Jmenovitý průměr závitu"
-        zav[:d] = zavitydata[6]
-        zav[:d_info] = "Malý (jádrový) průměr závitu"
-        zav[:d2] = zavitydata[4]
-        zav[:d2_info] = "Střední průměr závitu"
-        zav[:d1] = zavitydata[5]
-        zav[:d1_info] = "Velký průměr závitu"
-        zav[:P] = zavitydata[2]
-        zav[:P_info] = "Stoupání závitu"
-
-        println(text, zav[:typ], "   ", zav[:typ_info])
-        println(text, zav[:norma], "   ", zav[:norma_info])
-        println(text, zav[:zavit],"   ", zav[:zavit_info])
-        println(text, "D = ", zav[:D], "   ", zav[:D_info])
-        println(text, "d1 = ", zav[:d1], "   ", zav[:d1_info])
-        println(text, "d2 = ", zav[:d2], "   ", zav[:d2_info])
-        println(text, "d = ", zav[:d], "   ", zav[:d_info])
-        println(text, "P = ", zav[:P], "   ", zav[:P_info])
-
-        return zav, String(take!(text))
-    else
-        error("Neznámé nebo nepodporované označení závitu: $s")
-    end
+Struktura popisující závit:
+- `name`      – normalizované označení (např. "M8x1.25", "TR20x4")
+- `typ`       – :metric nebo :pipe
+- `d`         – jmenovitý průměr [mm]
+- `stoupani`  – stoupání [mm]
+"""
+struct ThreadSpec
+    name::String
+    typ::Symbol
+    d::Float64
+    stoupani::Float64
 end
 
-function nacti_zavity_data(
-    cesta::AbstractString,
-    soubor1::AbstractString,
-    souborDat1::AbstractString,
-    list_nazev1::AbstractString,
-    oznaceni::AbstractString
+# ---------------------------------------------------------
+# Databáze standardních stoupání metrických závitů (ISO)
+# ---------------------------------------------------------
+
+const METRIC_DEFAULT_PITCH = Dict(
+    1.0  => 0.25,
+    1.2  => 0.25,
+    1.4  => 0.3,
+    1.6  => 0.35,
+    1.8  => 0.35,
+    2.0  => 0.4,
+    2.5  => 0.45,
+    3.0  => 0.5,
+    4.0  => 0.7,
+    5.0  => 0.8,
+    6.0  => 1.0,
+    8.0  => 1.25,
+    10.0 => 1.5,
+    12.0 => 1.75,
+    14.0 => 2.0,
+    16.0 => 2.0,
+    18.0 => 2.5,
+    20.0 => 2.5,
+    22.0 => 2.5,
+    24.0 => 3.0,
+    27.0 => 3.0,
+    30.0 => 3.5,
+    33.0 => 3.5,
+    36.0 => 4.0,
 )
-    koncova_adresa1 = sprdsheet2velkst(
-        joinpath(cesta, soubor1),
-        list_nazev1,
-        druh="poslední"
-    )
-    STRTradk = 3
-    rozsahTabulka = "A$(STRTradk):$koncova_adresa1"
 
-    _, _, TBL1 = sprsheet2tabl(
-        cesta,
-        [soubor1, souborDat1],
-        list_nazev1,
-        ["A2", "D2", rozsahTabulka]
-    )
-    for row in eachrow(TBL1)
-        row_oznaceni = replace(string(row[1]), "," => ".")
-        #display(row_oznaceni)
-        if row_oznaceni == oznaceni
-            return row
+# ---------------------------------------------------------
+# Databáze trubkových závitů (zatím jednoduchá)
+# ---------------------------------------------------------
+
+const TRUBKOVE = Dict(
+    "TR20x4.0" => ThreadSpec("TR20x4.0", :pipe, 20.0, 4.0),
+    "TR16x3.0" => ThreadSpec("TR16x3.0", :pipe, 16.0, 3.0),
+)
+
+# ---------------------------------------------------------
+# Parser označení závitu
+# ---------------------------------------------------------
+
+"""
+    parse_designation(s::String)
+
+Rozpozná typ závitu, doplní případně normové stoupání
+a vrátí: (klíč, typ, d, stoupani).
+"""
+function parse_designation(s::String)
+    s = replace(strip(s), "," => ".")
+    S = uppercase(s)
+
+    # METRICKÉ ZÁVITY
+    if startswith(S, "M")
+        m = match(r"^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$", S)
+        m === nothing && error("Neplatné označení metrického závitu: $s")
+
+        d = parse(Float64, m.captures[1])
+        p = m.captures[2]
+
+        if isnothing(p)
+            pitch = get(METRIC_DEFAULT_PITCH, d,
+                error("Pro průměr M$(d) není definováno standardní stoupání"))
+        else
+            pitch = parse(Float64, p)
         end
+
+        key = "M$(d)x$(pitch)"
+        return key, :metric, d, pitch
     end
-    error("Závit $oznaceni nebyl nalezen v tabulce listu $list_nazev1")
+
+    # TRUBKOVÉ ZÁVITY
+    if startswith(S, "TR")
+        m = match(r"^TR(\d+(?:\.\d+)?)[xX](\d+(?:\.\d+)?)$", S)
+        m === nothing && error("Neplatné označení trubkového závitu: $s")
+
+        d = parse(Float64, m.captures[1])
+        pitch = parse(Float64, m.captures[2])
+        key = "TR$(d)x$(pitch)"
+
+        return key, :pipe, d, pitch
+    end
+
+    error("Neznámý typ závitu: $s")
 end
+
+# ---------------------------------------------------------
+# Funktor zavity – volání jako zavity()("M8")
+# ---------------------------------------------------------
+
+"""
+    zavity()
+
+Objekt, který lze volat jako funkci: `zavity()("M8")`.
+Vrací `ThreadSpec`.
+"""
+struct zavity end
+
+function (z::zavity)(designation::String)
+    key, typ, d, pitch = parse_designation(designation)
+
+    if typ === :metric
+        return ThreadSpec(key, :metric, d, pitch)
+    elseif typ === :pipe
+        return get(TRUBKOVE, key, ThreadSpec(key, :pipe, d, pitch))
+    end
+end
+
+end # module

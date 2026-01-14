@@ -1,14 +1,10 @@
-# ver: 2025-12-21
+# ver: 2026-01-14
 using StrojniSoucasti
 
-A1, txt1 = zavity("M3x0,5")
-display(A1)
-println(txt1)
+Z = StrojniSoucasti.zavity.zavity()
+z = Z("M8")
 
-A1, txt1 = zavity("M3")
-display(A1)
-println(txt1)
-
-A2, txt2 = zavity("Tr8")
-display(A2)
-println(txt2)
+z.name       # "M8x1.25"
+z.stoupani   # 1.25
+z.d          # 8.0
+z.typ        # :metric

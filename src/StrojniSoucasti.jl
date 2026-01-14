@@ -59,4 +59,7 @@ namahanikombinovane, namahaniohyb, ulozvypis, zavity, namahaniotl,
     ThicknessBand,
     thickness_band
 
+# Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
+using .zavity
+
 end # module StrojniSoucasti
