@@ -20,7 +20,7 @@
 ## Použité uživatelské funkce:
 #
 ## Příklad:
-# Z = StrojniSoucasti.zavity.zavity()
+# Z = zavity()
 # z = Z("M8")
 # z.name       # "M8x1.25"
 # z.stoupani   # 1.25

@@ -1,7 +1,7 @@
 # ver: 2026-01-14
 using StrojniSoucasti
 
-Z = StrojniSoucasti.zavity.zavity()
+Z = zavity.zavity()
 z = Z("M8")
 
 z.name       # "M8x1.25"
