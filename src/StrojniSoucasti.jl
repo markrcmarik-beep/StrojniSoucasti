@@ -60,6 +60,6 @@ namahanikombinovane, namahaniohyb, ulozvypis, zavity, ThreadSpec, namahaniotl,
     thickness_band
 
 # Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
-using .Zavity
+#using .Zavity
 
 end # module StrojniSoucasti
