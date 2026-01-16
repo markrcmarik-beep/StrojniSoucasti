@@ -8,21 +8,21 @@ A = zavity("M8")
 
 @test A.name == "M8"
 @test A.d == 8.0
-@test A.pitch == 1.25
+@test A.p == 1.25
 
 println("Označení: ", A.name)
 println("Průměr d = ", A.d)
-println("Stoupání p = ", A.pitch)
+println("Stoupání p = ", A.p)
 
 A1 = zavity("M8x1")
 
 @test A1.name == "M8x1"
 @test A1.d == 8.0
-@test A1.pitch == 1
+@test A1.p == 1
 
 println("Označení: ", A1.name)
 println("Průměr d = ", A1.d)
-println("Stoupání p = ", A1.pitch)
+println("Stoupání p = ", A1.p)
 
 A2 = zavity("M10x1.25")
 println(A2)
