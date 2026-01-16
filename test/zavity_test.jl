@@ -1,16 +1,15 @@
-# ver: 2026-01-14
+# ver: 2026-01-16
 using StrojniSoucasti
+using Test
 
-Z = StrojniSoucasti.Zavity.Zavity()
+#include("zavit.jl")
 
-#z1 = Z("M8")
-#z1.name        # "M8x1.25"
-#z1.pitch       # 1.25
+A = zavity("M8")
 
-#z2 = Z("M10x1")
-#z2.pitch       # 1.0
+@test A.name == "M8"
+@test A.d == 8.0
+@test A.pitch == 1.25
 
-z3 = Z("TR20x4")
-println(z3.name)
-println(z3.d)            # 20.0
-print(z3.pitch )       # 4
+println("Označení: ", A.name)
+println("Průměr d = ", A.d)
+println("Stoupání p = ", A.pitch)

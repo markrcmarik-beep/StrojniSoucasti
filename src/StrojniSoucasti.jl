@@ -39,7 +39,7 @@ include("namahanikombinovane.jl") # namáhání kombinovaně
 include("namahanikombinovanetext.jl") #
 include("tvarCSN.jl") #
 include("ulozvypis.jl") #
-include("Zavity/Zavity.jl") # závity
+include("zavity/zavity.jl") # závity
 include("namahaniotl.jl") # namáhání otlačením
 include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
@@ -47,7 +47,7 @@ include("profil_text_lines.jl") #
 # Export funkcí
 export dovoleneNapeti, mezUnavy, tvarprofilu, 
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
-namahanikombinovane, namahaniohyb, ulozvypis, Zavity, ThreadSpec, namahaniotl,
+namahanikombinovane, namahaniohyb, ulozvypis, zavity, ThreadSpec, namahaniotl,
     materialy,
     MaterialRequest,
     Material,
