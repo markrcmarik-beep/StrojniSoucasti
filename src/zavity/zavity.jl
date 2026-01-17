@@ -1,9 +1,8 @@
 
 using TOML
-
-include("types.jl")
+include("zavitytypes.jl")
 #include("load_db.jl")
-include("lookup_toml.jl")
+include("zavitylookup_toml.jl")
 
 #export zavity, DbRecord
 const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
