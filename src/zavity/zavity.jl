@@ -1,8 +1,9 @@
+# ver: 2026-01-17
 
 using TOML
 include("zavitytypes.jl")
 #include("load_db.jl")
-include("zavitylookup_toml.jl")
+#include("zavitylookup_toml.jl")
 
 #export zavity, DbRecord
 const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
@@ -34,4 +35,17 @@ function zavity(oznaceni::AbstractString)
     rec = lookup_toml(ZAVITY_DB, oznaceni)
     extra = merge(rec.extra, Dict(:typ => typ))
     return DbRecord(rec.name, rec.d, rec.p, extra)
+end
+
+function lookup_toml(db::Dict{String,Any}, key::AbstractString)
+    haskey(db, key) || error("Položka '$key' nebyla nalezena.")
+
+    row = db[key]
+
+    return DbRecord(
+        key,
+        row["d"],
+        get(row, "p", nothing),
+        Dict(Symbol(k) => v for (k,v) in row if k ∉ ("d","p"))
+    )
 end
