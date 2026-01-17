@@ -15,4 +15,5 @@ struct Material
     G::Float64          #
     ny::Float64         # Poissonovo číslo
     rho::Float64        # hustota [kg/m^3]
+    #extra::Dict{Symbol, Any}
 end
