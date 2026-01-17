@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis balíčku
 #
-# ver: 2026-01-13
+# ver: 2026-01-17
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
 #
@@ -16,10 +16,10 @@ module StrojniSoucasti
 # Import implementací
 # Nejdřív materialy aby byly dostupné typy a databáze
 include("materialy/materialy.jl")
-include("materialy/request.jl")
-include("materialy/reduction_table.jl")
-include("materialy/reduction.jl")
-include("materialy/select.jl")
+#include("materialy/request.jl")
+#include("materialy/reduction_table.jl")
+#include("materialy/reduction.jl")
+#include("materialy/select.jl")
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("tvarvlcn.jl") #
@@ -45,19 +45,9 @@ include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
 # Export funkcí
-export dovoleneNapeti, mezUnavy, tvarprofilu, 
+export dovoleneNapeti, mezUnavy, tvarprofilu, materialy,
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
-namahanikombinovane, namahaniohyb, ulozvypis, zavity, ThreadSpec, namahaniotl,
-    materialy,
-    MaterialRequest,
-    Material,
-    select_material,
-    reduced_properties,
-    Re_eff, Rm_eff, A_eff,
-    MATERIAL_DB,
-    REDUCTION_TABLES,
-    ThicknessBand,
-    thickness_band
+namahanikombinovane, namahaniohyb, ulozvypis, zavity, namahaniotl
 
 # Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
 #using .Zavity

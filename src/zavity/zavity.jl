@@ -7,7 +7,6 @@ include("zavitytypes.jl")
 
 #export zavity, DbRecord
 const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
-#println("Loaded ZAVITY_DB keys: ", keys(ZAVITY_DB))
 
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
