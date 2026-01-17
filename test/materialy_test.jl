@@ -1,3 +1,4 @@
+# ver: 2026-01-17
 using Test
 using StrojniSoucasti
 
