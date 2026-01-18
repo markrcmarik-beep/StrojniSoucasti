@@ -1,5 +1,30 @@
+## Funkce Julia v1.12
+###############################################################
+## Popis funkce:
+# Vrátí Profil struct s vlastnostmi profilu TR4HR z databáze.
 # ver: 2026-01-18
-# Modul pro práci s profily TR4HR - umožňuje ukládat více hodnot pro parametry
+## Funkce: profilTR4HR()
+#
+## Cesta uvnitř balíčku:
+# balicek/src/profilTR4HR.jl
+#
+## Vzor:
+## vystupni_promenne = profilTR4HR(vstupni_promenne)
+## Vstupní proměnné:
+# - name::AbstractString: Označení profilu (např. "TR4HR 20x20x2", "TR4HR20x2")
+## Výstupní proměnné:
+# - Profil struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+## Použité balíčky:
+# TOML
+## Použité uživatelské funkce:
+# profilTR4HRtypes.jl, profilTR4HR.toml
+## Příklad:
+# julia
+# prof = profilTR4HR("TR4HR 20x20x2")
+# println(prof.a)  # 20.0
+###############################################################
+## Použité proměnné vnitřní:
+#
 
 using TOML
 
