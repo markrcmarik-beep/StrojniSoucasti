@@ -8,12 +8,12 @@ include("profilTR4HRtypes.jl")
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
 
 function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
-    
+
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
-    
-    nadp = nothing
-    
+
+    nadpDB = nothing
+    oznaceni = nothing
     # Zkusit rozebrat formát TR4HR_a_x_b_x_t
     m = match(r"^TR4HR(\d+)X(\d+)X(\d+)$", name)
     if m !== nothing
@@ -40,7 +40,7 @@ function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
             oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
         end
     end
-        
+
     nadpDB === nothing && return nothing
     haskey(TR4HR_DB, nadpDB) || return nothing
 
