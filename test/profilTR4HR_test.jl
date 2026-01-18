@@ -2,9 +2,6 @@
 using Test
 using StrojniSoucasti
 
-A1 = StrojniSoucasti.profilTR4HR("tr4hr40x40x3")
-println("A1: ", A1.name, ", a=", A1.a, ", b=", A1.b, ", t=", A1.t)
-
 profilTR4HR_tests = [
     ("TR4HR20x20x2", 20.0, 20.0, 2.0),
     ("TR4HR30x20x3", 30.0, 20.0, 3.0),
@@ -14,16 +11,16 @@ profilTR4HR_tests = [
     ("TR4HR10x1", 10.0, 10.0, 1.0),
     ("tr4hr10x10x1", 10.0, 10.0, 1.0)
 ]   
-@testset "profilTR4HR tests" begin
-    for (name, exp_a, exp_b, exp_t) in profilTR4HR_tests
-        prof = StrojniSoucasti.profilTR4HR(name)
-        @test prof !== nothing "Profil $name should be found"
-        @test prof.a == exp_a "Profil $name: expected a=$exp_a, got $(prof.a)"
-        @test prof.b == exp_b "Profil $name: expected b=$exp_b, got $(prof.b)"
-        @test prof.t == exp_t "Profil $name: expected t=$exp_t, got $(prof.t)"
+@testset "profilTR4HR" begin
+    for (name1, exp_a, exp_b, exp_t) in profilTR4HR_tests
+        prof = StrojniSoucasti.profilTR4HR(name1)
+        @test prof !== nothing
+        @test prof.a === exp_a
+        @test prof.b === exp_b
+        @test prof.t === exp_t
     end
 
     # Test neexistující profil
-    @test StrojniSoucasti.profilTR4HR("TR4HR999x999x9") === nothing "Non-existing profile should return nothing"
-    @test StrojniSoucasti.profilTR4HR("TR4HR20x20x3") === nothing "Profile with wrong thickness should return nothing"
+    @test StrojniSoucasti.profilTR4HR("TR4HR999x999x9") === nothing
+    @test StrojniSoucasti.profilTR4HR("TR4HR20x20x3") === nothing
 end

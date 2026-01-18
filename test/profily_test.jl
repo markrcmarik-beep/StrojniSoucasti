@@ -1,6 +1,6 @@
 # ver: 2026-01-18
 using StrojniSoucasti, Unitful, Test
-include(joinpath(foldl(@__DIR__), "profily/profily.jl"))
+include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
 
 dims = profily("PLO 20x10") # pouze rozměry
 @test haskey(dims, :a)

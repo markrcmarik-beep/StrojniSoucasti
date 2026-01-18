@@ -1,4 +1,4 @@
-# ver: 2026-01-17
+# ver: 2026-01-18
 
 using TOML
 
@@ -24,7 +24,9 @@ julia
 
 """
 function materialy(name::AbstractString)::Material
-    haskey(MATERIALY_DB, name) || error("Materiál '$name' není v databázi")
+    name = uppercase(strip(name)) # velká písmena
+    name = replace(name, r"\s+" => "")   # odstranění všech mezer
+    haskey(MATERIALY_DB, name) || return nothing
     
     row = MATERIALY_DB[name]
     

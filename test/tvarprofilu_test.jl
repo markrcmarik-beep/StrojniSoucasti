@@ -1,5 +1,8 @@
 # ver: 2026-01-04
 using StrojniSoucasti, Unitful, Test
+@testset "tvarprofilu" begin
+    # Test neexistujícího profilu
+    @test_throws ErrorException tvarprofilu("NEEXISTUJICI 10x10")
 
 dims = tvarprofilu("PLO 20x10") # pouze rozměry
 @test haskey(dims, :a)
@@ -38,7 +41,7 @@ dims3 = tvarprofilu("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
 @test dims3[:t] == 5u"mm"
 @test dims3[:R] == 0u"mm"
 
-@testset "tvarprofilu – tvar 4HR" begin
+
     dims4 = tvarprofilu("4HR 50")
     @test haskey(dims4, :a)
     @test haskey(dims4, :b)
@@ -48,7 +51,7 @@ dims3 = tvarprofilu("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
     @test dims4[:a] == 50u"mm"
     @test dims4[:b] == 50u"mm"
     @test dims4[:R] == 0u"mm"
-end
+
 
 dims5 = tvarprofilu("KR 30", "S")
 @test haskey(dims5, :D)
@@ -57,3 +60,5 @@ dims5 = tvarprofilu("KR 30", "S")
 @test typeof(dims5[:S]) <: Unitful.AbstractQuantity # S je s jednotkou
 @test dims5[:info] == "KR"
 @test dims5[:D] == 30u"mm"
+
+end
