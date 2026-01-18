@@ -83,14 +83,14 @@ function profily(inputStr::AbstractString, args...)
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
     clean = replace(strip(inputStr), r"\s+" => " ") # odstraní nadbytečné mezery
-    println(clean)
+    println("clean: ",clean)
     parts = split(clean, " ") # rozdělí na profil a rozměry (např: SubString{String}["4HR", "50"])
-    println(parts)
+    println("parts: ",parts)
     if length(parts) < 2 # chybí rozměrová část
         error("Neplatný vstup: chybí rozměrová část.")
     end
     profile = uppercase(parts[1]) # první část je profil
-    println(profile)
+    println("profile: ",profile)
     dimPart = parts[2] # zbytek je dimenzionální část (profil + rozměry)
     # Výsledná struktura jako Dict
     dims = Dict{Symbol,Any}()
