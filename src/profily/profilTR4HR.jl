@@ -19,9 +19,10 @@
 ## Použité uživatelské funkce:
 # profilTR4HRtypes.jl, profilTR4HR.toml
 ## Příklad:
-# julia
 # prof = profilTR4HR("TR4HR 20x20x2")
 # println(prof.a)  # 20.0
+# println(prof.b)  # 20.0
+# println(prof.t)  # 2.0
 ###############################################################
 ## Použité proměnné vnitřní:
 #

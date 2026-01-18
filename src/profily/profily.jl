@@ -83,6 +83,7 @@ function profily(inputStr::AbstractString, args...)
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
     clean = replace(strip(inputStr), r"\s+" => " ") # odstraní nadbytečné mezery
+    println(clean)
     parts = split(clean, " ") # rozdělí na profil a rozměry (např: SubString{String}["4HR", "50"])
     println(parts)
     if length(parts) < 2 # chybí rozměrová část
