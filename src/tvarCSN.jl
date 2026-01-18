@@ -39,7 +39,7 @@ function tvarCSN(inputStr::AbstractString)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
-    s = uppercase(strip(inputStr))
+    s = uppercase(strip(inputStr)) # velká písmena
     s = replace(s, r"\s+" => "")   # odstranění všech mezer
     # -----------------------------------------------------------
     # 2) Inicializace výstupu
@@ -135,13 +135,23 @@ function tvarCSN(inputStr::AbstractString)
                 b = parse(Int, m.captures[2])
                 t = parse(Int, m.captures[3])
                 r = m.captures[5] === nothing ? 0 : parse(Int, m.captures[5])
-                @assert a > 2t && b > 2t "Tloušťka stěny je příliš velká"
-                @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
-                dims[:info] = "TR4HR"
-                dims[:a] = a * u"mm"
-                dims[:b] = b * u"mm"
-                dims[:t] = t * u"mm"
-                dims[:R] = r * u"mm"
+                # Zkusit databázi standardních profilů
+                A = profilTR4HR(s)
+                if A !== nothing
+                    dims[:info] = "TR4HR"
+                    dims[:a] = A.a * u"mm"
+                    dims[:b] = A.b * u"mm"
+                    dims[:t] = A.t * u"mm"
+                    dims[:R] = A.R * u"mm"
+                else
+                    @assert a > 2t && b > 2t "Tloušťka stěny je příliš velká"
+                    @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
+                    dims[:info] = "TR4HR"
+                    dims[:a] = a * u"mm"
+                    dims[:b] = b * u"mm"
+                    dims[:t] = t * u"mm"
+                    dims[:R] = r * u"mm"
+                end
             end
         )
     ]
