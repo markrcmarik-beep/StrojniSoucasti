@@ -22,6 +22,7 @@ include("materialy/materialy.jl")
 #include("materialy/select.jl")
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
+include("profil/profilTR4HR.jl") # profily TR4HR
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
 #include("hrana.jl") #

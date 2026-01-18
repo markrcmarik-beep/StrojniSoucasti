@@ -1,4 +1,4 @@
-# ver: 2026-01-17
+# ver: 2026-01-18
 # Modul pro práci s profily TR4HR - umožňuje ukládat více hodnot pro parametry
 
 using TOML
@@ -17,32 +17,49 @@ function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
     # Zkusit rozebrat formát TR4HR_a_x_b_x_t
     m = match(r"^TR4HR(\d+)X(\d+)X(\d+)$", name)
     if m !== nothing
-        a = parse(Int, m.captures[1])
-        b = parse(Int, m.captures[2])
-        t = parse(Int, m.captures[3])
-        nadp = string(a, "x", b)
+        a = parse(Int, m.captures[1]) # rozměr
+        b = parse(Int, m.captures[2]) # rozměr
+        t = parse(Int, m.captures[3]) # tloušťka
+        if a < b # zajistit a >= b
+            a, b = b, a  # zajistit a >= b
+        end
+        if a > b
+        nadpDB = string(a, "x", b) # nadpis v DB
+        oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+        elseif a == b
+            nadpDB = string(a) # nadpis v DB
+            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+        end
     else
         # Zkusit rozebrat formát TR4HR_a_x_t
         m = match(r"^TR4HR(\d+)X(\d+)$", name)
         if m !== nothing
-            a = parse(Int, m.captures[1])
-            t = parse(Int, m.captures[2])
-            nadp = string(a)
+            a = parse(Int, m.captures[1]) # rozměr
+            t = parse(Int, m.captures[2]) # tloušťka
+            nadpDB = string(a) # nadpis v DB
+            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
         end
     end
         
-    nadp === nothing && return nothing
-    haskey(TR4HR_DB, nadp) || return nothing
-    
-    row = TR4HR_DB[nadp]
-    
+    nadpDB === nothing && return nothing
+    haskey(TR4HR_DB, nadpDB) || return nothing
+
+    row = TR4HR_DB[nadpDB] # načíst řádek z DB
+    t_vec = get(row, "t", Float64[]) # dostupné tloušťky
+    if !(t in t_vec)
+        return nothing
+    end
+    idx = findfirst(==(t), t_vec) # najít index tloušťky
+    t = t_vec[idx] # vybraná tloušťka
+    R_val = row["R"][idx] # odpovídající poloměr
+
     return Profil(
-        get(row, "name", "")::String,
-        get(row, "standard", "")::String,
-        Float64(get(row, "a", 0.0)),
-        Float64(get(row, "b", 0.0)),
-        Float64(get(row, "t", 0.0)),
-        Float64(get(row, "R", 0.0)),
-        get(row, "material", "")::String
+        string(oznaceni), # název profilu
+        get(row, "standard", "")::String, # norma (nepovinné)
+        Float64(get(row, "a", 0.0)), # rozměr a
+        Float64(get(row, "b", 0.0)), # rozměr b
+        Float64(t),
+        Float64(R_val),
+        get(row, "material", String[])::Vector{String}
     )
 end
