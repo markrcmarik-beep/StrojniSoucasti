@@ -3,6 +3,7 @@ using StrojniSoucasti
 using Test
 
 #include("zavit.jl")
+@testset "zavity" begin
 
 A = zavity("M8")
 
@@ -29,3 +30,5 @@ println(A2)
 
 A3 = zavity("M6x0,5")
 println(A3)
+
+end
