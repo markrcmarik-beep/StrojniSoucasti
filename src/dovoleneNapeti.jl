@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2025-12-29
+# ver: 2026-01-19
 ## Funkce: dovoleneNapeti()
 #
 ## Vzor:
@@ -69,7 +69,6 @@ const GAMMA_M = begin
     base[("rázový","otlačení")] = 1.5
 
     G = Dict{Tuple{String,String},Float64}()
-
     # Přidej jednoduché případy
     for ((Z,N),v) in base
         G[(Z,N)] = v
@@ -105,17 +104,17 @@ end
 function dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický")
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)
-   Re = Reu"MPa"
+   Re = Re*u"MPa"
     #error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
 end
 # Ověření druhu namáhání
 povoleneN = ["tah", "tlak", "střih", "krut", "ohyb", "otlačení",
     "tah-střih", "tlak-střih", "tah-krut", "tlak-krut", "tah-ohyb", "tlak-ohyb",
-    "střih-krut", "střih-ohyb", "krut-ohyb"]
+    "střih-krut", "střih-ohyb", "krut-ohyb"] # kombinované druhy namáhání
 povoleneZ = ["statický", "pulzní", "dynamický", "rázový",
     "statický-statický", "statický-pulzní", "pulzní-statický", 
     "pulzní-pulzní", "statický-dynamický", "pulzní-dynamický", "dynamický-dynamický",
-    "statický-razový", "pulzní-razový", "dynamický-razový", "razový-razový"]
+    "statický-rázový", "pulzní-rázový", "dynamický-rázový", "rázový-rázový"] # kombinované způsoby zatížení
 if !(N in povoleneN)
     error("Neznámý druh namáhání: $N. Povolené hodnoty: $(join(povoleneN, ", ")).")
 end
@@ -127,21 +126,21 @@ end
 gammaM = gammaM_funkce(Z, N)
 # Výpočet dovoleného napětí
 sigma = if N in ["tah", "tlak", "ohyb"]
-    Re / gammaM # Prostý dělič
-elseif N in ["střih", "krut"]
-    Re / sqrt(3) / gammaM # Von Misesův kriteriál
-elseif N in ["tah-střih", "tlak-střih", "tah-krut", "tlak-krut", 
-    "tah-ohyb", "tlak-ohyb", "krut-ohyb"]
-    Re / gammaM # Prostý dělič
-elseif N in ["střih-krut", "střih-ohyb"]
-    Re / sqrt(3) / gammaM # Von Misesův kriteriál
-elseif N == "krut-ohyb"
-    Re / sqrt(3) / gammaM # Von Misesův kriteriál
-elseif N == "otlačení"
-    Re / gammaM # Speciální případ pro otlačení (rozdělení bezpečnostního faktoru)
-else
-    error("Neznámé: $N")
-end
+            Re / gammaM # Prostý dělič
+        elseif N in ["střih", "krut"]
+            Re / sqrt(3) / gammaM # Von Misesův kriteriál
+        elseif N in ["tah-střih", "tlak-střih", "tah-krut", "tlak-krut", 
+                "tah-ohyb", "tlak-ohyb", "krut-ohyb"]
+            Re / gammaM # Prostý dělič
+        elseif N in ["střih-krut", "střih-ohyb"]
+        Re / sqrt(3) / gammaM # Von Misesův kriteriál
+        elseif N == "krut-ohyb"
+            Re / sqrt(3) / gammaM # Von Misesův kriteriál
+        elseif N == "otlačení"
+            Re / gammaM # Speciální případ pro otlačení (rozdělení bezpečnostního faktoru)
+        else
+            error("Neznámé: $N")
+        end
 
 return sigma # Vrácení výsledku
 end
