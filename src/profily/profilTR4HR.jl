@@ -29,11 +29,11 @@
 
 using TOML
 
-include("profilTR4HRtypes.jl")
+include("profiltypes.jl")
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
 
-function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
+function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
 
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
@@ -83,7 +83,7 @@ function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
     end
     #R_val = row["R"][idx] # odpovídající poloměr
 
-    return Profil(
+    return Profil_TR4HR(
         string(oznaceni), # název profilu
         get(row, "standard", "")::String, # norma (nepovinné)
         row["a"], # rozměr a

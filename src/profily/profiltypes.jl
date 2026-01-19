@@ -1,7 +1,7 @@
 # ver: 2026-01-17
 
 # Struktura pro konkrétní profil s vybranou tloušťkou
-struct Profil
+struct Profil_TR4HR
     name::String                    # označení profilu
     standard::String                # norma
     a::Float64                      # rozměr [mm]
