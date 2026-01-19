@@ -10,7 +10,8 @@ profilTR4HR_tests = [
     ("TR4HR15x10x1.5", 15, 10, 1.5),
     ("TR4HR10x1", 10, 10, 1),
     ("tr4hr10x10x1", 10, 10, 1),
-    ("TR4HR60x40x6", 60, 40, 6)
+    ("TR4HR60x40x6", 60, 40, 6),
+    ("tr4hr60x6.3", 60, 60, 6.3)
 ]   
 @testset "profilTR4HR" begin
     for (name1, exp_a, exp_b, exp_t) in profilTR4HR_tests
