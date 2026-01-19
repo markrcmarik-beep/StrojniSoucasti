@@ -105,7 +105,8 @@ end
 function dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický")
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)
-    error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
+   Re = Reu"MPa"
+    #error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
 end
 # Ověření druhu namáhání
 povoleneN = ["tah", "tlak", "střih", "krut", "ohyb", "otlačení",
