@@ -77,15 +77,19 @@ function profilTR4HR(name::AbstractString)::Union{Profil, Nothing}
     end
     idx = findfirst(==(t), t_vec) # najít index tloušťky
     t = t_vec[idx] # vybraná tloušťka
-    R_val = row["R"][idx] # odpovídající poloměr
+    R_val = t/3 + t # výchozí poloměr
+    if R_val >= 8
+        R_val = 8
+    end
+    #R_val = row["R"][idx] # odpovídající poloměr
 
     return Profil(
         string(oznaceni), # název profilu
         get(row, "standard", "")::String, # norma (nepovinné)
-        Float64(get(row, "a", 0.0)), # rozměr a
-        Float64(get(row, "b", 0.0)), # rozměr b
-        Float64(t),
-        Float64(R_val),
+        row["a"], # rozměr a
+        row["b"], # rozměr b
+        t, # tloušťka
+        R_val, # poloměr
         get(row, "material", String[])::Vector{String}
     )
 end
