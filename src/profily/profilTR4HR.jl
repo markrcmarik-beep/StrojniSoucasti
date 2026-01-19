@@ -61,6 +61,7 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
         m = match(r"^TR4HR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)$", name)
         if m !== nothing
             a = parse(Float64, m.captures[1]) # rozměr
+            b = a
             t = parse(Float64, m.captures[2]) # tloušťka
             nadpDB = string(Int(a)) # nadpis v DB
             oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
@@ -86,8 +87,8 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
     return Profil_TR4HR(
         string(oznaceni), # název profilu
         get(row, "standard", "")::String, # norma (nepovinné)
-        row["a"], # rozměr a
-        row["b"], # rozměr b
+        a, # rozměr a
+        b, # rozměr b
         t, # tloušťka
         R_val, # poloměr
         get(row, "material", String[])::Vector{String}
