@@ -57,17 +57,19 @@ function tvarCSN(inputStr::AbstractString)
         # PLO / OBD : a x b (+ R)
         # -------------------------------------------------------
         (
-            r"^(PLO|OBD)(\d+)X(\d+)(R(\d+))?$",
-            function (m)
-                a = parse(Int, m.captures[2])
-                b = parse(Int, m.captures[3])
-                r = m.captures[5] === nothing ? 0 : parse(Int, m.captures[5])
-                @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
-                dims[:info] = m.captures[1]
-                dims[:a] = a * u"mm"
-                dims[:b] = b * u"mm"
-                dims[:R] = r * u"mm"
-            end
+    r"^(PLO|OBD)(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(?:R(\d+(?:\.\d+)?))?$",
+    function (m)
+        a = parse(Float64, m.captures[2])
+        b = parse(Float64, m.captures[3])
+        r = m.captures[4] === nothing ? 0.0 : parse(Float64, m.captures[4])
+
+        @assert r ≤ min(a, b) / 2 "Rádius R = $r mm je příliš velký"
+
+        dims[:info] = m.captures[1]
+        dims[:a]    = a * u"mm"
+        dims[:b]    = b * u"mm"
+        dims[:R]    = r * u"mm"
+    end
         ),
         # -------------------------------------------------------
         # KR : D

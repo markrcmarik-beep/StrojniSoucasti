@@ -1,7 +1,7 @@
 # ver: 2025-12-16
 using StrojniSoucasti
 
-A1 = StrojniSoucasti.tvarCSN("OBD20x15R3")
+A1 = StrojniSoucasti.tvarCSN("OBD20.5x15R3")
 println(A1)
 A1 = StrojniSoucasti.tvarCSN("OBD 20 x 15 R 3")
 println(A1)
