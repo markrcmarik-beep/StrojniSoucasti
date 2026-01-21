@@ -1,4 +1,4 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
@@ -6,6 +6,9 @@
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
 # ver: 2025-12-30
 ## Funkce: tvarprofilu()
+#
+## Cesta uvnitř balíčku:
+# balicek/src/tvarprofilu.jl
 #
 ## Vzor:
 ## vystupni_promenne = tvarprofilu(vstupni_promenne)
@@ -40,7 +43,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# tvarvlcn - Výpočet vlastností profilu dle zadaných rozměrů.
+# tvarCSN, tvarvlcn
 ## Příklad:
 # dims = tvarprofilu("PLO 20x10") # pouze rozměry
 # println(dims[:a]) # => 20 mm

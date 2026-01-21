@@ -1,18 +1,44 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# Funkce řeší textové označení tvaru dle ČSN a vrací
+# strukturu s rozměry.
+# ver: 2026-01-21
+## Funkce: tvarCSN()
 #
-# ver: 2025-12-30
-## Funkce: nazev_funkce()
+## Cesta uvnitř balíčku:
+# balicek/src/tvarCSN.jl
 #
 ## Vzor:
-## vystupni_promenne = nazev_funkce(vstupni_promenne)
+## vystupni_promenne = tvarCSN(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# inputStr - Textové označení tvaru dle ČSN.
+#  Podporované tvary:
+#   "PLO" - obdélníkový profil
+#   "PLO _a_x_b_" - "PLO 20x10" - obdélníkový profil
+#   "PLO _a_x_b_R_r_" - "PLO 20x10R3" - obdélníkový profil s rádiusem
+#   "OBD" - obdélníkový profil
+#   "OBD _a_x_b_" - "OBD 20x10" - obdélníkový profil
+#   "OBD _a_x_b_R_r_" - "OBD 20x10R3" - obdélníkový profil s rádiusem
+#   "KR" - kruhový profil
+#   "KR _D_" - "KR 20" - kruhový profil
+#   "TRKR" - trubkový kruhový profil
+#   "TRKR _D_x_t_" - "TRKR 20x2" - trubkový kruhový profil
+#   "4HR" - čtyřhranný profil
+#   "4HR _a_" - "4HR 20" - čtyřhranný profil
+#   "4HR _a_R_r_" - "4HR 20R3" - čtyřhranný profil s rádiusem
+#   "4HR _a_x_b_" - "4HR 20x10" - čtyřhranný profil obdélníkový
+#   "4HR _a_x_b_R_r_" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
+#   "6HR" - šestihranný profil
+#   "6HR _s_" - "6HR 20" - šestihranný profil
+#   "TR4HR" - trubkový čtyřhranný profil
+#   "TR4HR _a_x_b_x_t_" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
+#   "TR4HR _a_x_b_x_t_R_r_" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
+#   args... - (nepoužito)
 ## Výstupní proměnné:
 #
 ## Použité balíčky
-#
+# Unitful
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -23,18 +49,6 @@
 
 using Unitful
 
-"""
-    tvarCSN(inputStr::AbstractString) -> Dict{Symbol,Any}
-
-Rozpozná označení profilu dle ČSN (s mezerami i bez mezer)
-a vrátí slovník s rozměry profilu.
-
-Podporované příklady:
-- "OBD20x15R3"
-- "TR4HR 20x20x2"
-- "KR30"
-- "4HR25R2"
-"""
 function tvarCSN(inputStr::AbstractString)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu

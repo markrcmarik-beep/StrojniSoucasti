@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2025-11-30
+# ver: 2026-01-21
 ## Funkce: tvarvlcn()
+#
+## Cesta uvnitř balíčku:
+# balicek/src/tvarvlcn.jl
 #
 ## Vzor:
 ## (rozmer, text) = tvarvlcn(tvar::Dict, velicina::Symbol; natoceni=0)
@@ -41,8 +44,12 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # S - Plocha [mm²]
+    # -----------------------------------------------------------
     if velicina == :S  # Plocha [mm²]
+        # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
             a, b = getv(:a), getv(:b)
             if getv(:R) === missing
@@ -51,26 +58,42 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
                 R = getv(:R)
                 return a*b, "a*b"
             end
+        # -----------------------------------------------------------
+        # Kruhová tyč
         elseif info == "KR" # Kruhová tyč
             D = getv(:D)
             return π*(D/2)^2, "π*(D/2)²"
+        # -----------------------------------------------------------
+        # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
             return π*(D^2 - d^2)/4, "π*(D² - d²)/4"
+        # -----------------------------------------------------------
+        # Čtyřhranná tyč
         elseif info == "4HR" # Čtyřhranná tyč
             a = getv(:a)
             return a^2, "a²"
+        # -----------------------------------------------------------
+        # Šestihranná tyč
         elseif info == "6HR" # Šestihranná tyč
             s = getv(:s)
             return (3/4)*s^2, "3/4*s²"
+        # -----------------------------------------------------------
+        # Trubka čtyřhranná
         elseif info == "TR4HR" # Trubka čtyřhranná
             a, b, t = getv(:a), getv(:b), getv(:t)
             return a*b - (a-2t)*(b-2t), "a*b - (a-2t)*(b-2t)"
+        # -----------------------------------------------------------
+        # neznámý tvar
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # Ip - Polární moment [mm⁴]
+    # -----------------------------------------------------------
     elseif velicina == :Ip  # Polární moment [mm⁴]
+        # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
             a, b = getv(:a), getv(:b)
             if a >= b
@@ -94,15 +117,23 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
                     error("Neznámý výpočet. Tvar: $info pro veličinu: $velicina")
                 end
             end
+        # -----------------------------------------------------------
+        # Kruhová tyč
         elseif info == "KR" # Kruhová tyč
             D = getv(:D)
             return π/32*D^4, "π/32*D⁴"
+        # -----------------------------------------------------------
+        # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
             return π/32*(D^4 - d^4), "π/32*(D⁴ - d⁴)"
+        # -----------------------------------------------------------
+        # Čtyřhranná tyč
         elseif info == "4HR" # Čtyřhranná tyč
             a = getv(:a)
             return 0.1406*a^4, "0.1406*a⁴" # Torzní konstanta
+        # -----------------------------------------------------------
+        # Trubka čtyřhranná
         elseif info == "TR4HR"
             a, b, t = getv(:a), getv(:b), getv(:t)
             if min(a,b)*0.1 >= t
@@ -122,36 +153,58 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
                         Selhalo numerické řešení. 'a'=$a 'b'=$b 't'=$t")
                 end
             end
+        # -----------------------------------------------------------
+        # Šestihranná tyč
         elseif info == "6HR" # Šestihranná tyč
             s = getv(:s)
             return 0.133*sqrt(3)/2*s^4, "0.133*sqrt(3)/2*s⁴"
             #return 0.154*s^4, "0.154*s⁴" # Torzní konstanta
+        # -----------------------------------------------------------
+        # neznámý tvar
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # Wk - Modul v krutu [mm³]
+    # -----------------------------------------------------------
     elseif velicina == :Wk  # Modul v krutu [mm³]
+        # -----------------------------------------------------------
+        # Kruhová tyč
         if info == "KR" # Kruhová tyč
             D = getv(:D)
             return π/16*D^3, "π/16*D³"
+        # -----------------------------------------------------------
+        # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
             return π/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+        # -----------------------------------------------------------
+        # Čtyřhranná tyč
         elseif info == "4HR" # Čtyřhranná tyč
             a = getv(:a)
             return 0.208*a^3, "0.208*a³"
+        # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
         elseif info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
             a, b = getv(:a), getv(:b)
             return a*b^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
                 "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
+        # -----------------------------------------------------------
+        # Šestihranná tyč
         elseif info == "6HR" # Šestihranná tyč
             s = getv(:s)
             return 0.17*s^3, "0.17*s³" # ??????????????????
+        # -----------------------------------------------------------
+        # neznámý tvar
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # Ix - Kvadratický moment [mm⁴]
+    # -----------------------------------------------------------
     elseif velicina == :Ix  # Kvadratický moment [mm⁴]
+        # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
             a, b = getv(:a), getv(:b)
             if natoceni in (0, π, 2*π)
@@ -161,12 +214,18 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Kruhová tyč
         elseif info == "KR" # Kruhová tyč
             D = getv(:D)
             return π/64*D^4, "π/64*D⁴"
+        # -----------------------------------------------------------
+        # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
             return π/64*(D^4 - d^4), "π/64*(D⁴ - d⁴)"
+        # -----------------------------------------------------------
+        # Čtyřhranná tyč
         elseif info == "4HR" # Čtyřhranná tyč
             a = getv(:a)
             if natoceni in (0, π/2, π, 3*π/2, 2*π)
@@ -174,6 +233,8 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Šestihranná tyč
         elseif info == "6HR" # Šestihranná tyč (0rad ležící na ploše)
             s = getv(:s)
             if natoceni in (0, 2*π/6, 4*π/6, 6*π/6, 8*π/6, 10*π/6, 12*π/6)
@@ -183,14 +244,22 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Trubka čtyřhranná
         elseif info == "TR4HR" # Trubka čtyřhranná
             a, b, t = getv(:a), getv(:b), getv(:t)
             return (a*b^3/12) - ((a-2t)*(b-2t)^3/12), "(a*b³/12)-((a-2t)*(b-2t)³/12)"
+        # -----------------------------------------------------------
+        # neznámý tvar
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # Wo - Průřezový modul v ohybu [mm³]
+    # -----------------------------------------------------------
     elseif velicina == :Wo  # Modul v ohybu [mm³]
+        # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
             a, b = getv(:a), getv(:b)
             if natoceni in (0, π, 2*π)
@@ -200,12 +269,18 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Kruhová tyč
         elseif info == "KR" # Kruhová tyč
             D = getv(:D)
             return π/32*D^3, "π/32*D³"
+        # -----------------------------------------------------------
+        # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
             return π/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
+        # -----------------------------------------------------------
+        # Čtyřhranná tyč
         elseif info == "4HR" # Čtyřhranná tyč
             a = getv(:a)
             if natoceni in (0, π/2, π, 3*π/2, 2*π)
@@ -213,6 +288,8 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Šestihranná tyč
         elseif info == "6HR" # Šestihranná tyč
             s = getv(:s)
             if natoceni in (0, 2*π/6, 4*π/6, 6*π/6, 8*π/6, 10*π/6, 12*π/6)
@@ -222,6 +299,8 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # Trubka čtyřhranná
         elseif info == "TR4HR" # Trubka čtyřhranná
             a, b, t = getv(:a), getv(:b), getv(:t)
             if natoceni in (0, π/2, π, 3*π/2, 2*π)
@@ -229,11 +308,16 @@ function tvarvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             else
                 error("Neplatné natočení profilu: $natoceni rad pro $velicina")
             end
+        # -----------------------------------------------------------
+        # neznámý tvar
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
-# -------------------------------------------------------------
+    # -----------------------------------------------------------
+    # Neznámá veličina
+    # -----------------------------------------------------------
     else
         error("Neznámá veličina: $velicina")
     end
+    return nothing, nothing
 end
