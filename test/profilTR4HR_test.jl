@@ -24,4 +24,6 @@ profilTR4HR_tests = [
     # Test neexistující profil
     @test StrojniSoucasti.profilTR4HR("TR4HR999x999x9") === nothing
     @test StrojniSoucasti.profilTR4HR("TR4HR20x20x3") === nothing
+    @test StrojniSoucasti.profilTR4HR("TR4HR20.5x30x2") === nothing
+
 end

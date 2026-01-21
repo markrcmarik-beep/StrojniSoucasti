@@ -40,7 +40,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-#
+# profilTR4HR
 ## Příklad:
 #
 ###############################################################
@@ -89,9 +89,9 @@ function tvarCSN(inputStr::AbstractString)
         # KR : D
         # -------------------------------------------------------
         (
-            r"^KR(\d+)$",
+            r"^KR(\d+(?:\.\d+)?)$",
             function (m)
-                D = parse(Int, m.captures[1])
+                D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
                 #dims[:D] = mmval(m.captures[1]) * u"mm"
@@ -101,10 +101,10 @@ function tvarCSN(inputStr::AbstractString)
         # TRKR : D x t
         # -------------------------------------------------------
         (
-            r"^TRKR(\d+)X(\d+)$",
+            r"^TRKR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)$",
             function (m)
-                D = parse(Int, m.captures[1])
-                t = parse(Int, m.captures[2])
+                D = parse(Float64, m.captures[1])
+                t = parse(Float64, m.captures[2])
                 @assert D > 2t "Neplatná trubka: D ≤ 2t"
                 dims[:info] = "TRKR"
                 dims[:D] = D * u"mm"
@@ -116,10 +116,10 @@ function tvarCSN(inputStr::AbstractString)
         # 4HR : a (+ R)
         # -------------------------------------------------------
         (
-            r"^4HR(\d+)(R(\d+))?$",
+            r"^4HR(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
             function (m)
-                a = parse(Int, m.captures[1])
-                r = m.captures[3] === nothing ? 0 : parse(Int, m.captures[3])
+                a = parse(Float64, m.captures[1])
+                r = m.captures[3] === nothing ? 0 : parse(Float64, m.captures[3])
                 @assert r ≤ a/2 "Rádius R=$r mm je příliš velký"
                 dims[:info] = "4HR"
                 dims[:a] = a * u"mm"
@@ -131,10 +131,9 @@ function tvarCSN(inputStr::AbstractString)
         # 6HR : s
         # -------------------------------------------------------
         (
-            r"^6HR(\d+)$",
+            r"^6HR(\d+(?:\.\d+)?)$",
             function (m)
-                s1 = parse(Int, m.captures[1])
-
+                s1 = parse(Float64, m.captures[1])
                 dims[:info] = "6HR"
                 dims[:s] = s1 * u"mm"
                 dims[:a] = s1 * u"mm"
@@ -145,12 +144,38 @@ function tvarCSN(inputStr::AbstractString)
         # TR4HR : a x b x t (+ R)
         # -------------------------------------------------------
         (
-            r"^TR4HR(\d+)X(\d+)X(\d+)(R(\d+))?$",
+            r"^TR4HR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
             function (m)
-                a = parse(Int, m.captures[1])
-                b = parse(Int, m.captures[2])
-                t = parse(Int, m.captures[3])
-                r = m.captures[5] === nothing ? 0 : parse(Int, m.captures[5])
+                a = parse(Float64, m.captures[1])
+                b = parse(Float64, m.captures[2])
+                t = parse(Float64, m.captures[3])
+                r = m.captures[5] === nothing ? 0 : parse(Float64, m.captures[5])
+                # Zkusit databázi standardních profilů
+                A = profilTR4HR(s)
+                if A !== nothing
+                    dims[:info] = "TR4HR"
+                    dims[:a] = A.a * u"mm"
+                    dims[:b] = A.b * u"mm"
+                    dims[:t] = A.t * u"mm"
+                    dims[:R] = A.R * u"mm"
+                else
+                    @assert a > 2t && b > 2t "Tloušťka stěny je příliš velká"
+                    @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
+                    dims[:info] = "TR4HR"
+                    dims[:a] = a * u"mm"
+                    dims[:b] = b * u"mm"
+                    dims[:t] = t * u"mm"
+                    dims[:R] = r * u"mm"
+                end
+            end
+        ),
+        (
+            r"^TR4HR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
+            function (m)
+                a = parse(Float64, m.captures[1])
+                b = a
+                t = parse(Float64, m.captures[2])
+                r = m.captures[4] === nothing ? 0 : parse(Float64, m.captures[4])
                 # Zkusit databázi standardních profilů
                 A = profilTR4HR(s)
                 if A !== nothing

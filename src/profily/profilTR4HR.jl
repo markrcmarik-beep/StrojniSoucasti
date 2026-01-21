@@ -33,6 +33,15 @@ include("profiltypes.jl")
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
 
+# Pomocná funkce pro konverzi čísla na string bez zbytečných nul
+function num_to_string(x::Float64)::String
+    if x == floor(x)
+        return string(Int(x))  # celočíslo bez tečky
+    else
+        return string(x)  # desetinné číslo
+    end
+end
+
 function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
 
     name = uppercase(strip(name)) # velká písmena
@@ -50,10 +59,10 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
             a, b = b, a  # zajistit a >= b
         end
         if a > b
-        nadpDB = string(Int(a), "x", Int(b)) # nadpis v DB
-        oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+            nadpDB = num_to_string(a) * "x" * num_to_string(b) # nadpis v DB
+            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
         elseif a == b
-            nadpDB = string(Int(a)) # nadpis v DB
+            nadpDB = num_to_string(a) # nadpis v DB
             oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
         end
     else
@@ -63,7 +72,7 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
             a = parse(Float64, m.captures[1]) # rozměr
             b = a
             t = parse(Float64, m.captures[2]) # tloušťka
-            nadpDB = string(Int(a)) # nadpis v DB
+            nadpDB = num_to_string(a) # nadpis v DB
             oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
         end
     end

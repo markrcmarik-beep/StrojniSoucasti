@@ -1,11 +1,14 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-01-18
+# ver: 2026-01-21
 ## Funkce: profily()
+#
+## Cesta uvnitř balíčku:
+# balicek/src/profily/profily.jl
 #
 ## Vzor:
 ## vystupni_promenne = profily(vstupni_promenne)
@@ -40,7 +43,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# tvarvlcn - Výpočet vlastností profilu dle zadaných rozměrů.
+# tvarCSN, tvarvlcn
 ## Příklad:
 # dims = profily("PLO 20x10") # pouze rozměry
 # println(dims[:a]) # => 20 mm
@@ -83,14 +86,11 @@ function profily(inputStr::AbstractString, args...)
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
     clean = replace(strip(inputStr), r"\s+" => " ") # odstraní nadbytečné mezery
-    println("clean: ",clean)
     parts = split(clean, " ") # rozdělí na profil a rozměry (např: SubString{String}["4HR", "50"])
-    println("parts: ",parts)
-    if length(parts) < 2 # chybí rozměrová část
+    if length(parts) < 2
         error("Neplatný vstup: chybí rozměrová část.")
     end
     profile = uppercase(parts[1]) # první část je profil
-    println("profile: ",profile)
     dimPart = parts[2] # zbytek je dimenzionální část (profil + rozměry)
     # Výsledná struktura jako Dict
     dims = Dict{Symbol,Any}()

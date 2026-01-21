@@ -1,17 +1,17 @@
-# ver: 2026-01-18
+# ver: 2026-01-21
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
 
 @testset "profily" begin
 
-dims = profily("PLO 20x10") # pouze rozměry
+dims = profily("PLO 20.5x10") # pouze rozměry
 @test haskey(dims, :a)
 @test haskey(dims, :b)
 @test haskey(dims, :info)
 @test haskey(dims, :R)
 @test dims[:info] == "PLO"
-@test dims[:a] == 20u"mm"
+@test dims[:a] == 20.5u"mm"
 @test dims[:b] == 10u"mm"
 @test dims[:R] == 0u"mm"
 
