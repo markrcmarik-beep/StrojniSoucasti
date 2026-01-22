@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-01-07
+# ver: 2026-01-22
 ## Funkce: namahanikrut()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanikrut.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikrut(vstupni_promenne)

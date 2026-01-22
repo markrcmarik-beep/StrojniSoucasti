@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-01-13
+# ver: 2026-01-22
 ## Funkce: namahaniohyb()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahaniohyb.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahaniohyb(vstupni_promenne)
@@ -39,7 +42,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
+# materialy(), dovoleneNapeti(), profily(), profil_text_lines()
 ## Příklad:
 # Mo = 500.0 * u"N*m"
 # mat = "11 373"
@@ -141,10 +144,10 @@ function namahaniohyb(;
         error("Parametr natoceni musí být čísLo. [rad]")
     end
     if profil !== nothing
-        if !isdefined(Main, :tvarprofilu)
-            error("Funkce tvarprofilu není definována.")
+        if !isdefined(Main, :profily)
+            error("Funkce profily není definována.")
         end
-        tv = tvarprofilu(profil, "Wo", "Ix", natoceni)
+        tv = profily(profil, "Wo", "Ix", natoceni)
         if Wo === nothing && haskey(tv, :Wo)
             Wo = tv[:Wo]
         end

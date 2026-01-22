@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-01-13
+# ver: 2026-01-22
 ## Funkce: namahanistrih()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanistrih.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanistrih(vstupni_promenne)
@@ -24,7 +27,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy3(), dovoleneNapeti(), tvarprofilu(), profil_text_lines()
+# materialy3(), dovoleneNapeti(), profily(), profil_text_lines()
 ## Příklad:
 # F = 10000.0 * u"N"
 # mat = "11 373"
@@ -114,10 +117,10 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     S_text = ""
     profil_info = Dict{Symbol,Any}()
     if profil !== nothing
-        if !isdefined(Main,:tvarprofilu)
-            error("Funkce tvarprofilu není definována.")
+        if !isdefined(Main,:profily)
+            error("Funkce profily není definována.")
         end
-        tv = tvarprofilu(profil, "S")
+        tv = profily(profil, "S")
         if !haskey(tv,:S)
             error("Profil neposkytuje střižnou plochu S.")
         end

@@ -1,4 +1,4 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Výpočet kombinovaného namáhání (tah/střih + tlak/střih + 
@@ -8,6 +8,9 @@
 # namahanistrih, namahanikrut, namahaniohyb).
 # ver: 2026-01-02
 ## Funkce: namahanikombinovane()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanikombinovane.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikombinovane(vstupni_promenne)

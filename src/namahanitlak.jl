@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tlaku pro strojní součásti.
-# ver: 2026-01-13
+# ver: 2026-01-22
 ## Funkce: namahanitlak()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanitlak.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanitlak(vstupni_promenne)
@@ -71,7 +74,7 @@
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:
-# materialy, dovoleneNapeti, tvarprofilu
+# materialy, dovoleneNapeti, profily
 ## Příklad:
 # namahanitlak(F=1000u"N", S=50u"mm^2", mat="11373")
 #  vrátí dict s výsledky a textový výpis výpočtu
@@ -158,17 +161,17 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         sigmaDt = dovoleneNapeti(Re, "tlak", zatizeni)
     end
     # ---------------------------------------------------------
-    # profil (automatické volání tvarprofilu(profil, "S"))
+    # profil (automatické volání profily(profil, "S"))
     # ---------------------------------------------------------
     S_text = ""
     profil_info = Dict{Symbol,Any}()
     if profil !== nothing
-        if !isdefined(Main, :tvarprofilu)
-            error("Funkce tvarprofilu(...) není definována.")
+        if !isdefined(Main, :profily)
+            error("Funkce profily(...) není definována.")
         end
-        tv = tvarprofilu(profil, "S")  # vynucení výpočtu S
+        tv = profily(profil, "S")  # vynucení výpočtu S
         if !haskey(tv, :S)
-            error("Funkce tvarprofilu(...) nevrací :S ani po zadání \"S\".")
+            error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
         end
         S = tv[:S]
         if haskey(tv, :S_str)

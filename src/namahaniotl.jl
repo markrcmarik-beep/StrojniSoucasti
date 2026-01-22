@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-01-13
+# ver: 2026-01-22
 ## Funkce: namahaniotl()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahaniotl.jl
 #
 ## Vzor:
 ## VV, txt = namahaniotl(F=5000N, S_otl=120mm^2, mat="11373")
@@ -15,7 +18,7 @@
 # Re - meze kluzu materiálu (Unitful.Quantity nebo Number v MPa)
 # mat - materiál (řetězec nebo číslo dle materialy())
 # zatizeni - typ zatížení ("statický" nebo "dynamický", výchozí "statický")
-# profil - tvar profilu nebo kontaktu (řetězec dle tvarprofilu()), alternativně k S_otl
+# profil - tvar profilu nebo kontaktu (řetězec dle profily()), alternativně k S_otl
 # return_text - zda vrátit i textový výstup (Bool, výchozí true)
 ## Výstupní proměnné:
 # VV - slovník (Dict) s výsledky výpočtu
@@ -42,7 +45,7 @@
 ## Použité balíčky:
 # Unitful, Printf
 ## Použité uživatelské funkce:
-# materialy(), dovoleneNapeti(), tvarprofilu()
+# materialy(), dovoleneNapeti(), profily()
 ###############################################################
 ## Použité proměnné vnitřní:
 #
@@ -109,8 +112,8 @@ function namahaniotl(;
     # plocha z profilu
     S_text = ""
     if profil !== nothing
-        p = tvarprofilu(profil, "S")
-        haskey(p, :S) || error("tvarprofilu(...) nevrátilo S.")
+        p = profily(profil, "S")
+        haskey(p, :S) || error("profily(...) nevrátilo S.")
         S_otl = p[:S]
         S_text = get(p, :S_str, "")
     end

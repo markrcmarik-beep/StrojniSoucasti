@@ -1,9 +1,12 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
 # ver: 2026-01-19
 ## Funkce: dovoleneNapeti()
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/dovoleneNapeti.jl
 #
 ## Vzor:
 ## sigma = dovoleneNapeti(Re, N::AbstractString, Z::AbstractString)
