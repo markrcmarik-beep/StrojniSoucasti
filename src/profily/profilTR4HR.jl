@@ -6,7 +6,7 @@
 ## Funkce: profilTR4HR()
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profilTR4HR.jl
+# balicek/src/profil/profilTR4HR.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilTR4HR(vstupni_promenne)

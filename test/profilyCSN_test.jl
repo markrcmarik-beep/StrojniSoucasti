@@ -1,0 +1,23 @@
+# ver: 2025-12-16
+using StrojniSoucasti
+
+A1 = StrojniSoucasti.profilyCSN("OBD20.5x15R3")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("OBD 20 x 15 R 3")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("KR 40.5")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("TRKR 60.5x4")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("TR4HR20x20x2R4")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("TR4HR 20.5 x 20 x 2 R 4.5")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("TR4HR20x3")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("4HR25.8R2")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("PLO30x10")
+println(A1)
+A1 = StrojniSoucasti.profilyCSN("6HR30")
+println(A1)
