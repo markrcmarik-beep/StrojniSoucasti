@@ -43,7 +43,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# tvarCSN, tvarvlcn
+# profilyCSN, profilyvlcn
 ## Příklad:
 # dims = profily("PLO 20x10") # pouze rozměry
 # println(dims[:a]) # => 20 mm
@@ -98,7 +98,7 @@ function profily(inputStr::AbstractString, args...)
     # -----------------------------------------------------------
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
-    dims = StrojniSoucasti.tvarCSN(clean)
+    dims = StrojniSoucasti.profilyCSN(clean)
     # -----------------------------------------------------------
     # 3) Bez dalších parametrů → vracíme pouze rozměry
     # -----------------------------------------------------------
@@ -106,14 +106,14 @@ function profily(inputStr::AbstractString, args...)
         return dims # pouze rozměry
     end
     # -----------------------------------------------------------
-    # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, Ip…) nebo hodnoty pro natočení, řeší tvarvlcn nebo přidá natočení
+    # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, Ip…) nebo hodnoty pro natočení, řeší profilyvlcn nebo přidá natočení
     # -----------------------------------------------------------
     for property in args
         if isa(property, Number) || (isa(property, Unitful.AbstractQuantity) && unit(property) in [u"°", u"rad"])
             dims[:natoceni] = property
         elseif property isa AbstractString || property isa Symbol
             key = Symbol(property) # převod na Symbol
-            hodnota, vzorec = StrojniSoucasti.tvarvlcn(dims, key) # volání výpočtu vlastnosti
+            hodnota, vzorec = StrojniSoucasti.profilyvlcn(dims, key) # volání výpočtu vlastnosti
             dims[key] = hodnota # uložíme hodnotu vlastnosti
             dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
         else

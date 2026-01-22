@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis balíčku
 #
-# ver: 2026-01-18
+# ver: 2026-01-22
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
 #
@@ -23,6 +23,8 @@ include("materialy/materialy.jl")
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
 include("profily/profilTR4HR.jl") # profily TR4HR
+include("profily/profilyCSN.jl") # tvary profilů
+include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
