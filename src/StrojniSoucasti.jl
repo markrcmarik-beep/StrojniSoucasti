@@ -54,7 +54,7 @@ include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
 # Export funkcí
-export dovoleneNapeti, mezUnavy, tvarprofilu, materialy, profily
+export dovoleneNapeti, mezUnavy, tvarprofilu, materialy, profily,
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahanikombinovane, namahaniohyb, ulozvypis, zavity, namahaniotl
 
