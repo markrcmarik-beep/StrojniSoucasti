@@ -1,20 +1,27 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
+# Výpočet namáhání v krutu pro strojní součásti. Generování 
+# textového výpisu výpočtu.
 # ver: 2026-01-02
 ## Funkce: namahannamahanikombinovanetextitahtext()
+## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanikombinovanetext.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikombinovanetext(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# VV::Dict{Symbol,Any} - slovník vstupních a výstupních 
+#   proměnných pro kombinované namáhání
 ## Výstupní proměnné:
-#
+# lines - textový výstup s popisem výpočtu
 ## Použité balíčky:
-#
+# Printf: @sprintf
 ## Použité uživatelské funkce:
-#
+# namahanitahtext(), namahanitlaktext(),
+# namahanistrihtext(), namahanikruttext(), namahaniohybtext(),
 ## Příklad:
 #
 ###############################################################
