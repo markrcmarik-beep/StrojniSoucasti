@@ -1,7 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vrátí hodnotu meze únavy materiálu.
+# Vrátí hodnotu meze únavy materiálu. Hodnota je určena na základě
+# meze kluzu, meze pevnosti, druhu namáhání a způsobu zatížení.
 # ver: 2025-11-13
 ## Funkce: mezUnavy()
 ## Autor: Martin
@@ -26,7 +27,9 @@
 # mazUnavy(250u"MPa", "tah", "statický")
 #   vrátí mez únavy pro materiál s mezí kluzu 250 MPa při statickém tahu
 #   => 100.0 MPa
-
+# mazUnavy(450u"MPa", "ohyb", "dynamický")
+#   vrátí mez únavy pro materiál s mezí pevnosti 450 MPa při dynamickém ohybu
+#   => 108.0 MPa
 ###############################################################
 ## Použité proměnné vnitřní:
 #

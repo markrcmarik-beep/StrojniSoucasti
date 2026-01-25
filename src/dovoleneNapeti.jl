@@ -4,6 +4,7 @@
 # Vrátí hodnotu dovoleného napětí materiálu.
 # ver: 2026-01-19
 ## Funkce: dovoleneNapeti()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/dovoleneNapeti.jl

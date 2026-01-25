@@ -1,4 +1,4 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Funkce řeší sražené, zaoblené hrany strojních součástí. Vrací 
@@ -7,6 +7,10 @@
 # zaoblení). Pro sražení rovnostranné možné nahrazující zaoblení.
 # ver: 2025-11-24
 ## Funkce: hrana()
+## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/hrana.jl
 #
 ## Vzor:
 ##  = hrana(
