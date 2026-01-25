@@ -22,6 +22,13 @@
 # return_text - vrátí i textový výpis (true/false)
 ## Výstupní proměnné:
 # VV - Dict s výsledky kombinovaného namáhání
+#   - :sigma_eq - ekvivalentní napětí (MPa)
+#   - :sigmaD - dovolené napětí (MPa)
+#   - :bezpecnost - bezpečnost
+#   - :info - textový popis namáhání
+#   - :namahanizkr - typ kombinace namáhání
+#   - :zatizeni - popis zatížení
+#   - :VVkomb1 - poměr ekvivalentního napětí a dovoleného napětí
 # txt - textový výpis (volitelně)
 ## Použité balíčky
 # Unitful, Printf
