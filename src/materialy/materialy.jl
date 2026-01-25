@@ -4,9 +4,10 @@
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
 # ver: 2026-01-18
 ## Funkce: materialy()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/materialy.jl
+# balicek/src/materialy/materialy.jl
 #
 ## Vzor:
 ## vystupni_promenne = materialy(vstupni_promenne)
