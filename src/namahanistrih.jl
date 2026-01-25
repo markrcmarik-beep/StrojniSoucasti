@@ -4,6 +4,7 @@
 # Výpočet namáhání strojní součásti ve střihu.
 # ver: 2026-01-22
 ## Funkce: namahanistrih()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahanistrih.jl
@@ -22,8 +23,40 @@
 # profil - název profilu (volitelné)
 # return_text - vrátit i textový výpis
 ## Výstupní proměnné:
-# VV - Dict s výsledky
-# txt - textový výpis (volitelně)
+# VV - slovník (Dict) s výsledky výpočtu
+#   :info - popis namáhání
+#   :zatizeni - typ zatížení (řetězec)
+#   :F - střižná síla (Unitful.Quantity)
+#   :F_info - popis veličiny F
+#   :k - uživatelský požadavek bezpečnosti (Number, volitelné)
+#   :k_info - popis veličiny k
+#   :S - střižná plocha (Unitful.Quantity)
+#   :S_text - textový popis plochy S (řetězec
+#   :S_info - popis veličiny S
+#   :tau - vypočtené napětí ve střihu (Unitful.Quantity)
+#   :tau_str - vzorec pro výpočet tau (řetězec
+#   :tau_info - popis veličiny tau
+#   :tauDs - dovolené smykové napětí (Unitful.Quantity)
+#   :tauDs_info - popis veličiny tauDs
+#   :bezpecnost - součinitel bezpečnosti (Number)
+#   :bezpecnost_str - vzorec pro výpočet bezpecnost (řetězec)
+#   :bezpecnost_info - popis veličiny bezpecnost
+#   :verdict - závěr posouzení bezpečnosti (řetězec)
+#   :verdict_info - popis veličiny verdict (řetězec)
+#   :gamma - deformace ve smyku (Number, volitelné)
+#   :gamma_str - vzorec pro výpočet gamma (řetězec)
+#   :gamma_info - popis veličiny gamma
+#   :G - modul pružnosti ve smyku (Unitful.Quantity, volitelné)
+#   :G_info - popis veličiny G
+#   :Re - mez kluzu (Unitful.Quantity, volitelné)
+#   :Re_info - popis veličiny Re
+#   :mat - materiál (řetězec)
+#   :mat_info - popis veličiny mat
+#   :profil - profil (řetězec)
+#   :profil_info - popis veličiny profil
+# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
+#   return_text=true (výchozí). Pokud return_text=false, vrací 
+#   se pouze VV.
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:

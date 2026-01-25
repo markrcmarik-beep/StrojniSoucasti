@@ -4,6 +4,7 @@
 # Výpočet namáhání v krutu pro strojní součásti.
 # ver: 2026-01-22
 ## Funkce: namahanikrut()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahanikrut.jl
@@ -50,7 +51,9 @@
 #   :bezpecnost_info - Popis veličiny bezpecnost
 #   :verdict - Textové hodnocení bezpečnosti spoje
 #   :verdict_info - Popis veličiny verdict
-# txt - textový výstup s popisem výpočtu (pokud return_text=true)
+# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
+#   return_text=true (výchozí). Pokud return_text=false, vrací 
+#   se pouze VV.
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:

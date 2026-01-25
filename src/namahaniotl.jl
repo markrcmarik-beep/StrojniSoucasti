@@ -4,6 +4,7 @@
 # Kontrola namáhání na otlačení (plošný tlak).
 # ver: 2026-01-22
 ## Funkce: namahaniotl()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahaniotl.jl
@@ -41,7 +42,9 @@
 #   :mat_info - popis veličiny mat (řetězec)
 #   :profil - tvar / kontakt (řetězec)
 #   :profil_info - popis veličiny profil (řetězec)
-# txt - textový výstup (řetězec), pokud return_text=true
+# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
+#   return_text=true (výchozí). Pokud return_text=false, vrací 
+#   se pouze VV.
 ## Použité balíčky:
 # Unitful, Printf
 ## Použité uživatelské funkce:

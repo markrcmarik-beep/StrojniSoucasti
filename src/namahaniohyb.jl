@@ -4,6 +4,7 @@
 # Výpočet namáhání strojní součásti v ohybu.
 # ver: 2026-01-22
 ## Funkce: namahaniohyb()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahaniohyb.jl
@@ -38,7 +39,9 @@
 #   :mat - materiál
 #   :profil - profil
 #   :natoceni - natočení profilu
-# txt - textový výpis (volitelně)
+# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
+#   return_text=true (výchozí). Pokud return_text=false, vrací 
+#   se pouze VV.
 ## Použité balíčky
 # Unitful, Printf: @sprintf
 ## Použité uživatelské funkce:

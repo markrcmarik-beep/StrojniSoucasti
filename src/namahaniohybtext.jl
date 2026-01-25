@@ -1,20 +1,25 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
+# Výpočet namáhání v ohybu pro strojní součásti. Generování 
+# textového výpisu výpočtu.
 # ver: 2025-12-29
 ## Funkce: namahaniohybtext()
+## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahaniohybtext.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahaniohybtext(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# VV::Dict{Symbol,Any} - slovník vstupních a výstupních proměnných
 ## Výstupní proměnné:
-#
+# lines - textový výstup s popisem výpočtu
 ## Použité balíčky
-#
+# Printf: @sprintf
 ## Použité uživatelské funkce:
-#
+# profil_text_lines(),
 ## Příklad:
 #
 ###############################################################

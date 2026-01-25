@@ -1,17 +1,17 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet namáhání tahem pro strojní součásti. Generování 
+# Výpočet namáhání na otlačení pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2025-12-29
-## Funkce: namahanitahtext()
+# ver: 2026-01-25
+## Funkce: namahaniotltext()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanitahtext.jl
+# StrojniSoucasti/src/namahaniotltext.jl
 #
 ## Vzor:
-## vystupni_promenne = namahanitahtext(vstupni_promenne)
+## vystupni_promenne = namahaniotltext(vstupni_promenne)
 ## Vstupní proměnné:
 # VV::Dict{Symbol,Any} - slovník vstupních a výstupních proměnných
 ## Výstupní proměnné:
@@ -27,7 +27,7 @@
 #
 using Printf: @sprintf
 
-function namahanitahtext(VV::Dict{Symbol,Any})
+function namahaniotltext(VV::Dict{Symbol,Any})
     lines = String[]
     push!(lines, "Výpočet $(VV[:info])")
     push!(lines, "--------------------------------------------------------------")

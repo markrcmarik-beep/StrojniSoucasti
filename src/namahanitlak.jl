@@ -4,6 +4,7 @@
 # Výpočet namáhání v tlaku pro strojní součásti.
 # ver: 2026-01-22
 ## Funkce: namahanitlak()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahanitlak.jl

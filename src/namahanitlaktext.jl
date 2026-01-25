@@ -1,20 +1,25 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
+# Výpočet namáhání tlakem pro strojní součásti. Generování 
+# textového výpisu výpočtu.
 # ver: 2025-12-29
 ## Funkce: namahanitlaktext()
+## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanitlaktext.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanitlaktext(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# VV::Dict{Symbol,Any} - slovník vstupních a výstupních proměnných
 ## Výstupní proměnné:
-#
+# lines - textový výstup s popisem výpočtu
 ## Použité balíčky
-#
+# Printf: @sprintf
 ## Použité uživatelské funkce:
-#
+# profil_text_lines(),
 ## Příklad:
 #
 ###############################################################

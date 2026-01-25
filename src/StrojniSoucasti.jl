@@ -1,8 +1,11 @@
 ## Balíček Julia v1.12
 ###############################################################
 ## Popis balíčku
-#
-# ver: 2026-01-22
+# Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
+# strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
+# kombinovaně a na otlačení.
+# ver: 2026-01-25
+## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
 #
@@ -14,7 +17,7 @@
 module StrojniSoucasti
 
 # Import implementací
-# Nejdřív materialy aby byly dostupné typy a databáze
+## --- materialy ---
 include("materialy/materialy.jl")
 #include("materialy/request.jl")
 #include("materialy/reduction_table.jl")
@@ -22,6 +25,7 @@ include("materialy/materialy.jl")
 #include("materialy/select.jl")
 include("dovoleneNapeti.jl") # dovolená napětí
 include("mezUnavy.jl") # mez únavy
+## --- profily ---
 include("profily/profilTR4HR.jl") # profily TR4HR
 include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
@@ -29,6 +33,7 @@ include("profily/profily.jl") # tvary profilů
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
 #include("hrana.jl") #
+## --- namáhání ---
 include("namahanitah.jl") # namáhání tahem
 include("namahanitahtext.jl")
 include("namahanitlak.jl") # namáhání tlakem
