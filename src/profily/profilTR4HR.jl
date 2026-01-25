@@ -4,6 +4,7 @@
 # Vrátí Profil struct s vlastnostmi profilu TR4HR z databáze.
 # ver: 2026-01-18
 ## Funkce: profilTR4HR()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/profil/profilTR4HR.jl
