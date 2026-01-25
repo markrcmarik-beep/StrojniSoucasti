@@ -6,6 +6,7 @@
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
 # ver: 2026-01-21
 ## Funkce: profily()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/profily/profily.jl

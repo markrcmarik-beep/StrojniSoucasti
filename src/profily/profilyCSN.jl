@@ -5,6 +5,7 @@
 # strukturu s rozměry.
 # ver: 2026-01-22
 ## Funkce: profilyCSN()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/profily/profilyCSN.jl

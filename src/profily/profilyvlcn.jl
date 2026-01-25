@@ -4,6 +4,7 @@
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
 # ver: 2026-01-22
 ## Funkce: profilyvlcn()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/profily/profilyvlcn.jl
