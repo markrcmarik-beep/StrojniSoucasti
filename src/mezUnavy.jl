@@ -1,9 +1,13 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu meze únavy materiálu.
 # ver: 2025-11-13
 ## Funkce: mezUnavy()
+## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/mezUnavy.jl
 #
 ## Vzor:
 ## B = mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString)
