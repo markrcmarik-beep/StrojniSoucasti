@@ -8,6 +8,7 @@
 # namahanistrih, namahanikrut, namahaniohyb).
 # ver: 2026-01-02
 ## Funkce: namahanikombinovane()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/namahanikombinovane.jl

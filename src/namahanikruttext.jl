@@ -3,9 +3,12 @@
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2025-12-29
+# ver: 2026-01-25
 ## Funkce: namahanikruttext()
 ## Autor: Martin
+#
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/namahanikruttext.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikruttext(vstupni_promenne)
