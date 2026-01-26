@@ -1,5 +1,8 @@
 # ver: 2026-01-25
 using StrojniSoucasti, Unitful, Test
+
+@testset "materialy" begin
+
 prof1 = "KR 25"
 mat1 = "16440"
 VVtah1, _ = namahanitah(F=20u"kN", profil=prof1, mat=mat1)
@@ -44,3 +47,5 @@ println(txtkomb1)
 VVkomb1, txtkomb1 = namahanikombinovane(vysledky = [VVkrut1, VVohyb1],k=5)
 println(VVkomb1)
 println(txtkomb1)
+
+end
