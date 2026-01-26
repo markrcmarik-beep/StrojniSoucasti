@@ -39,10 +39,7 @@ using StrojniSoucasti
     @test mat.weldable == true
     @test mat.rho == 7850
 
-    #mat = materialy("nonexistent_material")
-    #println(mat)
-    #@test mat === nothing
+    mat = materialy("nonexistent_material")
+    @test mat === nothing
 
 end
-#mat = materialy("nonexistent_material")
-#    println(mat)

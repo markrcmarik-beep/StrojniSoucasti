@@ -13,6 +13,7 @@
 ## vystupni_promenne = materialy(vstupni_promenne)
 ## Vstupní proměnné:
 # - name::AbstractString: Označení materiálu (např. "S235", "S235JR+N")
+#
 ## Výstupní proměnné:
 # - Material struct s vlastnostmi materiálu nebo nothing, pokud materiál neexistuje.
 ## Použité balíčky:
@@ -33,7 +34,9 @@ include("materialytypes.jl")
 const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, "materialydatabaseOcelEN10025_2.toml"))
 const MATERIALY_DB_CSN = TOML.parsefile(joinpath(@__DIR__, "materialydatabaseOcelCSN.toml"))
 
-function materialy(name::AbstractString)::MaterialOcel
+function materialy(name::AbstractString)::Union{MaterialOcel,
+    Nothing}
+
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
     
