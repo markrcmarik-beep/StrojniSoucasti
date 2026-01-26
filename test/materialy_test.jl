@@ -5,12 +5,12 @@ using StrojniSoucasti
 @testset "materialy" begin
 
     mat = materialy("S235")
-    
+
     @test mat.name == "S235"
     @test mat.standard == "EN 10025-2"
-    @test mat.Re == 235.0
-    @test mat.Rm_min == 360.0
-    @test mat.Rm_max == 510.0
+    @test mat.Re == 235
+    @test mat.Rm_min == 360
+    @test mat.Rm_max == 510
     @test mat.A == 26.0
     @test mat.KV == 27.0
     @test mat.T_KV == 20.0

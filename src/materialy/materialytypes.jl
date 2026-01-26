@@ -1,6 +1,6 @@
 # ver: 2026-01-14
 
-struct Material
+struct MaterialOcel
     name::String
     standard::String
     Re::Float64         # nominální mez kluzu [MPa]

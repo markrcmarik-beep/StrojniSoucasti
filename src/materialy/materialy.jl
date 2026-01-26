@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-01-18
+# ver: 2026-01-26
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -30,29 +30,34 @@ using TOML
 
 include("materialytypes.jl")
 
-const MATERIALY_DB = TOML.parsefile(joinpath(@__DIR__, "materialydatabase.toml"))
+const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, "materialydatabaseOcelEN10025_2.toml"))
 
-function materialy(name::AbstractString)::Material
+
+function materialy(name::AbstractString)::MaterialOcel
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
-    haskey(MATERIALY_DB, name) || return nothing
     
-    row = MATERIALY_DB[name]
+    if haskey(MATERIALY_DB_EN10025_2, name) # materiál existuje v databázi
     
-    return Material(
+    row = MATERIALY_DB_EN10025_2[name]
+    return MaterialOcel(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
-        Float64(get(row, "Re", 0.0)), # meze kluzu
-        Float64(get(row, "Rm_min", 0.0)), # meze pevnosti
-        Float64(get(row, "Rm_max", 0.0)), # meze pevnosti max
-        Float64(get(row, "A", 0.0)), # prodloužení
-        Float64(get(row, "KV", 0.0)), # houževnatost KV
-        Float64(get(row, "T_KV", 0.0)), # teplota KV
+        Float64(get(row, "Re", 0)), # meze kluzu
+        Float64(get(row, "Rm_min", 0)), # meze pevnosti
+        Float64(get(row, "Rm_max", 0)), # meze pevnosti max
+        Float64(get(row, "A", 0)), # prodloužení
+        Float64(get(row, "KV", 0)), # houževnatost KV
+        Float64(get(row, "T_KV", 0)), # teplota KV
         Bool(get(row, "weldable", false)), # svařitelnost
-        Float64(get(row, "thickness_max", 0.0)), # max tloušťka
-        Float64(get(row, "E", 0.0)), # modul pružnosti
-        Float64(get(row, "G", 0.0)), # modul smyku
-        Float64(get(row, "ny", 0.0)), # Poissonovo číslo
-        Float64(get(row, "rho", 0.0)) # hustota
+        Float64(get(row, "thickness_max", 0)), # max tloušťka
+        Float64(get(row, "E", 0)), # modul pružnosti
+        Float64(get(row, "G", 0)), # modul smyku
+        Float64(get(row, "ny", 0)), # Poissonovo číslo
+        Float64(get(row, "rho", 0)) # hustota
     )
+
+    else
+        return nothing
+    end
 end
