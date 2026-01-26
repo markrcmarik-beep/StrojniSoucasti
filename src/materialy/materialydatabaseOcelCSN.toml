@@ -1,88 +1,8 @@
 
 schema_version = "1.0.0"
 
-["S235"]
-name = "S235"
-standard = "EN 10025-2"
-Re = 235
-Rm_min = 360
-Rm_max = 510
-A = 26
-KV = 27
-T_KV = 20
-weldable = true
-thickness_max = 200
-E = 210
-G = 81
-ny = 0.3
-rho = 7850
-
-["S235JR+N"]
-name = "S235JR+N"
-standard = "EN 10025-2"
-Re = 235
-Rm_min = 360
-Rm_max = 510
-A = 26
-KV = 27
-T_KV = 20
-weldable = true
-thickness_max = 200
-E = 210
-G = 81
-ny = 0.3
-rho = 7850
-
-["S235J2+N"]
-name = "S235J2+N"
-standard = "EN 10025-2"
-Re = 235
-Rm_min = 360
-Rm_max = 510
-A = 26
-KV = 27
-T_KV = -20
-weldable = true
-thickness_max = 200
-E = 210
-G = 81
-ny = 0.3
-rho = 7850
-
-["S355JR+N"]
-name = "S355JR+N"
-standard = "EN 10025-2"
-Re = 355
-Rm_min = 470
-Rm_max = 630
-A = 22
-KV = 27
-T_KV = 20
-weldable = true
-thickness_max = 200
-E = 210
-G = 81
-ny = 0.3
-rho = 7850
-
-["S355J2+N"]
-name = "S355J2+N"
-standard = "EN 10025-2"
-Re = 355
-Rm_min = 470
-Rm_max = 630
-A = 22
-KV = 27
-T_KV = -20
-weldable = true
-thickness_max = 200
-E = 210
-G = 81
-ny = 0.3
-rho = 7850
-
 ["11373"]
-name = "11373"
+name = "11 373"
 standard = "ČSN"
 Re = 250
 Rm_min = 370
@@ -98,7 +18,7 @@ ny = 0.3
 rho = 7850
 
 ["11373 žíhaný"]
-name = "11373 žíhaný"
+name = "11 373 žíhaný"
 standard = "ČSN"
 Re = 220
 Rm_min = 350
@@ -114,7 +34,7 @@ ny = 0.3
 rho = 7850
 
 ["16440"]
-name = "16440"
+name = "16 440"
 standard = "ČSN"
 Re = 400
 Rm_min = 650
@@ -130,7 +50,7 @@ ny = 0.3
 rho = 7850
 
 ["16440 zušlechtěno"]
-name = "16440 zušlechtěno"
+name = "16 440 zušlechtěno"
 standard = "ČSN"
 Re = 700
 Rm_min = 900
