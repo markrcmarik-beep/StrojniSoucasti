@@ -42,52 +42,86 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful, Unitful.DefaultSymbols
+#using Unitful, Unitful.DefaultSymbols
 
-function hrana(rozmer::String, uhel::Real=π/2, smer::String="out")
-    const π = pi # Pro zkrácení zápisu π místo pi v kódu
-    # Inicializace výstupní struktury
-    hodn = Dict{String, Any}()
-    # Rozdělení rozměru na části
-    if occursin("x", rozmer)
-        casti = split(rozmer, "x") # Např. "2x45deg" => ["2", "45deg"]
-        if length(casti) != 2
-            error("Neplatný formát rozměru: $rozmer")
-        end
-        hodnota1 = parse(Float64, casti[1]) # První hodnota
-        cast2 = casti[2] # Může být hodnota nebo úhel
-    else
-        error("Neplatný formát rozměru: $rozmer") # Očekává se formát "hodnota1xhodnota2"
-    end
-    if endswith(cast2, "deg")
-        uhel_hrany = parse(Float64, replace(cast2, "deg" => "")) * (π / 180) # Převod na radiany
-    elseif startswith(cast2, "R")
-        hodnota2 = parse(Float64, replace(cast2, "R" => "")) # Poloměr zaoblení
-        uhel_hrany = π / 2  # Pro zaoblení je úhel 90 stupňů
-    else
-        hodnota2 = parse(Float64, cast2) # Poloměr zaoblení
-        uhel_hrany = cast2 # Předpokládáme, že je to úhel v radiantech
-    end
-    # Výpočet plochy a alternativních hodnot
-    if smer == "in"
-        if endswith(cast2, "deg")
-            S = hodnota1^2 * tan(uhel / 2) # Vnitřní plocha
-            hodn["S"] = S
-        else
-            a = hodnota1 / sin(uhel / 2) # Délka stěny k hraně
-            hodn["a"] = a
-        end
-    elseif smer == "out"
-        if endswith(cast2, "deg")
-            S = hodnota1^2 * tan(uhel / 2) # Vnější plocha
-            hodn["S"] = S
-        else
-            R = hodnota1 / (1 - cos(uhel / 2)) # Alternativa zaoblení
-            hodn["R"] = R
-        end
-    else
-        error("Neplatný směr: $smer. Použijte 'in' nebo 'out'.")
-    end
+function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
 
-    return hodn
+    # -----------------------------------------------------------
+    # 1) Normalizace vstupu
+    # -----------------------------------------------------------
+    s = uppercase(strip(inputStr)) # velká písmena
+    s = replace(s, r"\s+" => "")   # odstranění všech mezer
+    # -----------------------------------------------------------
+    # 2) Inicializace výstupu
+    # -----------------------------------------------------------
+    dims = Dict{Symbol,Any}()
+    # -----------------------------------------------------------
+    # 3) Pomocné funkce
+    # -----------------------------------------------------------
+    mmval(x) = parse(Int, x) * u"mm"
+    # -----------------------------------------------------------
+    # 4) Tabulka parserů (regex → handler)
+    # -----------------------------------------------------------
+    parsers = [
+        # -------------------------------------------------------
+        # PLO / OBD : a x b (+ R)
+        # -------------------------------------------------------
+        (r"^R(\d+(?:\.\d+)?)$",
+    function (m)
+        R = parse(Float64, m.captures[1])
+        if uhel <= 0 || uhel >= pi
+            error("Úhel hrany musí být v rozmezí (0, π) radianů.")
+        end
+        if uhel == pi/2
+            S = R^2 - R^2 * (pi/4)  # Plocha
+            S_str = "R^2 - R^2 * (π/4)"  # Plocha jako řetězec
+            o = (pi/2) * R  # Délka oblouku čtvrtkruhu
+            o_str = "(π/2) * R" # Délka oblouku jako řetězec
+            a = R          # Délka stěny k hraně
+            a_str = "R"    # Délka stěny jako řetězec
+        else
+            error("Zaoblení je podporováno pouze pro úhel 90° (π/2 rad)")
+        end
+        dims[:info] = "R"
+        dims[:rozmer] = string("R", R)
+        dims[:R] = R
+        dims[:uhel] = uhel
+        dims[:smer] = smer
+        dims[:S] = S
+        dims[:S_str] = S_str
+        dims[:o] = o
+        dims[:o_str] = o_str
+        dims[:a] = a
+        dims[:a_str] = a_str
+    end
+    ),
+    (r"^KR(\d+(?:\.\d+)?)$",
+    function (m)
+        a = parse(Float64, m.captures[2])
+        b = parse(Float64, m.captures[3])
+        r = m.captures[4] === nothing ? 0.0 : parse(Float64, m.captures[4])
+
+        @assert r ≤ min(a, b) / 2 "Rádius R = $r mm je příliš velký"
+
+        dims[:info] = m.captures[1]
+        dims[:a]    = a
+        dims[:b]    = b
+        dims[:R]    = r
+    end
+        )
+    ]
+    # -----------------------------------------------------------
+    # 5) Vyhodnocení parserů
+    # -----------------------------------------------------------
+    for (regex, handler) in parsers
+        m = match(regex, s)
+        if m !== nothing
+            handler(m)
+            return dims
+        end
+    end
+    # -----------------------------------------------------------
+    # 6) Neznámý tvar
+    # -----------------------------------------------------------
+    error("Neznámé nebo nepodporované označení profilu: \"$inputStr\"")
 end

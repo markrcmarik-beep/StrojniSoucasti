@@ -1,6 +1,8 @@
-# ver: 2025-11-24
-using StrojniSoucasti, Unitful, Unitful.DefaultSymbols
-const π = pi
+# ver: 2026-01-27
+using Test
+using StrojniSoucasti
+
+@testset "hrana" begin
 
 #A1 = hrana("2x2", π/2, "out")
 #A1 = println(A1)
@@ -8,5 +10,7 @@ const π = pi
 #A2 = hrana("2x45deg", π/2, "out")
 #A2 = println(A2)
 
-B = hrana("R5", π/2, "out")
+B = StrojniSoucasti.hrana("R5", pi/2, "out")
 B = println(B)
+
+end

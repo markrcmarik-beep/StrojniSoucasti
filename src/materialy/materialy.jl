@@ -31,8 +31,10 @@ using TOML
 
 include("materialytypes.jl")
 
-const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, "materialydatabaseOcelEN10025_2.toml"))
-const MATERIALY_DB_CSN = TOML.parsefile(joinpath(@__DIR__, "materialydatabaseOcelCSN.toml"))
+const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseOcelEN10025_2.toml"))
+const MATERIALY_DB_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseOcelCSN.toml"))
 
 function materialy(name::AbstractString)::Union{MaterialOcel,
     Nothing}

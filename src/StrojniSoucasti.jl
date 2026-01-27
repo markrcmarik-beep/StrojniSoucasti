@@ -32,7 +32,7 @@ include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
-#include("hrana.jl") #
+include("hrana.jl") # hrany
 ## --- namáhání ---
 include("namahanitah.jl") # namáhání tahem
 include("namahanitahtext.jl")
