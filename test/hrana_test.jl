@@ -11,6 +11,9 @@ using StrojniSoucasti
 #A2 = println(A2)
 
 B = StrojniSoucasti.hrana("R5", pi/2, "out")
-B = println(B)
+B = println(B[:info])
+@test B[:info] === "R"
+#@test B[:rozmer] == "R5"
+#@test B[:R] == 5
 
 end

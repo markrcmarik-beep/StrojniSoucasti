@@ -69,6 +69,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         (r"^R(\d+(?:\.\d+)?)$",
     function (m)
         R = parse(Float64, m.captures[1])
+        println("R = $R")
         if uhel <= 0 || uhel >= pi
             error("Úhel hrany musí být v rozmezí (0, π) radianů.")
         end
@@ -83,7 +84,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
             error("Zaoblení je podporováno pouze pro úhel 90° (π/2 rad)")
         end
         dims[:info] = "R"
-        dims[:rozmer] = string("R", R)
+        dims[:rozmer] = ("R$R")
         dims[:R] = R
         dims[:uhel] = uhel
         dims[:smer] = smer
