@@ -14,6 +14,13 @@ B = StrojniSoucasti.hrana("R4.25", pi/2, "out")
 @test B[:rozmer] == "R4.25"
 @test B[:R] == 4.25
 
+B = StrojniSoucasti.hrana("2x2", pi/2, "out")
+@test B[:info] === "sražení"
+@test B[:rozmer] == "2x2"
+@test B[:x1] == 2
+@test B[:x2] == 2
+@test B[:S] == 2 * 2 / 2
+
 end
 
 B = StrojniSoucasti.hrana("2x2", pi/2, "out")
