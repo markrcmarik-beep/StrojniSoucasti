@@ -121,6 +121,8 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
             else
                 angle = atan((2 * cos(uhel / 2)^2 * x2) / x1)  # obecný trojúhelník
             end
+        else
+            error("Neplatný formát úhlu v rozměru hrany.")
         end
         S = x1 * x2 / 2  # Plocha
         S_str = "x1 * x2 / 2"  # Plocha jako řetězec

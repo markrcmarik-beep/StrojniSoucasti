@@ -14,6 +14,8 @@ B = StrojniSoucasti.hrana("R4.25", pi/2, "out")
 @test B[:rozmer] == "R4.25"
 @test B[:R] == 4.25
 
+end
+
 B = StrojniSoucasti.hrana("2x2", pi/2, "out")
 println(B)
 
@@ -23,4 +25,5 @@ println(B)
 B = StrojniSoucasti.hrana("2x2", 30*pi/180, "out")
 println(B)
 
-end
+B = StrojniSoucasti.hrana("2x45deg", 30*pi/180, "out")
+println(B)
