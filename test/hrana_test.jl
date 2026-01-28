@@ -4,16 +4,23 @@ using StrojniSoucasti
 
 @testset "hrana" begin
 
-#A1 = hrana("2x2", π/2, "out")
-#A1 = println(A1)
-
-#A2 = hrana("2x45deg", π/2, "out")
-#A2 = println(A2)
-
 B = StrojniSoucasti.hrana("R5", pi/2, "out")
-B = println(B[:info])
 @test B[:info] === "R"
-#@test B[:rozmer] == "R5"
-#@test B[:R] == 5
+@test B[:rozmer] == "R5"
+@test B[:R] == 5
+
+B = StrojniSoucasti.hrana("R4.25", pi/2, "out")
+@test B[:info] === "R"
+@test B[:rozmer] == "R4.25"
+@test B[:R] == 4.25
+
+B = StrojniSoucasti.hrana("2x2", pi/2, "out")
+println(B)
+
+B = StrojniSoucasti.hrana("2x45deg", pi/2, "out")
+println(B)
+
+B = StrojniSoucasti.hrana("2x2", 30*pi/180, "out")
+println(B)
 
 end

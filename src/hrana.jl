@@ -68,11 +68,11 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         # -------------------------------------------------------
         (r"^R(\d+(?:\.\d+)?)$",
     function (m)
-        R = parse(Float64, m.captures[1])
-        println("R = $R")
         if uhel <= 0 || uhel >= pi
             error("Úhel hrany musí být v rozmezí (0, π) radianů.")
         end
+        Rstr = m.captures[1]
+        R = occursin('.', Rstr) ? parse(Float64, Rstr) : parse(Int, Rstr) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
         if uhel == pi/2
             S = R^2 - R^2 * (pi/4)  # Plocha
             S_str = "R^2 - R^2 * (π/4)"  # Plocha jako řetězec
@@ -96,20 +96,48 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         dims[:a_str] = a_str
     end
     ),
-    (r"^KR(\d+(?:\.\d+)?)$",
+    (r"^(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(DEG|°)?$",
     function (m)
-        a = parse(Float64, m.captures[2])
-        b = parse(Float64, m.captures[3])
-        r = m.captures[4] === nothing ? 0.0 : parse(Float64, m.captures[4])
-
-        @assert r ≤ min(a, b) / 2 "Rádius R = $r mm je příliš velký"
-
-        dims[:info] = m.captures[1]
-        dims[:a]    = a
-        dims[:b]    = b
-        dims[:R]    = r
+        if uhel <= 0 || uhel >= pi
+            error("Úhel hrany musí být v rozmezí (0, π) radianů.")
+        end
+        X1 = m.captures[1]
+        X2 = m.captures[2]
+        x1 = occursin('.', X1) ? parse(Float64, X1) : parse(Int, X1) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
+        angle_str = m.captures[3] ? m.captures[3] : ""
+        if angle_str == "DEG" || angle_str == "°"
+            angledeg = occursin('.', X2) ? parse(Float64, X2) : parse(Int, X2) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
+            angle = deg2rad(angledeg)
+            if uhel == pi/2
+                x2 = tan(angle) * x1
+            else
+                co = cos(uhel / 2)^2
+                x2 = (tan(angle) * x1) / (2 * co)  # obecný trojúhelník
+            end
+        elseif angle_str == ""
+            x2 = occursin('.', X2) ? parse(Float64, X2) : parse(Int, X2) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
+            if uhel == pi/2
+                angle = tan(x2 / x1)
+            else
+                angle = atan((2 * cos(uhel / 2)^2 * x2) / x1)  # obecný trojúhelník
+            end
+        end
+        S = x1 * x2 / 2  # Plocha
+        S_str = "x1 * x2 / 2"  # Plocha jako řetězec
+        o = sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))  # Délka oblouku čtvrtkruhu
+        o_str = "sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))" # Délka oblouku jako řetězec
+        dims[:info] = "SRAŽENÍ"
+        dims[:rozmer] = string(x1, "x", x2)
+        dims[:x1] = x1
+        dims[:x2] = x2
+        dims[:uhel] = angle
+        dims[:smer] = smer
+        dims[:S] = S
+        dims[:S_str] = S_str
+        dims[:o] = o
+        dims[:o_str] = o_str
     end
-        )
+    )
     ]
     # -----------------------------------------------------------
     # 5) Vyhodnocení parserů
