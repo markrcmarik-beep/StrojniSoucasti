@@ -21,16 +21,34 @@ B = StrojniSoucasti.hrana("2x2", pi/2, "out")
 @test B[:x2] == 2
 @test B[:S] == 2 * 2 / 2
 
+@test_throws ErrorException(
+    "Neznámé nebo nepodporované označení profilu: \"k2xk2\"") begin
+    StrojniSoucasti.hrana("k2xk2", pi/2, "out")
 end
 
 B = StrojniSoucasti.hrana("2x2", pi/2, "out")
-println(B)
+@test B[:info] === "sražení"
+@test B[:rozmer] == "2x2"
+@test B[:x1] == 2
+@test B[:x2] == 2
+@test B[:S] == 2 * 2 / 2
 
 B = StrojniSoucasti.hrana("2x45deg", pi/2, "out")
-println(B)
+@test B[:info] === "sražení"
+#@test B[:rozmer] == "2x45deg"
+@test B[:x1] == 2
+#@test B[:x2] == 2
+#@test B[:S] == 2 * 2 / 2
 
 B = StrojniSoucasti.hrana("2x2", 30*pi/180, "out")
-println(B)
+@test B[:info] === "sražení"
+@test B[:rozmer] == "2x2"
+@test B[:x1] == 2
+@test B[:x2] == 2
 
 B = StrojniSoucasti.hrana("2x45deg", 30*pi/180, "out")
-println(B)
+@test B[:info] === "sražení"
+#@test B[:rozmer] == "2x45deg"
+@test B[:x1] == 2
+
+end

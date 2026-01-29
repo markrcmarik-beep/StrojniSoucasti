@@ -5,7 +5,7 @@
 # plochu vnitřní nebo vnější dle tvaru stažení, zaoblení. Pro 
 # zaoblení vrací délku stěny do špičky (k hraně vznikající bez 
 # zaoblení). Pro sražení rovnostranné možné nahrazující zaoblení.
-# ver: 2025-11-24
+# ver: 2026-01-29
 ## Funkce: hrana()
 ## Autor: Martin
 #
@@ -34,10 +34,13 @@
 #
 ## Příklad:
 # A1 = hrana("2x2", π/2, "out")
-#
+# => Dict(:info=>"sražení", :rozmer=>"2x2", :x1=>2, :x2=>2, :S=>2.0, 
+#   :o=>2.8284271247461903)
 # A2 = hrana("2x45deg", π/2, "out")
 #
 # B = hrana("R5", π/2, "out")
+# => Dict(:info=>"R", :rozmer=>"R5", :R=>5, :S=>7.853981633974483, 
+#   :o=>7.853981633974483, :a=>5)
 #
 ###############################################################
 ## Použité proměnné vnitřní:
@@ -104,7 +107,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         X1 = m.captures[1]
         X2 = m.captures[2]
         x1 = occursin('.', X1) ? parse(Float64, X1) : parse(Int, X1) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
-        angle_str = m.captures[3] ? m.captures[3] : ""
+        angle_str = m.captures[3] === nothing ? "" : m.captures[3]
         if angle_str == "DEG" || angle_str == "°"
             angledeg = occursin('.', X2) ? parse(Float64, X2) : parse(Int, X2) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
             angle = deg2rad(angledeg)
@@ -128,7 +131,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         S_str = "x1 * x2 / 2"  # Plocha jako řetězec
         o = sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))  # Délka oblouku čtvrtkruhu
         o_str = "sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))" # Délka oblouku jako řetězec
-        dims[:info] = "SRAŽENÍ"
+        dims[:info] = "sražení"
         dims[:rozmer] = string(x1, "x", x2)
         dims[:x1] = x1
         dims[:x2] = x2
