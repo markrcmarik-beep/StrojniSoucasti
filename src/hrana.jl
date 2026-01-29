@@ -117,6 +117,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
                 co = cos(uhel / 2)^2
                 x2 = (tan(angle) * x1) / (2 * co)  # obecný trojúhelník
             end
+            oznac = string(x1, "x", angledeg, "˚")
         elseif angle_str == ""
             x2 = occursin('.', X2) ? parse(Float64, X2) : parse(Int, X2) # Pokud obsahuje desetinnou tečku, vrať Float64, jinak Int
             if uhel == pi/2
@@ -124,6 +125,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
             else
                 angle = atan((2 * cos(uhel / 2)^2 * x2) / x1)  # obecný trojúhelník
             end
+            oznac = string(x1, "x", x2)
         else
             error("Neplatný formát úhlu v rozměru hrany.")
         end
@@ -132,7 +134,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         o = sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))  # Délka oblouku čtvrtkruhu
         o_str = "sqrt(x1^2 + x2^2 - 2 * x1 * x2 * cos(uhel))" # Délka oblouku jako řetězec
         dims[:info] = "sražení"
-        dims[:rozmer] = string(x1, "x", x2)
+        dims[:rozmer] = oznac
         dims[:x1] = x1
         dims[:x2] = x2
         dims[:uhel] = angle
