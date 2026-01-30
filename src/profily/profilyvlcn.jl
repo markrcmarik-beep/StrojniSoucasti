@@ -261,8 +261,16 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # -----------------------------------------------------------
     elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
         # -----------------------------------------------------------
+        # Plochá tyč nebo obdélník
+        if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
+            Ix = StrojniSoucasti.profilyvlcn(tvar1, :Ix)
+            Iy = StrojniSoucasti.profilyvlcn(tvar1, :Ix, natoceni=π/2)
+            Ixy = 0u"mm^4" # Pro obdélník je Ixy=0
+            Imin_val = (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )
+            return Imin_val, "(Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )"
+        # -----------------------------------------------------------
         # Kruhová tyč
-        if info == "KR" # Kruhová tyč
+        elseif info == "KR" # Kruhová tyč
             D = getv(:D)
             return π/64*D^4, "π/64*D⁴"
         # -----------------------------------------------------------
