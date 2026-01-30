@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-01-22
+# ver: 2026-01-30
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -19,6 +19,7 @@
 #       Ip - Polární moment [mm⁴]
 #       Wk - Průřezový modul v krutu [mm³]
 #       Ix - Kvadratický moment [mm⁴]
+#       Imin - Kvadratický moment minimální [mm⁴]
 #       Wo - Průřezový modul v ohybu [mm³]
 # natoceni – úhel natočení [rad], volitelný (parametr pro Ix a Wo)
 ## Výstupní proměnné:
@@ -252,6 +253,23 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             return (a*b^3/12) - ((a-2t)*(b-2t)^3/12), "(a*b³/12)-((a-2t)*(b-2t)³/12)"
         # -----------------------------------------------------------
         # neznámý tvar
+        else
+            error("Neznámý tvar: $info pro veličinu $velicina")
+        end
+    # -----------------------------------------------------------
+    # Imin - Kvadratický moment minimální [mm⁴]
+    # -----------------------------------------------------------
+    elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
+        # -----------------------------------------------------------
+        # Kruhová tyč
+        if info == "KR" # Kruhová tyč
+            D = getv(:D)
+            return π/64*D^4, "π/64*D⁴"
+        # -----------------------------------------------------------
+        # Trubka kruhová
+        elseif info == "TRKR" # Trubka kruhová
+            D, d = getv(:D), getv(:d)
+            return π/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end

@@ -1,4 +1,4 @@
-# ver: 2026-01-22
+# ver: 2026-01-30
 using StrojniSoucasti, Unitful, Unitful.DefaultSymbols
 
 # Plochá tyč 20x10 mm
@@ -6,6 +6,12 @@ plocha = Dict(
     :info => "PLO",
     :a => 20u"mm",
     :b => 10u"mm"
+)
+# Trubka kruhová
+plocha1 = Dict(
+    :info => "TRKR",
+    :D => 20u"mm",
+    :d => 10u"mm"
 )
 
 S, Stext = StrojniSoucasti.profilyvlcn(plocha, :S) # Výpočet plochy
@@ -17,12 +23,7 @@ println("Kvadratický moment v ohybu: $Ix ($Ixtext)")
 Wo, Wotext = StrojniSoucasti.profilyvlcn(plocha, :Wo) # Výpočet průřezového modulu v ohybu
 println("Průřezový modul v ohybu: $Wo ($Wotext)")
 
-# Trubka kruhová
-plocha1 = Dict(
-    :info => "TRKR",
-    :D => 20u"mm",
-    :d => 10u"mm"
-)
+
 
 Wk, Wktext = StrojniSoucasti.profilyvlcn(plocha1, :Wk) # Výpočet průřezového modulu v krutu
 println("Průřezový modul v krutu: $Wk ($Wktext)")
@@ -45,3 +46,6 @@ Prf3 = Dict(
 )
 S3, Stext3 = StrojniSoucasti.profilyvlcn(Prf3, :Ip) # Výpočet plochy
 println("Polární moment k neutrální ose: $S3 ($Stext3)")
+
+Imin, Imintext = StrojniSoucasti.profilyvlcn(plocha1, :Imin) # Výpočet Kvadratický moment v ohybu
+println("Kvadratický moment min: $Imin ($Imintext)")
