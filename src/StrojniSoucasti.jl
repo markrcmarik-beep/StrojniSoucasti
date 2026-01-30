@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-01-25
+# ver: 2026-01-30
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -32,24 +32,24 @@ include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("tvarvlcn.jl") #
 include("tvarprofilu.jl") # tvary profilů
-include("hrana.jl") # hrany
+include("profily/hrana.jl") # hrany
 ## --- namáhání ---
-include("namahanitah.jl") # namáhání tahem
-include("namahanitahtext.jl")
-include("namahanitlak.jl") # namáhání tlakem
-include("namahanitlaktext.jl")
-include("namahanikrut.jl") # namáhání krutem
-include("namahanikruttext.jl")
-include("namahanistrih.jl") # namáhání střihem
-include("namahanistrihtext.jl")
-include("namahaniohyb.jl") # namáhání ohybem
-include("namahaniohybtext.jl") #
-include("namahanikombinovane.jl") # namáhání kombinovaně
-include("namahanikombinovanetext.jl") #
+include("namahani/namahanitah.jl") # namáhání tahem
+include("namahani/namahanitahtext.jl")
+include("namahani/namahanitlak.jl") # namáhání tlakem
+include("namahani/namahanitlaktext.jl")
+include("namahani/namahanikrut.jl") # namáhání krutem
+include("namahani/namahanikruttext.jl")
+include("namahani/namahanistrih.jl") # namáhání střihem
+include("namahani/namahanistrihtext.jl")
+include("namahani/namahaniohyb.jl") # namáhání ohybem
+include("namahani/namahaniohybtext.jl") #
+include("namahani/namahanikombinovane.jl") # namáhání kombinovaně
+include("namahani/namahanikombinovanetext.jl") #
+include("namahani/namahaniotl.jl") # namáhání otlačením
 include("tvarCSN.jl") #
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
-include("namahaniotl.jl") # namáhání otlačením
 include("torsion_J_TR4HR_numeric.jl") #
 include("profil_text_lines.jl") #
 
