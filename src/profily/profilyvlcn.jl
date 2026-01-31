@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-01-30
+# ver: 2026-01-31
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -257,17 +257,21 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
     # -----------------------------------------------------------
-    # Imin - Kvadratický moment minimální [mm⁴]
+    # Imin - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )")
     # -----------------------------------------------------------
     elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
         # -----------------------------------------------------------
         # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-            Ix = StrojniSoucasti.profilyvlcn(tvar1, :Ix)
-            Iy = StrojniSoucasti.profilyvlcn(tvar1, :Ix, natoceni=π/2)
+            Ix, Ix_str = StrojniSoucasti.profilyvlcn(tvar1, :Ix)
+            Iy, Iy_str = StrojniSoucasti.profilyvlcn(tvar1, :Ix, natoceni=π/2)
+            Ixy_str = "0"
             Ixy = 0u"mm^4" # Pro obdélník je Ixy=0
             Imin_val = (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )
-            return Imin_val, "(Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )"
+            #function Imin_val_str(Ix_str, Iy_str, Ixy_str)
+            #    return "($Ix_str + $Iy_str)/2 - √( ( ($Ix_str - $Iy_str)/2 )² + $Ixy_str ² )"
+            #end
+            return Imin_val, "-sqrt((1//4)*((-(1//12)*(a^3)*b + (1//12)*a*(b^3))^2)) + (1//2)*((1//12)*(a^3)*b + (1//12)*a*(b^3))"
         # -----------------------------------------------------------
         # Kruhová tyč
         elseif info == "KR" # Kruhová tyč
@@ -277,7 +281,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
         # Trubka kruhová
         elseif info == "TRKR" # Trubka kruhová
             D, d = getv(:D), getv(:d)
-            return π/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
+            return π/64*(D^4 - d^4), "π/64*(D⁴ - d⁴)"
         else
             error("Neznámý tvar: $info pro veličinu $velicina")
         end
