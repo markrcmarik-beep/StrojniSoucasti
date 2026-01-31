@@ -1,5 +1,5 @@
 # ver: 2025-12-30
-using StrojniSoucasti, Unitful, Unitful.DefaultSymbols
+using StrojniSoucasti, Unitful
 
 # Plochá tyč 20x10 mm
 plocha = Dict(

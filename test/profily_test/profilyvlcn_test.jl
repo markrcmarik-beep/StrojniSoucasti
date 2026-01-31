@@ -2,7 +2,6 @@
 using Test
 using StrojniSoucasti
 using Unitful
-using Unitful.DefaultSymbols
 
 @testset "profilyvlcn – základní geometrické veličiny" begin
 
@@ -112,5 +111,8 @@ using Unitful.DefaultSymbols
         @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :NeznamaVelicina)
         @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=π/4)
     end
+
+    #S1 = StrojniSoucasti.profilyvlcn("PLO 20x30 R5", :S)
+    #println(S1)
 
 end

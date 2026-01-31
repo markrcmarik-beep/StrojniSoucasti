@@ -50,46 +50,8 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # S - Plocha [mm²]
     # -----------------------------------------------------------
     if velicina == :S  # Plocha [mm²]
-        # -----------------------------------------------------------
-        # Plochá tyč nebo obdélník
-        if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-            a, b = getv(:a), getv(:b)
-            if getv(:R) === missing
-                return a*b, "a*b"
-            else
-                R = getv(:R)
-                return a*b, "a*b"
-            end
-        # -----------------------------------------------------------
-        # Kruhová tyč
-        elseif info == "KR" # Kruhová tyč
-            D = getv(:D)
-            return π*(D/2)^2, "π*(D/2)²"
-        # -----------------------------------------------------------
-        # Trubka kruhová
-        elseif info == "TRKR" # Trubka kruhová
-            D, d = getv(:D), getv(:d)
-            return π*(D^2 - d^2)/4, "π*(D² - d²)/4"
-        # -----------------------------------------------------------
-        # Čtyřhranná tyč
-        elseif info == "4HR" # Čtyřhranná tyč
-            a = getv(:a)
-            return a^2, "a²"
-        # -----------------------------------------------------------
-        # Šestihranná tyč
-        elseif info == "6HR" # Šestihranná tyč
-            s = getv(:s)
-            return (3/4)*s^2, "3/4*s²"
-        # -----------------------------------------------------------
-        # Trubka čtyřhranná
-        elseif info == "TR4HR" # Trubka čtyřhranná
-            a, b, t = getv(:a), getv(:b), getv(:t)
-            return a*b - (a-2t)*(b-2t), "a*b - (a-2t)*(b-2t)"
-        # -----------------------------------------------------------
-        # neznámý tvar
-        else
-            error("Neznámý tvar: $info pro veličinu $velicina")
-        end
+        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
+        return S_hod, S_str
     # -----------------------------------------------------------
     # Ip - Polární moment [mm⁴]
     # -----------------------------------------------------------
