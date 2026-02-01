@@ -2,15 +2,15 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-01-31
-## Funkce: profilyvlcnS()
+# ver: 2026-02-01
+## Funkce: profilyvlcnWk()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnS.jl
+# balicek/src/profily/profilyvlcnWk.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyvlcnS(vstupni_promenne)
+## vystupni_promenne = profilyvlcnWk(vstupni_promenne)
 ## Vstupní proměnné:
 #
 ## Výstupní proměnné:
@@ -26,55 +26,37 @@
 #
 using Unitful
 
-function profilyvlcnS(tvar1::Dict, velicina::Symbol)
+function profilyvlcnWk(tvar1::Dict, velicina::Symbol)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
 
     # -----------------------------------------------------------
-    # Plochá tyč nebo obdélník
-    if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-        a, b = getv(:a), getv(:b)
-        if getv(:R) === missing
-            return a*b, "a*b"
-        else
-            R = getv(:R)
-            Sr = StrojniSoucasti.hrana(string("R",ustrip(u"mm",R)))
-            Sr = Sr[:S] * u"mm^2"
-            return a*b-4*Sr, "a*b - 4*S(R)"
-        end
-    # -----------------------------------------------------------
     # Kruhová tyč
-    elseif info == "KR" # Kruhová tyč
+    if info == "KR" # Kruhová tyč
         D = getv(:D)
-        return pi*(D/2)^2, "π*(D/2)²"
+        return pi/16*D^3, "π/16*D³"
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
         D, d = getv(:D), getv(:d)
-        return pi*(D^2 - d^2)/4, "π*(D² - d²)/4"
+        return pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
         a = getv(:a)
-        if getv(:R) === missing
-            return a^2, "a²"
-        else
-            R = getv(:R)
-            Sr = StrojniSoucasti.hrana(string("R",ustrip(u"mm",R)))
-            Sr = Sr[:S] * u"mm^2"
-            return a^2-4*Sr, "a² - 4*S(R)"
-        end
+        return 0.208*a^3, "0.208*a³"
+    # -----------------------------------------------------------
+    # Plochá tyč nebo obdélník
+    elseif info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
+        a, b = getv(:a), getv(:b)
+        return a*b^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
+            "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
         s = getv(:s)
-        return (3/4)*s^2, "3/4*s²"
-    # -----------------------------------------------------------
-    # Trubka čtyřhranná
-    elseif info == "TR4HR" # Trubka čtyřhranná
-        a, b, t = getv(:a), getv(:b), getv(:t)
-        return a*b - (a-2t)*(b-2t), "a*b - (a-2t)*(b-2t)"
+        return 0.17*s^3, "0.17*s³" # ??????????????????
     # -----------------------------------------------------------
     # neznámý tvar
     else
