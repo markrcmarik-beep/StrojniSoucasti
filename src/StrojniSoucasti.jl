@@ -34,6 +34,9 @@ include("tvarvlcn.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnIp.jl")
 include("profily/profilyvlcnWk.jl")
+include("profily/profilyvlcnIx.jl")
+include("profily/profilyvlcnIminImax.jl")
+include("profily/profilyvlcnWo.jl")
 include("tvarprofilu.jl") # tvary profilů
 include("profily/hrana.jl") # hrany
 ## --- namáhání ---

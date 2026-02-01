@@ -121,6 +121,19 @@ using Unitful
     end
 
     # ------------------------------------------------------------
+    # Imax – minimální kvadratický moment
+    # ------------------------------------------------------------
+    @testset "Imax – minimální kvadratický moment" begin
+        Imax1, txt1 = StrojniSoucasti.profilyvlcn(TRKR_01, :Imax)
+        @test Imax1 == pi/64 * ( (20u"mm")^4 - (10u"mm")^4 )
+        @test txt1 == "π/64*(D⁴ - d⁴)"
+
+        Imax2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imax)
+        @test Imax2 > 0u"mm^4"
+        @test txt2 == "(Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )"
+    end
+
+    # ------------------------------------------------------------
     # Wo – průřezový modul v ohybu
     # ------------------------------------------------------------
     @testset "Wo – modul v ohybu" begin
