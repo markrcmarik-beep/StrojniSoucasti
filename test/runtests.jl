@@ -10,7 +10,7 @@ using Test
     include("namahani_test/namahanistrih_test.jl")
     include("namahani_test/namahaniohyb_test.jl")
     include("namahani_test/namahanikombinovane_test.jl")
-    #include("namahani_test/namahaniotl_test.jl")
+    include("namahani_test/namahaniotl_test.jl")
     # profily
     include("profily_test/tvarprofilu_test.jl")
     include("profily_test/profilTR4HR_test.jl")
