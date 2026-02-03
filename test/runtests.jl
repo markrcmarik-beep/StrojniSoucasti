@@ -1,18 +1,16 @@
-# ver: 2026-01-31
+# ver: 2026-02-03
 using Test
 
     # materialy
     include("materialy_test/materialy_test.jl")
     # namahani
-    #iseror("namahani") do
-        include("namahani_test/namahanitah_test.jl")
-        include("namahani_test/namahanitlak_test.jl")
-        include("namahani_test/namahanikrut_test.jl")
-        include("namahani_test/namahanistrih_test.jl")
-        include("namahani_test/namahaniohyb_test.jl")
-        include("namahani_test/namahanikombinovane_test.jl")
-        #include("namahani_test/namahaniotl_test.jl")
-    #end
+    include("namahani_test/namahanitah_test.jl")
+    include("namahani_test/namahanitlak_test.jl")
+    include("namahani_test/namahanikrut_test.jl")
+    include("namahani_test/namahanistrih_test.jl")
+    include("namahani_test/namahaniohyb_test.jl")
+    include("namahani_test/namahanikombinovane_test.jl")
+    #include("namahani_test/namahaniotl_test.jl")
     # profily
     include("profily_test/tvarprofilu_test.jl")
     include("profily_test/profilTR4HR_test.jl")
