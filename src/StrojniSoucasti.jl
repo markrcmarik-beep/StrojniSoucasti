@@ -31,8 +31,8 @@ include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("profily/profil_text_lines.jl") #
-include("tvarvlcn.jl") #
-include("tvarCSN.jl") #
+include("profily/tvarvlcn.jl") #
+include("profily/tvarCSN.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnIp.jl")
 include("profily/profilyvlcnWk.jl")
