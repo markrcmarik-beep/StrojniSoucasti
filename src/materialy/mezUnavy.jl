@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí hodnotu meze únavy materiálu. Hodnota je určena na základě
 # meze kluzu, meze pevnosti, druhu namáhání a způsobu zatížení.
-# ver: 2025-11-13
+# ver: 2026-02-04
 ## Funkce: mezUnavy()
 ## Autor: Martin
 #
@@ -54,7 +54,7 @@ typu namáhání `N` a způsobu zatížení `Z`.
 # Návratová hodnota
 Slovník `Dict{String, Quantity}` s jednotkami `[MPa]`.
 """
-function mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString; tisk::Bool=false)
+function mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString)
     # --- Ověření jednotek ---
     for (name, val) in [("Re", Re), ("Rm", Rm)]
         if !(val isa Unitful.Quantity)
@@ -115,16 +115,6 @@ function mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString; tisk::Bool=false
         taue_krut
     else
         sigmae_tah
-    end
-
-    if tisk
-        println("─── Meze únavy ───")
-        println("Namáhání: ", Nn)
-        println("Zatížení: ", Zn)
-        for (k,v) in sort(collect(B))
-            println(rpad(k, 14), " = ", round(uconvert(u"MPa", v); sigdigits=5))
-        end
-        println("──────────────────")
     end
 
     return B

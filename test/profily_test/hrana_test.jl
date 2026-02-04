@@ -37,7 +37,6 @@ B = StrojniSoucasti.hrana("2x45deg", pi/2, "out")
 @test B[:info] === "sražení"
 @test B[:rozmer] == "2x45˚"
 @test B[:x1] == 2
-println(B[:x2])
 #@test B[:x2] == 2
 #@test B[:S] == 2 * 2 / 2
 

@@ -30,7 +30,7 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol, natoceni=0)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
-
+    
     # -----------------------------------------------------------
         # Plochá tyč nebo obdélník
         if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník

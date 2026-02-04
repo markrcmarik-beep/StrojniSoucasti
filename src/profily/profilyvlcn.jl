@@ -42,9 +42,12 @@
 using Unitful
 
 function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
-    info = tvar1[:info] # Získání informace o tvaru
+    #info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    if natoceni > 2*pi
+        natoceni = natoceni - 2*pi
+    end
     # -----------------------------------------------------------
     # S - Plocha [mm²]
     # -----------------------------------------------------------

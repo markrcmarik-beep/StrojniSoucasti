@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-02-01
+# ver: 2026-02-04
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -23,21 +23,23 @@ include("materialy/materialy.jl")
 #include("materialy/reduction_table.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
-include("dovoleneNapeti.jl") # dovolená napětí
-include("mezUnavy.jl") # mez únavy
+include("materialy/dovoleneNapeti.jl") # dovolená napětí
+include("materialy/mezUnavy.jl") # mez únavy
 ## --- profily ---
 include("profily/profilTR4HR.jl") # profily TR4HR
 include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
+include("profily/profil_text_lines.jl") #
 include("tvarvlcn.jl") #
+include("tvarCSN.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnIp.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnIx.jl")
 include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
-include("tvarprofilu.jl") # tvary profilů
+include("profily/tvarprofilu.jl") # tvary profilů
 include("profily/hrana.jl") # hrany
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
@@ -53,16 +55,19 @@ include("namahani/namahaniohybtext.jl") #
 include("namahani/namahanikombinovane.jl") # namáhání kombinovaně
 include("namahani/namahanikombinovanetext.jl") #
 include("namahani/namahaniotl.jl") # namáhání otlačením
-include("tvarCSN.jl") #
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
 include("torsion_J_TR4HR_numeric.jl") #
-include("profil_text_lines.jl") #
 
 # Export funkcí
-export dovoleneNapeti, mezUnavy, tvarprofilu, materialy, profily,
+export materialy, dovoleneNapeti, mezUnavy, 
+# profily
+tvarprofilu, profily,
+# namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
-namahanikombinovane, namahaniohyb, ulozvypis, zavity, namahaniotl
+namahaniohyb, namahaniotl, namahanikombinovane, 
+# 
+ulozvypis, zavity
 
 # Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
 #using .Zavity

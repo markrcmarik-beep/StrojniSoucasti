@@ -108,6 +108,15 @@ using Unitful
     end
 
     # ------------------------------------------------------------
+    # Iy – kvadratický moment
+    # ------------------------------------------------------------
+    @testset "Iy – kvadratický moment" begin
+        Iy0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Iy)
+        @test Iy0 == 10u"mm" * (20u"mm")^3 / 12
+        @test txt0 == "b*a³/12"
+    end
+
+    # ------------------------------------------------------------
     # Imin – minimální kvadratický moment
     # ------------------------------------------------------------
     @testset "Imin – minimální kvadratický moment" begin
