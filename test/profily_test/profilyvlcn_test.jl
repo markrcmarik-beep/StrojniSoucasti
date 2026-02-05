@@ -114,6 +114,37 @@ using Unitful
         Iy0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Iy)
         @test Iy0 == 10u"mm" * (20u"mm")^3 / 12
         @test txt0 == "b*a³/12"
+
+        # Přímé volání profilyvlcnIx pro :Iy (delegace na :Ix s natočením)
+        Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
+        @test Iy_direct == 10u"mm" * (20u"mm")^3 / 12
+        @test txt_direct == "b*a³/12"
+    end
+
+    # ------------------------------------------------------------
+    # Symetrické tvary – ověření Ix == Iy a Ixy == 0
+    # ------------------------------------------------------------
+    @testset "Symetrické tvary" begin
+        # Kruhová tyč (KR) – Ix == Iy a Ixy == 0
+        Ix_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Ix)
+        Iy_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Iy)
+        Ixy_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Ixy)
+        @test Ix_k == Iy_k
+        @test Ixy_k == 0
+
+        # Trubka kruhová (TRKR) – Ix == Iy a Ixy == 0
+        Ix_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ix)
+        Iy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Iy)
+        Ixy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ixy)
+        @test Ix_tr == Iy_tr
+        @test Ixy_tr == 0
+
+        # Čtyřhranná tyč (4HR) – čtverec  (Ix == Iy a Ixy == 0)
+        Ix_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Ix, natoceni=0)
+        Iy_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Iy)
+        Ixy_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Ixy)
+        @test Ix_4 == Iy_4
+        @test Ixy_4 == 0
     end
 
     # ------------------------------------------------------------
