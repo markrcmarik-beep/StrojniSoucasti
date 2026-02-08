@@ -36,6 +36,26 @@ const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__,
 const MATERIALY_DB_CSN = TOML.parsefile(joinpath(@__DIR__, 
     "materialydatabaseOcelCSN.toml"))
 
+"""
+    materialy(name::AbstractString) -> Union{MaterialOcel, Nothing}
+
+Vrátí `MaterialOcel` s vlastnostmi materiálu z databází EN10025-2 a ČSN.
+Pokud materiál neexistuje, vrátí `nothing`.
+
+Vstupy:
+- `name`: označení materiálu (např. "S235", "S235JR+N"). Bílé znaky se odstraní,
+  převádí se na velká písmena.
+
+Výstup:
+- `MaterialOcel` nebo `nothing`.
+
+Příklad:
+```julia
+mat = materialy("S235")
+println(mat.Re)  # 235.0
+```
+"""
+
 function materialy(name::AbstractString)::Union{MaterialOcel,
     Nothing}
 
