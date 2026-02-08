@@ -62,6 +62,27 @@
 
 using Unitful
 
+"""
+    namahaniohyb(; Mo, Lo=nothing, E=nothing, Ix=nothing, Wo=nothing,
+        sigmaDo=nothing, Re=nothing, mat=nothing, zatizeni::AbstractString="statický",
+        k=nothing, profil=nothing, natoceni=nothing, return_text::Bool=true)
+
+Výpočet namáhání v ohybu. Vrací slovník s výsledky a volitelně i textový výpis.
+
+Vstupy:
+- `Mo`: ohybový moment.
+- `Wo`/`Ix`: průřezové charakteristiky (nebo `profil`).
+- `sigmaDo`: dovolené napětí v ohybu (nebo `mat`/`Re`).
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahaniohyb(Mo=500u"N*m", profil="TR4HR 100x100x6", mat="S235")
+```
+"""
 function namahaniohyb(;
     Mo = nothing, Lo = nothing, E = nothing, Ix = nothing,
     Wo = nothing, sigmaDo = nothing, Re = nothing, mat = nothing,

@@ -38,6 +38,26 @@
 # fullpath - plná cesta k uloženému souboru
 ###############################################################
 
+"""
+    ulozvypis(text::AbstractString; cesta::AbstractString=pwd(),
+        soubor::AbstractString="vypocet", koncovka::AbstractString=".txt") -> String
+
+Uloží textový výstup do souboru a vrátí plnou cestu k uloženému souboru.
+
+Vstupy:
+- `text`: textový výstup.
+- `cesta`: cílová složka.
+- `soubor`: název souboru (s nebo bez přípony).
+- `koncovka`: přípona souboru (výchozí `.txt`).
+
+Výstup:
+- plná cesta k uloženému souboru.
+
+Příklad:
+```julia
+ulozvypis("vysledek", cesta=pwd(), soubor="vypocet")
+```
+"""
 function ulozvypis(text::AbstractString;
     cesta::AbstractString = pwd(),
     soubor::AbstractString = "vypocet",

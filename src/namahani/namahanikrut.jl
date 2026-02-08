@@ -74,6 +74,27 @@
 #
 using Unitful
 
+"""
+    namahanikrut(; Mk, Wk=nothing, Ip=nothing, S=nothing, tauDk=nothing, G=nothing,
+        Re=nothing, L0=nothing, mat=nothing, zatizeni::AbstractString="statický",
+        profil=nothing, k=nothing, return_text::Bool=true)
+
+Výpočet namáhání v krutu. Vrací slovník s výsledky a volitelně i textový výpis.
+
+Vstupy:
+- `Mk`: krouticí moment.
+- `Wk`/`Ip`: průřezové charakteristiky (nebo `profil`).
+- `tauDk`: dovolené smykové napětí (nebo `mat`/`Re`).
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahanikrut(Mk=500u"N*m", profil="TR4HR 100x100x6", mat="S235")
+```
+"""
 function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing, 
     S=nothing, tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 
     mat=nothing, zatizeni::AbstractString="statický",

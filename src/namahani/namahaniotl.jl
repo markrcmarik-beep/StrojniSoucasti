@@ -55,6 +55,27 @@
 using Unitful, Unitful.DefaultSymbols
 using Printf: @sprintf
 
+"""
+    namahaniotl(; F, S=nothing, sigmaDotl=nothing, Re=nothing, mat=nothing,
+        zatizeni::AbstractString="statický", profil=nothing, return_text::Bool=true)
+
+Kontrola namáhání na otlačení (plošný tlak). Vrací slovník s výsledky
+a volitelně i textový výpis.
+
+Vstupy:
+- `F`: zatěžující síla.
+- `S`: kontaktní plocha (nebo `profil`).
+- `sigmaDotl`: dovolené napětí (nebo `mat`/`Re`).
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahaniotl(F=5000u"N", profil="PLECH 10x30", mat="S235")
+```
+"""
 function namahaniotl(;
     F=nothing,
     S=nothing,

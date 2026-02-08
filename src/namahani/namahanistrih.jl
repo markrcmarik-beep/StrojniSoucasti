@@ -75,6 +75,27 @@
 
 using Unitful
 
+"""
+    namahanistrih(; F, S=nothing, tauDs=nothing, G=nothing, E=nothing, Re=nothing,
+        mat=nothing, zatizeni::AbstractString="statický", k=nothing,
+        profil=nothing, return_text::Bool=true)
+
+Výpočet namáhání ve střihu. Vrací slovník s výsledky a volitelně i textový výpis.
+
+Vstupy:
+- `F`: střižná síla.
+- `S`: střižná plocha (nebo `profil`).
+- `tauDs`: dovolené smykové napětí (nebo `mat`/`Re`).
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahanistrih(F=10000u"N", profil="TR4HR 100x100x6", mat="S235")
+```
+"""
 function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     G=nothing, E=nothing, Re=nothing, mat=nothing,
     zatizeni::AbstractString="statický", k=nothing,

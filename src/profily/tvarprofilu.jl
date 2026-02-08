@@ -81,6 +81,24 @@
 
 using Unitful
 
+"""
+    tvarprofilu(inputStr::AbstractString, args...) -> Dict{Symbol,Any}
+
+Zpracuje textové označení profilu dle ČSN a vrátí rozměry profilu.
+Volitelně spočítá i vybrané vlastnosti průřezu.
+
+Vstupy:
+- `inputStr`: označení profilu (např. `"PLO 20x10"`, `"TRKR 50x5"`).
+- `args...`: názvy vlastností k výpočtu (např. `"S"`, `"Ix"`, `"Iy"`) nebo úhel natočení.
+
+Výstup:
+- `Dict{Symbol,Any}` s rozměry a případně i s vypočtenými vlastnostmi.
+
+Příklad:
+```julia
+dims = tvarprofilu("PLO 20x10", "S", "Ix")
+```
+"""
 function tvarprofilu(inputStr::AbstractString, args...)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu

@@ -91,6 +91,28 @@
 #
 using Unitful
 
+"""
+    namahanitlak(; F, S=nothing, sigmaDt=nothing, E=nothing, Re=nothing, L0=nothing,
+        mat=nothing, zatizeni::AbstractString="statický", profil=nothing,
+        k=nothing, return_text::Bool=true)
+
+Výpočet namáhání v tlaku. Vrací slovník s výsledky a volitelně i textový výpis.
+
+Vstupy:
+- `F`: zatěžující síla.
+- `S`: plocha průřezu (nebo `profil`).
+- `sigmaDt`: dovolené napětí (nebo `mat`).
+- `mat`: materiál pro určení `Re`/`E`.
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahanitlak(F=1000u"N", S=50u"mm^2", mat="S235")
+```
+"""
 function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing, 
     E=nothing, Re=nothing, L0=nothing, mat=nothing,
     zatizeni::AbstractString="statický", profil=nothing,

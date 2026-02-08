@@ -36,23 +36,24 @@
 using Unitful, Unitful.DefaultSymbols
 
 """
-    mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString; tisk::Bool=false)
+    mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString) -> Quantity
 
+Vrátí mez únavy materiálu podle meze kluzu `Re`, meze pevnosti `Rm`,
+druhu namáhání `N` a způsobu zatížení `Z`.
 
-    mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString; tisk::Bool=false)
+Vstupy:
+- `Re`: mez kluzu s jednotkou (např. `250u"MPa"`).
+- `Rm`: mez pevnosti s jednotkou (např. `450u"MPa"`).
+- `N`: druh namáhání jako řetězec (např. `"tah"`, `"tlak"`, `"střih"`, `"ohyb"`, `"krut"`).
+- `Z`: způsob zatížení jako řetězec (např. `"statický"`, `"pulzní"`, `"dynamický"`, `"rázový"`).
 
-Vrátí **mez únavy** (sigmae, taue …) podle meze kluzu `Re`, meze pevnosti `Rm`,
-typu namáhání `N` a způsobu zatížení `Z`.
+Výstup:
+- mez únavy s jednotkou (MPa).
 
-# Parametry
-- `Re` - mez kluzu (např. `250u"MPa"`).
-- `Rm` - mez pevnosti (např. `450u"MPa"`).
-- `N`  - druh namáhání: `"tah"`, `"tlak"`, `"střih"`, `"ohyb"`, `"krut"`.
-- `Z`  - typ zatížení: `"statický"`, `"pulzní"`, `"dynamický"`, `"rázový"`.
-- `tisk` - volitelný výpis výsledků.
-
-# Návratová hodnota
-Slovník `Dict{String, Quantity}` s jednotkami `[MPa]`.
+Příklad:
+```julia
+mezUnavy(250u"MPa", 450u"MPa", "tah", "statický")
+```
 """
 function mezUnavy(Re, Rm, N::AbstractString, Z::AbstractString)
     # --- Ověření jednotek ---

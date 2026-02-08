@@ -44,6 +44,27 @@
 #
 using Unitful
 
+"""
+    namahanikombinovane(; vysledky::Vector{Dict{Symbol,Any}}, kriterium::Symbol=:HMH,
+        sigmaD=nothing, k=nothing, return_text::Bool=true)
+
+Výpočet kombinovaného namáhání (např. tah-střih, tlak-krut) pomocí kritéria
+HMH nebo Tresca. Využívá výstupy z dílčích funkcí namáhání.
+
+Vstupy:
+- `vysledky`: vektor slovníků z dílčích výpočtů.
+- `kriterium`: `:HMH` nebo `:Tresca`.
+- `sigmaD`: dovolené napětí (volitelné).
+- `return_text`: pokud `true`, vrací i textový výpis.
+
+Výstup:
+- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
+
+Příklad:
+```julia
+namahanikombinovane(vysledky=[VVtah, VVsmyk])
+```
+"""
 function namahanikombinovane(; 
     vysledky::Vector{Dict{Symbol,Any}},
     kriterium::Symbol = :HMH, sigmaD = nothing,

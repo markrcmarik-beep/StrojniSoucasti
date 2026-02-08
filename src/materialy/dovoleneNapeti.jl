@@ -105,6 +105,29 @@ const GAMMA_M = begin
     G
 end
 
+"""
+    dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický") -> Quantity
+
+Vrátí dovolené napětí materiálu podle meze kluzu `Re`, druhu namáhání `N`
+a způsobu zatížení `Z`.
+
+Vstupy:
+- `Re`: mez kluzu s jednotkou (např. `250u"MPa"`). Pokud je bez jednotky,
+  jednotka MPa se doplní.
+- `N`: druh namáhání jako řetězec (např. `"tah"`, `"tlak"`, `"střih"`,
+  `"ohyb"`, `"krut"`, kombinace jako `"tah-střih"`).
+- `Z`: způsob zatížení jako řetězec (např. `"statický"`, `"pulzní"`,
+  `"dynamický"`, `"rázový"`, kombinace jako `"statický-dynamický"`).
+
+Výstup:
+- `sigma`: dovolené napětí s jednotkou (MPa).
+
+Příklad:
+```julia
+dovoleneNapeti(250u"MPa", "tah", "statický")
+dovoleneNapeti(250u"MPa", "střih", "dynamický")
+```
+"""
 function dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický")
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)

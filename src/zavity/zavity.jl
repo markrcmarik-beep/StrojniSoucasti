@@ -32,6 +32,23 @@ include("zavitytypes.jl")
 #export zavity, DbRecord
 const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
 
+"""
+    zavity(oznaceni::AbstractString) -> DbRecord
+
+Vyhledá parametry závitu podle jeho označení.
+
+Vstupy:
+- `oznaceni`: označení závitu (např. `"M8x1.25"`, `"TR20x4"`, `"G1/2"`).
+
+Výstup:
+- `DbRecord` s informacemi o závitu (např. `d`, `p`).
+
+Příklad:
+```julia
+z = zavity("M8x1.25")
+z.d
+```
+"""
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
     RX_METRIC = r"^(?:[mM])(\d+(?:\.\d+)?)(?:[xX](\d+(?:\.\d+)?))?$"
