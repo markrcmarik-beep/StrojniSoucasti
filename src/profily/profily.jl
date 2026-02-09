@@ -118,6 +118,9 @@ function profily(inputStr::AbstractString, args...)
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
     dims = StrojniSoucasti.profilyCSN(clean)
+    if dims == nothing
+        error("Profil: $clean nebyl nalezen.")
+    end
     # -----------------------------------------------------------
     # 3) Bez dalších parametrů → vracíme pouze rozměry
     # -----------------------------------------------------------

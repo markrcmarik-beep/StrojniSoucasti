@@ -1,3 +1,4 @@
+# ver: 2026-02-08
 using Documenter
 using StrojniSoucasti
 

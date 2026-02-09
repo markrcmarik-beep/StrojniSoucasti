@@ -9,7 +9,7 @@ dims = profily("PLO 20.5x10") # pouze rozměry
 @test haskey(dims, :a)
 @test haskey(dims, :b)
 @test haskey(dims, :info)
-@test !haskey(dims, :R)
+@test haskey(dims, :R)
 @test dims[:info] == "PLO"
 @test dims[:a] == 20.5u"mm"
 @test dims[:b] == 10u"mm"
@@ -19,7 +19,7 @@ dims2 = profily("PLO 20x10", "S") # rozměry + vlastnosti
 @test haskey(dims2, :a)
 @test haskey(dims2, :b)
 @test haskey(dims2, :info)
-@test !haskey(dims2, :R)
+@test haskey(dims2, :R)
 @test haskey(dims2, :S)
 @test dims2[:info] == "PLO"
 @test dims2[:a] == 20u"mm"
@@ -32,7 +32,7 @@ dims33 = profily("TR4HR 50x30x5", "Ix") # rozměry + vlastnosti
 @test haskey(dims3, :b)
 @test haskey(dims3, :t)
 @test haskey(dims3, :info)
-@test !haskey(dims3, :R)
+@test haskey(dims3, :R)
 @test haskey(dims3, :S) # vlastnost S je přítomna
 @test typeof(dims3[:S]) <: Unitful.AbstractQuantity # S je s jednotkou
 @test haskey(dims3, :Ix)
@@ -44,15 +44,15 @@ dims33 = profily("TR4HR 50x30x5", "Ix") # rozměry + vlastnosti
 #@test dims3[:R] == 0u"mm"
 
 
-    dims4 = profily("4HR 50")
-    @test haskey(dims4, :a)
-    @test haskey(dims4, :b)
-    @test haskey(dims4, :info)
-    @test !haskey(dims4, :R)
-    @test dims4[:info] == "4HR"
-    @test dims4[:a] == 50u"mm"
-    @test dims4[:b] == 50u"mm"
-    #@test dims4[:R] == 0u"mm"
+dims4 = profily("4HR 50")
+@test haskey(dims4, :a)
+@test haskey(dims4, :b)
+@test haskey(dims4, :info)
+@test haskey(dims4, :R)
+@test dims4[:info] == "4HR"
+@test dims4[:a] == 50u"mm"
+@test dims4[:b] == 50u"mm"
+#@test dims4[:R] == 0u"mm"
 
 dims5 = profily("KR 30", "S")
 @test haskey(dims5, :D)
