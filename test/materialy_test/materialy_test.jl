@@ -34,10 +34,23 @@ using StrojniSoucasti
     mat = materialy("11 373")
 
     @test mat.name == "11 373"
-    @test mat.standard == "ČSN"
+    @test mat.standard == "ČSN 41 1373"
     @test mat.Re == 250
     @test mat.weldable == true
     @test mat.rho == 7850
+
+    mat = materialy("42 3001")
+
+    @test mat.name == "42 3001"
+    @test mat.standard == "ČSN"
+    @test mat.Re == 200
+    @test mat.Rm_min == 250
+    @test mat.Rm_max == 300
+    @test mat.A == 20
+    @test mat.E == 110
+    @test mat.G == 42
+    @test mat.ny == 0.34
+    @test mat.rho == 8930
 
     mat = materialy("nonexistent_material")
     @test mat === nothing

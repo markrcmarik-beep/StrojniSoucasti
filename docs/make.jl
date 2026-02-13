@@ -8,6 +8,6 @@ makedocs(
     pages = [
         "Uvod" => "index.md",
         "Materialy" => "materialy.md",
-        "Dovolene napeti" => "dovolene_napeti.md",
+        "Dovolene napeti" => "dovoleneNapeti.md",
     ],
 )

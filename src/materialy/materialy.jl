@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-01-26
+# ver: 2026-02-13
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -33,13 +33,16 @@ include("materialytypes.jl")
 
 const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
     "materialydatabaseOcelEN10025_2.toml"))
-const MATERIALY_DB_CSN = TOML.parsefile(joinpath(@__DIR__, 
+const MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(@__DIR__, 
     "materialydatabaseOcelCSN.toml"))
+const MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseKovyCSN.toml"))
 
 """
-    materialy(name::AbstractString) -> Union{MaterialOcel, Nothing}
+    materialy(name::AbstractString) -> Union{MaterialOcel, MaterialKovy, Nothing}
 
-Vrátí `MaterialOcel` s vlastnostmi materiálu z databází EN10025-2 a ČSN.
+Vrátí `MaterialOcel` nebo `MaterialKovy` s vlastnostmi materiálu z databází
+EN10025-2 a ČSN.
 Pokud materiál neexistuje, vrátí `nothing`.
 
 Vstupy:
@@ -47,7 +50,7 @@ Vstupy:
   převádí se na velká písmena.
 
 Výstup:
-- `MaterialOcel` nebo `nothing`.
+- `MaterialOcel`, `MaterialKovy` nebo `nothing`.
 
 Příklad:
 ```julia
@@ -57,6 +60,7 @@ println(mat.Re)  # 235.0
 """
 
 function materialy(name::AbstractString)::Union{MaterialOcel,
+    MaterialKovy,
     Nothing}
 
     name = uppercase(strip(name)) # velká písmena
@@ -81,9 +85,9 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         Float64(get(row, "ny", 0)), # Poissonovo číslo
         Float64(get(row, "rho", 0)) # hustota
     )
-    elseif haskey(MATERIALY_DB_CSN, name) # materiál existuje v databázi CSN
+    elseif haskey(MATERIALY_DB_OCEL_CSN, name) # materiál existuje v databázi ČSN ocelí
         
-        row = MATERIALY_DB_CSN[name]
+        row = MATERIALY_DB_OCEL_CSN[name]
         return MaterialOcel(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
@@ -95,6 +99,21 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         Float64(get(row, "T_KV", 0)), # teplota KV
         Bool(get(row, "weldable", false)), # svařitelnost
         Float64(get(row, "thickness_max", 0)), # max tloušťka
+        Float64(get(row, "E", 0)), # modul pružnosti
+        Float64(get(row, "G", 0)), # modul smyku
+        Float64(get(row, "ny", 0)), # Poissonovo číslo
+        Float64(get(row, "rho", 0)) # hustota
+    )
+    elseif haskey(MATERIALY_DB_KOVY_CSN, name) # materiál existuje v databázi ČSN kovů
+        
+        row = MATERIALY_DB_KOVY_CSN[name]
+        return MaterialKovy(
+        get(row, "name", name)::String, # název materiálu
+        get(row, "standard", "")::String, # norma (nepovinné)
+        Float64(get(row, "Re", 0)), # meze kluzu
+        Float64(get(row, "Rm_min", 0)), # meze pevnosti
+        Float64(get(row, "Rm_max", 0)), # meze pevnosti max
+        Float64(get(row, "A", 0)), # prodloužení
         Float64(get(row, "E", 0)), # modul pružnosti
         Float64(get(row, "G", 0)), # modul smyku
         Float64(get(row, "ny", 0)), # Poissonovo číslo

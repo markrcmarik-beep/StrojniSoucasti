@@ -1,0 +1,26 @@
+
+schema_version = "1.0.0"
+
+["423001"]
+name = "42 3001"
+standard = "ČSN"
+Re = 200
+Rm_min = 250
+Rm_max = 300
+A = 20
+E = 110
+G = 42
+ny = 0.34
+rho = 8930
+
+["CUCR"]
+name = "CuCr"
+standard = "ČSN"
+Re = 200
+Rm_min = 250
+Rm_max = 300
+A = 20
+E = 110
+G = 42
+ny = 0.34
+rho = 8930
