@@ -1,0 +1,43 @@
+schema_version = "1.0.0"
+
+["422420"]
+name = "42 2420"
+standard = "ČSN 42 2420"
+druh = "šedá litina"
+Rm_tah = 200
+Rm_tlak = 800
+A = 0.5
+HB_min = 170
+HB_max = 230
+E = 110
+G = 44
+ny = 0.27
+rho = 7200
+
+["422425"]
+name = "42 2425"
+standard = "ČSN 42 2425"
+druh = "šedá litina"
+Rm_tah = 250
+Rm_tlak = 900
+A = 0.8
+HB_min = 180
+HB_max = 260
+E = 115
+G = 45
+ny = 0.27
+rho = 7200
+
+["422305"]
+name = "42 2305"
+standard = "ČSN 42 2305"
+druh = "tvárná litina"
+Rm_tah = 500
+Rm_tlak = 1200
+A = 7
+HB_min = 170
+HB_max = 230
+E = 170
+G = 68
+ny = 0.28
+rho = 7100

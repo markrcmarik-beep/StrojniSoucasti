@@ -31,3 +31,18 @@ struct MaterialKovy
     rho::Float64        # hustota [kg/m^3]
     #extra::Dict{Symbol, Any}
 end
+
+struct MaterialLitina
+    name::String        # název
+    standard::String    # norma
+    druh::String        # typ litiny
+    Rm_tah::Float64     # mez pevnosti v tahu [MPa]
+    Rm_tlak::Float64    # mez pevnosti v tlaku [MPa]
+    A::Float64          # tažnost [%]
+    HB_min::Float64     # minimální tvrdost Brinell [HB]
+    HB_max::Float64     # maximální tvrdost Brinell [HB]
+    E::Float64          # Modul pružnosti (Youngův modul) [GPa]
+    G::Float64          # Modul smyku [GPa]
+    ny::Float64         # Poissonovo číslo
+    rho::Float64        # hustota [kg/m^3]
+end

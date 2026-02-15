@@ -52,6 +52,22 @@ using StrojniSoucasti
     @test mat.ny == 0.34
     @test mat.rho == 8930
 
+    mat = materialy("42 2420")
+
+    @test mat isa StrojniSoucasti.MaterialLitina
+    @test mat.name == "42 2420"
+    @test mat.standard == "ČSN 42 2420"
+    @test mat.druh == "šedá litina"
+    @test mat.Rm_tah == 200
+    @test mat.Rm_tlak == 800
+    @test mat.A == 0.5
+    @test mat.HB_min == 170
+    @test mat.HB_max == 230
+    @test mat.E == 110
+    @test mat.G == 44
+    @test mat.ny == 0.27
+    @test mat.rho == 7200
+
     mat = materialy("nonexistent_material")
     @test mat === nothing
 
