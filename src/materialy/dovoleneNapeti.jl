@@ -172,6 +172,15 @@ sigma = if N in ["tah", "tlak", "ohyb"]
 return sigma # Vrácení výsledku
 end
 
+# Varianta s klíčovým argumentem Re (kompatibilní s voláním
+# dovoleneNapeti(Re=..., "tah", "statický"))
+function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing)
+    if Re === nothing
+        error("Chybí vstupní parametr Re.")
+    end
+    return dovoleneNapeti(Re, N, Z)
+end
+
 function gammaM_funkce(Z::AbstractString, N::AbstractString)
     # Pokud uživatel zadá jednosložkové zatížení (např. "statický")
     # a druh namáhání je kombinovaný (např. "tah-střih"),

@@ -181,7 +181,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti(Re, "tlak", zatizeni)
+        sigmaDt = dovoleneNapeti(Re=Re, "tlak", zatizeni)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))

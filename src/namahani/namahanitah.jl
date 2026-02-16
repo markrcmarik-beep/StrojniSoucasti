@@ -169,7 +169,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti(Re, "tah", zatizeni)
+        sigmaDt = dovoleneNapeti(Re=Re, "tah", zatizeni)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))

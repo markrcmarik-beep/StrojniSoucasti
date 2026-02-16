@@ -129,7 +129,7 @@ function namahaniotl(;
     end
     # dovolené napětí na otlačení
     if Re !== nothing
-        sigmaDotl = dovoleneNapeti(Re, "otlačení", zatizeni)
+        sigmaDotl = dovoleneNapeti(Re=Re, "otlačení", zatizeni)
     end
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
     # ----------------------------------------------------------

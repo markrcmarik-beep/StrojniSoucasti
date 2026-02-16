@@ -148,7 +148,7 @@ function namahaniohyb(;
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDo = dovoleneNapeti(Re, "ohyb", zatizeni)
+        sigmaDo = dovoleneNapeti(Re=Re, "ohyb", zatizeni)
     end
     # ---------------------------------------------------------
     # profil

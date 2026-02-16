@@ -162,7 +162,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDk = dovoleneNapeti(Re, "krut", zatizeni)
+        tauDk = dovoleneNapeti(Re=Re, "krut", zatizeni)
     end
     # ---------------------------------------------------------
     # profil
