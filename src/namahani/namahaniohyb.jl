@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-01-22
+# ver: 2026-02-16
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -148,7 +148,7 @@ function namahaniohyb(;
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDo = dovoleneNapeti(Re=Re, "ohyb", zatizeni)
+        sigmaDo = dovoleneNapeti("ohyb", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil

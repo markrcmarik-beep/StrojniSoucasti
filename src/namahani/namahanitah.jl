@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-01-22
+# ver: 2026-02-16
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -169,7 +169,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti(Re=Re, "tah", zatizeni)
+        sigmaDt = dovoleneNapeti("tah", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))

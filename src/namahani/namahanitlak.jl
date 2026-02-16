@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tlaku pro strojní součásti.
-# ver: 2026-01-22
+# ver: 2026-02-16
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -181,7 +181,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti(Re=Re, "tlak", zatizeni)
+        sigmaDt = dovoleneNapeti("tlak", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))

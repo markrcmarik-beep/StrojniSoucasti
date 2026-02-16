@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-02-05
+# ver: 2026-02-16
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -129,7 +129,7 @@ function namahaniotl(;
     end
     # dovolené napětí na otlačení
     if Re !== nothing
-        sigmaDotl = dovoleneNapeti(Re=Re, "otlačení", zatizeni)
+        sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
     end
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
     # ----------------------------------------------------------

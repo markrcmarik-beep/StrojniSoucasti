@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-01-22
+# ver: 2026-02-16
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -164,7 +164,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
         if !isdefined(Main,:dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDs = dovoleneNapeti(Re, "střih", zatizeni)
+        tauDs = dovoleneNapeti("střih", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil → střižná plocha

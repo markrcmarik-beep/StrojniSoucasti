@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2026-01-19
+# ver: 2026-02-16
 ## Funkce: dovoleneNapeti()
 ## Autor: Martin
 #
@@ -128,7 +128,7 @@ dovoleneNapeti(250u"MPa", "tah", "statický")
 dovoleneNapeti(250u"MPa", "střih", "dynamický")
 ```
 """
-function dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický")
+function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing)
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)
    Re = Re*u"MPa"
@@ -170,15 +170,6 @@ sigma = if N in ["tah", "tlak", "ohyb"]
         end
 
 return sigma # Vrácení výsledku
-end
-
-# Varianta s klíčovým argumentem Re (kompatibilní s voláním
-# dovoleneNapeti(Re=..., "tah", "statický"))
-function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing)
-    if Re === nothing
-        error("Chybí vstupní parametr Re.")
-    end
-    return dovoleneNapeti(Re, N, Z)
 end
 
 function gammaM_funkce(Z::AbstractString, N::AbstractString)
