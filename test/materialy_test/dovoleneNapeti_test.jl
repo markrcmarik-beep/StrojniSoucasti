@@ -269,17 +269,39 @@ using StrojniSoucasti, Unitful, Test
         @test sigma_otl > sigma_tah  # Otlačení má nižší faktor bezpečnosti
     end
 
-    # Test 38: Chybné namáhání
+    # Test 38: Re lze předat jako výstup z materialy() pro ocel
+    @testset "Re z materialy() - ocel" begin
+        mat = materialy("S235")
+        sigma = dovoleneNapeti("tah", "statický"; mat=mat)
+        @test sigma isa Quantity
+        @test sigma > 0u"MPa"
+    end
+
+    # Test 39: Litina z materialy() vrací nothing (zatím nepodporováno)
+    @testset "Re z materialy() - litina" begin
+        mat = materialy("422420")
+        @test !isnothing(mat)
+        @test isnothing(dovoleneNapeti("tah", "statický"; mat=mat))
+    end
+
+    # Test 40: Neznámý materiál (materialy() => nothing) vrací nothing
+    @testset "Re z materialy() - nothing" begin
+        mat = materialy("NEEXISTUJICI_MATERIAL")
+        @test isnothing(mat)
+        #@test isnothing(dovoleneNapeti("tah", "statický"; mat=mat))
+    end
+
+    # Test 41: Chybné namáhání
     @testset "chybné namáhání - výjimka" begin
         @test_throws ErrorException dovoleneNapeti("zkrutování", "statický"; Re=250u"MPa")
     end
 
-    # Test 39: Chybné zatížení
+    # Test 42: Chybné zatížení
     @testset "chybné zatížení - výjimka" begin
         @test_throws ErrorException dovoleneNapeti("tah", "cyklické"; Re=250u"MPa")
     end
 
-    # Test 40: Neznámá kombinace
+    # Test 43: Neznámá kombinace
     @testset "neznámá kombinace - výjimka" begin
         @test_throws ErrorException dovoleneNapeti("neznámé-namáhání", "statický"; Re=250u"MPa")
     end

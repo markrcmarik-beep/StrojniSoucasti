@@ -101,6 +101,7 @@ a způsobu zatížení `Z`.
 Vstupy:
 - `Re`: mez kluzu s jednotkou (např. `250u"MPa"`). Pokud je bez jednotky,
   jednotka MPa se doplní.
+- `mat`: výstup z `materialy(...)`. Pokud není zadáno `Re`, použije se `mat.Re`.
 - `N`: druh namáhání jako řetězec (např. `"tah"`, `"tlak"`, `"střih"`,
   `"ohyb"`, `"krut"`, kombinace jako `"tah-střih"`).
 - `Z`: způsob zatížení jako řetězec (např. `"statický"`, `"pulzní"`,
@@ -115,10 +116,27 @@ dovoleneNapeti(250u"MPa", "tah", "statický")
 dovoleneNapeti(250u"MPa", "střih", "dynamický")
 ```
 """
-function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing)
+function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing, mat=nothing)
+if Re === nothing && mat !== nothing
+    if hasproperty(mat, :Re)
+        Re = getproperty(mat, :Re)
+    else
+        Re = nothing
+    end
+elseif Re === nothing && mat === nothing
+    error("Zadej Re= nebo mat=")
+elseif Re !== nothing && mat !== nothing
+    error("Příliš zadání. Zadej jen Re= nebo mat=")
+end
+
+if Re !== nothing
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)
-   Re = Re*u"MPa"
+    if Re isa Number
+        Re = Re*u"MPa"
+    else
+        return nothing
+    end
     #error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
 end
 # Ověření druhu namáhání
@@ -150,6 +168,9 @@ sigma = if N in ["tah", "tlak", "ohyb"]
         end
 
 return sigma # Vrácení výsledku
+else
+    return nothing
+end
 end
 
 function gammaM_funkce(Z::AbstractString, N::AbstractString)
