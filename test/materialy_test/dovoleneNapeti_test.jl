@@ -6,6 +6,15 @@ using StrojniSoucasti, Unitful, Test
 
 @testset "dovoleneNapeti" begin
 
+    # Test 0: hodnoty načtené z gammaM.toml
+    @testset "gammaM.toml - načtení dat" begin
+        sigma_simple = dovoleneNapeti("tah", "statický"; Re=260u"MPa")
+        @test sigma_simple ≈ 200.0u"MPa" rtol=1e-12
+
+        sigma_combo = dovoleneNapeti("tah-střih", "statický-pulzní"; Re=230u"MPa")
+        @test sigma_combo ≈ 100.0u"MPa" rtol=1e-12
+    end
+
     # Test 1: Tah - statický
     @testset "tah - statický" begin
         sigma = dovoleneNapeti("tah", "statický", Re=250u"MPa")

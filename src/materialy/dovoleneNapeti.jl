@@ -18,7 +18,7 @@
 ## Výstupní proměnné:
 # sigma - dovolené napětí materiálu s jednotkou (MPa)
 ## Použité balíčky
-# Unitful
+# Unitful, TOML
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -33,77 +33,64 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
+using TOML
 
-# Určení bezpečnostního faktoru gammaM podle typu zatížení a namáhání
-# GENERÁTOR: vytvoří konzistentní a symetrickou tabulku hodnot podle
-# standardních pravidel: pro kombinace se použije konzervativní maximum
-# a pro kombinované namáhání aplikujeme mírný násobící faktor.
-const GAMMA_M = begin
-    Zs = ["statický","pulzní","dynamický","rázový"]
-    Ns_simple = ["tah","tlak","střih","krut","ohyb","otlačení"]
-
-    # Základní (jednoduché) hodnoty - upravené tak, aby byly konzistentní
+# Načtení základní tabulky gammaM z externího TOML.
+const GAMMA_M_BASE = begin
+    raw = TOML.parsefile(joinpath(@__DIR__, "gammaM.toml"))
     base = Dict{Tuple{String,String},Float64}()
-    base[("statický","tah")] = 1.3
-    base[("statický","tlak")] = 1.3
-    base[("statický","střih")] = 1.5
-    base[("statický","krut")] = 1.7
-    base[("statický","ohyb")] = 1.5
-    base[("statický","otlačení")] = 1.0
+    z_values = String[]
+    n_values = String[]
 
-    base[("pulzní","tah")] = 1.7
-    base[("pulzní","tlak")] = 1.7
-    base[("pulzní","střih")] = 2.0
-    base[("pulzní","krut")] = 2.2
-    base[("pulzní","ohyb")] = 2.0
-    base[("pulzní","otlačení")] = 1.2
-
-    base[("dynamický","tah")] = 2.0
-    base[("dynamický","tlak")] = 2.0
-    base[("dynamický","střih")] = 2.5
-    base[("dynamický","krut")] = 2.7
-    base[("dynamický","ohyb")] = 2.5
-    base[("dynamický","otlačení")] = 1.3
-
-    base[("rázový","tah")] = 2.5
-    base[("rázový","tlak")] = 2.5
-    base[("rázový","střih")] = 3.0
-    base[("rázový","krut")] = 3.2
-    base[("rázový","ohyb")] = 3.0
-    base[("rázový","otlačení")] = 1.5
-
-    G = Dict{Tuple{String,String},Float64}()
-    # Přidej jednoduché případy
-    for ((Z,N),v) in base
-        G[(Z,N)] = v
-    end
-    # Funkce pro vytvoření všech kombinací Z1-Z2 a N kombinací
-    combo_factor = 1.15
-    for Z1 in Zs, Z2 in Zs
-        Zkey = string(Z1, "-", Z2)
-        # jednoduché namáhání pro kombinace zatížení: bereme konzervativní maximum
-        for N in Ns_simple
-            G[(Zkey,N)] = max(base[(Z1,N)], base[(Z2,N)])
+    for (Z, row_any) in raw
+        row_any isa AbstractDict || error("Neplatná sekce '$Z' v gammaM.toml.")
+        push!(z_values, String(Z))
+        for (N, v_any) in row_any
+            push!(n_values, String(N))
+            base[(String(Z), String(N))] = Float64(v_any)
         end
-        # kombinované druhy namáhání (všechny dvojice z Ns_simple)
-        for i in eachindex(Ns_simple)
-            for j in (i+1):lastindex(Ns_simple)
-                a = Ns_simple[i]
-                b = Ns_simple[j]
+    end
+
+    unique_n = unique(n_values)
+    for Z in unique(z_values), N in unique_n
+        haskey(base, (Z, N)) || error("V gammaM.toml chybí hodnota pro Z='$Z', N='$N'.")
+    end
+    base
+end
+
+const ZS = sort!(unique([z for (z, _) in keys(GAMMA_M_BASE)]))
+const NS_SIMPLE = sort!(unique([n for (_, n) in keys(GAMMA_M_BASE)]))
+
+# Určení bezpečnostního faktoru gammaM podle typu zatížení a namáhání.
+const GAMMA_M = begin
+    G = Dict{Tuple{String,String},Float64}()
+    for ((Z, N), v) in GAMMA_M_BASE
+        G[(Z, N)] = v
+    end
+
+    combo_factor = 1.15
+    for Z1 in ZS, Z2 in ZS
+        Zkey = string(Z1, "-", Z2)
+        for N in NS_SIMPLE
+            G[(Zkey, N)] = max(GAMMA_M_BASE[(Z1, N)], GAMMA_M_BASE[(Z2, N)])
+        end
+        for i in eachindex(NS_SIMPLE)
+            for j in (i+1):lastindex(NS_SIMPLE)
+                a = NS_SIMPLE[i]
+                b = NS_SIMPLE[j]
                 Nkey = string(a, "-", b)
-                # vezmeme nejhorší kombinaci obou režimů a aplikujeme faktor
-                g_candidates = [base[(Z1,a)], base[(Z2,b)], base[(Z1,b)], base[(Z2,a)]]
-                g = maximum(g_candidates) * combo_factor
-                # nepropadejme pod maximum komponent
-                g = max(g, maximum(g_candidates))
-                g = round(g; digits=2)
-                G[(Zkey,Nkey)] = g
-                G[(Zkey,string(b, "-", a))] = g
+                g_candidates = [GAMMA_M_BASE[(Z1, a)], GAMMA_M_BASE[(Z2, b)], GAMMA_M_BASE[(Z1, b)], GAMMA_M_BASE[(Z2, a)]]
+                g = round(maximum(g_candidates) * combo_factor; digits=2)
+                G[(Zkey, Nkey)] = g
+                G[(Zkey, string(b, "-", a))] = g
             end
         end
     end
     G
 end
+
+const POVOLENE_N = sort!(unique([n for (_, n) in keys(GAMMA_M)]))
+const POVOLENE_Z = sort!(unique([z for (z, _) in keys(GAMMA_M)]))
 
 """
     dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický") -> Quantity
@@ -135,18 +122,11 @@ if !(Re isa Unitful.Quantity)
     #error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
 end
 # Ověření druhu namáhání
-povoleneN = ["tah", "tlak", "střih", "krut", "ohyb", "otlačení",
-    "tah-střih", "tlak-střih", "tah-krut", "tlak-krut", "tah-ohyb", "tlak-ohyb",
-    "střih-krut", "střih-ohyb", "krut-ohyb"] # kombinované druhy namáhání
-povoleneZ = ["statický", "pulzní", "dynamický", "rázový",
-    "statický-statický", "statický-pulzní", "pulzní-statický", 
-    "pulzní-pulzní", "statický-dynamický", "pulzní-dynamický", "dynamický-dynamický",
-    "statický-rázový", "pulzní-rázový", "dynamický-rázový", "rázový-rázový"] # kombinované způsoby zatížení
-if !(N in povoleneN)
-    error("Neznámý druh namáhání: $N. Povolené hodnoty: $(join(povoleneN, ", ")).")
+if !(N in POVOLENE_N)
+    error("Neznámý druh namáhání: $N. Povolené hodnoty: $(join(POVOLENE_N, ", ")).")
 end
-if !(Z in povoleneZ)
-    error("Neznámý způsob zatížení: $Z. Povolené hodnoty: $(join(povoleneZ, ", ")).")
+if !(Z in POVOLENE_Z)
+    error("Neznámý způsob zatížení: $Z. Povolené hodnoty: $(join(POVOLENE_Z, ", ")).")
 end
 # Určení bezpečnostního faktoru gammaM podle typu zatížení a namáhání
 
