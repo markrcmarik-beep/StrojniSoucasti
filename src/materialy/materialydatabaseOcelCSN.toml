@@ -4,6 +4,7 @@ schema_version = "1.0.0"
 ["11373"]
 name = "11 373"
 standard = "ČSN 41 1373"
+druh = "konstrukční ocel"
 Re = 250
 Rm_min = 370
 Rm_max = 370
@@ -20,6 +21,7 @@ rho = 7850
 ["11373ŽÍHANÝ"]
 name = "11 373 žíhaný"
 standard = "ČSN"
+druh = "konstrukční ocel"
 Re = 220
 Rm_min = 350
 Rm_max = 370
@@ -36,6 +38,7 @@ rho = 7850
 ["16440"]
 name = "16 440"
 standard = "ČSN"
+druh = "konstrukční ocel"
 Re = 400
 Rm_min = 650
 Rm_max = 750
@@ -52,6 +55,7 @@ rho = 7850
 ["16440ZUŠLECHTĚNO"]
 name = "16 440 zušlechtěno"
 standard = "ČSN"
+druh = "konstrukční ocel"
 Re = 700
 Rm_min = 900
 Rm_max = 1100

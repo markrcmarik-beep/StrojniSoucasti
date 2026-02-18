@@ -4,6 +4,7 @@ schema_version = "1.0.0"
 ["S235"]
 name = "S235"
 standard = "EN 10025-2"
+druh = "konstrukční ocel"
 Re = 235
 Rm_min = 360
 Rm_max = 510
@@ -20,6 +21,7 @@ rho = 7850
 ["S235JR+N"]
 name = "S235JR+N"
 standard = "EN 10025-2"
+druh = "konstrukční ocel"
 Re = 235
 Rm_min = 360
 Rm_max = 510
@@ -36,6 +38,7 @@ rho = 7850
 ["S235J2+N"]
 name = "S235J2+N"
 standard = "EN 10025-2"
+druh = "konstrukční ocel"
 Re = 235
 Rm_min = 360
 Rm_max = 510
@@ -52,6 +55,7 @@ rho = 7850
 ["S355JR+N"]
 name = "S355JR+N"
 standard = "EN 10025-2"
+druh = "konstrukční ocel"
 Re = 355
 Rm_min = 470
 Rm_max = 630
@@ -68,6 +72,7 @@ rho = 7850
 ["S355J2+N"]
 name = "S355J2+N"
 standard = "EN 10025-2"
+druh = "konstrukční ocel"
 Re = 355
 Rm_min = 470
 Rm_max = 630
