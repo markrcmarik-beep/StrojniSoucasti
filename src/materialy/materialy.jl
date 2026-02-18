@@ -75,6 +75,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         return MaterialOcel(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
+        get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
@@ -94,6 +95,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         return MaterialOcel(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
+        get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
@@ -113,6 +115,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         return MaterialKovy(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
+        get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
