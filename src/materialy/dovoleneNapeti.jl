@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2026-02-16
+# ver: 2026-02-18
 ## Funkce: dovoleneNapeti()
 ## Autor: Martin
 #
@@ -32,8 +32,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful
-using TOML
+using Unitful, TOML
 
 # Načtení základní tabulky gammaM z externího TOML.
 const GAMMA_M_BASE = begin
@@ -48,15 +47,15 @@ const GAMMA_M_BASE = begin
         for (N, v_any) in row_any
             push!(n_values, String(N))
             base[(String(Z), String(N))] = Float64(v_any)
-        end
-    end
+        end # konec for
+    end # konec for
 
     unique_n = unique(n_values)
     for Z in unique(z_values), N in unique_n
         haskey(base, (Z, N)) || error("V gammaM.toml chybí hodnota pro Z='$Z', N='$N'.")
-    end
+    end # konec for
     base
-end
+end # konec const GAMMA_M_BASE
 
 const ZS = sort!(unique([z for (z, _) in keys(GAMMA_M_BASE)]))
 const NS_SIMPLE = sort!(unique([n for (_, n) in keys(GAMMA_M_BASE)]))
@@ -66,14 +65,14 @@ const GAMMA_M = begin
     G = Dict{Tuple{String,String},Float64}()
     for ((Z, N), v) in GAMMA_M_BASE
         G[(Z, N)] = v
-    end
+    end # konec for
 
     combo_factor = 1.15
     for Z1 in ZS, Z2 in ZS
         Zkey = string(Z1, "-", Z2)
         for N in NS_SIMPLE
             G[(Zkey, N)] = max(GAMMA_M_BASE[(Z1, N)], GAMMA_M_BASE[(Z2, N)])
-        end
+        end # konec for
         for i in eachindex(NS_SIMPLE)
             for j in (i+1):lastindex(NS_SIMPLE)
                 a = NS_SIMPLE[i]
@@ -83,11 +82,11 @@ const GAMMA_M = begin
                 g = round(maximum(g_candidates) * combo_factor; digits=2)
                 G[(Zkey, Nkey)] = g
                 G[(Zkey, string(b, "-", a))] = g
-            end
-        end
-    end
-    G
-end
+            end # konec for
+        end # konec for
+    end # konec for
+    G # Vrácení kompletního slovníku GAMMA_M s kombinacemi zatížení a namáhání
+end # konec const GAMMA_M
 
 const POVOLENE_N = sort!(unique([n for (_, n) in keys(GAMMA_M)]))
 const POVOLENE_Z = sort!(unique([z for (z, _) in keys(GAMMA_M)]))
@@ -122,30 +121,31 @@ if Re === nothing && mat !== nothing
         Re = getproperty(mat, :Re)
     else
         Re = nothing
-    end
+    end # konec if
 elseif Re === nothing && mat === nothing
     error("Zadej Re= nebo mat=")
 elseif Re !== nothing && mat !== nothing
     error("Příliš zadání. Zadej jen Re= nebo mat=")
-end
+end # konec if
 
 if Re !== nothing
 # Ověření jednotek Re
 if !(Re isa Unitful.Quantity)
     if Re isa Number
         Re = Re*u"MPa"
-    else
+    else # Pokud Re není ani číslo, ani jednotková veličina
         return nothing
-    end
+    end # konec if
     #error("Vstupní parametr Re musí mít jednotku (např. 250u\"MPa\").")
-end
+end # konec if
 # Ověření druhu namáhání
 if !(N in POVOLENE_N)
     error("Neznámý druh namáhání: $N. Povolené hodnoty: $(join(POVOLENE_N, ", ")).")
-end
+end # konec if
+# Ověření způsobu zatížení
 if !(Z in POVOLENE_Z)
     error("Neznámý způsob zatížení: $Z. Povolené hodnoty: $(join(POVOLENE_Z, ", ")).")
-end
+end # konec if
 # Určení bezpečnostního faktoru gammaM podle typu zatížení a namáhání
 
 gammaM = gammaM_funkce(Z, N)
@@ -163,15 +163,15 @@ sigma = if N in ["tah", "tlak", "ohyb"]
             Re / sqrt(3) / gammaM # Von Misesův kriteriál
         elseif N == "otlačení"
             Re / gammaM # Speciální případ pro otlačení (rozdělení bezpečnostního faktoru)
-        else
+        else # Pokud by se sem dostal, znamená to, že N není v povolených hodnotách, což by mělo být zachyceno dříve.
             error("Neznámé: $N")
-        end
+        end # konec if
 
 return sigma # Vrácení výsledku
-else
+else # Pokud Re není zadáno, vrátíme nothing (nebo případně můžeme zvolit jinou logiku, např. použít mat.Re, pokud je k dispozici).
     return nothing
-end
-end
+end # konec if
+end # konec funkce dovoleneNapeti
 
 function gammaM_funkce(Z::AbstractString, N::AbstractString)
     # Pokud uživatel zadá jednosložkové zatížení (např. "statický")
@@ -180,15 +180,15 @@ function gammaM_funkce(Z::AbstractString, N::AbstractString)
     key = (Z, N)
     if haskey(GAMMA_M, key)
         return GAMMA_M[key]
-    end
+    end # konec if
     # Pokus o normalizaci: pokud je Z jednosložkové a N kombinované,
     # vyzkoušíme klíč ("Z-Z", N)
     if !occursin("-", Z) && occursin("-", N)
         key2 = (string(Z, "-", Z), N)
         if haskey(GAMMA_M, key2)
             return GAMMA_M[key2]
-        end
-    end
+        end # konec if
+    end # konec if
     # Pokud nebylo nalezeno, vypiš srozumitelnou chybu
     error("Neznámá kombinace zatížení: Z=$Z, N=$N")
-end
+end # konec funkce gammaM_funkce
