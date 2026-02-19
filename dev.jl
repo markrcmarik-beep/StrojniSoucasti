@@ -1,5 +1,5 @@
 # ver: 2026-02-14
-
+# Jednorázová aktivace balíčku 
 import Pkg
 
 # cesta ke složce, kde leží tento skript
