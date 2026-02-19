@@ -1,5 +1,5 @@
 # ver: 2026-02-14
-
+# stála aktivace balíčku 
 import Pkg
 
 package_path = @__DIR__
