@@ -1,5 +1,20 @@
 # ver: 2026-02-20
 # Čištění cache a dočasných souborů
+# Základní čištění
+#julia clean.jl
+
+# Čištění včetně build souborů
+#julia clean.jl --build
+
+# Odstranění závislostí a cache
+#julia clean.jl --deps
+
+# Kompletní úklid
+#julia clean.jl --all
+
+# Verbose režim
+#julia clean.jl --verbose
+
 import Pkg
 
 package_path = @__DIR__
