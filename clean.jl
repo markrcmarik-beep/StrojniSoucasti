@@ -75,8 +75,14 @@ Pkg.activate(package_path)
 Pkg.gc()
 
 if verbose
-    println("\nChyšné soubory:")
-    run(`find $(package_path) -type f -name "*.o" -o -name "*.so" -o -name "*.a")
+    println("\nNalezene binarni artefakty:")
+    for (root, _, files) in walkdir(package_path)
+        for file in files
+            if endswith(file, ".o") || endswith(file, ".so") || endswith(file, ".a")
+                println(joinpath(root, file))
+            end
+        end
+    end
 end
 
 println("\nHotovo. Prostředí bylo vyčištěno.")
