@@ -1,13 +1,34 @@
-# Advanced Version of the Update
+# ver: 2026-02-20
+# Aktualizace balíčku s flexibilními možnostmi
+import Pkg
 
-# This function performs advanced operations with detailed steps.
-function advancedUpdate()  
-    # Step 1: Initialize the process
-    initializeProcess()  
+package_path = @__DIR__
 
-    # Step 2: Execute main operations
-    executeOperations()  
+# získání argumentů z příkazové řádky
+update_docs = "--docs" in ARGS
+verbose = "--verbose" in ARGS || "-v" in ARGS
 
-    # Step 3: Finalize the update
-    finalizeUpdate()  
+println("Aktualizuji prostředí: ", package_path)
+
+# aktivace lokálního prostředí
+Pkg.activate(package_path)
+
+# aktualizace závislostí
+println("Aktualizuji závislosti...")
+Pkg.update()
+
+# aktualizace docs prostředí (pokud je požadováno)
+if update_docs && isdir(joinpath(package_path, "docs"))
+    println("\nAktualizuji docs prostředí...")
+    Pkg.activate(joinpath(package_path, "docs"))
+    Pkg.update()
+    Pkg.activate(package_path)
 end
+
+# zobrazení statusu
+if verbose || update_docs
+    println("\nAktuální stav prostředí:")
+    Pkg.status()
+end
+
+println("\nHotovo. Prostředí je aktualizováno.")
