@@ -1,5 +1,18 @@
 # ver: 2026-02-20
 # Aktualizace balíčku s flexibilními možnostmi
+# Základní aktualizace (jen hlavní balíček)
+#julia update.jl
+
+# S detailním výstupem
+#julia update.jl --verbose
+#julia update.jl -v
+
+# Včetně aktualizace docs prostředí
+#julia update.jl --docs
+
+# Kombinace
+#julia update.jl --docs --verbose
+
 import Pkg
 
 package_path = @__DIR__
