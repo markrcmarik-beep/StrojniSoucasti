@@ -1,4 +1,4 @@
-Ver: 2026-02-20
+# ver: 2026-02-20
 # Build Documentation Script
 
 # This script serves to manage the build process with various options.
