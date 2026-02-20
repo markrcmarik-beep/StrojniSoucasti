@@ -1,34 +1,20 @@
-# ver: 2026-02-20
-# Aktualizace balíčku s flexibilními možnostmi
-import Pkg
+# Help Functionality
 
-package_path = @__DIR__
+This script includes a help function that can be invoked with the --help flag. Use this flag to get information about how to use the script effectively.
 
-# získání argumentů z příkazové řádku
-update_docs = "--docs" in ARGS
-verbose = "--verbose" in ARGS || "-v" in ARGS
+## Usage
 
-println("Aktualizuji prostředí: ", package_path)
+```bash
+julia update.jl --help
+```
 
-# aktivace lokálního prostředí
-Pkg.activate(package_path)
+## Help Output
 
-# aktualizace závislostí
-println("Aktualizuji závislosti...")
-Pkg.update()
+When you run the command above, it will display:
 
-# aktualizace docs prostředí (pokud je požadováno)
-if update_docs && isdir(joinpath(package_path, "docs"))
-    println("\nAktualizuji docs prostředí...")
-    Pkg.activate(joinpath(package_path, "docs"))
-    Pkg.update()
-    Pkg.activate(package_path)
-end
+```
+Usage: update.jl [options]
 
-# zobrazení statusu
-if verbose || update_docs
-    println("\nAktuální stav prostředí:")
-    Pkg.status()
-end
-
-println("\nHotovo. Prostředí je aktualizováno.")
+Options:
+  --help          Show this help message and exit
+```
