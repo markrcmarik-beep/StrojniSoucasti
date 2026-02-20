@@ -1,6 +1,18 @@
+Ver: 2026-02-20
 # Build Documentation Script
 
 # This script serves to manage the build process with various options.
+# Základní build
+#julia build.jl
+
+# S kontrolou a čištěním
+#julia build.jl --clean
+
+# Lokální náhled
+#julia build.jl --serve
+
+# Deployment na GitHub Pages
+#julia build.jl --deploy
 
 # Function to display help information
 function display_help() 
