@@ -1,8 +1,9 @@
-# ver: 2026-02-13
+# ver: 2026-02-18
 
 struct MaterialOcel
     name::String        # název
-    standard::String    # norma
+    standard::String    # norma (nepovinné)
+    druh::String        # druh oceli (např. "konstrukční", "nástrojová", "nerezová")
     Re::Float64         # nominální mez kluzu [MPa]
     Rm_min::Float64     # mez pevnosti [MPa]
     Rm_max::Float64     # mez pevnosti max. [MPa]
@@ -20,7 +21,8 @@ end
 
 struct MaterialKovy
     name::String        # název
-    standard::String    # norma
+    standard::String    # norma (nepovinné)
+    druh::String        # druh kovu (např. "hliník", "měď", "titan")
     Re::Float64         # nominální mez kluzu [MPa]
     Rm_min::Float64     # mez pevnosti [MPa]
     Rm_max::Float64     # mez pevnosti max. [MPa]
@@ -34,8 +36,8 @@ end
 
 struct MaterialLitina
     name::String        # název
-    standard::String    # norma
-    druh::String        # typ litiny
+    standard::String    # norma (nepovinné)
+    druh::String        # typ litiny (např. "šedá", "tvárná", "spheroidalní")
     Rm_tah::Float64     # mez pevnosti v tahu [MPa]
     Rm_tlak::Float64    # mez pevnosti v tlaku [MPa]
     A::Float64          # tažnost [%]

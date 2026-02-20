@@ -6,7 +6,7 @@
 # pomocí HMH nebo Tresca kritéria. Funkce využívá výstupy
 # z již existujících funkcí namáhání (namahanitah, namahanitlak,
 # namahanistrih, namahanikrut, namahaniohyb).
-# ver: 2026-01-02
+# ver: 2026-02-16
 ## Funkce: namahanikombinovane()
 ## Autor: Martin
 #
@@ -371,7 +371,7 @@ if sigmaD === nothing
     if !isdefined(Main, :dovoleneNapeti)
         error("Funkce dovoleneNapeti není definována.")
     end
-    sigmaD = dovoleneNapeti(Re, namahanizkr, zatizeni)
+    sigmaD = dovoleneNapeti(namahanizkr, zatizeni; Re=Re)
 end
 if sigmaD !== nothing
     sigmaD = uconvert(u"MPa", sigmaD)

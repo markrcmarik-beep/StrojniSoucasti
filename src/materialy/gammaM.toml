@@ -1,0 +1,32 @@
+
+["statický"]
+"tah" = 1.3
+"tlak" = 1.3
+"střih" = 1.5
+"krut" = 1.7
+"ohyb" = 1.5
+"otlačení" = 1.0
+
+["pulzní"]
+"tah" = 1.7
+"tlak" = 1.7
+"střih" = 2.0
+"krut" = 2.2
+"ohyb" = 2.0
+"otlačení" = 1.2
+
+["dynamický"]
+"tah" = 2.0
+"tlak" = 2.0
+"střih" = 2.5
+"krut" = 2.7
+"ohyb" = 2.5
+"otlačení" = 1.3
+
+["rázový"]
+"tah" = 2.5
+"tlak" = 2.5
+"střih" = 3.0
+"krut" = 3.2
+"ohyb" = 3.0
+"otlačení" = 1.5

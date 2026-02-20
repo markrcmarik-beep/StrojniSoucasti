@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-01-22
+# ver: 2026-02-16
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -162,7 +162,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         if !isdefined(Main, :dovoleneNapeti)
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDk = dovoleneNapeti(Re, "krut", zatizeni)
+        tauDk = dovoleneNapeti("krut", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil
