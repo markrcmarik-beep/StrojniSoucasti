@@ -1,4 +1,4 @@
-# ver: 2026-02-16
+# ver: 2026-02-21
 # Testovací skript pro funkci dovoleneNapeti.jl
 # Testuje výpočet dovolených napětí s různými kombinacemi namáhání a zatížení
 
@@ -272,23 +272,37 @@ using StrojniSoucasti, Unitful, Test
     # Test 38: Re lze předat jako výstup z materialy() pro ocel
     @testset "Re z materialy() - ocel" begin
         mat = materialy("S235")
+        #println(mat)
         sigma = dovoleneNapeti("tah", "statický"; mat=mat)
         @test sigma isa Quantity
         @test sigma > 0u"MPa"
     end
 
-    # Test 39: Litina z materialy() vrací nothing (zatím nepodporováno)
+    # Test 39: Litina z materialy() - tah/tlak/střih s tau_lim
     @testset "Re z materialy() - litina" begin
         mat = materialy("422420")
         @test !isnothing(mat)
-        @test isnothing(dovoleneNapeti("tah", "statický"; mat=mat))
+
+        sigma_tah = dovoleneNapeti("tah", "statický"; mat=mat)
+        sigma_tlak = dovoleneNapeti("tlak", "statický"; mat=mat)
+        sigma_strih = dovoleneNapeti("střih", "statický"; mat=mat)
+
+        @test isapprox(sigma_tah, (200/1.3)u"MPa"; rtol=1e-12)
+        @test isapprox(sigma_tlak, (800/1.3)u"MPa"; rtol=1e-12)
+        @test isapprox(sigma_strih, (100/1.5)u"MPa"; rtol=1e-12)
     end
 
-    # Test 40: Neznámý materiál (materialy() => nothing) vrací nothing
+    # Test 40: Litina bez tau_lim - fallback na Rm_tah/sqrt(3)
+    @testset "litina fallback bez tau_lim" begin
+        mat_no_tau = (; Rm_tah=200.0, Rm_tlak=800.0)
+        sigma_strih = dovoleneNapeti("střih", "statický"; mat=mat_no_tau)
+        @test isapprox(sigma_strih, ((200/sqrt(3))/1.5)u"MPa"; rtol=1e-12)
+    end
+
+    # Test 41: Neznamy material (materialy() => nothing)
     @testset "Re z materialy() - nothing" begin
         mat = materialy("NEEXISTUJICI_MATERIAL")
         @test isnothing(mat)
-        #@test isnothing(dovoleneNapeti("tah", "statický"; mat=mat))
     end
 
     # Test 41: Chybné namáhání

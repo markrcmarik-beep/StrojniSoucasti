@@ -1,4 +1,4 @@
-# ver: 2026-02-18
+# ver: 2026-02-21
 
 struct MaterialOcel
     name::String        # název
@@ -40,6 +40,7 @@ struct MaterialLitina
     druh::String        # typ litiny (např. "šedá", "tvárná", "spheroidalní")
     Rm_tah::Float64     # mez pevnosti v tahu [MPa]
     Rm_tlak::Float64    # mez pevnosti v tlaku [MPa]
+    tau_lim::Float64    # mez smykové pevnosti [MPa]
     A::Float64          # tažnost [%]
     HB_min::Float64     # minimální tvrdost Brinell [HB]
     HB_max::Float64     # maximální tvrdost Brinell [HB]
@@ -48,3 +49,4 @@ struct MaterialLitina
     ny::Float64         # Poissonovo číslo
     rho::Float64        # hustota [kg/m^3]
 end
+
