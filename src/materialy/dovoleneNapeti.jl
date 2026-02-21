@@ -1,8 +1,8 @@
-## Funkce Julia v1.12
+﻿## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2026-02-18
+# ver: 2026-02-21
 ## Funkce: dovoleneNapeti()
 ## Autor: Martin
 #
@@ -137,6 +137,15 @@ elseif Re === nothing && mat === nothing
 elseif Re !== nothing && mat !== nothing
     error("Příliš zadání. Zadej jen Re= nebo mat=")
 end # konec if
+tau_lim = nothing
+if mat !== nothing && hasproperty(mat, :tau_lim)
+    tau_lim = getproperty(mat, :tau_lim)
+    if tau_lim isa Number
+        tau_lim = tau_lim * u"MPa"
+    elseif !(tau_lim isa Unitful.Quantity)
+        tau_lim = nothing
+    end
+end
 
 if Re !== nothing
 # Ověření jednotek Re
@@ -163,14 +172,14 @@ gammaM = gammaM_funkce(Z, N)
 sigma = if N in ["tah", "tlak", "ohyb"]
             Re / gammaM # Prostý dělič
         elseif N in ["střih", "krut"]
-            Re / sqrt(3) / gammaM # Von Misesův kriteriál
+            (tau_lim === nothing ? Re / sqrt(3) : tau_lim) / gammaM # Střih/krut: přednostně tau_lim
         elseif N in ["tah-střih", "tlak-střih", "tah-krut", "tlak-krut", 
                 "tah-ohyb", "tlak-ohyb", "krut-ohyb"]
             Re / gammaM # Prostý dělič
         elseif N in ["střih-krut", "střih-ohyb"]
-        Re / sqrt(3) / gammaM # Von Misesův kriteriál
+        (tau_lim === nothing ? Re / sqrt(3) : tau_lim) / gammaM # Střih/krut: přednostně tau_lim
         elseif N == "krut-ohyb"
-            Re / sqrt(3) / gammaM # Von Misesův kriteriál
+            (tau_lim === nothing ? Re / sqrt(3) : tau_lim) / gammaM # Střih/krut: přednostně tau_lim
         elseif N == "otlačení"
             Re / gammaM # Speciální případ pro otlačení (rozdělení bezpečnostního faktoru)
         else # Pokud by se sem dostal, znamená to, že N není v povolených hodnotách, což by mělo být zachyceno dříve.
@@ -202,3 +211,4 @@ function gammaM_funkce(Z::AbstractString, N::AbstractString)
     # Pokud nebylo nalezeno, vypiš srozumitelnou chybu
     error("Neznámá kombinace zatížení: Z=$Z, N=$N")
 end # konec funkce gammaM_funkce
+

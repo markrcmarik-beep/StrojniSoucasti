@@ -1,8 +1,8 @@
-## Funkce Julia v1.12
+﻿## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-02-13
+# ver: 2026-02-21
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -134,6 +134,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         get(row, "druh", "")::String, # typ litiny
         Float64(get(row, "Rm_tah", 0)), # mez pevnosti v tahu
         Float64(get(row, "Rm_tlak", 0)), # mez pevnosti v tlaku
+        Float64(get(row, "tau_lim", 0.5 * Float64(get(row, "Rm_tah", 0)))), # mez smykové pevnosti
         Float64(get(row, "A", 0)), # prodloužení
         Float64(get(row, "HB_min", 0)), # tvrdost Brinell min
         Float64(get(row, "HB_max", 0)), # tvrdost Brinell max
@@ -147,3 +148,4 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
     end
     return nothing
 end
+
