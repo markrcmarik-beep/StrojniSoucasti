@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-02-16
+# ver: 2026-02-21
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -297,84 +297,3 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         return VV
     end
 end
-
-"""
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-01-22
-## Funkce: namahanitah()
-#
-## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanitah.jl
-#
-## Vzor:
-## vystupni_promenne = namahanitah(vstupni_promenne)
-## Vstupní proměnné:
-# F - Zatěžující síla (Unitful.Quantity), povinné. Musí být v tahu (kladná hodnota).
-# S - Plocha průřezu (Unitful.Quantity), povinné pokud není zadán profil
-# sigmaDt - Dovolené napětí v tahu (Unitful.Quantity), povinné pokud není zadán mat
-# E - Modul pružnosti v tahu, Youngův modul (Unitful.Quantity), volitelný, výchozí 210 GPa
-# Re - Mez kluzu (Unitful.Quantity), volitelný, pokud je zadán mat
-# L0 - Délka namáhaného profilu (Unitful.Quantity), volitelný
-# mat - Materiál jako řetězec (název materiálu) nebo Dict s vlastnostmi materiálu, volitelný
-# zatizeni - způsob zatížení jako řetězec: "statický", "pulzní", "dynamický", "rázový" (výchozí: "statický")
-# profil - název profilu jako řetězec (pro získání S), volitelný
-# return_text - Logická hodnota (Bool). Určuje, zda se má vrátit i
-#     textový výpis výpočtu. Výchozí hodnota je true. Pokud je false,
-#     vrací se pouze dict s výsledky.
-## Výstupní proměnné:
-# VV - Dict s výsledky výpočtu namáhání v tahu. Pole VV obsahují:
-#   :info - Popis výpočtu
-#   :zatizeni - Typ zatížení (statický, pulzní, dynamický, rázový)
-#   :F - Zatěžující síla (Unitful.Quantity)
-#   :F_info - Popis pole F
-#   :S - Plocha průřezu (Unitful.Quantity)
-#   :S_text - Textový popis výpočtu S (je-li k dispozici)
-#   :S_info - Popis pole S
-#   :sigmaDt - Dovolené napětí v tahu (Unitful.Quantity)
-#   :sigmaDt_info - Popis pole sigmaDt
-#   :sigma - Skutečné napětí v tahu (Unitful.Quantity v MPa)
-#   :sigma_info - Popis pole sigma
-#   :epsilon - Poměrné prodloužení (bez jednotky)
-#   :epsilon_info - Popis pole epsilon
-#   :bezpecnost - Součinitel bezpečnosti k (bez jednotky)
-#   :bezpecnost_info - Popis pole bezpecnost
-#   :verdict - Závěr o bezpečnosti spoje (řetězec)
-#   :verdict_info - Popis pole verdict
-#   :E - Modul pružnosti v tahu, Youngův modul (Unitful.Quantity)
-#   :E_info - Popis pole E
-#   :Re - Mez kluzu (Unitful.Quantity)
-#   :Re_info - Popis pole Re
-#   :mat - Materiál (řetězec)
-#   :mat_info - Popis pole mat
-#   :L0 - Délka namáhaného profilu (Unitful.Quantity)
-#   :L0_info - Popis pole L0
-#   :deltaL - Skutečné prodloužení (Unitful.Quantity), je-li spočítané
-#   :deltaL_info - Popis pole deltaL
-#   :L - Délka po prodloužení (Unitful.Quantity), je-li spočítané
-#   :L_info - Popis pole L
-#   :profil - Tvar profilu (řetězec), jestli byl zadaný
-#   :profil_info - Popis pole profil
-# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
-#   return_text=true (výchozí). Pokud return_text=false, vrací 
-#   se pouze VV.
-## Použité balíčky
-# Unitful, Printf: @sprintf
-## Použité uživatelské funkce:
-# materialy, dovoleneNapeti, profily
-## Příklad:
-# namahanitah(F=1000u"N", S=50u"mm^2", mat="11373")
-#  vrátí dict s výsledky a textový výpis výpočtu
-# println(VV) => dict s výsledky výpočtu
-# println(txt) => textový výpis výpočtu
-# namahanitah(F=2000, S=100, sigmaDt=150u"MPa", E=200u"GPa", L0=500u"mm", 
-#   zatizeni="statický", profil="PLO 20x10")
-#  vrátí dict s výsledky a textový výpis výpočtu
-# println(VV) => dict s výsledky výpočtu
-# println(txt) => textový výpis výpočtu
-###############################################################
-## Použité proměnné vnitřní:
-#
-"""

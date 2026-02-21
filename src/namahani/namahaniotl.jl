@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-02-16
+# ver: 2026-02-21
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -84,6 +84,7 @@ function namahaniotl(;
     mat=nothing,
     zatizeni::AbstractString="statický",
     profil=nothing,
+    k=nothing,
     return_text::Bool=true)
     # ----------------------------------------------------------
     # pomocné
@@ -118,6 +119,9 @@ function namahaniotl(;
         Re = isnum(Re) ? attach(Re, u"MPa") : Re
         hasq(Re) || error("Re musí být číslo nebo Unitful.Quantity.")
     end
+    if k !== nothing
+        isnum(k) || error("k musí být číslo.")
+    end
     # ----------------------------------------------------------
     # materiál
     if mat !== nothing
@@ -135,76 +139,60 @@ function namahaniotl(;
     # ----------------------------------------------------------
     # plocha z profilu
     S_text = ""
+    profil_info = Dict{Symbol,Any}()
     if profil !== nothing
         p = profily(profil, "S")
         haskey(p, :S) || error("profily(...) nevrátilo S.")
         S = p[:S]
         S_text = get(p, :S_str, "")
+        for kk in keys(p)
+            if kk ∉ (:S, :S_str)
+                profil_info[kk] = p[kk]
+            end
+        end
     end
 
     S !== nothing || error("Chybí kontaktní plocha S.")
     # ----------------------------------------------------------
     # výpočty
+    sigma_str = "F / S"
     sigma = uconvert(u"MPa", F / S)
-    k = uconvert(u"MPa", sigmaDotl) / sigma
-    verdict = k >= 1.5 ? "Spoj je bezpečný" :
-              k >= 1.0 ? "Spoj je na hranici bezpečnosti" :
-                         "Spoj není bezpečný!"
+    sigmaDotl = uconvert(u"MPa", sigmaDotl)
+    bezpecnost_str = "sigmaDt / sigma"
+    bezpecnost = sigmaDotl / sigma
+    verdict = bezpecnost >= 1.5 ? "Spoj je bezpečný" :
+              bezpecnost >= 1.0 ? "Spoj je na hranici bezpečnosti" :
+                                  "Spoj není bezpečný!"
     # ----------------------------------------------------------
     # výstup
     VV = Dict{Symbol,Any}()
     VV[:info] = "namáhání na otlačení"
     VV[:zatizeni] = zatizeni
-    VV[:F] = F
+    VV[:zatizeni_info] = "Druh zatížení"
+    VV[:F] = F # zatěžující síla
     VV[:F_info] = "Zatěžující síla"
-    VV[:S] = S
+    VV[:k] = k # součinitel bezpečnosti (uživatelský požadavek)
+    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
+    VV[:S] = S # kontaktní plocha
+    VV[:S_text] = S_text
     VV[:S_str] = S_text
     VV[:S_info] = "Kontaktní plocha"
     VV[:sigmaDotl] = sigmaDotl
     VV[:sigmaDotl_info] = "Dovolené napětí na otlačení"
-    VV[:sigma] = sigma
+    VV[:sigma] = sigma # skutečné napětí
+    VV[:sigma_str] = sigma_str
     VV[:sigma_info] = "Skutečné napětí na otlačení"
-    VV[:bezpecnost] = k
+    VV[:Re] = Re # mez kluzu
+    VV[:Re_info] = "Mez kluzu"
+    VV[:bezpecnost] = bezpecnost
+    VV[:bezpecnost_str] = bezpecnost_str
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
     VV[:verdict] = verdict
     VV[:verdict_info] = "Výsledek posouzení"
-    VV[:mat] = mat
+    VV[:mat] = mat # materiál
     VV[:mat_info] = "Materiál"
     VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = "Tvar / kontakt"
+    VV[:profil_info] = profil_info
 
-    return return_text ? (VV, namahaniotltext(VV)) : VV
-end
-
-# --------------------------------------------------------------
-# textový výstup
-function namahaniotltext(VV::Dict{Symbol,Any})
-    lines = String[]
-    push!(lines, "Výpočet $(VV[:info])")
-    push!(lines, "------------------------------------------------------------")
-    push!(lines, "materiál: $(VV[:mat])")
-    push!(lines, "profil / kontakt: $(VV[:profil])")
-    push!(lines, "zatížení: $(VV[:zatizeni])")
-    push!(lines, "------------------------------------------------------------")
-    push!(lines, "zadání:")
-    push!(lines, @sprintf("F = %g N   %s",
-        ustrip(u"N", uconvert(u"N", VV[:F])), VV[:F_info]))
-    if VV[:S_str] != ""
-        push!(lines, @sprintf("S = %s = %g mm^2   %s", VV[:S_str],
-            ustrip(u"mm^2", uconvert(u"mm^2", VV[:S])), VV[:S_info]))
-    else
-        push!(lines, @sprintf("S = %g mm^2   %s",
-            ustrip(u"mm^2", uconvert(u"mm^2", VV[:S])),
-            VV[:S_info]))
-    end
-    push!(lines, @sprintf("sigma_dov = %g MPa   %s",
-        ustrip(u"MPa", uconvert(u"MPa", VV[:sigmaDotl])), VV[:sigmaDotl_info]))
-    push!(lines, "------------------------------------------------------------")
-    push!(lines, "výpočet:")
-    push!(lines, @sprintf("sigma = %g MPa   %s", ustrip(u"MPa", VV[:sigma]), 
-        VV[:sigma_info]))
-    push!(lines, @sprintf("k = %g   %s\n%s: %s", ustrip(VV[:bezpecnost]), 
-        VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
-
-    return join(lines, "\n")
+    return return_text ? (VV, StrojniSoucasti.namahaniotltext(VV)) : VV
 end
