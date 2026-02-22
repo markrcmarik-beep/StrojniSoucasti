@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-02-21
+# ver: 2026-02-22
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -52,8 +52,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful, Unitful.DefaultSymbols
-using Printf: @sprintf
+using Unitful, Unitful
 
 """
     namahaniotl(; F, S=nothing, sigmaDotl=nothing, Re=nothing, mat=nothing,
@@ -130,10 +129,18 @@ function namahaniotl(;
         end
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
+        matName = matinfo.name # název materiálu z dictu
+    else
+        matinfo = nothing
+        matName = ""
     end
     # dovolené napětí na otlačení
-    if Re !== nothing
-        sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
+    if sigmaDotl === nothing
+        if matinfo !== nothing
+            sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
+        elseif Re !== nothing
+            sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
+        end
     end
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
     # ----------------------------------------------------------
@@ -189,7 +196,7 @@ function namahaniotl(;
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
     VV[:verdict] = verdict
     VV[:verdict_info] = "Výsledek posouzení"
-    VV[:mat] = mat # materiál
+    VV[:mat] = matName # materiál
     VV[:mat_info] = "Materiál"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info
