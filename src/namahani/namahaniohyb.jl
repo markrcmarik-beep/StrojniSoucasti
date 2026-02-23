@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-02-16
+# ver: 2026-02-23
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -137,18 +137,27 @@ function namahaniohyb(;
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
         E = (matinfo.E)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+     else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené napětí
     # ---------------------------------------------------------
     if sigmaDo === nothing
-        if Re === nothing
-            error("Chybí sigmaDo i Re - nelze stanovit dovolené napětí.")
+        if Re === nothing && mat === nothing
+            error("Chybí sigmaDo, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main, :dovoleneNapeti)
+        if isdefined(Main, :dovoleneNapeti)
+            if matinfo !== nothing
+                sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                sigmaDo = dovoleneNapeti("ohyb", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDo = dovoleneNapeti("ohyb", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil
@@ -272,7 +281,7 @@ function namahaniohyb(;
     VV[:Re_info] = "Mez kluzu"
     VV[:E] = E # modul pružnosti
     VV[:E_info] = "Modul pružnosti"
-    VV[:mat] = mat # materiál
+    VV[:mat] = matName # materiál
     VV[:mat_info] = mat === nothing ? "" : "Materiál"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info # info o profilu

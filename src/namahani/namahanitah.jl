@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-02-22
+# ver: 2026-02-23
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -161,8 +161,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         matName = matinfo.name # název materiálu z dictu
     else
         matinfo = nothing
-        matName = ""
-
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené napětí

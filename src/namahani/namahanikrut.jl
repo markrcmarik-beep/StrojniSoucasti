@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-02-16
+# ver: 2026-02-23
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -148,21 +148,30 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         if !isdefined(Main, :materialy)
             error("Funkce materialy(mat) není definována.")
         end
-        matinfo = materialy(mat)
+        matinfo = materialy(mat) # získání informací o materiálu
         Re = (matinfo.Re)u"MPa" # mez kluzu
         G = (matinfo.G)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+     else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené napětí
     # ---------------------------------------------------------
     if tauDk === nothing
-        if Re === nothing
-            error("Chybí tauDk i Re - nelze stanovit dovolené napětí.")
+        if Re === nothing && mat === nothing
+            error("Chybí tauDk, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main, :dovoleneNapeti)
+        if isdefined(Main, :dovoleneNapeti)
+            if matinfo !== nothing
+                tauDk = dovoleneNapeti("střih", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                tauDk = dovoleneNapeti("střih", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDk = dovoleneNapeti("krut", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil
@@ -265,7 +274,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     VV[:G_info] = "Smykový modul"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = mat # materiál
+    VV[:mat] = matName # materiál
     VV[:mat_info] = "Materiál"
     VV[:L0] = L0 # délka pro výpočet úhlu zkroucení
     VV[:L0_info] = "Délka pro výpočet zkroucení"
