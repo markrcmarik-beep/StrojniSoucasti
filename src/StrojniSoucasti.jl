@@ -58,7 +58,7 @@ include("namahani/namahaniotl.jl") # namáhání otlačením
 include("namahani/namahaniotltext.jl") # textový výpis namáhání otlačením
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
-include("torsion_J_TR4HR_numeric.jl") #
+include("profily/torsion_J_TR4HR_numeric.jl") #
 
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
