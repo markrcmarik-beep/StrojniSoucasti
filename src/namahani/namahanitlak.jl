@@ -114,7 +114,7 @@ namahanitlak(F=1000u"N", S=50u"mm^2", mat="S235")
 ```
 """
 function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing, 
-    E=nothing, Re=nothing, L0=nothing, mat=nothing,
+    E=nothing, Re=nothing, L0=nothing, Imin=nothing, mat=nothing,
     zatizeni::AbstractString="statický", profil=nothing,
     k=nothing, return_text::Bool=true)
     # ---------------------------------------------------------
@@ -124,6 +124,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # kontrola duplicity S/profil
     cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
     if cntS > 1
@@ -164,7 +165,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
+        if !isdefined(@__MODULE__, :materialy)
             error("Funkce materialy(mat) není definována.")
         end
         matinfo = materialy(mat)
@@ -182,7 +183,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         if Re === nothing && mat === nothing
             error("Chybí sigmaDt, Re,  mat - nelze stanovit dovolené napětí.")
         end
-        if isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
             if matinfo !== nothing
                 sigmaDt = dovoleneNapeti("tlak", zatizeni; mat=matinfo)
             elseif Re !== nothing
@@ -195,26 +196,51 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))
     # ---------------------------------------------------------
-    S_text = ""
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main, :profily)
-            error("Funkce profily(...) není definována.")
-        end
-        tv = profily(profil, "S")  # vynucení výpočtu S
-        if !haskey(tv, :S)
-            error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
-        end
-        S = tv[:S]
-        if haskey(tv, :S_str)
-            S_text = tv[:S_str]
-        end
-        for k in keys(tv)
-            if k ∉ (:S, :S_str)
-                profil_info[k] = tv[k]
-            end
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        profil_info = Dict{Symbol,Any}()
+        tv = profily(profil)  # získání všech informací o profilu
+    
+    for k in keys(tv)
+        if k ∉ (:S, :S_str)
+            profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
         end
     end
+    end
+    S_text = ""
+    if S === nothing
+        if profil === nothing
+            error("Chybí S nebo profil - nelze stanovit plochu průřezu.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily(profil, \"S\") není definována.")
+        else
+            tv = profily(profil, "S")  # vynucení výpočtu S
+            if !haskey(tv, :S)
+                error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
+            end
+            S = tv[:S]
+            if haskey(tv, :S_str)
+                S_text = tv[:S_str]
+            end
+
+        end
+    end
+    #Imin_text = ""
+    #if Imin === nothing
+    #    if profil === nothing
+    #        error("Chybí Imin nebo profil - nelze stanovit minimální kvadratický moment.")
+    #    elseif !isdefined(Main, :profily)
+    #        error("Funkce profily(profil, \"Imin\") není definována.")
+    #    else
+    #        tv = profily(profil, "Imin")  # vynucení výpočtu Imin
+    #        if !haskey(tv, :Imin)
+    #            error("Funkce profily(...) nevrací :Imin ani po zadání \"Imin\".")
+    #        end
+    #        Imin = tv[:Imin]
+    #        if haskey(tv, :Imin_str)
+    #            Imin_text = tv[:Imin_str]
+    #        end
+    #    end
+    #end
     # kontrola F, S, sigmaDt
     if F === nothing
         error("Chybí F.")
@@ -226,6 +252,9 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         error("Chybí sigmaDt (nezadáno sigmaDt ani mat/Re).")
     else
         sigmaDt = uconvert(u"MPa", sigmaDt)
+    end
+    if L0 !== nothing && E === nothing
+        error("Pro vypocet zkraceni (L0) je nutne zadat i E.")
     end
     # ---------------------------------------------------------
     # výpočet

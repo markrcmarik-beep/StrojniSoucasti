@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2026-02-01
+# Vypocet hlavnich kvadratickych momentu Imin, Imax.
+# ver: 2026-02-26
 ## Funkce: profilyvlcnIminImax()
 ## Autor: Martin
 #
@@ -12,56 +12,66 @@
 ## Vzor:
 ## vystupni_promenne = profilyvlcnIminImax(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# tvar1 - slovník (Dict) s informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
+# velicina - hledaná veličina: :Imin nebo :Imax
+# natoceni - úhel natočení [rad], volitelný (parametr pro Ix a Wo)
 ## Výstupní proměnné:
-#
+# vystupni_promenne - Struktura (Dict) s rozměry profilu a
+#   případně i s vypočtenými vlastnostmi. V tomto případě Imin a Imax.
 ## Použité balíčky:
-#
+# Unitful
 ## Použité uživatelské funkce:
-#
+# profilyvlcnIx
 ## Příklad:
 #
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+###############################################################
+
 using Unitful
 
 function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
-    info = tvar1[:info] # Získání informace o tvaru
-    # Pomocné funkce na čtení parametrů
-    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    info = tvar1[:info]
+    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing
+
+    if velicina != :Imin && velicina != :Imax
+        error("Neznama velicina: $velicina")
+    end
 
     # -----------------------------------------------------------
-    # Plochá tyč nebo obdélník
-    if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
+    # Plocha tyc nebo obdelnik
+    if info in Set(["PLO", "OBD"])
         Ix, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, 0)
         Iy, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, pi/2)
         Ixy, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy)
         Ixy = Ixy * u"mm^4"
+
         if velicina == :Imin
-            Imin_val = (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )
-            # Vzorec pro obdélník s Iy = b*a³/12 a Ix = a*b³/12
+            Imin_val = (Ix + Iy)/2 - sqrt(((Ix - Iy)/2)^2 + Ixy^2)
             Imin_str = "-sqrt((1//4)*((-(1//12)*(a^3)*b + (1//12)*a*(b^3))^2)) + (1//2)*((1//12)*(a^3)*b + (1//12)*a*(b^3))"
             return Imin_val, Imin_str
-        elseif velicina == :Imax
-            Imax_val = (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )
-            # Vzorec pro obdélník s Iy = b*a³/12 a Ix = a*b³/12
-            Imax_str = "(Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )"
+        else
+            Imax_val = (Ix + Iy)/2 + sqrt(((Ix - Iy)/2)^2 + Ixy^2)
+            Imax_str = "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
             return Imax_val, Imax_str
         end
+
     # -----------------------------------------------------------
-    # Kruhová tyč
-    elseif info == "KR" # Kruhová tyč
+    # Kruhova tyc
+    elseif info == "KR"
         D = getv(:D)
-        return pi/64*D^4, "π/64*D⁴"
+        return pi/64*D^4, "pi/64*D^4"
+
     # -----------------------------------------------------------
-    # Trubka kruhová
-    elseif info == "TRKR" # Trubka kruhová
+    # Trubka kruhova
+    elseif info == "TRKR"
         D, d = getv(:D), getv(:d)
-        return pi/64*(D^4 - d^4), "π/64*(D⁴ - d⁴)"
+        return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
+
     # -----------------------------------------------------------
     else
-        error("Neznámý tvar: $info pro veličinu $velicina")
+        error("Neznamy tvar: $info pro velicinu $velicina")
     end
-
 end

@@ -1,4 +1,4 @@
-# ver: 2026-02-23
+# ver: 2026-02-26
 using Test
 
     # materialy
@@ -18,6 +18,8 @@ using Test
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profilTR4HR_test.jl")
     include("profily_test/profilyvlcn_test.jl")
+    include("profily_test/profilyvlcnIx_test.jl")
+    include("profily_test/profilyvlcnIminlmax_test.jl")
     include("profily_test/hrana_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")

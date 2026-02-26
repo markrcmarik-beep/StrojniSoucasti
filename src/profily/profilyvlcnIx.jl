@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2026-02-01
+# Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
+# ver: 2026-02-26
 ## Funkce: profilyvlcnIx()
 ## Autor: Martin
 #
@@ -27,101 +27,99 @@
 using Unitful
 
 function profilyvlcnIx(tvar1::Dict, velicina::Symbol, natoceni=0)
-    info = tvar1[:info] # Získání informace o tvaru
-    # Pomocné funkce na čtení parametrů
-    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    info = tvar1[:info] # Ziskani informace o tvaru
+    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
 
-    # Podpora :Iy delegací na :Ix (rotace o 90°)
+    angle = mod(natoceni, 2*pi) # Normalizace natočení do rozsahu [0, 2π)
+    isrot(x, y) = isapprox(x, y; atol=1e-12, rtol=0.0) # Porovnani natočení s tolerancí
+
+    # Podpora :Iy delegaci na :Ix (rotace o 90 deg)
     if velicina == :Iy
-        return profilyvlcnIx(tvar1, :Ix, natoceni + pi/2)
+        return profilyvlcnIx(tvar1, :Ix, angle + pi/2)
     end
 
     # -----------------------------------------------------------
-        # Plochá tyč nebo obdélník
-        if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                a, b = getv(:a), getv(:b)
-                if natoceni in (0, pi, 2*pi)
-                    return a*b^3/12, "a*b³/12"
-                elseif natoceni in (pi/2, 3*pi/2)
-                    return b*a^3/12, "b*a³/12"
-                else
-                    error("Neplatné natočení profilu: $info $natoceni rad pro $velicina")
-                end
+    # Plocha tyc nebo obdelnik
+    if info in Set(["PLO", "OBD"])
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            a, b = getv(:a), getv(:b)
+            if isrot(angle, 0) || isrot(angle, pi)
+                return a*b^3/12, "a*b^3/12"
+            elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
+                return b*a^3/12, "b*a^3/12"
+            else
+                error("Neplatne natoceni profilu: $info $natoceni rad pro $velicina")
             end
-        # -----------------------------------------------------------
-        # Kruhová tyč
-        elseif info == "KR" # Kruhová tyč
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                D = getv(:D)
-                return pi/64*D^4, "π/64*D⁴"
-            end
-        # -----------------------------------------------------------
-        # Trubka kruhová
-        elseif info == "TRKR" # Trubka kruhová
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                D, d = getv(:D), getv(:d)
-                return pi/64*(D^4 - d^4), "π/64*(D⁴ - d⁴)"
-            end
-        # -----------------------------------------------------------
-        # Čtyřhranná tyč
-        elseif info == "4HR" # Čtyřhranná tyč
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                a = getv(:a)
-                if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
-                return a^4/12, "a⁴/12"
-                else
-                    error("Neplatné natočení profilu: $info $natoceni rad pro $velicina")
-                end
-            end
-        # -----------------------------------------------------------
-        # Šestihranná tyč
-        elseif info == "6HR" # Šestihranná tyč (0rad ležící na ploše)
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                s = getv(:s)
-                if natoceni in (0, 2*pi/6, 4*pi/6, 6*pi/6, 8*pi/6, 10*pi/6, 12*pi/6)
-                    return 5*sqrt(3)/144*s^4, "5√3/144*s⁴"
-                elseif natoceni in (pi/6, 3*pi/6, 5*pi/6, 7*pi/6, 9*pi/6, 11*pi/6)
-                    return 5/96*s^4, "5/96*s⁴"
-                else
-                    error("Neplatné natočení profilu: $info $natoceni rad pro $velicina")
-                end
-            end
-        # -----------------------------------------------------------
-        # Trubka čtyřhranná
-        elseif info == "TR4HR" # Trubka čtyřhranná
-            if velicina == :Ixy
-                Ixy = 0
-                Ixy_str = "0"
-                return Ixy, Ixy_str
-            elseif velicina == :Ix
-                a, b, t = getv(:a), getv(:b), getv(:t)
-                return (a*b^3/12) - ((a-2t)*(b-2t)^3/12), "(a*b³/12)-((a-2t)*(b-2t)³/12)"
-            end
-        # -----------------------------------------------------------
-        # neznámý tvar
-        else
-            error("Neznámý tvar: $info pro veličinu $velicina")
         end
 
+    # -----------------------------------------------------------
+    # Kruhova tyc
+    elseif info == "KR"
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            D = getv(:D)
+            return pi/64*D^4, "pi/64*D^4"
+        end
+
+    # -----------------------------------------------------------
+    # Trubka kruhova
+    elseif info == "TRKR"
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            D, d = getv(:D), getv(:d)
+            return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
+        end
+
+    # -----------------------------------------------------------
+    # Ctyrhranna tyc
+    elseif info == "4HR"
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            a = getv(:a)
+            if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
+                return a^4/12, "a^4/12"
+            else
+                error("Neplatne natoceni profilu: $info $natoceni rad pro $velicina")
+            end
+        end
+
+    # -----------------------------------------------------------
+    # Sestihranna tyc (0rad lezi na plose)
+    elseif info == "6HR"
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            s = getv(:s)
+            n = round(Int, angle / (pi/6))
+            if !isrot(angle, n*(pi/6))
+                error("Neplatne natoceni profilu: $info $natoceni rad pro $velicina")
+            elseif iseven(n)
+                return 5*sqrt(3)/144*s^4, "5*sqr(3)/144*s^4"
+            else
+                return 5/96*s^4, "5/96*s^4"
+            end
+        end
+
+    # -----------------------------------------------------------
+    # Trubka ctyrhranna
+    elseif info == "TR4HR"
+        if velicina == :Ixy
+            return 0, "0"
+        elseif velicina == :Ix
+            a, b, t = getv(:a), getv(:b), getv(:t)
+            return (a*b^3/12) - ((a-2t)*(b-2t)^3/12), "(a*b^3/12)-((a-2t)*(b-2t)^3/12)"
+        end
+
+    # -----------------------------------------------------------
+    # Neznamy tvar
+    else
+        error("Neznamy tvar: $info pro velicinu $velicina")
+    end
+
+    error("Nepodporovana velicina: $velicina pro tvar $info")
 end

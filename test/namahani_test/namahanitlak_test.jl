@@ -135,8 +135,9 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 14: Bezpečnost - hranice bezpečnosti
     @testset "hranice bezpečnosti" begin
-        VV, txt = namahanitlak(F=4800u"N", S=400u"mm^2", sigmaDt=80u"MPa")
-        @test VV[:bezpecnost] >= 1.0 && VV[:bezpecnost] < 8
+        VV, txt = namahanitlak(F=24000u"N", S=400u"mm^2", sigmaDt=80u"MPa")
+        @test VV[:bezpecnost] >= 1.0 && VV[:bezpecnost] < 1.5
+        @test occursin("na hranici", VV[:verdict])
     end
 
     # Test 15: Bezpečnost - nebezpečný spoj
