@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet hlavnich kvadratickych momentu Imin, Imax.
-# ver: 2026-02-26
+# Výpočet hlavních kvadratických momentů Imin, Imax.
+# ver: 2026-02-28
 ## Funkce: profilyvlcnIminImax()
 ## Autor: Martin
 #
@@ -14,6 +14,11 @@
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru, např.:
 #    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
+#    Dict("info" => "KR", "D" => 20u"mm")
+#    Dict("info" => "TRKR", "D" => 20u"mm", "d" => 10u"mm")
+#    Dict("info" => "4HR", "a" => 20u"mm")
+#    Dict("info" => "6HR", "s" => 20u"mm")
+#    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
 # velicina - hledaná veličina: :Imin nebo :Imax
 # natoceni - úhel natočení [rad], volitelný (parametr pro Ix a Wo)
 ## Výstupní proměnné:
@@ -43,9 +48,9 @@ function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
     # -----------------------------------------------------------
     # Plocha tyc nebo obdelnik
     if info in Set(["PLO", "OBD"])
-        Ix, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, 0)
-        Iy, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, pi/2)
-        Ixy, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy)
+        Ix, Ixtext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, 0)
+        Iy, Iytext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, pi/2)
+        Ixy, Ixytext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy)
         Ixy = Ixy * u"mm^4"
 
         if velicina == :Imin
@@ -71,6 +76,22 @@ function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
         return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
 
     # -----------------------------------------------------------
+    # čtvercový průřez
+    elseif info == "4HR"
+        a = getv(:a)
+        return a^4/12, "a^4/12"
+    # -----------------------------------------------------------
+    # šestihranný průřez
+    elseif info == "6HR"
+        s = getv(:s)
+        return s^4/6, "s^4/6"
+    # -----------------------------------------------------------
+    # trubka čtyřhranná
+    elseif info == "TR4HR"
+        a, b, t = getv(:a), getv(:b), getv(:t)
+        return (a*b^3 - (a-2t)*(b-2t)^3)/12, "(a*b^3 - (a-2t)*(b-2t)^3)/12"
+    # -----------------------------------------------------------
+    # Neznámý tvar
     else
         error("Neznamy tvar: $info pro velicinu $velicina")
     end

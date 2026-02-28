@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-02-26
+# ver: 2026-02-28
 ## Funkce: profilyvlcnIx()
 ## Autor: Martin
 #
@@ -12,11 +12,19 @@
 ## Vzor:
 ## vystupni_promenne = profilyvlcnIx(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# tvar1 - slovník (Dict) s informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
+#    Dict("info" => "KR", "D" => 20u"mm")
+#    Dict("info" => "TRKR", "D" => 20u"mm", "d" => 10u"mm")
+#    Dict("info" => "4HR", "a" => 20u"mm")
+#    Dict("info" => "6HR", "s" => 20u"mm")
+#    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
+# velicina - hledaná veličina: :Ix, :Iy, :Ixy
 ## Výstupní proměnné:
-#
+# vystupni_promenne - Struktura (Dict) s rozměry profilu a
+#   případně i s vypočtenými vlastnostmi. V tomto případě Ix, Iy, Ixy.
 ## Použité balíčky:
-#
+# Unitful
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -35,7 +43,7 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol, natoceni=0)
 
     # Podpora :Iy delegaci na :Ix (rotace o 90 deg)
     if velicina == :Iy
-        return profilyvlcnIx(tvar1, :Ix, angle + pi/2)
+        return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
     end
 
     # -----------------------------------------------------------

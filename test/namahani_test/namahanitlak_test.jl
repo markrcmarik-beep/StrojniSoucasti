@@ -161,4 +161,43 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:F] > 0u"N"
     end
 
+    # Test 18: Neplatné vstupy
+    @testset "neplatné vstupy" begin
+        err = try
+            namahanitlak(F=0u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("F musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=0u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("S musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", k=0)
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("k musí být kladné číslo", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", Imin=0u"mm^4")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("Imin musí být kladná hodnota", sprint(showerror, err))
+    end
+
 end

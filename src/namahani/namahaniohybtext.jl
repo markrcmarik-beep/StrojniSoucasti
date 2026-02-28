@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání v ohybu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2025-12-29
+# ver: 2026-02-28
 ## Funkce: namahaniohybtext()
 ## Autor: Martin
 #
@@ -28,14 +28,14 @@
 using Printf: @sprintf
 
 function namahaniohybtext(VV::Dict{Symbol,Any})
-    lines = String[]
-    push!(lines, "Výpočet $(VV[:info])")
+    lines = String[] # pole pro textový výstup
+    push!(lines, "Výpočet $(VV[:info])") # název výpočtu z VV[:info]
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "materiál: $(VV[:mat] === nothing ? "" : VV[:mat])")
     append!(lines, profil_text_lines(VV)) # přidá text profilu
-    push!(lines, "zatížení: $(VV[:zatizeni])")
+    push!(lines, "zatížení: $(VV[:zatizeni])") # přidá text zatížení do textového výstupu
     push!(lines, "----------------------------------------------------------------")
-    push!(lines, "zadání:")
+    push!(lines, "zadání:") # přidá text zadání výpočtu
     push!(lines, @sprintf("Mo = %g   %s", VV[:Mo], VV[:Mo_info]))
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))

@@ -1,4 +1,4 @@
-# ver: 2026-02-26
+﻿# ver: 2026-02-28
 using Test
 
     # materialy
@@ -18,9 +18,10 @@ using Test
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profilTR4HR_test.jl")
     include("profily_test/profilyvlcn_test.jl")
-    include("profily_test/profilyvlcnIx_test.jl")
     include("profily_test/profilyvlcnS_test.jl")
+    include("profily_test/profilyvlcnIp_test.jl")
     include("profily_test/profilyvlcnWk_test.jl")
+    include("profily_test/profilyvlcnIx_test.jl")
     include("profily_test/profilyvlcnWo_test.jl")
     include("profily_test/profilyvlcnIminlmax_test.jl")
     include("profily_test/hrana_test.jl")

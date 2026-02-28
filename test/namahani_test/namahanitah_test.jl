@@ -32,7 +32,7 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 3: Výpočet s Re a pulzním zatížením
     @testset "výpočet s Re a pulzním zatížením" begin
-        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", L0=220u"mm", zatizeni="pulzní")
+        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", L0=220u"mm", E=210u"GPa", zatizeni="pulzní")
         @test haskey(VV, :sigma)
         @test haskey(VV, :sigmaDt)
         @test haskey(VV, :Re)
@@ -166,6 +166,36 @@ using StrojniSoucasti, Unitful, Test
     @testset "kladná síla" begin
         VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
         @test VV[:F] > 0u"N"
+    end
+
+    # Test 19: Neplatné vstupy
+    @testset "neplatné vstupy" begin
+        err = try
+            namahanitah(F=0u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("F musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitah(F=6000u"N", S=0u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("S musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", k=0)
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("k musí být kladné číslo", sprint(showerror, err))
     end
 
 end

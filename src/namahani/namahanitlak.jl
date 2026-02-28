@@ -1,8 +1,11 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet namáhání v tlaku pro strojní součásti.
-# ver: 2026-02-23
+# Výpočet namáhání v tlaku pro strojní součásti. Funkce umožňuje 
+# zadat zatěžující sílu, plochu průřezu nebo profil, dovolené 
+# napětí nebo materiál, délku namáhaného profilu a typ zatížení. 
+# Vrací slovník s výsledky výpočtu a volitelně i textový výpis.
+# ver: 2026-02-28
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -26,6 +29,9 @@
 #     např. MPa, GPa). Volitelné, pokud není zadán parametr mat.
 # L0 - Délka namáhaného profilu (Number nebo Unitful.Quantity s jednotkou délky,
 #     např. mm, m). Volitelné.
+# Imin - Minimální kvadratický moment průřezu pro výpočet stability v tlaku
+#     (Number nebo Unitful.Quantity s jednotkou mm^4). Má přednost před 
+#     parametrem profil. (Volitelné)
 # mat - Materiál (String s názvem materiálu nebo Dict s vlastnostmi
 #     materiálu, např. Dict(:Re => 235MPa, :E => 210GPa)). Volitelné,
 #     pokud není zadán parametr sigmaDt nebo Re.
@@ -125,40 +131,58 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
     profil_info = Dict{Symbol,Any}()
-    # kontrola duplicity S/profil
-    cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
-    if cntS > 1
-        error("Zadejte pouze jednu hodnotu z: S nebo profil.")
-    end
-    if (sigmaDt !== nothing) && (mat !== nothing)
-        error("Zadejte pouze sigmaDt nebo mat, ne obojí.")
-    end
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
     if F !== nothing
         F = attach_unit(F, u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
     else
         error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
         S = attach_unit(S, u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if sigmaDt !== nothing
         sigmaDt = attach_unit(sigmaDt, u"MPa")
+        if sigmaDt <= 0u"MPa"
+            error("sigmaDt musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re, u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if E !== nothing
         E = attach_unit(E, u"GPa")
+        if E <= 0u"GPa"
+            error("E musí být kladná hodnota.")
+        end
     end
     if L0 !== nothing
         L0 = attach_unit(L0, u"mm")
+        if L0 <= 0u"mm"
+            error("L0 musí být kladná hodnota.")
+        end
+    end
+    if Imin !== nothing
+        Imin = attach_unit(Imin, u"mm^4")
+        if Imin <= 0u"mm^4"
+            error("Imin musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
@@ -177,7 +201,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
-    # dovolené napětí
+    # dovolené tlakové napětí
     # ---------------------------------------------------------
     if sigmaDt === nothing
         if Re === nothing && mat === nothing
@@ -197,14 +221,12 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # profil (automatické volání profily(profil, "S"))
     # ---------------------------------------------------------
     if profil !== nothing && isdefined(@__MODULE__, :profily)
-        profil_info = Dict{Symbol,Any}()
         tv = profily(profil)  # získání všech informací o profilu
-    
-    for k in keys(tv)
-        if k ∉ (:S, :S_str)
-            profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+        for k in keys(tv)
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+            end
         end
-    end
     end
     S_text = ""
     if S === nothing
@@ -221,30 +243,27 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
             if haskey(tv, :S_str)
                 S_text = tv[:S_str]
             end
-
         end
     end
-    #Imin_text = ""
-    #if Imin === nothing
-    #    if profil === nothing
+    Imin_text = ""
+    if Imin === nothing
+        if profil !== nothing
     #        error("Chybí Imin nebo profil - nelze stanovit minimální kvadratický moment.")
-    #    elseif !isdefined(Main, :profily)
-    #        error("Funkce profily(profil, \"Imin\") není definována.")
-    #    else
-    #        tv = profily(profil, "Imin")  # vynucení výpočtu Imin
-    #        if !haskey(tv, :Imin)
-    #            error("Funkce profily(...) nevrací :Imin ani po zadání \"Imin\".")
-    #        end
-    #        Imin = tv[:Imin]
-    #        if haskey(tv, :Imin_str)
-    #            Imin_text = tv[:Imin_str]
-    #        end
-    #    end
-    #end
-    # kontrola F, S, sigmaDt
-    if F === nothing
-        error("Chybí F.")
+            if !isdefined(@__MODULE__, :profily)
+                error("Funkce profily(profil, \"Imin\") není definována.")
+            else
+                tv = profily(profil, "Imin")  # vynucení výpočtu Imin
+                if !haskey(tv, :Imin)
+                error("Funkce profily(...) nevrací :Imin ani po zadání \"Imin\".")
+                end
+                Imin = tv[:Imin] # minimální kvadratický moment průřezu pro výpočet stability v tlaku
+                if haskey(tv, :Imin_str)
+                    Imin_text = tv[:Imin_str]
+                end
+            end
+        end
     end
+    # kontrola
     if S === nothing
         error("Chybí S (ani profil nebyl použit).")
     end
@@ -261,6 +280,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     sigma_str = "F / S"
     sigma = F / S
+    sigma = uconvert(u"MPa", sigma)
     k_str = "sigmaDt / sigma"
     k = sigmaDt / sigma
     epsilon = nothing
@@ -331,6 +351,9 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:mat_info] = "Materiál"
     VV[:L0] = L0 # délka namáhaného profilu
     VV[:L0_info] = "Délka namáhaného profilu"
+    VV[:Imin] = Imin # minimální kvadratický moment průřezu pro výpočet stability v tlaku
+    VV[:Imin_str] = Imin_text
+    VV[:Imin_info] = "Minimální kvadratický moment průřezu pro výpočet stability v tlaku"
     VV[:deltaL] = deltaL # skutečné zkrácení
     VV[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""
     VV[:deltaL_info] = deltaL===nothing ? "" : "Skutečné zkrácení"

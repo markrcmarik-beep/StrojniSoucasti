@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-02-23
+# ver: 2026-02-28
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -107,40 +107,53 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
-    # kontrola duplicity S / profil
-    cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
-    if cntS > 1
-        error("Zadejte pouze jednu hodnotu z: S nebo profil.")
-    end
-    if (tauDs !== nothing) && (mat !== nothing)
-        error("Zadejte buď tauDs, nebo mat/Re - ne obojí.")
-    end
+    # vstupy - jednotky
     # ---------------------------------------------------------
-    # jednotky
     if F !== nothing
         F = attach_unit(F,u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
     else
-        error("Chybí střižná síla F.")
+        error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
         S = attach_unit(S,u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if tauDs !== nothing
         tauDs = attach_unit(tauDs,u"MPa")
+        if tauDs <= 0u"MPa"
+            error("tauDs musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re,u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if G !== nothing
         G = attach_unit(G,u"GPa")
+        if G <= 0u"MPa"
+            error("G musí být kladná hodnota.")
+        end
     end
     if E !== nothing
         E = attach_unit(E,u"GPa")
+        if E <= 0u"MPa"
+            error("E musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
@@ -176,28 +189,42 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
         end
     end
     # ---------------------------------------------------------
-    # profil → střižná plocha
-    S_text = ""
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main,:profily)
-            error("Funkce profily není definována.")
-        end
-        tv = profily(profil, "S")
-        if !haskey(tv,:S)
-            error("Profil neposkytuje střižnou plochu S.")
-        end
-        S = tv[:S]
-        haskey(tv,:S_str) && (S_text = tv[:S_str])
+    # profil (automatické volání profily(profil, "S"))
+    # ---------------------------------------------------------
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
         for k in keys(tv)
-            k ∉ (:S,:S_str) && (profil_info[k] = tv[k])
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+            end
         end
     end
-    # ---------------------------------------------------------
-    # validace
-    F === nothing && error("Chybí střižná síla F.")
-    S === nothing && error("Chybí střižná plocha S.")
-    F <= 0u"N" && error("F musí být kladná (velikost síly).")
+    S_text = ""
+    if S === nothing
+        if profil === nothing
+            error("Chybí S nebo profil - nelze stanovit plochu průřezu.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily(profil, \"S\") není definována.")
+        else
+            tv = profily(profil, "S")  # vynucení výpočtu S
+            if !haskey(tv, :S)
+                error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
+            end
+            S = tv[:S]
+            if haskey(tv, :S_str)
+                S_text = tv[:S_str]
+            end
+        end
+    end
+    # kontrola
+    if S === nothing
+        error("Chybí S (ani profil nebyl použit).")
+    end
+    if tauDs === nothing
+        error("Chybí tauDs (nezadáno tauDs ani mat/Re).")
+    else
+        tauDs = uconvert(u"MPa", tauDs)
+    end
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------

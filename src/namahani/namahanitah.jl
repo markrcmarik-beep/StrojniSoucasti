@@ -112,47 +112,60 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
-    # kontroly duplicity S/profil
-    cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
-    if cntS > 1
-        error("Zadejte pouze jednu hodnotu z: S nebo profil.")
-    end
-    if (sigmaDt !== nothing) && (mat !== nothing)
-        error("Zadejte pouze sigmaDt nebo mat, ne obojí.")
-    end
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
     if F !== nothing
         F = attach_unit(F, u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
     else
         error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
         S = attach_unit(S, u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if sigmaDt !== nothing
         sigmaDt = attach_unit(sigmaDt, u"MPa")
+        if sigmaDt <= 0u"MPa"
+            error("sigmaDt musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re, u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if E !== nothing
         E = attach_unit(E, u"GPa")
+        if E <= 0u"GPa"
+            error("E musí být kladná hodnota.")
+        end
     end
     if L0 !== nothing
         L0 = attach_unit(L0, u"mm")
+        if L0 <= 0u"mm"
+            error("L0 musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
+        if !isdefined(@__MODULE__, :materialy)
             error("Funkce materialy(mat) není definována.")
         end
         matinfo = materialy(mat)
@@ -170,7 +183,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         if Re === nothing && mat === nothing
             error("Chybí sigmaDt, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
             if matinfo !== nothing
                 sigmaDt = dovoleneNapeti("tah", zatizeni; mat=matinfo)
             elseif Re !== nothing
@@ -183,30 +196,32 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))
     # ---------------------------------------------------------
-    S_text = ""
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main, :profily)
-            error("Funkce profily(...) není definována.")
-        end
-        tv = profily(profil, "S")  # vynucení výpočtu S
-        if !haskey(tv, :S)
-            error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
-        end
-        S = tv[:S]
-        if haskey(tv, :S_str)
-            S_text = tv[:S_str]
-        end
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
         for k in keys(tv)
-            if k ∉ (:S, :S_str)
-                profil_info[k] = tv[k]
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
             end
         end
     end
-    # kontrola F, S, sigmaDt
-    if F === nothing
-        error("Chybí F.")
+    S_text = ""
+    if S === nothing
+        if profil === nothing
+            error("Chybí S a profil - nelze stanovit plochu průřezu.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily(profil, \"S\") není definována.")
+        else
+            tv = profily(profil, "S")  # vynucení výpočtu S
+            if !haskey(tv, :S)
+                error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
+            end
+            S = tv[:S] # plocha průřezu pro výpočet napětí
+            if haskey(tv, :S_str)
+                S_text = tv[:S_str] # textový popis výpočtu S
+            end
+        end
     end
+    # kontrola
     if S === nothing
         error("Chybí S (ani profil nebyl použit).")
     end
@@ -214,6 +229,9 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         error("Chybí sigmaDt (nezadáno sigmaDt ani mat/Re).")
     else
         sigmaDt = uconvert(u"MPa", sigmaDt)
+    end
+    if L0 !== nothing && E === nothing
+        error("Pro vypocet zkraceni (L0) je nutne zadat i E.")
     end
     # ---------------------------------------------------------
     # výpočet
@@ -298,7 +316,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:L_str] = @isdefined(L_str) ? L_str : ""
     VV[:L_info] = L === nothing ? "" : "Délka po deformaci"
     VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = profil_info
+    VV[:profil_info] = profil_info 
     if return_text
         Dispstr = StrojniSoucasti.namahanitahtext(VV)
         return VV, Dispstr

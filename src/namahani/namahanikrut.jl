@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-02-23
+# ver: 2026-02-28
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -99,7 +99,6 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     S=nothing, tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 
     mat=nothing, zatizeni::AbstractString="statický",
     profil=nothing, k=nothing, return_text::Bool=true)
-    #VV::Dict{Symbol,Any}=nothing)
     # ---------------------------------------------------------
     # pomocné
     # ---------------------------------------------------------
@@ -107,38 +106,65 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
     if Mk !== nothing
         Mk = attach_unit(Mk, u"N*m") # převod na N*m
+        if Mk <= 0u"N*m"
+            error("Mk musí být kladná hodnota.")
+        end
     else
         error("Mk musí být zadáno(N*m).")
     end
     if S !== nothing
         S = attach_unit(S, u"mm^2") # převod na mm^2
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if Wk !== nothing
         Wk = attach_unit(Wk, u"mm^3") # převod na mm^3
+        if Wk <= 0u"mm^3"
+            error("Wk musí být kladná hodnota.")
+        end
     end
     if Ip !== nothing
         Ip = attach_unit(Ip, u"mm^4") # převod na mm^4
+        if Ip <= 0u"mm^4"
+            error("Ip musí být kladná hodnota.")
+        end
     end
     if tauDk !== nothing
         tauDk = attach_unit(tauDk, u"MPa") # převod na MPa
+        if tauDk <= 0u"MPa"
+            error("tauDk musí být kladná hodnota.")
+        end
     end
     if G !== nothing
         G = attach_unit(G, u"GPa") # převod na GPa
+        if G <= 0u"GPa"
+            error("G musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re, u"MPa") # převod na MPa
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if L0 !== nothing
         L0 = attach_unit(L0, u"mm") # převod na mm
+        if L0 <= 0u"mm"
+            error("L0 musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladná hodnota.")
         end
     end
     # ---------------------------------------------------------
@@ -157,7 +183,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
-    # dovolené napětí
+    # dovolené krutové napětí
     # ---------------------------------------------------------
     if tauDk === nothing
         if Re === nothing && mat === nothing
@@ -176,6 +202,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # ---------------------------------------------------------
     # profil
     # ---------------------------------------------------------
+
     profil_info = Dict{Symbol,Any}()
     if profil !== nothing
         if !isdefined(Main, :tvarprofilu)
@@ -202,6 +229,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
                 profil_info[:k] = tv[k] # převzetí dalších rozměrů
             end
         end
+    end
+        # kontrola
+    if Wk === nothing
+        error("Chybí Wk (ani profil nebyl použit).")
     end
     # ---------------------------------------------------------
     # výpočet
