@@ -235,12 +235,12 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         elseif !isdefined(@__MODULE__, :profily)
             error("Funkce profily(profil, \"S\") není definována.")
         else
-            tv = profily(profil, "S")  # vynucení výpočtu S
+            tv = profily(profil, "S")  # získání plochy průřezu z profilu
             if !haskey(tv, :S)
                 error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
             end
-            S = tv[:S]
-            if haskey(tv, :S_str)
+            S = tv[:S] # plocha průřezu pro výpočet napětí
+            if haskey(tv, :S_str) # textový popis výpočtu S z profilu
                 S_text = tv[:S_str]
             end
         end

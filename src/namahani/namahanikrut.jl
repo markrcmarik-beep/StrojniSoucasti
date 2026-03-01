@@ -96,7 +96,7 @@ namahanikrut(Mk=500u"N*m", profil="TR4HR 100x100x6", mat="S235")
 ```
 """
 function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing, 
-    S=nothing, tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 
+    tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 
     mat=nothing, zatizeni::AbstractString="statický",
     profil=nothing, k=nothing, return_text::Bool=true)
     # ---------------------------------------------------------
@@ -117,12 +117,6 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         end
     else
         error("Mk musí být zadáno(N*m).")
-    end
-    if S !== nothing
-        S = attach_unit(S, u"mm^2") # převod na mm^2
-        if S <= 0u"mm^2"
-            error("S musí být kladná hodnota.")
-        end
     end
     if Wk !== nothing
         Wk = attach_unit(Wk, u"mm^3") # převod na mm^3
@@ -202,31 +196,46 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # ---------------------------------------------------------
     # profil
     # ---------------------------------------------------------
-
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main, :tvarprofilu)
-            error("Funkce tvarprofilu(...) není definována.")
-        end
-        tv = tvarprofilu(profil, "Wk", "Ip")
-        # převzetí, pokud chybí explicitní hodnoty
-        if Wk === nothing && haskey(tv, :Wk)
-            Wk = tv[:Wk] # převzetí z profilu
-        end
-        if Ip === nothing && haskey(tv, :Ip)
-            Ip = tv[:Ip] # převzetí z profilu
-        end
-        # Wk_str/Ip_str
-        if haskey(tv, :Wk_str)
-            profil_info[:Wk_str] = tv[:Wk_str] # převzetí textového popisu
-        end
-        if haskey(tv, :Ip_str)
-            profil_info[:Ip_str] = tv[:Ip_str] # převzetí textového popisu
-        end
-        # ostatní rozměry (a,b,t,...)
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
         for k in keys(tv)
-            if k ∉ (:Wk, :Wk_str, :Ip, :Ip_str)
-                profil_info[:k] = tv[k] # převzetí dalších rozměrů
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+            end
+        end
+    end
+    Wk_text = ""
+    if Wk === nothing
+        if profil === nothing
+            error("Chybí Wk a profil - nelze stanovit průřezový modul.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily není definována.")
+        else
+            tv = profily(profil, "Wk")  # získání Wk z profilu
+            if !haskey(tv, :Wk)
+                error("Profil $profil neobsahuje informaci o Wk.")
+            end
+            Wk = tv[:Wk] # převzetí Wk z profilu
+            if haskey(tv, :Wk_str) # textový popis výpočtu Wk z profilu
+                Wk_text = tv[:Wk_str] # převzetí textového popisu Wk z profilu
+            end
+        end
+    end
+    Ip_text = ""
+    if Ip === nothing
+        if profil !== nothing
+            #error("Chybí Ip a profil - nelze stanovit polární moment setrvačnosti.")
+            if !isdefined(@__MODULE__, :profily)
+                error("Funkce profily není definována.")
+            else
+                tv = profily(profil, "Ip")  # získání Ip z profilu
+                if !haskey(tv, :Ip)
+                    error("Profil $profil neobsahuje informaci o Ip.")
+                end
+                Ip = tv[:Ip] # převzetí Ip z profilu
+                if haskey(tv, :Ip_str) # textový popis výpočtu Ip z profilu
+                    Ip_text = tv[:Ip_str] # převzetí textového popisu Ip z profilu
+                end
             end
         end
     end
@@ -284,10 +293,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wk] = Wk # průřezový modul v krutu
     VV[:Wk_info] = "Průřezový modul v krutu"
-    VV[:Wk_text] = get(profil_info, :Wk_str, "")
+    VV[:Wk_text] = Wk_text
     VV[:Ip] = Ip # polární moment setrvačnosti
     VV[:Ip_info] = "Polární moment setrvačnosti"
-    VV[:Ip_text] = get(profil_info, :Ip_str, "")
+    VV[:Ip_text] = Ip_text
     VV[:tauDk] = tauDk # dovolené smykové napětí v krutu
     VV[:tauDk_info] = "Dovolené napětí v krutu"
     VV[:tau] = tau # napětí v krutu

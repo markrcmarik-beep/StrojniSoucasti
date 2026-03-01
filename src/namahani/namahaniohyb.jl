@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-02-23
+# ver: 2026-03-01
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -96,35 +96,59 @@ function namahaniohyb(;
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
     if Mo !== nothing
         Mo = attach_unit(Mo, u"N*m")
+        if Mo <= 0u"N*m"
+            error("Ohybový moment Mo musí být kladný.")
+        end
     else
         error("Chybí ohybový moment Mo.")
     end
     if Lo !== nothing
         Lo = attach_unit(Lo, u"mm")
+        if Lo <= 0u"mm"
+            error("Délka nosníku Lo musí být kladná.")
+        end
     end
     if E !== nothing
         E = attach_unit(E, u"MPa")
+        if E <= 0u"MPa"
+            error("Modul pružnosti E musí být kladný.")
+        end
     end
     if Ix !== nothing
         Ix = attach_unit(Ix, u"mm^4")
+        if Ix <= 0u"mm^4"
+            error("Moment setrvačnosti Ix musí být kladný.")
+        end
     end
     if Wo !== nothing
         Wo = attach_unit(Wo, u"mm^3")
+        if Wo <= 0u"mm^3"
+            error("Průřezový modul v ohybu Wo musí být kladný.")
+        end
     end
     if sigmaDo !== nothing
         sigmaDo = attach_unit(sigmaDo, u"MPa")
+        if sigmaDo <= 0u"MPa"
+            error("Dovolené napětí v ohybu sigmaDo musí být kladné.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re, u"MPa")
+        if Re <= 0u"MPa"
+            error("Mez kluzu Re musí být kladná.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
