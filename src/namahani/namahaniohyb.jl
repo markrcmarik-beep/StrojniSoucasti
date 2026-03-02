@@ -167,7 +167,7 @@ function namahaniohyb(;
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
-    # dovolené napětí
+    # dovolené ohybové napětí
     # ---------------------------------------------------------
     if sigmaDo === nothing
         if Re === nothing && mat === nothing
@@ -186,7 +186,7 @@ function namahaniohyb(;
     # ---------------------------------------------------------
     # profil
     # ---------------------------------------------------------
-    profil_info = Dict{Symbol,Any}()
+
     if natoceni === nothing
         natoceni = 0 * u"rad"
     elseif natoceni isa Real
@@ -219,6 +219,7 @@ function namahaniohyb(;
             end
         end
     end
+    # kontrola, že máme potřebné charakteristiky průřezu
     if Wo === nothing
         error("Chybí průřezový modul v ohybu Wo.")
     end
