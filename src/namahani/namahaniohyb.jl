@@ -226,39 +226,39 @@ function namahaniohyb(;
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
-    sigma_str = "Mo / Wo"
-    sigma = Mo / Wo
-    sigma = uconvert(u"MPa", sigma)
+    sigma_str = "Mo / Wo" # napětí v ohybu
+    sigma = Mo / Wo # napětí v ohybu
+    sigma = uconvert(u"MPa", sigma) # převod na MPa
     delta = nothing
     y = nothing
     alfa = nothing
     if E !== nothing && Ix !== nothing
-        delta_str = "Mo / (E * Ix)"
-        delta = Mo / (E * Ix)
-        delta = uconvert(u"m^-1", delta)
+        delta_str = "Mo / (E * Ix)" # relativní průhyb
+        delta = Mo / (E * Ix) # relativní průhyb
+        delta = uconvert(u"m^-1", delta) # převod na 1/m
         if Lo !== nothing
-            y_str = "Mo * Lo^2 / (3 * E * Ix)"
-            y = Mo * (Lo)^2 / (3 * E * Ix)
-            y = uconvert(u"mm", y)
-            alfa_str = "Mo * Lo / (2 * E * Ix)"
-            alfa = Mo * Lo / (2 * E * Ix)
-            alfa = uconvert(u"rad", alfa)
+            y_str = "Mo * Lo^2 / (3 * E * Ix)" # průhyb na volném konci
+            y = Mo * (Lo)^2 / (3 * E * Ix) # průhyb na volném konci
+            y = uconvert(u"mm", y) # převod na mm
+            alfa_str = "Mo * Lo / (2 * E * Ix)" # úhel natočení průřezu
+            alfa = Mo * Lo / (2 * E * Ix) # úhel natočení průřezu
+            alfa = uconvert(u"rad", alfa) # převod na radiany
         end
     end
-    k_str = "sigmaDo / sigma"
-    k = sigmaDo / sigma
+    k_str = "sigmaDo / sigma" # součinitel bezpečnosti
+    k = sigmaDo / sigma # součinitel bezpečnosti
     if k_uziv === nothing
-        verdict =   if k ≥ 1.5
+        verdict =   if k ≥ 1.5 # obecně doporučovaný minimální součinitel bezpečnosti pro ohyb
                         "Součást je bezpečná"
                     elseif k ≥ 1.0
                         "Součást je na hranici bezpečnosti"
-                    else
+                    else 
                         "Součást není bezpečná!"
                     end
     else
-        verdict =   if k >= k_uziv + 0.5
+        verdict =   if k >= k_uziv + 0.5 # přidáváme 0.5 jako rezervu nad uživatelský požadavek
                         "Spoj je bezpečný"
-                    elseif k >= k_uziv
+                    elseif k >= k_uziv # uživatelský požadavek bezpečnosti je splněn, ale bez rezervy
                         "Spoj je na hranici bezpečnosti"
                     else
                         "Spoj není bezpečný!"

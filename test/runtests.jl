@@ -20,6 +20,7 @@ using Test
     include("profily_test/profilyvlcn_test.jl")
     include("profily_test/profilyvlcnS_test.jl")
     include("profily_test/profilyvlcnIp_test.jl")
+    include("profily_test/torsion_J_TR4HR_numeric_test.jl")
     include("profily_test/profilyvlcnWk_test.jl")
     include("profily_test/profilyvlcnIx_test.jl")
     include("profily_test/profilyvlcnWo_test.jl")
