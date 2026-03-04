@@ -254,7 +254,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
             else
                 tv = profily(profil, "Imin")  # vynucení výpočtu Imin
                 if !haskey(tv, :Imin)
-                error("Funkce profily(...) nevrací :Imin ani po zadání \"Imin\".")
+                    error("Funkce profily(...) nevrací :Imin ani po zadání \"Imin\".")
                 end
                 Imin = tv[:Imin] # minimální kvadratický moment průřezu pro výpočet stability v tlaku
                 if haskey(tv, :Imin_str)

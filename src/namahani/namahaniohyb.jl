@@ -186,6 +186,14 @@ function namahaniohyb(;
     # ---------------------------------------------------------
     # profil
     # ---------------------------------------------------------
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
+        for k in keys(tv)
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+            end
+        end
+    end
 
     if natoceni === nothing
         natoceni = 0 * u"rad"
@@ -200,22 +208,37 @@ function namahaniohyb(;
     elseif !isa(natoceni, Number)
         error("Parametr natoceni musí být čísLo. [rad]")
     end
-    if profil !== nothing
-        if !isdefined(Main, :profily)
+    Wo_text = ""
+    if Wo === nothing
+        if profil === nothing
+            error("Chybí Wo nebo profil - nelze stanovit průřezový modul v ohybu.")
+        elseif !isdefined(@__MODULE__, :profily)
             error("Funkce profily není definována.")
+        else
+            tv = profily(profil, "Wo", natoceni)
+            if !haskey(tv, :Wo)
+                error("Nelze získat Wo z profilu $profil.")
+            end
+            Wo = tv[:Wo] # získání Wo z profilu
+            if haskey(tv, :Wo_str)
+                Wo_text = tv[:Wo_str] # získání textového popisu Wo z profilu
+            end
         end
-        tv = profily(profil, "Wo", "Ix", natoceni)
-        if Wo === nothing && haskey(tv, :Wo)
-            Wo = tv[:Wo]
-        end
-        haskey(tv, :Wo_str) && (profil_info[:Wo_str] = tv[:Wo_str])
-        if Ix === nothing && haskey(tv, :Ix)
-            Ix = tv[:Ix]
-        end
-        haskey(tv, :Ix_str) && (profil_info[:Ix_str] = tv[:Ix_str])
-        for k in keys(tv)
-            if k ∉ (:Wo, :Wo_str)
-                profil_info[k] = tv[k]
+    end
+    Ix_text = ""
+    if Ix === nothing
+        if profil !== nothing
+            if !isdefined(@__MODULE__, :profily)
+                error("Funkce profily není definována.")
+            else
+                tv = profily(profil, "Ix", natoceni)
+                if !haskey(tv, :Ix)
+                    error("Nelze získat Ix z profilu $profil.")
+                end
+                Ix = tv[:Ix] # získání Ix z profilu
+                if haskey(tv, :Ix_str)
+                    Ix_text = tv[:Ix_str] # získání textového popisu Ix z profilu
+                end
             end
         end
     end
@@ -277,10 +300,10 @@ function namahaniohyb(;
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wo] = Wo # průřezový modul v ohybu
     VV[:Wo_info] = "Průřezový modul v ohybu"
-    VV[:Wo_text] = get(profil_info, :Wo_str, "")
+    VV[:Wo_text] = Wo_text
     VV[:Ix] = Ix # moment setrvačnosti
     VV[:Ix_info] = "Moment setrvačnosti"
-    VV[:Ix_text] = get(profil_info, :Ix_str, "")
+    VV[:Ix_text] = Ix_text
     VV[:Lo] = Lo # délka nosníku
     VV[:Lo_info] = "Délka nosníku"
     VV[:sigmaDo] = sigmaDo # dovolené napětí v ohybu
