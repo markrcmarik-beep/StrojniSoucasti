@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-03-01
+# ver: 2026-03-06
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -208,7 +208,7 @@ function namahaniohyb(;
     elseif !isa(natoceni, Number)
         error("Parametr natoceni musí být čísLo. [rad]")
     end
-    Wo_text = ""
+    Wo_str = ""
     if Wo === nothing
         if profil === nothing
             error("Chybí Wo nebo profil - nelze stanovit průřezový modul v ohybu.")
@@ -221,11 +221,11 @@ function namahaniohyb(;
             end
             Wo = tv[:Wo] # získání Wo z profilu
             if haskey(tv, :Wo_str)
-                Wo_text = tv[:Wo_str] # získání textového popisu Wo z profilu
+                Wo_str = tv[:Wo_str] # získání textového popisu Wo z profilu
             end
         end
     end
-    Ix_text = ""
+    Ix_str = ""
     if Ix === nothing
         if profil !== nothing
             if !isdefined(@__MODULE__, :profily)
@@ -237,7 +237,7 @@ function namahaniohyb(;
                 end
                 Ix = tv[:Ix] # získání Ix z profilu
                 if haskey(tv, :Ix_str)
-                    Ix_text = tv[:Ix_str] # získání textového popisu Ix z profilu
+                    Ix_str = tv[:Ix_str] # získání textového popisu Ix z profilu
                 end
             end
         end
@@ -300,10 +300,10 @@ function namahaniohyb(;
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wo] = Wo # průřezový modul v ohybu
     VV[:Wo_info] = "Průřezový modul v ohybu"
-    VV[:Wo_text] = Wo_text # textový popis Wo (např. z profilu)
+    VV[:Wo_str] = Wo_str # textový popis Wo (např. z profilu)
     VV[:Ix] = Ix # moment setrvačnosti
     VV[:Ix_info] = "Moment setrvačnosti"
-    VV[:Ix_text] = Ix_text # textový popis Ix (např. z profilu)
+    VV[:Ix_str] = Ix_str # textový popis Ix (např. z profilu)
     VV[:Lo] = Lo # délka nosníku
     VV[:Lo_info] = "Délka nosníku"
     VV[:sigmaDo] = sigmaDo # dovolené napětí v ohybu

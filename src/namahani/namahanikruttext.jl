@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahanikruttext()
 ## Autor: Martin
 #
@@ -41,10 +41,10 @@ function namahanikruttext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
     if VV[:Wk] !== nothing
-        push!(lines, @sprintf("Wk = %s = %g   %s", VV[:Wk_text], VV[:Wk], VV[:Wk_info]))
+        push!(lines, @sprintf("Wk = %s = %g   %s", VV[:Wk_str], VV[:Wk], VV[:Wk_info]))
     end
     if VV[:Ip] !== nothing
-        push!(lines, @sprintf("Ip = %s = %g   %s", VV[:Ip_text], VV[:Ip], VV[:Ip_info]))
+        push!(lines, @sprintf("Ip = %s = %g   %s", VV[:Ip_str], VV[:Ip], VV[:Ip_info]))
     end
     if VV[:tauDk] !== nothing
         push!(lines, @sprintf("tauDk = %g   %s", VV[:tauDk], VV[:tauDk_info]))

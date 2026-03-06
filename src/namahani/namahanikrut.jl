@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -34,10 +34,10 @@
 #   :Mk_info - Popis veličiny Mk
 #   :Wk - Průřezový modul v krutu
 #   :Wk_info - Popis veličiny Wk
-#   :Wk_text - Textový popis Wk (z profilu)
+#   :Wk_str - Textový popis Wk (z profilu)
 #   :Ip - Polární moment setrvačnosti
 #   :Ip_info - Popis veličiny Ip
-#   :Ip_text - Textový popis Ip (z profilu)
+#   :Ip_str - Textový popis Ip (z profilu)
 #   :tauDk - Dovolené smykové napětí v krutu
 #   :tauDk_info - Popis veličiny tauDk
 #   :tau - Smykové napětí v krutu
@@ -204,7 +204,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             end
         end
     end
-    Wk_text = ""
+    Wk_str = ""
     if Wk === nothing
         if profil === nothing
             error("Chybí Wk a profil - nelze stanovit průřezový modul.")
@@ -217,11 +217,11 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             end
             Wk = tv[:Wk] # převzetí Wk z profilu
             if haskey(tv, :Wk_str) # textový popis výpočtu Wk z profilu
-                Wk_text = tv[:Wk_str] # převzetí textového popisu Wk z profilu
+                Wk_str = tv[:Wk_str] # převzetí textového popisu Wk z profilu
             end
         end
     end
-    Ip_text = ""
+    Ip_str = ""
     if Ip === nothing
         if profil !== nothing
             #error("Chybí Ip a profil - nelze stanovit polární moment setrvačnosti.")
@@ -234,7 +234,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
                 end
                 Ip = tv[:Ip] # převzetí Ip z profilu
                 if haskey(tv, :Ip_str) # textový popis výpočtu Ip z profilu
-                    Ip_text = tv[:Ip_str] # převzetí textového popisu Ip z profilu
+                    Ip_str = tv[:Ip_str] # převzetí textového popisu Ip z profilu
                 end
             end
         end
@@ -293,10 +293,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wk] = Wk # průřezový modul v krutu
     VV[:Wk_info] = "Průřezový modul v krutu"
-    VV[:Wk_text] = Wk_text # textový popis Wk (např. z profilu)
+    VV[:Wk_str] = Wk_str # textový popis Wk (např. z profilu)
     VV[:Ip] = Ip # polární moment setrvačnosti
     VV[:Ip_info] = "Polární moment setrvačnosti"
-    VV[:Ip_text] = Ip_text # textový popis Ip (např. z profilu)
+    VV[:Ip_str] = Ip_str # textový popis Ip (např. z profilu)
     VV[:tauDk] = tauDk # dovolené smykové napětí v krutu
     VV[:tauDk_info] = "Dovolené napětí v krutu"
     VV[:tau] = tau # napětí v krutu

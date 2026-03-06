@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání ve smyku pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahanistrihtext()
 ## Autor: Martin
 #
@@ -40,8 +40,8 @@ function namahanistrihtext(VV::Dict{Symbol,Any})
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
-    if VV[:S_text] != ""
-        push!(lines,@sprintf("S = %s = %g   %s",VV[:S_text],VV[:S], 
+    if VV[:S_str] != ""
+        push!(lines,@sprintf("S = %s = %g   %s",VV[:S_str],VV[:S], 
             VV[:S_info]))
     else
         push!(lines,@sprintf("S = %g   %s",VV[:S],VV[:S_info]))

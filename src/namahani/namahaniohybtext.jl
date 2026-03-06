@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání v ohybu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahaniohybtext()
 ## Autor: Martin
 #
@@ -43,9 +43,17 @@ function namahaniohybtext(VV::Dict{Symbol,Any})
     if VV[:natoceni] !== nothing
         push!(lines, @sprintf("natočení = %g   %s", VV[:natoceni], VV[:natoceni_info]))
     end
-    push!(lines, @sprintf("Wo = %g   %s", VV[:Wo], VV[:Wo_info]))
+    if VV[:Wo_str] != ""
+        push!(lines, @sprintf("Wo = %s = %g   %s", VV[:Wo_str], VV[:Wo], VV[:Wo_info]))
+    else
+        push!(lines, @sprintf("Wo = %g   %s", VV[:Wo], VV[:Wo_info]))
+    end
     if VV[:Ix] !== nothing
-        push!(lines, @sprintf("Ix = %g   %s", VV[:Ix], VV[:Ix_info]))
+        if VV[:Ix_str] != ""
+            push!(lines, @sprintf("Ix = %s = %g   %s", VV[:Ix_str], VV[:Ix], VV[:Ix_info]))
+        else
+            push!(lines, @sprintf("Ix = %g   %s", VV[:Ix], VV[:Ix_info]))
+        end
     end
     if VV[:Re] !== nothing
         push!(lines, @sprintf("Re = %g   %s", VV[:Re], VV[:Re_info]))

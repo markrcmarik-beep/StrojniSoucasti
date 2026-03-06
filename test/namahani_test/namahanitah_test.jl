@@ -4,6 +4,16 @@
 
 using StrojniSoucasti, Unitful, Test
 
+function assert_namahanitah_text_common(txt::String, VV::Dict{Symbol,Any})
+    @test !isempty(txt)
+    @test occursin("F = ", txt)
+    @test occursin("S = ", txt)
+    @test occursin("sigmaDt = ", txt)
+    @test occursin("sigma = $(VV[:sigma_str])", txt)
+    @test occursin("k = $(VV[:bezpecnost_str])", txt)
+    @test occursin(string(VV[:verdict]), txt)
+end
+
 @testset "namahanitah" begin
 
     # Test 1: Základní výpočet bez jednotek
@@ -132,6 +142,22 @@ using StrojniSoucasti, Unitful, Test
         # Ověření číselného výpočtu
         expected_sigma = uconvert(u"MPa", 6000u"N" / 400u"mm^2")
         @test isapprox(uconvert(u"MPa", VV[:sigma]), expected_sigma, rtol=1e-5)
+    end
+
+    @testset "textovy vystup - struktura a podminene radky" begin
+        VV1, txt1 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+        assert_namahanitah_text_common(txt1, VV1)
+        @test !occursin("epsilon =", txt1)
+        @test !occursin("deltaL =", txt1)
+        @test !occursin(r"^L ="m, txt1)
+
+        VV2, txt2 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa",
+            E=200u"GPa", L0=500u"mm")
+        assert_namahanitah_text_common(txt2, VV2)
+        @test occursin("L0 = ", txt2)
+        @test occursin("epsilon = $(VV2[:epsilon_str])", txt2)
+        @test occursin("deltaL = $(VV2[:deltaL_str])", txt2)
+        @test occursin("L = $(VV2[:L_str])", txt2)
     end
 
     # Test 14: Bezpečnost - bezpečný spoj

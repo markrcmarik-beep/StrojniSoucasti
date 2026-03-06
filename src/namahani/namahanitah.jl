@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-02-23
+# ver: 2026-03-06
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -31,7 +31,7 @@
 #   :F - Zatěžující síla (Unitful.Quantity)
 #   :F_info - Popis pole F
 #   :S - Plocha průřezu (Unitful.Quantity)
-#   :S_text - Textový popis výpočtu S (je-li k dispozici)
+#   :S_str - Textový popis výpočtu S (je-li k dispozici)
 #   :S_info - Popis pole S
 #   :sigmaDt - Dovolené napětí v tahu (Unitful.Quantity)
 #   :sigmaDt_info - Popis pole sigmaDt
@@ -204,7 +204,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
             end
         end
     end
-    S_text = ""
+    S_str = ""
     if S === nothing
         if profil === nothing
             error("Chybí S a profil - nelze stanovit plochu průřezu.")
@@ -217,7 +217,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
             end
             S = tv[:S] # plocha průřezu pro výpočet napětí
             if haskey(tv, :S_str)
-                S_text = tv[:S_str] # textový popis výpočtu S
+                S_str = tv[:S_str] # textový popis výpočtu S
             end
         end
     end
@@ -231,7 +231,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         sigmaDt = uconvert(u"MPa", sigmaDt)
     end
     if L0 !== nothing && E === nothing
-        error("Pro vypocet zkraceni (L0) je nutne zadat i E.")
+        error("Pro vypocet zkraceni (L0) je nutne zadat i (E).")
     end
     # ---------------------------------------------------------
     # výpočet
@@ -286,12 +286,12 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text # textový popis výpočtu S (např. z profilu)
+    VV[:S_str] = S_str # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí
     VV[:sigmaDt_info] = "Dovolené napětí"
     VV[:sigma] = sigma # skutečné napětí v tahu
-    VV[:sigma_str] = sigma_str
+    VV[:sigma_str] = sigma_str # textový popis výpočtu sigma (pro zobrazení v textu)
     VV[:sigma_info] = "Skutečné napětí v tahu"
     VV[:epsilon] = epsilon # poměrné prodloužení
     VV[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""

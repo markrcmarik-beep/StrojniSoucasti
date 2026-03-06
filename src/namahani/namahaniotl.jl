@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-03-05
+# ver: 2026-03-06
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -151,13 +151,13 @@ function namahaniotl(;
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
     # ----------------------------------------------------------
     # plocha z profilu
-    S_text = ""
+    S_str = ""
     profil_info = Dict{Symbol,Any}()
     if profil !== nothing
         p = profily(profil, "S")
         haskey(p, :S) || error("profily(...) nevrátilo S.")
         S = p[:S]
-        S_text = get(p, :S_str, "")
+        S_str = get(p, :S_str, "")
         for kk in keys(p)
             if kk ∉ (:S, :S_str)
                 profil_info[kk] = p[kk]
@@ -187,8 +187,7 @@ function namahaniotl(;
     VV[:k] = k # součinitel bezpečnosti (uživatelský požadavek)
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # kontaktní plocha
-    VV[:S_text] = S_text
-    VV[:S_str] = S_text
+    VV[:S_str] = S_str # textový popis výpočtu S
     VV[:S_info] = "Kontaktní plocha"
     VV[:sigmaDotl] = sigmaDotl
     VV[:sigmaDotl_info] = "Dovolené napětí na otlačení"

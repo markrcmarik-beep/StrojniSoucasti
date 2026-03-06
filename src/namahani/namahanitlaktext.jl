@@ -43,8 +43,8 @@ function namahanitlaktext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
     if VV[:S] !== nothing
-        if VV[:S_text] != ""
-            push!(lines, @sprintf("S = %s = %g   %s", VV[:S_text], VV[:S], VV[:S_info]))
+        if VV[:S_str] != ""
+            push!(lines, @sprintf("S = %s = %g   %s", VV[:S_str], VV[:S], VV[:S_info]))
         else
             push!(lines, @sprintf("S = %g   %s", VV[:S], VV[:S_info]))
         end

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -31,7 +31,7 @@
 #   :k - uživatelský požadavek bezpečnosti (Number, volitelné)
 #   :k_info - popis veličiny k
 #   :S - střižná plocha (Unitful.Quantity)
-#   :S_text - textový popis plochy S (řetězec
+#   :S_str - textový popis plochy S (řetězec
 #   :S_info - popis veličiny S
 #   :tau - vypočtené napětí ve střihu (Unitful.Quantity)
 #   :tau_str - vzorec pro výpočet tau (řetězec
@@ -199,7 +199,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
             end
         end
     end
-    S_text = ""
+    S_str = ""
     if S === nothing
         if profil === nothing
             error("Chybí S nebo profil - nelze stanovit plochu průřezu.")
@@ -212,7 +212,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
             end
             S = tv[:S]
             if haskey(tv, :S_str)
-                S_text = tv[:S_str]
+                S_str = tv[:S_str]
             end
         end
     end
@@ -263,7 +263,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text # textový popis plochy S (např. z profilu)
+    VV[:S_str] = S_str # textový popis plochy S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:tau] = tau # napětí ve střihu
     VV[:tau_str] = tau_str

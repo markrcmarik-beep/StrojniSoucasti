@@ -5,7 +5,7 @@
 # zadat zatěžující sílu, plochu průřezu nebo profil, dovolené 
 # napětí nebo materiál, délku namáhaného profilu a typ zatížení. 
 # Vrací slovník s výsledky výpočtu a volitelně i textový výpis.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -49,7 +49,7 @@
 #   :F - Zatěžující síla (Unitful.Quantity)
 #   :F_info - Popis pole F
 #   :S - Plocha průřezu (Unitful.Quantity)
-#   :S_text - Textový popis výpočtu S (je-li k dispozici)
+#   :S_str - Textový popis výpočtu S (je-li k dispozici)
 #   :S_info - Popis pole S
 #   :sigmaDt - Dovolené napětí v tlaku (Unitful.Quantity)
 #   :sigmaDt_info - Popis pole sigmaDt
@@ -228,7 +228,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
             end
         end
     end
-    S_text = ""
+    S_str = ""
     if S === nothing
         if profil === nothing
             error("Chybí S nebo profil - nelze stanovit plochu průřezu.")
@@ -241,11 +241,11 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
             end
             S = tv[:S] # plocha průřezu pro výpočet napětí
             if haskey(tv, :S_str) # textový popis výpočtu S z profilu
-                S_text = tv[:S_str]
+                S_str = tv[:S_str]
             end
         end
     end
-    Imin_text = ""
+    Imin_str = ""
     if Imin === nothing
         if profil !== nothing
     #        error("Chybí Imin nebo profil - nelze stanovit minimální kvadratický moment.")
@@ -258,7 +258,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
                 end
                 Imin = tv[:Imin] # minimální kvadratický moment průřezu pro výpočet stability v tlaku
                 if haskey(tv, :Imin_str)
-                    Imin_text = tv[:Imin_str]
+                    Imin_str = tv[:Imin_str]
                 end
             end
         end
@@ -328,7 +328,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text # textový popis výpočtu S (např. z profilu)
+    VV[:S_str] = S_str # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí v tlaku
     VV[:sigmaDt_info] = "Dovolené napětí v tlaku"
@@ -352,7 +352,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:L0] = L0 # délka namáhaného profilu
     VV[:L0_info] = "Délka namáhaného profilu"
     VV[:Imin] = Imin # minimální kvadratický moment průřezu pro výpočet stability v tlaku
-    VV[:Imin_str] = Imin_text # textový popis výpočtu Imin (např. z profilu)
+    VV[:Imin_str] = Imin_str # textový popis výpočtu Imin (např. z profilu)
     VV[:Imin_info] = "Minimální kvadratický moment průřezu pro výpočet stability v tlaku"
     VV[:deltaL] = deltaL # skutečné zkrácení
     VV[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""

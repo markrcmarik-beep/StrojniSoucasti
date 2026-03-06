@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání na otlačení pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-02-28
+# ver: 2026-03-06
 ## Funkce: namahaniotltext()
 ## Autor: Martin
 #
@@ -51,9 +51,9 @@ function namahaniotltext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("k = %g   %s", VV[:k], get(VV, :k_info, "")))
     end
     if get(VV, :S, nothing) !== nothing # plocha průřezu
-        S_text = get(VV, :S_text, get(VV, :S_str, ""))
-        if S_text != ""
-            push!(lines, @sprintf("S = %s = %g   %s", S_text, VV[:S], get(VV, :S_info, "")))
+        S_str = get(VV, :S_str, get(VV, :S_str, ""))
+        if S_str != ""
+            push!(lines, @sprintf("S = %s = %g   %s", S_str, VV[:S], get(VV, :S_info, "")))
         else
             push!(lines, @sprintf("S = %g   %s", VV[:S], get(VV, :S_info, "")))
         end
