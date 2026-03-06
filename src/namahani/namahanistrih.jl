@@ -263,7 +263,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text
+    VV[:S_text] = S_text # textový popis plochy S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:tau] = tau # napětí ve střihu
     VV[:tau_str] = tau_str

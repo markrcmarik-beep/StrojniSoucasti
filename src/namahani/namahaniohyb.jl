@@ -300,10 +300,10 @@ function namahaniohyb(;
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wo] = Wo # průřezový modul v ohybu
     VV[:Wo_info] = "Průřezový modul v ohybu"
-    VV[:Wo_text] = Wo_text
+    VV[:Wo_text] = Wo_text # textový popis Wo (např. z profilu)
     VV[:Ix] = Ix # moment setrvačnosti
     VV[:Ix_info] = "Moment setrvačnosti"
-    VV[:Ix_text] = Ix_text
+    VV[:Ix_text] = Ix_text # textový popis Ix (např. z profilu)
     VV[:Lo] = Lo # délka nosníku
     VV[:Lo_info] = "Délka nosníku"
     VV[:sigmaDo] = sigmaDo # dovolené napětí v ohybu

@@ -6,7 +6,7 @@
 # pomocí HMH nebo Tresca kritéria. Funkce využívá výstupy
 # z již existujících funkcí namáhání (namahanitah, namahanitlak,
 # namahanistrih, namahanikrut, namahaniohyb).
-# ver: 2026-02-16
+# ver: 2026-03-05
 ## Funkce: namahanikombinovane()
 ## Autor: Martin
 #
@@ -81,10 +81,15 @@ function namahanikombinovane(;
     # ---------------------------------------------------------
     if sigmaD !== nothing
         sigmaD = attach_unit(sigmaD, u"MPa") # převod na MPa
+        if sigmaD <= 0u"MPa"
+            error("sigmaD musí být kladné napětí.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno uživatelské k: $k_uziv")
+        elseif k_uziv <= 0
+            error("Uživatelský k musí být kladná hodnota.")
         end
     end
     # ---------------------------------------------------------
@@ -94,7 +99,7 @@ function namahanikombinovane(;
 if ((vysledky[1][:info] == "namáhání v tahu" &&
     vysledky[2][:info] == "namáhání ve střihu") ||
     (vysledky[1][:info] == "namáhání ve střihu" && 
-    vysledky[2][:info] == "namáhání v tahu"))
+    vysledky[2][:info] == "namáhání v tahu")) # kombinace tah-střih
     namahanizkr = "tah-střih"
     namahani_info = "namáhání v tahu - střihu"
     if vysledky[1][:info] == "namáhání v tahu" # první je tah
@@ -108,7 +113,7 @@ if ((vysledky[1][:info] == "namáhání v tahu" &&
 elseif (vysledky[1][:info] == "namáhání v tlaku" && 
     vysledky[2][:info] == "namáhání ve střihu") ||
     (vysledky[1][:info] == "namáhání ve střihu" && 
-    vysledky[2][:info] == "namáhání v tlaku")
+    vysledky[2][:info] == "namáhání v tlaku") # kombinace tlak-střih
     namahanizkr = "tlak-střih"
     namahani_info = "namáháni v tlaku - střihu"
     if vysledky[1][:info] == "namáhání v tlaku" # první je tlak

@@ -139,7 +139,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         if F <= 0u"N"
             error("F musí být kladná hodnota.")
         end
-    else
+    else # F je povinné
         error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
@@ -328,7 +328,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text
+    VV[:S_text] = S_text # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí v tlaku
     VV[:sigmaDt_info] = "Dovolené napětí v tlaku"
@@ -352,7 +352,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:L0] = L0 # délka namáhaného profilu
     VV[:L0_info] = "Délka namáhaného profilu"
     VV[:Imin] = Imin # minimální kvadratický moment průřezu pro výpočet stability v tlaku
-    VV[:Imin_str] = Imin_text
+    VV[:Imin_str] = Imin_text # textový popis výpočtu Imin (např. z profilu)
     VV[:Imin_info] = "Minimální kvadratický moment průřezu pro výpočet stability v tlaku"
     VV[:deltaL] = deltaL # skutečné zkrácení
     VV[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""

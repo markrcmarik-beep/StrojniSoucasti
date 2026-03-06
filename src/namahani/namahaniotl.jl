@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-02-22
+# ver: 2026-03-05
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -85,41 +85,47 @@ function namahaniotl(;
     profil=nothing,
     k=nothing,
     return_text::Bool=true)
-    # ----------------------------------------------------------
+    # ---------------------------------------------------------
     # pomocné
+    # ---------------------------------------------------------
+    k_uziv=k
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
-    attach(x,u) = hasq(x) ? x : x*u
-    # ----------------------------------------------------------
-    # kontrola duplicity vstupů
-    if S !== nothing && profil !== nothing
-        error("Zadej pouze jednu z hodnot: S nebo profil.")
+    attach_unit(x,u) = hasq(x) ? x : x * u
+    # ---------------------------------------------------------
+    # vstupy – jednotky
+    # ---------------------------------------------------------
+    if F !== nothing
+        F = attach_unit(F, u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
+    else
+        error("F musí být číslo nebo Unitful.Quantity")
     end
-
-    if sigmaDotl !== nothing && mat !== nothing
-        error("Zadej pouze jednu z hodnot: sigmaDotl nebo mat.")
-    end
-    # ----------------------------------------------------------
-    # jednotky
-    F !== nothing || error("Chybí zatěžující síla F.")
-    F = isnum(F) ? attach(F, u"N") : F
-    hasq(F) || error("F musí být číslo nebo Unitful.Quantity.")
-
     if S !== nothing
-        S = isnum(S) ? attach(S, u"mm^2") : S
-        hasq(S) || error("S musí být číslo nebo Unitful.Quantity.")
+        S = attach_unit(S, u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if sigmaDotl !== nothing
-        sigmaDotl = isnum(sigmaDotl) ? attach(sigmaDotl, u"MPa") : sigmaDotl
-        hasq(sigmaDotl) || error("sigmaDotl musí být číslo nebo Unitful.Quantity.")
+        sigmaDotl = attach_unit(sigmaDotl, u"MPa")
+        if sigmaDotl <= 0u"MPa"
+            error("sigmaDotl musí být kladná hodnota.")
+        end
     end
-
     if Re !== nothing
-        Re = isnum(Re) ? attach(Re, u"MPa") : Re
-        hasq(Re) || error("Re musí být číslo nebo Unitful.Quantity.")
+        Re = attach_unit(Re, u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if k !== nothing
         isnum(k) || error("k musí být číslo.")
+        if k <= 0
+            error("k musí být kladná hodnota.")
+        end
     end
     # ----------------------------------------------------------
     # materiál
