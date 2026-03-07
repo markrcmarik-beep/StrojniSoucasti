@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2026-02-01
+# Výpočet torzní konstanty Ip pro různé tvary profilů.
+# ver: 2026-03-02
 ## Funkce: profilyvlcnIp()
 ## Autor: Martin
 #
@@ -12,13 +12,16 @@
 ## Vzor:
 ## vystupni_promenne = profilyvlcnIp(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
+#   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
+#   :a, :b, :t, :D, :d, :s - parametry profilu (v závislosti na tvaru)
+# velicina - symbol určující, kterou veličinu chceme vypočítat (
 ## Výstupní proměnné:
-#
+# výsledek výpočtu a textový popis vzorce použitý pro výpočet
 ## Použité balíčky:
-#
+# Unitful
 ## Použité uživatelské funkce:
-#
+# StrojniSoucasti.torsion_J_TR4HR_numeric(),
 ## Příklad:
 #
 ###############################################################

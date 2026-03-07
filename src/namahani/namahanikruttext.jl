@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-01-25
+# ver: 2026-03-06
 ## Funkce: namahanikruttext()
 ## Autor: Martin
 #
@@ -28,23 +28,23 @@
 using Printf: @sprintf
 
 function namahanikruttext(VV::Dict{Symbol,Any})
-    lines = String[]
-    push!(lines, "Výpočet $(VV[:info])")
+    lines = String[] # pole pro textový výstup
+    push!(lines, "Výpočet $(VV[:info])") # název výpočtu z VV[:info]
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "materiál: $(VV[:mat] === nothing ? "" : string(VV[:mat]))")
     append!(lines, profil_text_lines(VV)) # přidat info o profilu
-    push!(lines, "zatížení: $(VV[:zatizeni])")
+    push!(lines, "zatížení: $(VV[:zatizeni])") # přidat info o zatížení do textového výstupu
     push!(lines, "----------------------------------------------------------------")
-    push!(lines, "zadání:")
+    push!(lines, "zadání:") # přidat info o zadání výpočtu
     push!(lines, @sprintf("Mk = %g   %s", VV[:Mk], VV[:Mk_info]))
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
     if VV[:Wk] !== nothing
-        push!(lines, @sprintf("Wk = %s = %g   %s", VV[:Wk_text], VV[:Wk], VV[:Wk_info]))
+        push!(lines, @sprintf("Wk = %s = %g   %s", VV[:Wk_str], VV[:Wk], VV[:Wk_info]))
     end
     if VV[:Ip] !== nothing
-        push!(lines, @sprintf("Ip = %s = %g   %s", VV[:Ip_text], VV[:Ip], VV[:Ip_info]))
+        push!(lines, @sprintf("Ip = %s = %g   %s", VV[:Ip_str], VV[:Ip], VV[:Ip_info]))
     end
     if VV[:tauDk] !== nothing
         push!(lines, @sprintf("tauDk = %g   %s", VV[:tauDk], VV[:tauDk_info]))

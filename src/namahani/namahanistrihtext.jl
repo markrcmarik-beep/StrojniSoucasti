@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání ve smyku pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-01-25
+# ver: 2026-03-06
 ## Funkce: namahanistrihtext()
 ## Autor: Martin
 #
@@ -28,20 +28,20 @@
 using Printf: @sprintf
 
 function namahanistrihtext(VV::Dict{Symbol,Any})
-    lines = String[]
-    push!(lines,"Výpočet $(VV[:info])")
+    lines = String[] # pole pro textový výstup
+    push!(lines,"Výpočet $(VV[:info])") # název výpočtu z VV[:info]
     push!(lines,"--------------------------------------------------------------")
     push!(lines, "materiál: $(VV[:mat] === nothing ? "" : string(VV[:mat]))")
-    append!(lines, profil_text_lines(VV)) # přidání textu profilu, pokud je zadaný
-    push!(lines,"zatížení: $(VV[:zatizeni])")
+    append!(lines, profil_text_lines(VV)) # přidáme informace o profilu do textového výstupu
+    push!(lines,"zatížení: $(VV[:zatizeni])") # přidáme informace o zatížení do textového výstupu
     push!(lines,"--------------------------------------------------------------")
-    push!(lines,"zadání:")
+    push!(lines,"zadání:") # přidáme informace o zadání výpočtu
     push!(lines,@sprintf("F = %g   %s",VV[:F],VV[:F_info]))
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
-    if VV[:S_text] != ""
-        push!(lines,@sprintf("S = %s = %g   %s",VV[:S_text],VV[:S], 
+    if VV[:S_str] != ""
+        push!(lines,@sprintf("S = %s = %g   %s",VV[:S_str],VV[:S], 
             VV[:S_info]))
     else
         push!(lines,@sprintf("S = %g   %s",VV[:S],VV[:S_info]))
