@@ -69,9 +69,6 @@ StrojniSoucasti
 │
 ├─ src
 │   ├─ StrojniSoucasti.jl
-│   ├─ SpravaSouboru.jl
-│   ├─ sprsheetRef.jl
-│   ├─ sprsheet2tabl.jl
 │   └─ další moduly
 │
 ├─ test
@@ -94,6 +91,5 @@ odešlete Pull Request
 
 Diskuse o vývoji probíhá pomocí nástrojů platformy GitHub.
 
-Licence
-
-Licence projektu bude doplněna.
+License
+This project is licensed under the MIT License.
