@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tlaku pro strojní součásti.
-# ver: 2026-02-16
+# ver: 2026-02-23
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -170,18 +170,27 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
         E = (matinfo.E)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+    else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené napětí
     # ---------------------------------------------------------
     if sigmaDt === nothing
-        if Re === nothing
-            error("Chybí sigmaDt i Re - nelze stanovit dovolené napětí.")
+        if Re === nothing && mat === nothing
+            error("Chybí sigmaDt, Re,  mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main, :dovoleneNapeti)
+        if isdefined(Main, :dovoleneNapeti)
+            if matinfo !== nothing
+                sigmaDt = dovoleneNapeti("tlak", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                sigmaDt = dovoleneNapeti("tlak", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti("tlak", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))
@@ -289,7 +298,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:E_info] = "Youngův modul (tlak)"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = mat
+    VV[:mat] = matName # název materiálu z dictu
     VV[:mat_info] = "Materiál"
     VV[:L0] = L0 # délka namáhaného profilu
     VV[:L0_info] = "Délka namáhaného profilu"

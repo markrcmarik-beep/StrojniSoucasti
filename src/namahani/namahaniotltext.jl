@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání na otlačení pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-01-25
+# ver: 2026-02-21
 ## Funkce: namahaniotltext()
 ## Autor: Martin
 #
@@ -29,55 +29,56 @@ using Printf: @sprintf
 
 function namahaniotltext(VV::Dict{Symbol,Any})
     lines = String[]
-    push!(lines, "Výpočet $(VV[:info])")
+    info = get(VV, :info, "namáhání na otlačení")
+    mat = get(VV, :mat, nothing)
+    zatizeni = get(VV, :zatizeni, "")
+    profil = get(VV, :profil, "")
+    profil_info = get(VV, :profil_info, Dict{Symbol,Any}())
+    if !(profil_info isa Dict{Symbol,Any})
+        profil_info = Dict{Symbol,Any}()
+    end
+    push!(lines, "Výpočet $info")
     push!(lines, "--------------------------------------------------------------")
-    push!(lines, "materiál: $(VV[:mat] === nothing ? "" : string(VV[:mat]))")
-    append!(lines, profil_text_lines(VV))
-    push!(lines, "zatížení: $(VV[:zatizeni])")
+    push!(lines, "materiál: $(mat === nothing ? "" : string(mat))")
+    append!(lines, profil_text_lines(Dict(:profil => profil, :profil_info => profil_info)))
+    push!(lines, "zatížení: $zatizeni")
     push!(lines, "--------------------------------------------------------------")
     push!(lines, "zadání:")
-    if VV[:F] !== nothing # zatěžující síla
-        push!(lines, @sprintf("F = %g   %s", VV[:F], VV[:F_info]))
+    if get(VV, :F, nothing) !== nothing # zatěžující síla
+        push!(lines, @sprintf("F = %g   %s", VV[:F], get(VV, :F_info, "")))
     end
-    if VV[:k] !== nothing
-        push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
+    if get(VV, :k, nothing) !== nothing
+        push!(lines, @sprintf("k = %g   %s", VV[:k], get(VV, :k_info, "")))
     end
-    if VV[:S] !== nothing # plocha průřezu
-        if VV[:S_text] != ""
-            push!(lines, @sprintf("S = %s = %g   %s", VV[:S_text], VV[:S], VV[:S_info]))
+    if get(VV, :S, nothing) !== nothing # plocha průřezu
+        S_text = get(VV, :S_text, get(VV, :S_str, ""))
+        if S_text != ""
+            push!(lines, @sprintf("S = %s = %g   %s", S_text, VV[:S], get(VV, :S_info, "")))
         else
-            push!(lines, @sprintf("S = %g   %s", VV[:S], VV[:S_info]))
+            push!(lines, @sprintf("S = %g   %s", VV[:S], get(VV, :S_info, "")))
         end
     end
-    if VV[:sigmaDt] !== nothing # dovolené napětí
-        push!(lines, @sprintf("sigmaDt = %g   %s", VV[:sigmaDt], VV[:sigmaDt_info]))
+    sigmaD = get(VV, :sigmaDotl, get(VV, :sigmaDt, nothing))
+    sigmaD_info = haskey(VV, :sigmaDotl_info) ? VV[:sigmaDotl_info] : get(VV, :sigmaDt_info, "")
+    if sigmaD !== nothing # dovolené napětí
+        push!(lines, @sprintf("sigmaDotl = %g   %s", sigmaD, sigmaD_info))
     end
-    if VV[:L0] !== nothing # počáteční délka
-        push!(lines, @sprintf("L0 = %g   %s", VV[:L0], VV[:L0_info]))
-    end
-    if VV[:Re] !== nothing # mez kluzu
-        push!(lines, @sprintf("Re = %g   %s", VV[:Re], VV[:Re_info]))
-    end
-    if VV[:E] !== nothing # Youngův modul
-        push!(lines, @sprintf("E = %g   %s", VV[:E], VV[:E_info]))
+    if get(VV, :Re, nothing) !== nothing # mez kluzu
+        push!(lines, @sprintf("Re = %g   %s", VV[:Re], get(VV, :Re_info, "")))
     end
     push!(lines, "--------------------------------------------------------------")
     push!(lines, "výpočet:")
-    push!(lines, @sprintf("sigma = %s = %g   %s", VV[:sigma_str],VV[:sigma], VV[:sigma_info]))
-    if VV[:epsilon] !== nothing # poměrné prodloužení
-        push!(lines, @sprintf("epsilon = %s = %g %%   %s",
-            VV[:epsilon_str], VV[:epsilon]*100, VV[:epsilon_info]))
+    push!(lines, @sprintf("sigma = %s = %g   %s", get(VV, :sigma_str, "F / S"),
+        get(VV, :sigma, 0), get(VV, :sigma_info, "")))
+    k = get(VV, :bezpecnost, 0) # součinitel bezpečnosti
+    kval = try
+        ustrip(k)
+    catch
+        k
     end
-    if VV[:deltaL] !== nothing # skutečné prodloužení
-        push!(lines, @sprintf("deltaL = %s = %g   %s",
-            VV[:deltaL_str], VV[:deltaL], VV[:deltaL_info]))
-    end
-    if VV[:L] !== nothing # délka po deformaci
-        push!(lines, @sprintf("L = %s = %g   %s", VV[:L_str], VV[:L], VV[:L_info]))
-    end
-    k = VV[:bezpecnost] # součinitel bezpečnosti
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", VV[:bezpecnost_str], 
-        ustrip(k), VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
+    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", get(VV, :bezpecnost_str, "sigmaDotl / sigma"),
+        kval, get(VV, :bezpecnost_info, ""), get(VV, :verdict_info, "Výsledek"),
+        get(VV, :verdict, "")))
 
     return join(lines, "\n")
 end

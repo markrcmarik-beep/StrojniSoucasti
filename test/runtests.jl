@@ -1,4 +1,4 @@
-# ver: 2026-02-09
+# ver: 2026-02-23
 using Test
 
     # materialy
@@ -14,8 +14,6 @@ using Test
     include("namahani_test/namahaniotl_test.jl")
     include("namahani_test/namahanikombinovane_test.jl")
     # profily
-    #include("profily_test/tvarprofilu_test.jl")
-    
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profilTR4HR_test.jl")

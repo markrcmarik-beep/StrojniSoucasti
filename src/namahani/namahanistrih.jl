@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-02-16
+# ver: 2026-02-23
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -153,18 +153,27 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
         G = (matinfo.G)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+     else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené smykové napětí
     # ---------------------------------------------------------
     if tauDs === nothing
-        if Re === nothing
-            error("Chybí tauDs nebo Re/mat.")
+        if Re === nothing && mat === nothing
+            error("Chybí tauDs, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main,:dovoleneNapeti)
+        if isdefined(Main,:dovoleneNapeti)
+            if matinfo !== nothing
+                tauDs = dovoleneNapeti("střih", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                tauDs = dovoleneNapeti("střih", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDs = dovoleneNapeti("střih", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil → střižná plocha
@@ -246,7 +255,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     VV[:G_info] = "Modul pružnosti ve smyku"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = mat
+    VV[:mat] = matName # materiál
     VV[:mat_info] = "Materiál"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info
