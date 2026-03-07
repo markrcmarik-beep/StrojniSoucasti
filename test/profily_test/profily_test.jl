@@ -1,4 +1,4 @@
-# ver: 2026-01-21
+# ver: 2026-01-26
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -42,7 +42,6 @@ dims33 = profily("TR4HR 50x30x5", "Ix") # rozměry + vlastnosti
 @test dims3[:b] == 30u"mm"
 @test dims3[:t] == 5u"mm"
 #@test dims3[:R] == 0u"mm"
-
 
 dims4 = profily("4HR 50")
 @test haskey(dims4, :a)

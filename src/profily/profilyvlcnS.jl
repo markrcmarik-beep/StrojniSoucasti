@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2026-01-31
+# Vypočet plochy pro různé tvary dle zkratky označeni.
+# ver: 2026-02-27
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -12,15 +12,26 @@
 ## Vzor:
 ## vystupni_promenne = profilyvlcnS(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# tvar1 - slovník (Dict) s informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
+#    Dict("info" => "KR", "D" => 30u"mm")
+#    Dict("info" => "TRKR", "D" => 30u"mm", "d" => 20u"mm")
+#    Dict("info" => "4HR", "a" => 20u"mm")
+#    Dict("info" => "6HR", "s" => 20u"mm")
+#    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
+# velicina - hledaná veličina: 
+#    :S - Plocha průřezu [mm²]
 ## Výstupní proměnné:
-#
+# vystupni_promenne - Struktura (Dict) s rozměry profilu a
+#   případně i s vypočtenými vlastnostmi. V tomto případě plocha S.
 ## Použité balíčky:
-#
+# Unitful
 ## Použité uživatelské funkce:
-#
+# StrojniSoucasti.hrana
 ## Příklad:
-#
+# tvar = Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm") # Definice tvaru plošné tyče o rozměrech 20 mm x 10 mm
+# S, vzorec = profilyvlcnS(tvar, :S) # Plocha plošné tyče
+#   vrátí plochu a použitý vzorec
 ###############################################################
 ## Použité proměnné vnitřní:
 #

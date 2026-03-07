@@ -61,9 +61,9 @@ function namahanikombinovanetext(VV::Dict{Symbol,Any})
     push!(lines, "kritérium: $(VV[:kriterium])")
     push!(lines, "zatížení:  $(VV[:zatizeni])")
     if haskey(VV, :k)
-    if VV[:k] !== nothing
-        push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
-    end
+        if VV[:k] !== nothing
+            push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
+        end
     end
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "napětí:  $(VV[:namahani])")

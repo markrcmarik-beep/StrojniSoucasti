@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2026-02-01
+# Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
+# ver: 2026-02-27
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
@@ -12,15 +12,26 @@
 ## Vzor:
 ## vystupni_promenne = profilyvlcnWo(vstupni_promenne)
 ## Vstupní proměnné:
-#
+# tvar1 - slovník (Dict) s informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
+#    Dict("info" => "KR", "D" => 30u"mm")
+#    Dict("info" => "TRKR", "D" => 20u"mm", "d" => 10u"mm")
+#    Dict("info" => "4HR", "a" => 20u"mm")
+#    Dict("info" => "6HR", "s" => 20u"mm")
+#    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
+# velicina - hledaná veličina: :Wo
 ## Výstupní proměnné:
-#
+# vystupni_promenne - Struktura (Dict) s rozměry profilu a
+#   případně i s vypočtenými vlastnostmi. V tomto případě Wo.
 ## Použité balíčky:
-#
+# Unitful
 ## Použité uživatelské funkce:
 #
 ## Příklad:
-#
+# tvar = Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm") # Definice 
+#   tvaru plošné tyče s rozměry a=20 mm, b=10 mm
+# Wo, vzorec = profilyvlcnWo(tvar, :Wo) # Vypočet průřezového modulu 
+#   v ohybu pro tento tvar vrátí Wo a použitý vzorec
 ###############################################################
 ## Použité proměnné vnitřní:
 #

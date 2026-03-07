@@ -4,6 +4,16 @@
 
 using StrojniSoucasti, Unitful, Test
 
+function assert_namahanitah_text_common(txt::String, VV::Dict{Symbol,Any})
+    @test !isempty(txt)
+    @test occursin("F = ", txt)
+    @test occursin("S = ", txt)
+    @test occursin("sigmaDt = ", txt)
+    @test occursin("sigma = $(VV[:sigma_str])", txt)
+    @test occursin("k = $(VV[:bezpecnost_str])", txt)
+    @test occursin(string(VV[:verdict]), txt)
+end
+
 @testset "namahanitah" begin
 
     # Test 1: Základní výpočet bez jednotek
@@ -32,7 +42,7 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 3: Výpočet s Re a pulzním zatížením
     @testset "výpočet s Re a pulzním zatížením" begin
-        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", L0=220u"mm", zatizeni="pulzní")
+        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", L0=220u"mm", E=210u"GPa", zatizeni="pulzní")
         @test haskey(VV, :sigma)
         @test haskey(VV, :sigmaDt)
         @test haskey(VV, :Re)
@@ -134,6 +144,22 @@ using StrojniSoucasti, Unitful, Test
         @test isapprox(uconvert(u"MPa", VV[:sigma]), expected_sigma, rtol=1e-5)
     end
 
+    @testset "textovy vystup - struktura a podminene radky" begin
+        VV1, txt1 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+        assert_namahanitah_text_common(txt1, VV1)
+        @test !occursin("epsilon =", txt1)
+        @test !occursin("deltaL =", txt1)
+        @test !occursin(r"^L ="m, txt1)
+
+        VV2, txt2 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa",
+            E=200u"GPa", L0=500u"mm")
+        assert_namahanitah_text_common(txt2, VV2)
+        @test occursin("L0 = ", txt2)
+        @test occursin("epsilon = $(VV2[:epsilon_str])", txt2)
+        @test occursin("deltaL = $(VV2[:deltaL_str])", txt2)
+        @test occursin("L = $(VV2[:L_str])", txt2)
+    end
+
     # Test 14: Bezpečnost - bezpečný spoj
     @testset "bezpečný spoj" begin
         VV, txt = namahanitah(F=3000u"N", S=400u"mm^2", Re=240u"MPa")
@@ -166,6 +192,36 @@ using StrojniSoucasti, Unitful, Test
     @testset "kladná síla" begin
         VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
         @test VV[:F] > 0u"N"
+    end
+
+    # Test 19: Neplatné vstupy
+    @testset "neplatné vstupy" begin
+        err = try
+            namahanitah(F=0u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("F musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitah(F=6000u"N", S=0u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("S musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", k=0)
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("k musí být kladné číslo", sprint(showerror, err))
     end
 
 end

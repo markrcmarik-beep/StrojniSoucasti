@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet namáhání na otlačení pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-02-21
+# ver: 2026-03-06
 ## Funkce: namahaniotltext()
 ## Autor: Martin
 #
@@ -28,7 +28,7 @@
 using Printf: @sprintf
 
 function namahaniotltext(VV::Dict{Symbol,Any})
-    lines = String[]
+    lines = String[] # pole pro textový výstup
     info = get(VV, :info, "namáhání na otlačení")
     mat = get(VV, :mat, nothing)
     zatizeni = get(VV, :zatizeni, "")
@@ -37,13 +37,13 @@ function namahaniotltext(VV::Dict{Symbol,Any})
     if !(profil_info isa Dict{Symbol,Any})
         profil_info = Dict{Symbol,Any}()
     end
-    push!(lines, "Výpočet $info")
+    push!(lines, "Výpočet $info") # název výpočtu z VV[:info]
     push!(lines, "--------------------------------------------------------------")
-    push!(lines, "materiál: $(mat === nothing ? "" : string(mat))")
-    append!(lines, profil_text_lines(Dict(:profil => profil, :profil_info => profil_info)))
-    push!(lines, "zatížení: $zatizeni")
+    push!(lines, "materiál: $(mat === nothing ? "" : string(mat))") 
+    append!(lines, profil_text_lines(Dict(:profil => profil, :profil_info => profil_info))) # přidáme informace o profilu do textového výstupu
+    push!(lines, "zatížení: $zatizeni") # přidáme informace o zatížení do textového výstupu
     push!(lines, "--------------------------------------------------------------")
-    push!(lines, "zadání:")
+    push!(lines, "zadání:") # přidáme informace o zadání výpočtu
     if get(VV, :F, nothing) !== nothing # zatěžující síla
         push!(lines, @sprintf("F = %g   %s", VV[:F], get(VV, :F_info, "")))
     end
@@ -51,9 +51,9 @@ function namahaniotltext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("k = %g   %s", VV[:k], get(VV, :k_info, "")))
     end
     if get(VV, :S, nothing) !== nothing # plocha průřezu
-        S_text = get(VV, :S_text, get(VV, :S_str, ""))
-        if S_text != ""
-            push!(lines, @sprintf("S = %s = %g   %s", S_text, VV[:S], get(VV, :S_info, "")))
+        S_str = get(VV, :S_str, get(VV, :S_str, ""))
+        if S_str != ""
+            push!(lines, @sprintf("S = %s = %g   %s", S_str, VV[:S], get(VV, :S_info, "")))
         else
             push!(lines, @sprintf("S = %g   %s", VV[:S], get(VV, :S_info, "")))
         end

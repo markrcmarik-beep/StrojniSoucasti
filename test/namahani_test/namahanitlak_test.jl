@@ -135,8 +135,9 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 14: Bezpečnost - hranice bezpečnosti
     @testset "hranice bezpečnosti" begin
-        VV, txt = namahanitlak(F=4800u"N", S=400u"mm^2", sigmaDt=80u"MPa")
-        @test VV[:bezpecnost] >= 1.0 && VV[:bezpecnost] < 8
+        VV, txt = namahanitlak(F=24000u"N", S=400u"mm^2", sigmaDt=80u"MPa")
+        @test VV[:bezpecnost] >= 1.0 && VV[:bezpecnost] < 1.5
+        @test occursin("na hranici", VV[:verdict])
     end
 
     # Test 15: Bezpečnost - nebezpečný spoj
@@ -158,6 +159,45 @@ using StrojniSoucasti, Unitful, Test
     @testset "kladná síla" begin
         VV, txt = namahanitlak(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
         @test VV[:F] > 0u"N"
+    end
+
+    # Test 18: Neplatné vstupy
+    @testset "neplatné vstupy" begin
+        err = try
+            namahanitlak(F=0u"N", S=400u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("F musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=0u"mm^2", sigmaDt=240u"MPa")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("S musí být kladná hodnota", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", k=0)
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("k musí být kladné číslo", sprint(showerror, err))
+
+        err = try
+            namahanitlak(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa", Imin=0u"mm^4")
+            nothing
+        catch e
+            e
+        end
+        @test err isa ErrorException
+        @test occursin("Imin musí být kladná hodnota", sprint(showerror, err))
     end
 
 end
