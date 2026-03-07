@@ -27,7 +27,7 @@ Hlavní funkce
 
 Balíček obsahuje utility pro práci s tabulkovými daty a pomocné výpočtové funkce.
 
-Příklady:
+Příklady funkcí:
 
 převod mezi adresou buňky a indexy tabulky
 
@@ -64,6 +64,25 @@ OpenDocument Spreadsheet (.ods)
 
 Načtená data mohou být automaticky ukládána do souborů .jld2, aby bylo opakované načítání výrazně rychlejší.
 
+Databáze technických hodnot
+
+Součástí balíčku mohou být databáze technických údajů používaných při výpočtech strojních součástí (např. materiálové vlastnosti, geometrické parametry apod.).
+
+Tyto hodnoty mohou být sestaveny z různých zdrojů, například:
+
+technické normy
+
+strojírenské tabulky
+
+odborná literatura
+
+veřejně dostupné technické zdroje na internetu
+
+Uvedené hodnoty jsou určeny pouze pro výpočtové a orientační účely.
+Balíček neposkytuje oficiální znění technických norem ani jejich úplné tabulky.
+
+Při konstrukčním návrhu nebo výrobě je vždy nutné ověřit hodnoty v aktuálním znění příslušné normy nebo technické dokumentace.
+
 Struktura projektu
 StrojniSoucasti
 │
@@ -92,4 +111,5 @@ odešlete Pull Request
 Diskuse o vývoji probíhá pomocí nástrojů platformy GitHub.
 
 License
+
 This project is licensed under the MIT License.
