@@ -29,4 +29,4 @@ using Test
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
-    
+    include("ulozvypis_test.jl")
