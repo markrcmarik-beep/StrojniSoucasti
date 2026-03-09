@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-02-21
+# ver: 2026-03-09
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -12,18 +12,52 @@
 ## Vzor:
 ## vystupni_promenne = materialy(vstupni_promenne)
 ## Vstupní proměnné:
-# - name::AbstractString: Označení materiálu (např. "S235", "S235JR+N")
-#
+# name::AbstractString
+#   Označení materiálu (např. "S235", "11373", "S235JR+N").
+#   Před vyhledáním se oříznou okraje, odstraní mezery a převádí se na velká písmena.
 ## Výstupní proměnné:
-# - Material struct s vlastnostmi materiálu nebo nothing, pokud materiál neexistuje.
+# mat::Union{MaterialOcel, MaterialKovy, MaterialLitina, Nothing}
+#   Datová struktura s vlastnostmi materiálu z databází EN10025-2/ČSN,
+#   nebo `nothing`, pokud materiál nebyl nalezen.
+#   Typicky dostupná pole:
+#   - společná pro všechny typy: `name`, `standard`, `druh`, `A`, `E`, `G`, `ny`, `rho`
+#   - pouze pro `MaterialOcel` a `MaterialKovy`: `Re`, `Rm_min`, `Rm_max`
+#   - pouze pro `MaterialOcel`: `KV`, `T_KV`, `weldable`, `thickness_max`
+#   - pouze pro `MaterialLitina`: `Rm_tah`, `Rm_tlak`, `tau_lim`, `HB_min`, `HB_max`
+#   Příklady čtení:
+#   - `mat.name`::String
+#   - `mat.Re`::Float64 (jen `MaterialOcel`, `MaterialKovy`)
+#   - `mat.E`::Float64
+#   - `mat.G`::Float64
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
 # materialytypes.jl, materialydatabase.toml
 ## Příklad:
 # julia
-# mat = materialy("S235")
-# println(mat.Re)  # 235.0
+# vstup:
+# mat = materialy("11373")
+#
+# použití:
+# if mat !== nothing
+#     println(typeof(mat))             # např. MaterialOcel
+#     println("name = ", mat.name)
+#     println("Re = ", mat.Re, " MPa")   # jen pro MaterialOcel/MaterialKovy
+#     println("E  = ", mat.E,  " MPa")
+#     println("G  = ", mat.G,  " MPa")
+# else
+#     println("Materiál nebyl nalezen.")
+# end
+#
+# očekávaný výstup (pro existující ocel):
+# MaterialOcel
+# name = 11373
+# Re = ... MPa
+# E  = ... MPa
+# G  = ... MPa
+#
+# očekávaný výstup (pro neexistující materiál):
+# Materiál nebyl nalezen.
 ###############################################################
 ## Použité proměnné vnitřní:
 #
@@ -56,8 +90,33 @@ Výstup:
 
 Příklad:
 ```julia
-mat = materialy("S235")
-println(mat.Re)  # 235.0
+# vstup:
+mat = materialy("11373")
+
+# použití:
+if mat !== nothing
+    println(typeof(mat))             # např. MaterialOcel
+    println("name = ", mat.name)
+    println("Re = ", mat.Re, " MPa")   # jen pro MaterialOcel/MaterialKovy
+    println("E  = ", mat.E,  " MPa")
+    println("G  = ", mat.G,  " MPa")
+else
+    println("Materiál nebyl nalezen.")
+end
+```
+
+Očekávaný výstup (pro existující ocel):
+```text
+MaterialOcel
+name = 11373
+Re = ... MPa
+E  = ... MPa
+G  = ... MPa
+```
+
+Očekávaný výstup (pro neexistující materiál):
+```text
+Materiál nebyl nalezen.
 ```
 """
 
