@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-02-16
+# ver: 2026-03-06
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -31,7 +31,7 @@
 #   :F - Zatěžující síla (Unitful.Quantity)
 #   :F_info - Popis pole F
 #   :S - Plocha průřezu (Unitful.Quantity)
-#   :S_text - Textový popis výpočtu S (je-li k dispozici)
+#   :S_str - Textový popis výpočtu S (je-li k dispozici)
 #   :S_info - Popis pole S
 #   :sigmaDt - Dovolené napětí v tahu (Unitful.Quantity)
 #   :sigmaDt_info - Popis pole sigmaDt
@@ -112,92 +112,116 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
-    # kontroly duplicity S/profil
-    cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
-    if cntS > 1
-        error("Zadejte pouze jednu hodnotu z: S nebo profil.")
-    end
-    if (sigmaDt !== nothing) && (mat !== nothing)
-        error("Zadejte pouze sigmaDt nebo mat, ne obojí.")
-    end
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
     if F !== nothing
         F = attach_unit(F, u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
     else
         error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
         S = attach_unit(S, u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if sigmaDt !== nothing
         sigmaDt = attach_unit(sigmaDt, u"MPa")
+        if sigmaDt <= 0u"MPa"
+            error("sigmaDt musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re, u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if E !== nothing
         E = attach_unit(E, u"GPa")
+        if E <= 0u"GPa"
+            error("E musí být kladná hodnota.")
+        end
     end
     if L0 !== nothing
         L0 = attach_unit(L0, u"mm")
+        if L0 <= 0u"mm"
+            error("L0 musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
+        if !isdefined(@__MODULE__, :materialy)
             error("Funkce materialy(mat) není definována.")
         end
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
         E = (matinfo.E)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+    else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené napětí
     # ---------------------------------------------------------
     if sigmaDt === nothing
-        if Re === nothing
-            error("Chybí sigmaDt i Re - nelze stanovit dovolené napětí.")
+        if Re === nothing && mat === nothing
+            error("Chybí sigmaDt, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
+            if matinfo !== nothing
+                sigmaDt = dovoleneNapeti("tah", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                sigmaDt = dovoleneNapeti("tah", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        sigmaDt = dovoleneNapeti("tah", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
     # profil (automatické volání profily(profil, "S"))
     # ---------------------------------------------------------
-    S_text = ""
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main, :profily)
-            error("Funkce profily(...) není definována.")
-        end
-        tv = profily(profil, "S")  # vynucení výpočtu S
-        if !haskey(tv, :S)
-            error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
-        end
-        S = tv[:S]
-        if haskey(tv, :S_str)
-            S_text = tv[:S_str]
-        end
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
         for k in keys(tv)
-            if k ∉ (:S, :S_str)
-                profil_info[k] = tv[k]
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
             end
         end
     end
-    # kontrola F, S, sigmaDt
-    if F === nothing
-        error("Chybí F.")
+    S_str = ""
+    if S === nothing
+        if profil === nothing
+            error("Chybí S a profil - nelze stanovit plochu průřezu.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily(profil, \"S\") není definována.")
+        else
+            tv = profily(profil, "S")  # vynucení výpočtu S
+            if !haskey(tv, :S)
+                error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
+            end
+            S = tv[:S] # plocha průřezu pro výpočet napětí
+            if haskey(tv, :S_str)
+                S_str = tv[:S_str] # textový popis výpočtu S
+            end
+        end
     end
+    # kontrola
     if S === nothing
         error("Chybí S (ani profil nebyl použit).")
     end
@@ -205,6 +229,9 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         error("Chybí sigmaDt (nezadáno sigmaDt ani mat/Re).")
     else
         sigmaDt = uconvert(u"MPa", sigmaDt)
+    end
+    if L0 !== nothing && E === nothing
+        error("Pro vypocet zkraceni (L0) je nutne zadat i (E).")
     end
     # ---------------------------------------------------------
     # výpočet
@@ -259,12 +286,12 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text # textový popis výpočtu S
+    VV[:S_str] = S_str # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí
     VV[:sigmaDt_info] = "Dovolené napětí"
     VV[:sigma] = sigma # skutečné napětí v tahu
-    VV[:sigma_str] = sigma_str
+    VV[:sigma_str] = sigma_str # textový popis výpočtu sigma (pro zobrazení v textu)
     VV[:sigma_info] = "Skutečné napětí v tahu"
     VV[:epsilon] = epsilon # poměrné prodloužení
     VV[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""
@@ -278,7 +305,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:E_info] = "Youngův modul"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = mat
+    VV[:mat] = matName
     VV[:mat_info] = "Materiál"
     VV[:L0] = L0 # počáteční délka
     VV[:L0_info] = "Počáteční délka"
@@ -289,7 +316,7 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:L_str] = @isdefined(L_str) ? L_str : ""
     VV[:L_info] = L === nothing ? "" : "Délka po deformaci"
     VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = profil_info
+    VV[:profil_info] = profil_info 
     if return_text
         Dispstr = StrojniSoucasti.namahanitahtext(VV)
         return VV, Dispstr
@@ -297,84 +324,3 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
         return VV
     end
 end
-
-"""
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-01-22
-## Funkce: namahanitah()
-#
-## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanitah.jl
-#
-## Vzor:
-## vystupni_promenne = namahanitah(vstupni_promenne)
-## Vstupní proměnné:
-# F - Zatěžující síla (Unitful.Quantity), povinné. Musí být v tahu (kladná hodnota).
-# S - Plocha průřezu (Unitful.Quantity), povinné pokud není zadán profil
-# sigmaDt - Dovolené napětí v tahu (Unitful.Quantity), povinné pokud není zadán mat
-# E - Modul pružnosti v tahu, Youngův modul (Unitful.Quantity), volitelný, výchozí 210 GPa
-# Re - Mez kluzu (Unitful.Quantity), volitelný, pokud je zadán mat
-# L0 - Délka namáhaného profilu (Unitful.Quantity), volitelný
-# mat - Materiál jako řetězec (název materiálu) nebo Dict s vlastnostmi materiálu, volitelný
-# zatizeni - způsob zatížení jako řetězec: "statický", "pulzní", "dynamický", "rázový" (výchozí: "statický")
-# profil - název profilu jako řetězec (pro získání S), volitelný
-# return_text - Logická hodnota (Bool). Určuje, zda se má vrátit i
-#     textový výpis výpočtu. Výchozí hodnota je true. Pokud je false,
-#     vrací se pouze dict s výsledky.
-## Výstupní proměnné:
-# VV - Dict s výsledky výpočtu namáhání v tahu. Pole VV obsahují:
-#   :info - Popis výpočtu
-#   :zatizeni - Typ zatížení (statický, pulzní, dynamický, rázový)
-#   :F - Zatěžující síla (Unitful.Quantity)
-#   :F_info - Popis pole F
-#   :S - Plocha průřezu (Unitful.Quantity)
-#   :S_text - Textový popis výpočtu S (je-li k dispozici)
-#   :S_info - Popis pole S
-#   :sigmaDt - Dovolené napětí v tahu (Unitful.Quantity)
-#   :sigmaDt_info - Popis pole sigmaDt
-#   :sigma - Skutečné napětí v tahu (Unitful.Quantity v MPa)
-#   :sigma_info - Popis pole sigma
-#   :epsilon - Poměrné prodloužení (bez jednotky)
-#   :epsilon_info - Popis pole epsilon
-#   :bezpecnost - Součinitel bezpečnosti k (bez jednotky)
-#   :bezpecnost_info - Popis pole bezpecnost
-#   :verdict - Závěr o bezpečnosti spoje (řetězec)
-#   :verdict_info - Popis pole verdict
-#   :E - Modul pružnosti v tahu, Youngův modul (Unitful.Quantity)
-#   :E_info - Popis pole E
-#   :Re - Mez kluzu (Unitful.Quantity)
-#   :Re_info - Popis pole Re
-#   :mat - Materiál (řetězec)
-#   :mat_info - Popis pole mat
-#   :L0 - Délka namáhaného profilu (Unitful.Quantity)
-#   :L0_info - Popis pole L0
-#   :deltaL - Skutečné prodloužení (Unitful.Quantity), je-li spočítané
-#   :deltaL_info - Popis pole deltaL
-#   :L - Délka po prodloužení (Unitful.Quantity), je-li spočítané
-#   :L_info - Popis pole L
-#   :profil - Tvar profilu (řetězec), jestli byl zadaný
-#   :profil_info - Popis pole profil
-# txt - Volitelně i textový výpis výpočtu. Je-li parametr 
-#   return_text=true (výchozí). Pokud return_text=false, vrací 
-#   se pouze VV.
-## Použité balíčky
-# Unitful, Printf: @sprintf
-## Použité uživatelské funkce:
-# materialy, dovoleneNapeti, profily
-## Příklad:
-# namahanitah(F=1000u"N", S=50u"mm^2", mat="11373")
-#  vrátí dict s výsledky a textový výpis výpočtu
-# println(VV) => dict s výsledky výpočtu
-# println(txt) => textový výpis výpočtu
-# namahanitah(F=2000, S=100, sigmaDt=150u"MPa", E=200u"GPa", L0=500u"mm", 
-#   zatizeni="statický", profil="PLO 20x10")
-#  vrátí dict s výsledky a textový výpis výpočtu
-# println(VV) => dict s výsledky výpočtu
-# println(txt) => textový výpis výpočtu
-###############################################################
-## Použité proměnné vnitřní:
-#
-"""

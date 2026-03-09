@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-01-21
+# ver: 2026-02-23
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -118,7 +118,7 @@ function profily(inputStr::AbstractString, args...)
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
     dims = StrojniSoucasti.profilyCSN(clean)
-    if dims == nothing
+    if dims === nothing
         error("Profil: $clean nebyl nalezen.")
     end
     # -----------------------------------------------------------

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-02-16
+# ver: 2026-03-06
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -31,7 +31,7 @@
 #   :k - uživatelský požadavek bezpečnosti (Number, volitelné)
 #   :k_info - popis veličiny k
 #   :S - střižná plocha (Unitful.Quantity)
-#   :S_text - textový popis plochy S (řetězec
+#   :S_str - textový popis plochy S (řetězec
 #   :S_info - popis veličiny S
 #   :tau - vypočtené napětí ve střihu (Unitful.Quantity)
 #   :tau_str - vzorec pro výpočet tau (řetězec
@@ -107,40 +107,53 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x, u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
-    # kontrola duplicity S / profil
-    cntS = (S !== nothing ? 1 : 0) + (profil !== nothing ? 1 : 0)
-    if cntS > 1
-        error("Zadejte pouze jednu hodnotu z: S nebo profil.")
-    end
-    if (tauDs !== nothing) && (mat !== nothing)
-        error("Zadejte buď tauDs, nebo mat/Re - ne obojí.")
-    end
+    # vstupy - jednotky
     # ---------------------------------------------------------
-    # jednotky
     if F !== nothing
         F = attach_unit(F,u"N")
+        if F <= 0u"N"
+            error("F musí být kladná hodnota.")
+        end
     else
-        error("Chybí střižná síla F.")
+        error("F musí být číslo nebo Unitful.Quantity")
     end
     if S !== nothing
         S = attach_unit(S,u"mm^2")
+        if S <= 0u"mm^2"
+            error("S musí být kladná hodnota.")
+        end
     end
     if tauDs !== nothing
         tauDs = attach_unit(tauDs,u"MPa")
+        if tauDs <= 0u"MPa"
+            error("tauDs musí být kladná hodnota.")
+        end
     end
     if Re !== nothing
         Re = attach_unit(Re,u"MPa")
+        if Re <= 0u"MPa"
+            error("Re musí být kladná hodnota.")
+        end
     end
     if G !== nothing
         G = attach_unit(G,u"GPa")
+        if G <= 0u"MPa"
+            error("G musí být kladná hodnota.")
+        end
     end
     if E !== nothing
         E = attach_unit(E,u"GPa")
+        if E <= 0u"MPa"
+            error("E musí být kladná hodnota.")
+        end
     end
     if k_uziv !== nothing
         if !isnum(k_uziv)
             error("Chybně zadáno k: $k_uziv")
+        elseif k_uziv <= 0
+            error("k musí být kladné číslo.")
         end
     end
     # ---------------------------------------------------------
@@ -153,42 +166,65 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
         matinfo = materialy(mat)
         Re = (matinfo.Re)u"MPa" # mez kluzu
         G = (matinfo.G)u"GPa" # modul pružnosti
+        matName = matinfo.name # název materiálu z dictu
+     else
+        matinfo = nothing
+        matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
     # dovolené smykové napětí
     # ---------------------------------------------------------
     if tauDs === nothing
-        if Re === nothing
-            error("Chybí tauDs nebo Re/mat.")
+        if Re === nothing && mat === nothing
+            error("Chybí tauDs, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if !isdefined(Main,:dovoleneNapeti)
+        if isdefined(Main,:dovoleneNapeti)
+            if matinfo !== nothing
+                tauDs = dovoleneNapeti("střih", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                tauDs = dovoleneNapeti("střih", zatizeni; Re=Re)
+            end
+        else
             error("Funkce dovoleneNapeti není definována.")
         end
-        tauDs = dovoleneNapeti("střih", zatizeni; Re=Re)
     end
     # ---------------------------------------------------------
-    # profil → střižná plocha
-    S_text = ""
-    profil_info = Dict{Symbol,Any}()
-    if profil !== nothing
-        if !isdefined(Main,:profily)
-            error("Funkce profily není definována.")
-        end
-        tv = profily(profil, "S")
-        if !haskey(tv,:S)
-            error("Profil neposkytuje střižnou plochu S.")
-        end
-        S = tv[:S]
-        haskey(tv,:S_str) && (S_text = tv[:S_str])
+    # profil (automatické volání profily(profil, "S"))
+    # ---------------------------------------------------------
+    if profil !== nothing && isdefined(@__MODULE__, :profily)
+        tv = profily(profil)  # získání všech informací o profilu
         for k in keys(tv)
-            k ∉ (:S,:S_str) && (profil_info[k] = tv[k])
+            if k ∉ (:S, :S_str) # vynecháme S a S_str, které zpracujeme zvlášť
+                profil_info[k] = tv[k] # přidáme další informace z profilu do profil_info
+            end
         end
     end
-    # ---------------------------------------------------------
-    # validace
-    F === nothing && error("Chybí střižná síla F.")
-    S === nothing && error("Chybí střižná plocha S.")
-    F <= 0u"N" && error("F musí být kladná (velikost síly).")
+    S_str = ""
+    if S === nothing
+        if profil === nothing
+            error("Chybí S nebo profil - nelze stanovit plochu průřezu.")
+        elseif !isdefined(@__MODULE__, :profily)
+            error("Funkce profily(profil, \"S\") není definována.")
+        else
+            tv = profily(profil, "S")  # vynucení výpočtu S
+            if !haskey(tv, :S)
+                error("Funkce profily(...) nevrací :S ani po zadání \"S\".")
+            end
+            S = tv[:S]
+            if haskey(tv, :S_str)
+                S_str = tv[:S_str]
+            end
+        end
+    end
+    # kontrola
+    if S === nothing
+        error("Chybí S (ani profil nebyl použit).")
+    end
+    if tauDs === nothing
+        error("Chybí tauDs (nezadáno tauDs ani mat/Re).")
+    else
+        tauDs = uconvert(u"MPa", tauDs)
+    end
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
@@ -227,7 +263,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
-    VV[:S_text] = S_text
+    VV[:S_str] = S_str # textový popis plochy S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:tau] = tau # napětí ve střihu
     VV[:tau_str] = tau_str
@@ -246,7 +282,7 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     VV[:G_info] = "Modul pružnosti ve smyku"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = mat
+    VV[:mat] = matName # materiál
     VV[:mat_info] = "Materiál"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info

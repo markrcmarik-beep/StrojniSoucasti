@@ -1,4 +1,4 @@
-# ver: 2026-02-09
+﻿# ver: 2026-02-28
 using Test
 
     # materialy
@@ -14,14 +14,19 @@ using Test
     include("namahani_test/namahaniotl_test.jl")
     include("namahani_test/namahanikombinovane_test.jl")
     # profily
-    #include("profily_test/tvarprofilu_test.jl")
-    
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profilTR4HR_test.jl")
     include("profily_test/profilyvlcn_test.jl")
+    include("profily_test/profilyvlcnS_test.jl")
+    include("profily_test/profilyvlcnIp_test.jl")
+    include("profily_test/torsion_J_TR4HR_numeric_test.jl")
+    include("profily_test/profilyvlcnWk_test.jl")
+    include("profily_test/profilyvlcnIx_test.jl")
+    include("profily_test/profilyvlcnWo_test.jl")
+    include("profily_test/profilyvlcnIminlmax_test.jl")
     include("profily_test/hrana_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
-    
+    include("ulozvypis_test.jl")

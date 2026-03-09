@@ -1,4 +1,4 @@
-# ver: 2026-01-31
+# ver: 2026-02-26
 using Test
 using StrojniSoucasti
 using Unitful
@@ -103,8 +103,8 @@ using Unitful
 
         @test Ix0 == 20u"mm" * (10u"mm")^3 / 12
         @test Ix90 == 10u"mm" * (20u"mm")^3 / 12
-        @test txt0 == "a*b³/12"
-        @test txt90 == "b*a³/12"
+        @test txt0 == "a*b^3/12"
+        @test txt90 == "b*a^3/12"
     end
 
     # ------------------------------------------------------------
@@ -113,12 +113,12 @@ using Unitful
     @testset "Iy – kvadratický moment" begin
         Iy0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Iy)
         @test Iy0 == 10u"mm" * (20u"mm")^3 / 12
-        @test txt0 == "b*a³/12"
+        @test txt0 == "b*a^3/12"
 
         # Přímé volání profilyvlcnIx pro :Iy (delegace na :Ix s natočením)
         Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
         @test Iy_direct == 10u"mm" * (20u"mm")^3 / 12
-        @test txt_direct == "b*a³/12"
+        @test txt_direct == "b*a^3/12"
     end
 
     # ------------------------------------------------------------
@@ -153,7 +153,7 @@ using Unitful
     @testset "Imin – minimální kvadratický moment" begin
         Imin1, txt1 = StrojniSoucasti.profilyvlcn(TRKR_01, :Imin)
         @test Imin1 == pi/64 * ( (20u"mm")^4 - (10u"mm")^4 )
-        @test txt1 == "π/64*(D⁴ - d⁴)"
+        @test txt1 == "pi/64*(D^4 - d^4)"
 
         Imin2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imin)
         @test Imin2 > 0u"mm^4"
@@ -166,11 +166,11 @@ using Unitful
     @testset "Imax – minimální kvadratický moment" begin
         Imax1, txt1 = StrojniSoucasti.profilyvlcn(TRKR_01, :Imax)
         @test Imax1 == pi/64 * ( (20u"mm")^4 - (10u"mm")^4 )
-        @test txt1 == "π/64*(D⁴ - d⁴)"
+        @test txt1 == "pi/64*(D^4 - d^4)"
 
         Imax2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imax)
         @test Imax2 > 0u"mm^4"
-        @test txt2 == "(Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )"
+        @test txt2 == "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
     end
 
     # ------------------------------------------------------------

@@ -9,5 +9,7 @@ makedocs(
         "Uvod" => "index.md",
         "Materialy" => "materialy.md",
         "Dovolene napeti" => "dovoleneNapeti.md",
+        "Pouziti balicku" => "pouziti.md",
+        "API" => "api.md",
     ],
 )
