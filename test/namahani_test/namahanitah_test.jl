@@ -62,6 +62,20 @@ end
         @test isa(txt, String)
     end
 
+    # Test 4b: Výpočet s materiálem jako struct z materialy()
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+    end
+
     # Test 5: Výpočet s profilem a délkou
     @testset "výpočet s profilem a délkou" begin
         VV, txt = namahanitah(F=6000u"N", profil="TRKR 76x5", mat="11373", zatizeni="dynamický", L0=210u"mm", k=5)
