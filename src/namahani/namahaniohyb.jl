@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-03-06
+# ver: 2026-03-11
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -155,13 +155,28 @@ function namahaniohyb(;
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if mat isa AbstractString
+            if !isdefined(@__MODULE__, :materialy)
+                error("Funkce materialy(mat) není definována.")
+            end
+            matinfo = materialy(mat)
+        else
+            matinfo = mat
         end
-        matinfo = materialy(mat)
-        Re = (matinfo.Re)u"MPa" # mez kluzu
-        E = (matinfo.E)u"GPa" # modul pružnosti
-        matName = matinfo.name # název materiálu z dictu
+        if matinfo === nothing
+            error("Materiál '$mat' nebyl nalezen.")
+        end
+        if matinfo isa AbstractDict
+            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
+            E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
+            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
+        else
+            Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
+            E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
+            matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        end
+        Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
+        E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
      else
         matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
@@ -173,7 +188,7 @@ function namahaniohyb(;
         if Re === nothing && mat === nothing
             error("Chybí sigmaDo, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
             if matinfo !== nothing
                 sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
             elseif Re !== nothing

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-03-06
+# ver: 2026-03-11
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -127,20 +127,36 @@ function namahaniotl(;
             error("k musí být kladná hodnota.")
         end
     end
-    # ----------------------------------------------------------
+    # ---------------------------------------------------------
     # materiál
+    # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if mat isa AbstractString
+            if !isdefined(@__MODULE__, :materialy)
+                error("Funkce materialy(mat) není definována.")
+            end
+            matinfo = materialy(mat)
+        else
+            matinfo = mat
         end
-        matinfo = materialy(mat)
-        Re = (matinfo.Re)u"MPa" # mez kluzu
-        matName = matinfo.name # název materiálu z dictu
+        if matinfo === nothing
+            error("Materiál '$mat' nebyl nalezen.")
+        end
+        if matinfo isa AbstractDict
+            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
+            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
+        else
+            Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
+            matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        end
+        Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
     else
         matinfo = nothing
         matName = ""
     end
-    # dovolené napětí na otlačení
+    # ---------------------------------------------------------
+    # dovolené napětí
+    # ---------------------------------------------------------
     if sigmaDotl === nothing
         if matinfo !== nothing
             sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
@@ -149,8 +165,9 @@ function namahaniotl(;
         end
     end
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
-    # ----------------------------------------------------------
-    # plocha z profilu
+    # ---------------------------------------------------------
+    # profil (automatické volání profily)
+    # ---------------------------------------------------------
     S_str = ""
     profil_info = Dict{Symbol,Any}()
     if profil !== nothing

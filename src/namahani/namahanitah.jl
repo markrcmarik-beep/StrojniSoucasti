@@ -164,30 +164,30 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
-    if mat !== nothing
-        if mat isa AbstractString
+    if mat !== nothing # pokud je mat zadán, pokusíme se získat informace o materiálu
+        if mat isa AbstractString # pokud je mat řetězec, pokusíme se získat informace o materiálu pomocí funkce materialy(mat)
             if !isdefined(@__MODULE__, :materialy)
                 error("Funkce materialy(mat) není definována.")
             end
             matinfo = materialy(mat)
-        else
+        else # pokud je mat již dict nebo struct s potřebnými informacemi, použijeme ho přímo a nebudeme volat materialy(mat)
             matinfo = mat
         end
         if matinfo === nothing
             error("Materiál '$mat' nebyl nalezen.")
         end
-        if matinfo isa AbstractDict
+        if matinfo isa AbstractDict # pokud je matinfo dict, získáme hodnoty z dictu s použitím haskey a get, abychom se vyhnuli chybám při přístupu k neexistujícím klíčům
             Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
             E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
             matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
-        else
+        else # pokud je matinfo struct, získáme hodnoty z vlastností struct pomocí hasproperty a getproperty, abychom se vyhnuli chybám při přístupu k neexistujícím vlastnostem
             Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
             E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
             matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
         end
         Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
         E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
-    else
+    else # pokud není mat zadán, nemáme informace o materiálu
         matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end

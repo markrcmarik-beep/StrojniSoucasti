@@ -1,4 +1,4 @@
-# ver: 2026-02-05
+# ver: 2026-03-11
 # Testovací skript pro funkci namahaniotl.jl
 # Testuje namáhání na otlačení (plošný tlak) s různými typy zatížení
 
@@ -47,6 +47,17 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :sigmaDotl)
         @test haskey(VV, :info)
         @test VV[:info] == "namáhání na otlačení"
+        @test isa(txt, String)
+    end
+
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniotl(F=5000u"N", S=120u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :sigmaDotl)
+        @test VV[:mat] == A1.name
         @test isa(txt, String)
     end
 

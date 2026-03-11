@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-03-06
+# ver: 2026-03-11
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -165,13 +165,28 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if mat isa AbstractString
+            if !isdefined(@__MODULE__, :materialy)
+                error("Funkce materialy(mat) není definována.")
+            end
+            matinfo = materialy(mat)
+        else
+            matinfo = mat
         end
-        matinfo = materialy(mat) # získání informací o materiálu
-        Re = (matinfo.Re)u"MPa" # mez kluzu
-        G = (matinfo.G)u"GPa" # modul pružnosti
-        matName = matinfo.name # název materiálu z dictu
+        if matinfo === nothing
+            error("Materiál '$mat' nebyl nalezen.")
+        end
+        if matinfo isa AbstractDict
+            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
+            G_raw = haskey(matinfo, :G) ? matinfo[:G] : get(matinfo, "G", nothing)
+            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
+        else
+            Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
+            G_raw = hasproperty(matinfo, :G) ? getproperty(matinfo, :G) : nothing
+            matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        end
+        Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
+        G = G_raw === nothing ? G : attach_unit(G_raw, u"GPa")
      else
         matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
@@ -183,7 +198,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
         if Re === nothing && mat === nothing
             error("Chybí tauDk, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
             if matinfo !== nothing
                 tauDk = dovoleneNapeti("střih", zatizeni; mat=matinfo)
             elseif Re !== nothing

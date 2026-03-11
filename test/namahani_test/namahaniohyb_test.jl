@@ -1,4 +1,4 @@
-# ver: 2026-02-03
+# ver: 2026-03-11
 # Testovací skript pro funkci namahaniohyb.jl
 # Testuje namáhání v ohybu s různými typy zatížení
 
@@ -50,6 +50,21 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :delta)
         @test VV[:Re] > 0u"MPa"
         @test VV[:E] > 0u"GPa"
+        @test isa(txt, String)
+    end
+
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Ix=600u"mm^4", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test haskey(VV, :delta)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
         @test isa(txt, String)
     end
 

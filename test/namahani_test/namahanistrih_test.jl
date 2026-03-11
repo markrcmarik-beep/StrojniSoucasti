@@ -1,4 +1,4 @@
-# ver: 2026-02-03
+# ver: 2026-03-11
 # Testovací skript pro funkci namahanistrih.jl
 # Testuje namáhání ve střihu s různými typy zatížení
 
@@ -49,6 +49,20 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :G)
         @test VV[:Re] > 0u"MPa"
         @test VV[:G] > 0u"GPa"
+        @test isa(txt, String)
+    end
+
+    # Test 4b: Výpočet s materiálem jako struct z materialy()
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahanistrih(F=6000u"N", S=400u"mm^2", mat=A1)
+        @test haskey(VV, :tau)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :G)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:G] > 0u"GPa"
+        @test VV[:mat] == A1.name
         @test isa(txt, String)
     end
 
