@@ -5,7 +5,7 @@
 # zadat zatěžující sílu, plochu průřezu nebo profil, dovolené 
 # napětí nebo materiál, délku namáhaného profilu a typ zatížení. 
 # Vrací slovník s výsledky výpočtu a volitelně i textový výpis.
-# ver: 2026-03-10
+# ver: 2026-03-12
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -384,4 +384,63 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     else
         return VV
     end
+end
+
+function namahanitlakvypocet(; F=nothing, S=nothing, sigmaDt=nothing, 
+    E=nothing, Re=nothing, L0=nothing, k_uziv=nothing)
+
+sigma_str = "F / S"
+sigma = F / S
+sigma = uconvert(u"MPa", sigma)
+k_str = "sigmaDt / sigma"
+k = sigmaDt / sigma
+epsilon = nothing
+if E !== nothing
+    epsilon_str = "sigma / E"
+    epsilon = sigma / E  # poměrné zkrácení (kladné)
+    epsilon = ustrip(epsilon)  # bez jednotky
+end
+# deltaL a L (zkrácení: záporné deltaL)
+deltaL = nothing
+L = nothing
+if L0 !== nothing
+    deltaL_str = "-epsilon * L0"
+    deltaL = -epsilon * L0    # zkrácení materiálu v tlaku (mm)
+    deltaL = uconvert(u"mm", deltaL)
+    L_str = "L0 + deltaL"
+    L = L0 + deltaL
+    L = uconvert(u"mm", L)
+end
+if k_uziv === nothing
+    verdict =   if k >= 1.5
+                    "Spoj je bezpečný"
+                elseif k >= 1.0
+                    "Spoj je na hranici bezpečnosti"
+                else
+                    "Spoj není bezpečný!"
+                end
+else
+    verdict =   if k >= k_uziv + 0.5
+                    "Spoj je bezpečný"
+                elseif k >= k_uziv
+                    "Spoj je na hranici bezpečnosti"
+                else
+                    "Spoj není bezpečný!"
+                end # konec if
+end
+
+vypocet = Dict{Symbol,Any}()
+vypocet[:sigma_str] = sigma_str
+vypocet[:sigma] = sigma
+vypocet[:k_str] = k_str
+vypocet[:k] = k
+vypocet[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""
+vypocet[:epsilon] = epsilon
+vypocet[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""
+vypocet[:deltaL] = deltaL
+vypocet[:L_str] = @isdefined(L_str) ? L_str : ""
+vypocet[:L] = L
+vypocet[:verdict] = verdict
+return vypocet
+
 end

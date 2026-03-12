@@ -158,10 +158,14 @@ function namahaniotl(;
     # dovolené napětí
     # ---------------------------------------------------------
     if sigmaDotl === nothing
-        if matinfo !== nothing
-            sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
-        elseif Re !== nothing
-            sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
+            if matinfo !== nothing
+                sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
+            elseif Re !== nothing
+                sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
+            end
+        else
+            error("Funkce dovoleneNapeti není definována, nelze určit dovolené napětí.")
         end
     end
     sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
