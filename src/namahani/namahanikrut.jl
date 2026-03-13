@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-03-11
+# ver: 2026-03-13
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
@@ -261,6 +261,63 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
+    vypocet = namahanikrutvypocet(Mk=Mk, Wk=Wk, tauDk=tauDk, G=G, 
+        L0=L0, Ip=Ip, k_uziv=k_uziv)
+    # ---------------------------------------------------------
+    # výstup
+    # ---------------------------------------------------------
+    VV = Dict{Symbol,Any}()
+    VV[:info] = "namáhání v krutu"
+    VV[:zatizeni] = zatizeni # způsob zatížení
+    VV[:zatizeni_info] = "Způsob zatížení"
+    VV[:Mk] = Mk # krouticí moment
+    VV[:Mk_info] = "Krouticí moment"
+    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
+    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
+    VV[:Wk] = Wk # průřezový modul v krutu
+    VV[:Wk_info] = "Průřezový modul v krutu"
+    VV[:Wk_str] = Wk_str # textový popis Wk (např. z profilu)
+    VV[:Ip] = Ip # polární moment setrvačnosti
+    VV[:Ip_info] = "Polární moment setrvačnosti"
+    VV[:Ip_str] = Ip_str # textový popis Ip (např. z profilu)
+    VV[:tauDk] = tauDk # dovolené smykové napětí v krutu
+    VV[:tauDk_info] = "Dovolené napětí v krutu"
+    VV[:tau] = vypocet[:tau] # smykové napětí v krutu
+    VV[:tau_str] = vypocet[:tau_str] # vzorec pro výpočet tau
+    VV[:tau_info] = "Napětí v krutu"
+    VV[:phi] = vypocet[:phi] # úhel zkroucení
+    VV[:phi_str] = vypocet[:phi_str] # vzorec pro výpočet phi
+    VV[:phi_info] = "Úhel zkroucení"
+    VV[:bezpecnost] = vypocet[:k] # součinitel bezpečnosti
+    VV[:bezpecnost_str] = vypocet[:k_str] # vzorec pro výpočet součinitele bezpečnosti
+    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
+    VV[:verdict] =  vypocet[:verdict] # textové hodnocení bezpečnosti spoje
+    VV[:verdict_info] = "Bezpečnost spoje"
+    VV[:G] = G # smykový modul
+    VV[:G_info] = "Smykový modul"
+    VV[:Re] = Re # mez kluzu
+    VV[:Re_info] = "Mez kluzu"
+    VV[:mat] = matName # materiál
+    VV[:mat_info] = "Materiál"
+    VV[:L0] = L0 # délka pro výpočet úhlu zkroucení
+    VV[:L0_info] = "Délka pro výpočet zkroucení"
+    VV[:theta] = vypocet[:theta] # poměrné zkroucení
+    VV[:theta_str] = vypocet[:theta_str] # vzorec pro výpočet poměrného zkroucení
+    VV[:theta_info] = "Poměrné zkroucení"
+    VV[:profil] = profil === nothing ? "" : profil
+    VV[:profil_info] = profil_info # další info o profilu
+
+    if return_text
+        Dispstr = StrojniSoucasti.namahanikruttext(VV)
+        return VV, Dispstr
+    else
+        return VV
+    end
+end
+
+function namahanikrutvypocet(; Mk=nothing, Wk=nothing, tauDk=nothing, 
+    G=nothing, L0=nothing, Ip=nothing, k_uziv=nothing)
+
     tau_str = "Mk / Wk"
     tau = Mk / Wk
     tau = uconvert(u"MPa", tau)
@@ -295,54 +352,16 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
                         "Spoj není bezpečný!"
                     end # konec if
     end
-    # ---------------------------------------------------------
-    # výstup
-    # ---------------------------------------------------------
-    VV = Dict{Symbol,Any}()
-    VV[:info] = "namáhání v krutu"
-    VV[:zatizeni] = zatizeni # způsob zatížení
-    VV[:zatizeni_info] = "Způsob zatížení"
-    VV[:Mk] = Mk # krouticí moment
-    VV[:Mk_info] = "Krouticí moment"
-    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
-    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
-    VV[:Wk] = Wk # průřezový modul v krutu
-    VV[:Wk_info] = "Průřezový modul v krutu"
-    VV[:Wk_str] = Wk_str # textový popis Wk (např. z profilu)
-    VV[:Ip] = Ip # polární moment setrvačnosti
-    VV[:Ip_info] = "Polární moment setrvačnosti"
-    VV[:Ip_str] = Ip_str # textový popis Ip (např. z profilu)
-    VV[:tauDk] = tauDk # dovolené smykové napětí v krutu
-    VV[:tauDk_info] = "Dovolené napětí v krutu"
-    VV[:tau] = tau # napětí v krutu
-    VV[:tau_str] = tau_str # vzorec pro napětí v krutu
-    VV[:tau_info] = "Napětí v krutu"
-    VV[:phi] = phi # úhel zkroucení [rad]
-    VV[:phi_str] = @isdefined(phi_str) ? phi_str : "" # vzorec pro úhel zkroucení
-    VV[:phi_info] = phi === nothing ? "" : "Úhel zkroucení"
-    VV[:bezpecnost] = k # součinitel bezpečnosti
-    VV[:bezpecnost_str] = k_str # vzorec pro součinitel bezpečnosti
-    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] =  verdict # textové hodnocení bezpečnosti spojení
-    VV[:verdict_info] = "Bezpečnost spoje"
-    VV[:G] = G # smykový modul
-    VV[:G_info] = "Smykový modul"
-    VV[:Re] = Re # mez kluzu
-    VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = matName # materiál
-    VV[:mat_info] = "Materiál"
-    VV[:L0] = L0 # délka pro výpočet úhlu zkroucení
-    VV[:L0_info] = "Délka pro výpočet zkroucení"
-    VV[:theta] = theta # poměrné zkroucení [rad/m]
-    VV[:theta_str] = @isdefined(theta_str) ? theta_str : "" # vzorec pro poměrné zkroucení
-    VV[:theta_info] = "Poměrné zkroucení"
-    VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = profil_info # další info o profilu
+    vypocet = Dict{Symbol,Any}()
+    vypocet[:tau] = tau
+    vypocet[:tau_str] = tau_str
+    vypocet[:k] = k
+    vypocet[:k_str] = k_str
+    vypocet[:phi] = (phi)
+    vypocet[:phi_str] = @isdefined(phi_str) ? phi_str : ""
+    vypocet[:theta] = (theta)
+    vypocet[:theta_str] = @isdefined(theta_str) ? theta_str : ""
+    vypocet[:verdict] = verdict
+    return vypocet
 
-    if return_text
-        Dispstr = StrojniSoucasti.namahanikruttext(VV)
-        return VV, Dispstr
-    else
-        return VV
-    end
 end
