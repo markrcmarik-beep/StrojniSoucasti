@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-03-11
+# ver: 2026-03-13
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -75,16 +75,9 @@ Příklad:
 namahaniotl(F=5000u"N", profil="PLECH 10x30", mat="S235")
 ```
 """
-function namahaniotl(;
-    F=nothing,
-    S=nothing,
-    sigmaDotl=nothing,
-    Re=nothing,
-    mat=nothing,
-    zatizeni::AbstractString="statický",
-    profil=nothing,
-    k=nothing,
-    return_text::Bool=true)
+function namahaniotl(;F=nothing, S=nothing, sigmaDotl=nothing,
+    Re=nothing, mat=nothing, zatizeni::AbstractString="statický",
+    profil=nothing, k=nothing, return_text::Bool=true)
     # ---------------------------------------------------------
     # pomocné
     # ---------------------------------------------------------
@@ -92,6 +85,7 @@ function namahaniotl(;
     hasq(x) = x !== nothing && isa(x, Unitful.AbstractQuantity)
     isnum(x) = x !== nothing && isa(x, Number)
     attach_unit(x,u) = hasq(x) ? x : x * u
+    profil_info = Dict{Symbol,Any}()
     # ---------------------------------------------------------
     # vstupy – jednotky
     # ---------------------------------------------------------
@@ -121,9 +115,9 @@ function namahaniotl(;
             error("Re musí být kladná hodnota.")
         end
     end
-    if k !== nothing
-        isnum(k) || error("k musí být číslo.")
-        if k <= 0
+    if k_uziv !== nothing
+        isnum(k_uziv) || error("k musí být číslo.")
+        if k_uziv <= 0
             error("k musí být kladná hodnota.")
         end
     end
@@ -173,7 +167,6 @@ function namahaniotl(;
     # profil (automatické volání profily)
     # ---------------------------------------------------------
     S_str = ""
-    profil_info = Dict{Symbol,Any}()
     if profil !== nothing
         p = profily(profil, "S")
         haskey(p, :S) || error("profily(...) nevrátilo S.")
@@ -189,38 +182,33 @@ function namahaniotl(;
     S !== nothing || error("Chybí kontaktní plocha S.")
     # ----------------------------------------------------------
     # výpočty
-    sigma_str = "F / S"
-    sigma = uconvert(u"MPa", F / S)
-    sigmaDotl = uconvert(u"MPa", sigmaDotl)
-    bezpecnost_str = "sigmaDt / sigma"
-    bezpecnost = sigmaDotl / sigma
-    verdict = bezpecnost >= 1.5 ? "Spoj je bezpečný" :
-              bezpecnost >= 1.0 ? "Spoj je na hranici bezpečnosti" :
-                                  "Spoj není bezpečný!"
+    # ----------------------------------------------------------
+    vypocet = namahaniotlvypocet(F=F, S=S, sigmaDotl=sigmaDotl, k_uziv=k_uziv)
     # ----------------------------------------------------------
     # výstup
+    # ----------------------------------------------------------
     VV = Dict{Symbol,Any}()
     VV[:info] = "namáhání na otlačení"
     VV[:zatizeni] = zatizeni
     VV[:zatizeni_info] = "Druh zatížení"
     VV[:F] = F # zatěžující síla
     VV[:F_info] = "Zatěžující síla"
-    VV[:k] = k # součinitel bezpečnosti (uživatelský požadavek)
+    VV[:k] = k_uziv # součinitel bezpečnosti (uživatelský požadavek)
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # kontaktní plocha
     VV[:S_str] = S_str # textový popis výpočtu S
     VV[:S_info] = "Kontaktní plocha"
     VV[:sigmaDotl] = sigmaDotl
     VV[:sigmaDotl_info] = "Dovolené napětí na otlačení"
-    VV[:sigma] = sigma # skutečné napětí
-    VV[:sigma_str] = sigma_str
+    VV[:sigma] = vypocet[:sigma] # skutečné napětí na otlačení
+    VV[:sigma_str] = vypocet[:sigma_str] # textový popis výpočtu sigma
     VV[:sigma_info] = "Skutečné napětí na otlačení"
     VV[:Re] = Re # mez kluzu
     VV[:Re_info] = "Mez kluzu"
-    VV[:bezpecnost] = bezpecnost
-    VV[:bezpecnost_str] = bezpecnost_str
+    VV[:bezpecnost] = vypocet[:k] # součinitel bezpečnosti
+    VV[:bezpecnost_str] = vypocet[:k_str] # textový popis výpočtu součinitele bezpečnosti
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] = verdict
+    VV[:verdict] = vypocet[:verdict] # výsledek posouzení
     VV[:verdict_info] = "Výsledek posouzení"
     VV[:mat] = matName # materiál
     VV[:mat_info] = "Materiál"
@@ -228,4 +216,35 @@ function namahaniotl(;
     VV[:profil_info] = profil_info
 
     return return_text ? (VV, StrojniSoucasti.namahaniotltext(VV)) : VV
+end
+
+function namahaniotlvypocet(; F=nothing, S=nothing, sigmaDotl=nothing, 
+    k_uziv=nothing)
+
+    sigma_str = "F / S"
+    sigma = uconvert(u"MPa", F / S)
+    sigmaDotl = uconvert(u"MPa", sigmaDotl)
+    k_str = "sigmaDt / sigma"
+    k = sigmaDotl / sigma
+    if k_uziv === nothing
+        verdict = k >= 1.5 ?   "Spoj je bezpečný" :
+                k >= 1.0 ?     "Spoj je na hranici bezpečnosti" :
+                                "Spoj není bezpečný!"
+    else
+        verdict =   if k >= k_uziv + 0.5
+                        "Spoj je bezpečný"
+                    elseif k >= k_uziv
+                        "Spoj je na hranici bezpečnosti"
+                    else
+                        "Spoj není bezpečný!"
+                    end
+    end
+    vypocet = Dict{Symbol,Any}()
+    vypocet[:sigma] = sigma
+    vypocet[:sigma_str] = sigma_str
+    vypocet[:k] = k
+    vypocet[:k_str] = k_str
+    vypocet[:verdict] = verdict
+    return vypocet
+
 end

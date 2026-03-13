@@ -5,7 +5,7 @@
 # zadat zatěžující sílu, plochu průřezu nebo profil, dovolené 
 # napětí nebo materiál, délku namáhaného profilu a typ zatížení. 
 # Vrací slovník s výsledky výpočtu a volitelně i textový výpis.
-# ver: 2026-03-12
+# ver: 2026-03-13
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -293,45 +293,8 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
-    sigma_str = "F / S"
-    sigma = F / S
-    sigma = uconvert(u"MPa", sigma)
-    k_str = "sigmaDt / sigma"
-    k = sigmaDt / sigma
-    epsilon = nothing
-    if E !== nothing
-        epsilon_str = "sigma / E"
-        epsilon = sigma / E  # poměrné zkrácení (kladné)
-        epsilon = ustrip(epsilon)  # bez jednotky
-    end
-    # deltaL a L (zkrácení: záporné deltaL)
-    deltaL = nothing
-    L = nothing
-    if L0 !== nothing
-        deltaL_str = "-epsilon * L0"
-        deltaL = -epsilon * L0    # zkrácení materiálu v tlaku (mm)
-        deltaL = uconvert(u"mm", deltaL)
-        L_str = "L0 + deltaL"
-        L = L0 + deltaL
-        L = uconvert(u"mm", L)
-    end
-    if k_uziv === nothing
-    verdict = if k >= 1.5
-        "Spoj je bezpečný"
-    elseif k >= 1.0
-        "Spoj je na hranici bezpečnosti"
-    else
-        "Spoj není bezpečný!"
-    end
-    else
-        verdict =   if k >= k_uziv + 0.5
-                        "Spoj je bezpečný"
-                    elseif k >= k_uziv
-                        "Spoj je na hranici bezpečnosti"
-                    else
-                        "Spoj není bezpečný!"
-                    end # konec if
-    end
+    V2 = namahanitlakvypocet(F=F, S=S, sigmaDt=sigmaDt, E=E, Re=Re, 
+        L0=L0, Imin=Imin, k_uziv=k_uziv)
     # ---------------------------------------------------------
     # VÝSTUPNÍ DICT
     # ---------------------------------------------------------
@@ -347,16 +310,16 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí v tlaku
     VV[:sigmaDt_info] = "Dovolené napětí v tlaku"
-    VV[:sigma] = sigma # skutečné napětí v MPa
-    VV[:sigma_str] = sigma_str
+    VV[:sigma] = V2[:sigma] # skutečné napětí v tlaku
+    VV[:sigma_str] = V2[:sigma_str] # textový popis výpočtu sigma (např. z F a S)
     VV[:sigma_info] = "Napětí v tlaku"
-    VV[:epsilon] = epsilon # poměrné zkrácení
-    VV[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""
+    VV[:epsilon] = V2[:epsilon] # poměrné zkrácení (bez jednotky)
+    VV[:epsilon_str] = V2[:epsilon_str] # textový popis výpočtu epsilon (např. z sigma a E)
     VV[:epsilon_info] = "Poměrné zkrácení"
-    VV[:bezpecnost] = k # součinitel bezpečnosti
-    VV[:bezpecnost_str] = k_str
+    VV[:bezpecnost] = V2[:k] # součinitel bezpečnosti k
+    VV[:bezpecnost_str] = V2[:k_str] # textový popis výpočtu k
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] = verdict
+    VV[:verdict] = V2[:verdict] # závěr o bezpečnosti spoje
     VV[:verdict_info] = "Bezpečnost spoje"
     VV[:E] = E # Youngův modul
     VV[:E_info] = "Youngův modul (tlak)"
@@ -369,12 +332,12 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:Imin] = Imin # minimální kvadratický moment průřezu pro výpočet stability v tlaku
     VV[:Imin_str] = Imin_str # textový popis výpočtu Imin (např. z profilu)
     VV[:Imin_info] = "Minimální kvadratický moment průřezu pro výpočet stability v tlaku"
-    VV[:deltaL] = deltaL # skutečné zkrácení
-    VV[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""
-    VV[:deltaL_info] = deltaL===nothing ? "" : "Skutečné zkrácení"
-    VV[:L] = L # délka po zkrácení
-    VV[:L_str] = @isdefined(L_str) ? L_str : ""
-    VV[:L_info] = L===nothing ? "" : "Délka po deformaci"
+    VV[:deltaL] = V2[:deltaL] # skutečné zkrácení
+    VV[:deltaL_str] = V2[:deltaL_str] # textový popis výpočtu deltaL (např. z epsilon a L0)
+    VV[:deltaL_info] = "Skutečné zkrácení"
+    VV[:L] = V2[:L] # délka po zkrácení
+    VV[:L_str] = V2[:L_str] # textový popis výpočtu L (např. z L0 a deltaL)
+    VV[:L_info] = "Délka po deformaci"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info
 
@@ -387,7 +350,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
 end
 
 function namahanitlakvypocet(; F=nothing, S=nothing, sigmaDt=nothing, 
-    E=nothing, Re=nothing, L0=nothing, k_uziv=nothing)
+    E=nothing, Re=nothing, L0=nothing, Imin=nothing, k_uziv=nothing)
 
 sigma_str = "F / S"
 sigma = F / S

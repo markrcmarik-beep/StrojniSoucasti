@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti ve střihu.
-# ver: 2026-03-11
+# ver: 2026-03-13
 ## Funkce: namahanistrih()
 ## Autor: Martin
 #
@@ -243,6 +243,53 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
+    vypocet = namahanistrihvypocet(F=F, S=S, tauDs=tauDs, 
+        G=G, k_uziv=k_uziv)
+    # ---------------------------------------------------------
+    # výstup
+    # ---------------------------------------------------------
+    VV = Dict{Symbol,Any}()
+    VV[:info] = "namáhání ve střihu"
+    VV[:zatizeni] = zatizeni
+    VV[:F] = F # zatěžující síla
+    VV[:F_info] = "Zatěžující síla"
+    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
+    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
+    VV[:S] = S # plocha průřezu
+    VV[:S_str] = S_str # textový popis plochy S (např. z profilu)
+    VV[:S_info] = "Plocha průřezu"
+    VV[:tau] = vypocet[:tau] # napětí ve střihu
+    VV[:tau_str] = vypocet[:tau_str] # textový popis výpočtu tau
+    VV[:tau_info] = "Napětí ve střihu"
+    VV[:tauDs] = tauDs # dovolené napětí ve střihu
+    VV[:tauDs_info] = "Dovolené napětí ve střihu"
+    VV[:bezpecnost] = vypocet[:k] # součinitel bezpečnosti
+    VV[:bezpecnost_str] = vypocet[:k_str] # textový popis výpočtu součinitele bezpečnosti
+    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
+    VV[:verdict] = vypocet[:verdict] # závěr posouzení bezpečnosti
+    VV[:verdict_info] = "Bezpečnost spoje"
+    VV[:gamma] = vypocet[:gamma] # deformace ve smyku
+    VV[:gamma_str] = vypocet[:gamma_str] # textový popis výpočtu gamma
+    VV[:gamma_info] = "Deformace ve smyku"
+    VV[:G] = G # modul pružnosti ve smyku
+    VV[:G_info] = "Modul pružnosti ve smyku"
+    VV[:Re] = Re # mez kluzu
+    VV[:Re_info] = "Mez kluzu"
+    VV[:mat] = matName # materiál
+    VV[:mat_info] = "Materiál"
+    VV[:profil] = profil === nothing ? "" : profil
+    VV[:profil_info] = profil_info
+
+    if return_text
+        return VV, StrojniSoucasti.namahanistrihtext(VV)
+    else
+        return VV
+    end
+end
+
+function namahanistrihvypocet(; F=nothing, S=nothing, tauDs=nothing, 
+    G=nothing, k_uziv=nothing)
+
     tau_str = "F / S"
     tau = F / S # napětí ve střihu
     tau = uconvert(u"MPa", tau)
@@ -267,44 +314,14 @@ function namahanistrih(; F=nothing, S=nothing, tauDs=nothing,
                         "Spoj není bezpečný!"
                     end # konec if
     end
-    # ---------------------------------------------------------
-    # výstup
-    # ---------------------------------------------------------
-    VV = Dict{Symbol,Any}()
-    VV[:info] = "namáhání ve střihu"
-    VV[:zatizeni] = zatizeni
-    VV[:F] = F # zatěžující síla
-    VV[:F_info] = "Zatěžující síla"
-    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
-    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
-    VV[:S] = S # plocha průřezu
-    VV[:S_str] = S_str # textový popis plochy S (např. z profilu)
-    VV[:S_info] = "Plocha průřezu"
-    VV[:tau] = tau # napětí ve střihu
-    VV[:tau_str] = tau_str
-    VV[:tau_info] = "Napětí ve střihu"
-    VV[:tauDs] = tauDs # dovolené napětí ve střihu
-    VV[:tauDs_info] = "Dovolené napětí ve střihu"
-    VV[:bezpecnost] = k # součinitel bezpečnosti
-    VV[:bezpecnost_str] = k_str
-    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] = verdict
-    VV[:verdict_info] = "Bezpečnost spoje"
-    VV[:gamma] = gamma # deformace ve smyku
-    VV[:gamma_str] = @isdefined(gamma_str) ? gamma_str : ""
-    VV[:gamma_info] = "Deformace ve smyku"
-    VV[:G] = G # modul pružnosti ve smyku
-    VV[:G_info] = "Modul pružnosti ve smyku"
-    VV[:Re] = Re # mez kluzu
-    VV[:Re_info] = "Mez kluzu"
-    VV[:mat] = matName # materiál
-    VV[:mat_info] = "Materiál"
-    VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = profil_info
+    vypocet = Dict{Symbol,Any}()
+    vypocet[:tau] = tau
+    vypocet[:tau_str] = tau_str
+    vypocet[:k] = k
+    vypocet[:k_str] = k_str
+    vypocet[:gamma] = gamma
+    vypocet[:gamma_str] = @isdefined(gamma_str) ? gamma_str : ""
+    vypocet[:verdict] = verdict
 
-    if return_text
-        return VV, StrojniSoucasti.namahanistrihtext(VV)
-    else
-        return VV
-    end
+    return vypocet
 end
