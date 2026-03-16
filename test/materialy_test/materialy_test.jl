@@ -9,6 +9,7 @@ using StrojniSoucasti
     @test mat.name == "S235"
     @test mat.standard == "EN 10025-2"
     @test mat.Re == 235
+    @test mat.Re_unit == "MPa"
     @test mat.Rm_min == 360
     @test mat.Rm_max == 510
     @test mat.A == 26
@@ -26,6 +27,7 @@ using StrojniSoucasti
     @test mat.name == "S235JR+N"
     @test mat.standard == "EN 10025-2"
     @test mat.Re == 235
+    @test mat.Re_unit == "MPa"
     @test mat.weldable == true
     @test mat.thickness_max == 200
     @test mat.E == 210
@@ -36,6 +38,7 @@ using StrojniSoucasti
     @test mat.name == "11 373"
     @test mat.standard == "ČSN 41 1373"
     @test mat.Re == 250
+    @test mat.Re_unit == "MPa"
     @test mat.weldable == true
     @test mat.rho == 7850
 
@@ -44,6 +47,7 @@ using StrojniSoucasti
     @test mat.name == "42 3001"
     @test mat.standard == "ČSN"
     @test mat.Re == 200
+    @test mat.Re_unit == "MPa"
     @test mat.Rm_min == 250
     @test mat.Rm_max == 300
     @test mat.A == 20

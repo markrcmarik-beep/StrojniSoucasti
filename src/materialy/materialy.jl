@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-03-09
+# ver: 2026-03-16
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -21,12 +21,13 @@
 #   nebo `nothing`, pokud materiál nebyl nalezen.
 #   Typicky dostupná pole:
 #   - společná pro všechny typy: `name`, `standard`, `druh`, `A`, `E`, `G`, `ny`, `rho`
-#   - pouze pro `MaterialOcel` a `MaterialKovy`: `Re`, `Rm_min`, `Rm_max`
+#   - pouze pro `MaterialOcel` a `MaterialKovy`: `Re`, `Re_unit`, `Rm_min`, `Rm_max`
 #   - pouze pro `MaterialOcel`: `KV`, `T_KV`, `weldable`, `thickness_max`
 #   - pouze pro `MaterialLitina`: `Rm_tah`, `Rm_tlak`, `tau_lim`, `HB_min`, `HB_max`
 #   Příklady čtení:
 #   - `mat.name`::String
 #   - `mat.Re`::Float64 (jen `MaterialOcel`, `MaterialKovy`)
+#   - `mat.Re_unit`::String (jen `MaterialOcel`, `MaterialKovy`)
 #   - `mat.E`::Float64
 #   - `mat.G`::Float64
 ## Použité balíčky:
@@ -42,7 +43,7 @@
 # if mat !== nothing
 #     println(typeof(mat))             # např. MaterialOcel
 #     println("name = ", mat.name)
-#     println("Re = ", mat.Re, " MPa")   # jen pro MaterialOcel/MaterialKovy
+#     println("Re = ", mat.Re, " ", mat.Re_unit)   # jen pro MaterialOcel/MaterialKovy
 #     println("E  = ", mat.E,  " MPa")
 #     println("G  = ", mat.G,  " MPa")
 # else
@@ -65,7 +66,7 @@ using TOML
 
 include("materialytypes.jl")
 
-const MATERIALY_DB_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
+const MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
     "materialydatabaseOcelEN10025_2.toml"))
 const MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(@__DIR__, 
     "materialydatabaseOcelCSN.toml"))
@@ -73,52 +74,6 @@ const MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabaseKovyCSN.toml"))
 const MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabaseLitinaCSN.toml"))
-
-"""
-    materialy(name::AbstractString) -> Union{MaterialOcel, MaterialKovy, MaterialLitina, Nothing}
-
-Vrátí `MaterialOcel`, `MaterialKovy` nebo `MaterialLitina` s vlastnostmi
-materiálu z databází EN10025-2 a ČSN.
-Pokud materiál neexistuje, vrátí `nothing`.
-
-Vstupy:
-- `name`: označení materiálu (např. "S235", "S235JR+N"). Bílé znaky se odstraní,
-  převádí se na velká písmena.
-
-Výstup:
-- `MaterialOcel`, `MaterialKovy`, `MaterialLitina` nebo `nothing`.
-
-Příklad:
-```julia
-# vstup:
-mat = materialy("11373")
-
-# použití:
-if mat !== nothing
-    println(typeof(mat))             # např. MaterialOcel
-    println("name = ", mat.name)
-    println("Re = ", mat.Re, " MPa")   # jen pro MaterialOcel/MaterialKovy
-    println("E  = ", mat.E,  " MPa")
-    println("G  = ", mat.G,  " MPa")
-else
-    println("Materiál nebyl nalezen.")
-end
-```
-
-Očekávaný výstup (pro existující ocel):
-```text
-MaterialOcel
-name = 11373
-Re = ... MPa
-E  = ... MPa
-G  = ... MPa
-```
-
-Očekávaný výstup (pro neexistující materiál):
-```text
-Materiál nebyl nalezen.
-```
-"""
 
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,
@@ -128,14 +83,15 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
     
-    if haskey(MATERIALY_DB_EN10025_2, name) # materiál existuje v databázi
+    if haskey(MATERIALY_DB_OCEL_EN10025_2, name) # materiál existuje v databázi
     
-        row = MATERIALY_DB_EN10025_2[name]
+        row = MATERIALY_DB_OCEL_EN10025_2[name]
         return MaterialOcel(
         get(row, "name", name)::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
         get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
+        "MPa", # jednotka meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
         Float64(get(row, "A", 0)), # prodloužení
@@ -156,6 +112,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         get(row, "standard", "")::String, # norma (nepovinné)
         get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
+        "MPa", # jednotka meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
         Float64(get(row, "A", 0)), # prodloužení
@@ -176,6 +133,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         get(row, "standard", "")::String, # norma (nepovinné)
         get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
+        "MPa", # jednotka meze kluzu
         Float64(get(row, "Rm_min", 0)), # meze pevnosti
         Float64(get(row, "Rm_max", 0)), # meze pevnosti max
         Float64(get(row, "A", 0)), # prodloužení

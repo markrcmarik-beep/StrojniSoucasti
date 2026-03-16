@@ -5,6 +5,7 @@ struct MaterialOcel
     standard::String    # norma (nepovinné)
     druh::String        # druh oceli (např. "konstrukční", "nástrojová", "nerezová")
     Re::Float64         # nominální mez kluzu [MPa]
+    Re_unit::String     # jednotka meze kluzu
     Rm_min::Float64     # mez pevnosti [MPa]
     Rm_max::Float64     # mez pevnosti max. [MPa]
     A::Float64          # tažnost [%]
@@ -24,6 +25,7 @@ struct MaterialKovy
     standard::String    # norma (nepovinné)
     druh::String        # druh kovu (např. "hliník", "měď", "titan")
     Re::Float64         # nominální mez kluzu [MPa]
+    Re_unit::String     # jednotka meze kluzu
     Rm_min::Float64     # mez pevnosti [MPa]
     Rm_max::Float64     # mez pevnosti max. [MPa]
     A::Float64          # tažnost [%]
