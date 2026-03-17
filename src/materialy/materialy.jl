@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-03-16
+# ver: 2026-03-17
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -16,7 +16,7 @@
 #   Označení materiálu (např. "S235", "11373", "S235JR+N").
 #   Před vyhledáním se oříznou okraje, odstraní mezery a převádí se na velká písmena.
 ## Výstupní proměnné:
-# mat::Union{MaterialOcel, MaterialKovy, MaterialLitina, Nothing}
+# mat::Union{MaterialOcel, MaterialKovy, MaterialLitina, MaterialPryz, Nothing}
 #   Datová struktura s vlastnostmi materiálu z databází EN10025-2/ČSN,
 #   nebo `nothing`, pokud materiál nebyl nalezen.
 #   Typicky dostupná pole:
@@ -24,6 +24,7 @@
 #   - pouze pro `MaterialOcel` a `MaterialKovy`: `Re`, `Re_unit`, `Rm_min`, `Rm_min_unit`, `Rm_max`, `Rm_max_unit`
 #   - pouze pro `MaterialOcel`: `KV`, `T_KV`, `weldable`, `thickness_max`
 #   - pouze pro `MaterialLitina`: `Rm_tah`, `Rm_tlak`, `tau_lim`, `HB_min`, `HB_max` (+ jejich *_unit)
+#   - pouze pro `MaterialPryz`: `hardness`, `hardness_unit`
 #   Příklady čtení:
 #   - `mat.name`::String
 #   - `mat.Re`::Float64 (jen `MaterialOcel`, `MaterialKovy`)
@@ -76,10 +77,13 @@ const MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabaseKovyCSN.toml"))
 const MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabaseLitinaCSN.toml"))
+const MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
+    "materialydatabasePryz.toml"))
 
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,
     MaterialLitina,
+    MaterialPryz,
     Nothing}
 
     name = uppercase(strip(name)) # velká písmena
@@ -194,6 +198,24 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         "GPa", # jednotka modulu pružnosti
         Float64(get(row, "G", 0)), # modul smyku
         "GPa", # jednotka modulu smyku
+        Float64(get(row, "ny", 0)), # Poissonovo číslo
+        "-", # jednotka Poissonova čísla
+        Float64(get(row, "rho", 0)), # hustota
+        "kg/m^3" # jednotka hustoty
+    )
+    elseif haskey(MATERIALY_DB_PRYZ, name) # materiál existuje v databázi pryží
+
+        row = MATERIALY_DB_PRYZ[name]
+        return MaterialPryz(
+        get(row, "name", name)::String, # název materiálu
+        get(row, "standard", "")::String, # norma (nepovinné)
+        get(row, "druh", "")::String, # druh pryže
+        Float64(get(row, "hardness", 0)), # tvrdost
+        "ShA", # jednotka tvrdosti
+        Float64(get(row, "E", 0)), # modul pružnosti
+        "MPa", # jednotka modulu pružnosti
+        Float64(get(row, "G", 0)), # modul smyku
+        "MPa", # jednotka modulu smyku
         Float64(get(row, "ny", 0)), # Poissonovo číslo
         "-", # jednotka Poissonova čísla
         Float64(get(row, "rho", 0)), # hustota

@@ -1,4 +1,4 @@
-# ver: 2026-01-18
+# ver: 2026-03-17
 using Test
 using StrojniSoucasti
 
@@ -114,6 +114,19 @@ using StrojniSoucasti
     @test mat.ny == 0.27
     @test mat.ny_unit == "-"
     @test mat.rho == 7200
+    @test mat.rho_unit == "kg/m^3"
+
+    mat = materialy("NBR70")
+
+    @test mat isa StrojniSoucasti.MaterialPryz
+    @test mat.name == "NBR70"
+    @test mat.standard == "-"
+    @test mat.druh == "NBR"
+    @test mat.hardness == 70
+    @test mat.hardness_unit == "ShA"
+    @test mat.E_unit == "MPa"
+    @test mat.G_unit == "MPa"
+    @test mat.ny_unit == "-"
     @test mat.rho_unit == "kg/m^3"
 
     mat = materialy("nonexistent_material")
