@@ -59,6 +59,7 @@ include("namahani/namahaniotl.jl") # namáhání otlačením
 include("namahani/namahaniotltext.jl") # textový výpis namáhání otlačením
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
+include("tolerance/tolerance.jl") # tolerance
 
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
@@ -68,7 +69,9 @@ tvarprofilu, profily,
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 
 # 
-ulozvypis, zavity
+ulozvypis, zavity,
+# tolerance
+tolerance
 
 # Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
 #using .Zavity

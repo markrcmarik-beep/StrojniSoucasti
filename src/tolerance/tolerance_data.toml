@@ -1,0 +1,27 @@
+# Tabulková data tolerancí podle norem ČSN/ISO.
+# Jednotky: mm
+# Poznámka: Doplňte kompletní tabulky podle příslušných norem.
+
+sizes = ["0-3", "3-6", "6-10", "10-18", "18-30", "30-50", "50-80", "80-120", "120-180", "180-250", "250-315", "315-400", "400-500"]
+
+[IT]
+  [IT."30-50"]
+  "7" = 0.021
+  "8" = 0.039
+  "9" = 0.062
+
+  [IT."50-80"]
+  "7" = 0.025
+  "8" = 0.046
+  "9" = 0.074
+
+[fundamental]
+  [fundamental."30-50"]
+  # Příklad: H8 (díra) -> EI = 0, ES = IT
+  H = { es = "IT", ei = 0.0 }
+  # Příklad: f7 (hřídel) -> hodnoty doplnit dle normy
+  f = { es = -0.020, ei = -0.041 }
+
+  [fundamental."50-80"]
+  H = { es = "IT", ei = 0.0 }
+  f = { es = -0.023, ei = -0.048 }

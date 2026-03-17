@@ -30,3 +30,5 @@ using Test
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
     include("ulozvypis_test.jl")
+    # tolerance
+    include("tolerance_test.jl")
