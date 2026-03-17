@@ -1,4 +1,4 @@
-# ver: 2026-02-03
+# ver: 2026-03-10
 # Testovací skript pro funkci namahanitlak.jl
 # Testuje namáhání v tlaku s různými typy zatížení
 
@@ -48,6 +48,20 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :E)
         @test VV[:Re] > 0u"MPa"
         @test VV[:E] > 0u"GPa"
+        @test isa(txt, String)
+    end
+
+        # Test 4b: Výpočet s materiálem jako struct z materialy()
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahanitlak(F=6000u"N", S=400u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
         @test isa(txt, String)
     end
 

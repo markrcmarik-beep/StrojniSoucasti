@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-03-06
+# ver: 2026-03-13
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -155,13 +155,28 @@ function namahaniohyb(;
     # materiál
     # ---------------------------------------------------------
     if mat !== nothing
-        if !isdefined(Main, :materialy)
-            error("Funkce materialy(mat) není definována.")
+        if mat isa AbstractString
+            if !isdefined(@__MODULE__, :materialy)
+                error("Funkce materialy(mat) není definována.")
+            end
+            matinfo = materialy(mat)
+        else
+            matinfo = mat
         end
-        matinfo = materialy(mat)
-        Re = (matinfo.Re)u"MPa" # mez kluzu
-        E = (matinfo.E)u"GPa" # modul pružnosti
-        matName = matinfo.name # název materiálu z dictu
+        if matinfo === nothing
+            error("Materiál '$mat' nebyl nalezen.")
+        end
+        if matinfo isa AbstractDict
+            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
+            E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
+            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
+        else
+            Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
+            E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
+            matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        end
+        Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
+        E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
      else
         matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
@@ -173,7 +188,7 @@ function namahaniohyb(;
         if Re === nothing && mat === nothing
             error("Chybí sigmaDo, Re, mat - nelze stanovit dovolené napětí.")
         end
-        if isdefined(Main, :dovoleneNapeti)
+        if isdefined(@__MODULE__, :dovoleneNapeti)
             if matinfo !== nothing
                 sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
             elseif Re !== nothing
@@ -249,6 +264,66 @@ function namahaniohyb(;
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
+    vypocet = namahaniohybvypocet(Mo=Mo, Lo=Lo, E=E, Ix=Ix, Wo=Wo, 
+        sigmaDo=sigmaDo, k_uziv=k_uziv)
+    # ---------------------------------------------------------
+    # výstup
+    # ---------------------------------------------------------
+    VV = Dict{Symbol,Any}()
+    VV[:info] = "namáhání v ohybu"
+    VV[:zatizeni] = zatizeni # druh zatížení (statický, pulzní, dynamický, rázový)
+    VV[:zatizeni_info] = "Druh zatížení"
+    VV[:Mo] = Mo # ohybový moment
+    VV[:Mo_info] = "Ohybový moment"
+    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
+    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
+    VV[:Wo] = Wo # průřezový modul v ohybu
+    VV[:Wo_info] = "Průřezový modul v ohybu"
+    VV[:Wo_str] = Wo_str # textový popis Wo (např. z profilu)
+    VV[:Ix] = Ix # moment setrvačnosti
+    VV[:Ix_info] = "Moment setrvačnosti"
+    VV[:Ix_str] = Ix_str # textový popis Ix (např. z profilu)
+    VV[:Lo] = Lo # délka nosníku
+    VV[:Lo_info] = "Délka nosníku"
+    VV[:sigmaDo] = sigmaDo # dovolené napětí v ohybu
+    VV[:sigmaDo_info] = "Dovolené napětí v ohybu"
+    VV[:sigma] = vypocet[:sigma] # vypočtené napětí v ohybu
+    VV[:sigma_str] = vypocet[:sigma_str] # textový popis napětí v ohybu
+    VV[:sigma_info] = "Napětí v ohybu"
+    VV[:delta] = vypocet[:delta] # relativní průhyb
+    VV[:delta_str] = vypocet[:delta_str] # textový popis relativního průhybu
+    VV[:delta_info] = "Relativní průhyb"
+    VV[:y] = vypocet[:y] # průhyb na volném konci
+    VV[:y_str] = vypocet[:y_str] # textový popis průhybu na volném konci
+    VV[:y_info] = "Průhyb na volném konci"
+    VV[:alfa] = vypocet[:alfa] # úhel natočení průřezu
+    VV[:alfa_str] = vypocet[:alfa_str] # textový popis úhlu natočení průřezu
+    VV[:alfa_info] = "Úhel natočení průřezu"
+    VV[:bezpecnost] = vypocet[:k] # součinitel bezpečnosti
+    VV[:bezpecnost_str] = vypocet[:k_str] # textový popis součinitele bezpečnosti
+    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
+    VV[:verdict] = vypocet[:verdict] # závěr posouzení bezpečnosti
+    VV[:verdict_info] = "Závěr posouzení bezpečnosti"
+    VV[:Re] = Re # mez kluzu
+    VV[:Re_info] = "Mez kluzu"
+    VV[:E] = E # modul pružnosti
+    VV[:E_info] = "Modul pružnosti"
+    VV[:mat] = matName # materiál
+    VV[:mat_info] = "Materiál"
+    VV[:profil] = profil === nothing ? "" : profil
+    VV[:profil_info] = profil_info # info o profilu
+    VV[:natoceni] = natoceni # natočení profilu
+    VV[:natoceni_info] = "Natočení profilu"
+    if return_text
+        return VV, StrojniSoucasti.namahaniohybtext(VV)
+    else
+        return VV
+    end
+end
+
+function namahaniohybvypocet(; Mo=nothing, Lo=nothing, E=nothing, 
+    Ix=nothing, Wo=nothing, sigmaDo=nothing, k_uziv=nothing)
+
     sigma_str = "Mo / Wo" # napětí v ohybu
     sigma = Mo / Wo # napětí v ohybu
     sigma = uconvert(u"MPa", sigma) # převod na MPa
@@ -287,57 +362,18 @@ function namahaniohyb(;
                         "Spoj není bezpečný!"
                     end # konec if
     end
-    # ---------------------------------------------------------
-    # výstup
-    # ---------------------------------------------------------
-    VV = Dict{Symbol,Any}()
-    VV[:info] = "namáhání v ohybu"
-    VV[:zatizeni] = zatizeni # druh zatížení (statický, pulzní, dynamický, rázový)
-    VV[:zatizeni_info] = "Druh zatížení"
-    VV[:Mo] = Mo # ohybový moment
-    VV[:Mo_info] = "Ohybový moment"
-    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
-    VV[:k_info] = "Uživatelský požadavek bezpečnosti"
-    VV[:Wo] = Wo # průřezový modul v ohybu
-    VV[:Wo_info] = "Průřezový modul v ohybu"
-    VV[:Wo_str] = Wo_str # textový popis Wo (např. z profilu)
-    VV[:Ix] = Ix # moment setrvačnosti
-    VV[:Ix_info] = "Moment setrvačnosti"
-    VV[:Ix_str] = Ix_str # textový popis Ix (např. z profilu)
-    VV[:Lo] = Lo # délka nosníku
-    VV[:Lo_info] = "Délka nosníku"
-    VV[:sigmaDo] = sigmaDo # dovolené napětí v ohybu
-    VV[:sigmaDo_info] = "Dovolené napětí v ohybu"
-    VV[:sigma] = sigma # napětí v ohybu
-    VV[:sigma_str] = sigma_str
-    VV[:sigma_info] = "Napětí v ohybu"
-    VV[:delta] = delta # relativní průhyb
-    VV[:delta_str] = @isdefined(delta_str) ?  delta_str : ""
-    VV[:delta_info] = "Relativní průhyb"
-    VV[:y] = y # průhyb na volném konci
-    VV[:y_str] = @isdefined(y_str) ? y_str : ""
-    VV[:y_info] = "Průhyb na volném konci"
-    VV[:alfa] = alfa # úhel natočení průřezu
-    VV[:alfa_str] = @isdefined(alfa_str) ? alfa_str : ""
-    VV[:alfa_info] = "Úhel natočení průřezu"
-    VV[:bezpecnost] = k # součinitel bezpečnosti
-    VV[:bezpecnost_str] = k_str
-    VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] = verdict # závěr posouzení bezpečnosti
-    VV[:verdict_info] = "Závěr posouzení bezpečnosti"
-    VV[:Re] = Re # mez kluzu
-    VV[:Re_info] = "Mez kluzu"
-    VV[:E] = E # modul pružnosti
-    VV[:E_info] = "Modul pružnosti"
-    VV[:mat] = matName # materiál
-    VV[:mat_info] = mat === nothing ? "" : "Materiál"
-    VV[:profil] = profil === nothing ? "" : profil
-    VV[:profil_info] = profil_info # info o profilu
-    VV[:natoceni] = natoceni # natočení profilu
-    VV[:natoceni_info] = "Natočení profilu"
-    if return_text
-        return VV, StrojniSoucasti.namahaniohybtext(VV)
-    else
-        return VV
-    end
+    vypocet = Dict{Symbol,Any}()
+    vypocet[:sigma_str] = sigma_str
+    vypocet[:sigma] = sigma
+    vypocet[:delta_str] = @isdefined(delta_str) ?  delta_str : ""
+    vypocet[:delta] = delta
+    vypocet[:y_str] = @isdefined(y_str) ? y_str : ""
+    vypocet[:y] = y
+    vypocet[:alfa_str] = @isdefined(alfa_str) ? alfa_str : ""
+    vypocet[:alfa] = alfa
+    vypocet[:k_str] = k_str
+    vypocet[:k] = k
+    vypocet[:verdict] = verdict
+    return vypocet
+
 end

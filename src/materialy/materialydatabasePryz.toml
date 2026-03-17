@@ -1,0 +1,181 @@
+schema_version = "1.0.0"
+
+["NBR70"]
+name = "NBR70"
+standard = "-"
+druh = "NBR"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1300
+
+["NBR50"]
+name = "NBR50"
+standard = "-"
+druh = "NBR"
+hardness = 50
+E = 2.456
+G = 0.824
+ny = 0.49
+rho = 1300
+
+["NBR60"]
+name = "NBR60"
+standard = "-"
+druh = "NBR"
+hardness = 60
+E = 3.605
+G = 1.210
+ny = 0.49
+rho = 1300
+
+["NBR80"]
+name = "NBR80"
+standard = "-"
+druh = "NBR"
+hardness = 80
+E = 9.351
+G = 3.138
+ny = 0.49
+rho = 1300
+
+["EPDM60"]
+name = "EPDM60"
+standard = "-"
+druh = "EPDM"
+hardness = 60
+E = 3.605
+G = 1.210
+ny = 0.49
+rho = 1300
+
+["EPDM70"]
+name = "EPDM70"
+standard = "-"
+druh = "EPDM"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1310
+
+["EPDM80"]
+name = "EPDM80"
+standard = "-"
+druh = "EPDM"
+hardness = 80
+E = 9.351
+G = 3.138
+ny = 0.49
+rho = 1310
+
+["FKM70"]
+name = "FKM70"
+standard = "-"
+druh = "FKM"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1850
+
+["FKM75"]
+name = "FKM75"
+standard = "-"
+druh = "FKM"
+hardness = 75
+E = 7.053
+G = 2.367
+ny = 0.49
+rho = 1850
+
+["FKM90"]
+name = "FKM90"
+standard = "-"
+druh = "FKM"
+hardness = 90
+E = 20.844
+G = 6.995
+ny = 0.49
+rho = 1850
+
+["VMQ50"]
+name = "VMQ50"
+standard = "-"
+druh = "VMQ"
+hardness = 50
+E = 2.456
+G = 0.824
+ny = 0.49
+rho = 1200
+
+["VMQ60"]
+name = "VMQ60"
+standard = "-"
+druh = "VMQ"
+hardness = 60
+E = 3.605
+G = 1.210
+ny = 0.49
+rho = 1200
+
+["VMQ70"]
+name = "VMQ70"
+standard = "-"
+druh = "VMQ"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1200
+
+["CR70"]
+name = "CR70"
+standard = "-"
+druh = "CR"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1450
+
+["NR70"]
+name = "NR70"
+standard = "-"
+druh = "NR"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1300
+
+["SBR70"]
+name = "SBR70"
+standard = "-"
+druh = "SBR"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1500
+
+["PU70"]
+name = "PU70"
+standard = "-"
+druh = "PU"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 1240
+
+["HNBR70"]
+name = "HNBR70"
+standard = "-"
+druh = "HNBR"
+hardness = 70
+E = 5.520
+G = 1.852
+ny = 0.49
+rho = 980

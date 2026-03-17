@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v tahu pro strojní součásti.
-# ver: 2026-03-06
+# ver: 2026-03-12
 ## Funkce: namahanitah()
 ## Autor: Martin
 #
@@ -164,15 +164,30 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
-    if mat !== nothing
-        if !isdefined(@__MODULE__, :materialy)
-            error("Funkce materialy(mat) není definována.")
+    if mat !== nothing # pokud je mat zadán, pokusíme se získat informace o materiálu
+        if mat isa AbstractString # pokud je mat řetězec, pokusíme se získat informace o materiálu pomocí funkce materialy(mat)
+            if !isdefined(@__MODULE__, :materialy)
+                error("Funkce materialy(mat) není definována.")
+            end
+            matinfo = materialy(mat)
+        else # pokud je mat již dict nebo struct s potřebnými informacemi, použijeme ho přímo a nebudeme volat materialy(mat)
+            matinfo = mat
         end
-        matinfo = materialy(mat)
-        Re = (matinfo.Re)u"MPa" # mez kluzu
-        E = (matinfo.E)u"GPa" # modul pružnosti
-        matName = matinfo.name # název materiálu z dictu
-    else
+        if matinfo === nothing
+            error("Materiál '$mat' nebyl nalezen.")
+        end
+        if matinfo isa AbstractDict # pokud je matinfo dict, získáme hodnoty z dictu s použitím haskey a get, abychom se vyhnuli chybám při přístupu k neexistujícím klíčům
+            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
+            E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
+            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
+        else # pokud je matinfo struct, získáme hodnoty z vlastností struct pomocí hasproperty a getproperty, abychom se vyhnuli chybám při přístupu k neexistujícím vlastnostem
+            Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
+            E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
+            matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        end
+        Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
+        E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
+    else # pokud není mat zadán, nemáme informace o materiálu
         matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
@@ -236,44 +251,8 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
-    sigma_str = "F / S"
-    sigma = F / S
-    sigma = uconvert(u"MPa", sigma)
-    k_str = "sigmaDt / sigma"
-    k = sigmaDt / sigma
-    epsilon = nothing
-    if E !== nothing
-        epsilon_str = "sigma / E"
-        epsilon = sigma / E
-        epsilon = ustrip(epsilon)  # bez jednotky
-    end
-    deltaL = nothing
-    L = nothing
-    if L0 !== nothing && epsilon !== nothing
-        deltaL_str = "epsilon * L0"
-        deltaL = epsilon * L0
-        deltaL = uconvert(u"mm", deltaL)
-        L_str = "L0 + deltaL"
-        L = L0 + deltaL
-        L = uconvert(u"mm", L)
-    end
-    if k_uziv === nothing
-    verdict = if k >= 1.5
-        "Spoj je bezpečný"
-    elseif k >= 1.0
-        "Spoj je na hranici bezpečnosti"
-    else
-        "Spoj není bezpečný!"
-    end
-    else
-        verdict =   if k >= k_uziv + 0.5
-                        "Spoj je bezpečný"
-                    elseif k >= k_uziv
-                        "Spoj je na hranici bezpečnosti"
-                    else
-                        "Spoj není bezpečný!"
-                    end # konec if
-    end
+    V2 = namahanitahvypocet(F=F, S=S, sigmaDt=sigmaDt, E=E, L0=L0, 
+        k_uziv=k_uziv)
     # ---------------------------------------------------------
     # výstup
     # ---------------------------------------------------------
@@ -283,23 +262,23 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:zatizeni_info] = "Druh zatížení"
     VV[:F] = F # zatěžující síla
     VV[:F_info] = "Zatěžující síla"
-    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
+    VV[:k] = k_uziv # uživatelský požadavek bezpečnosti (může být nothing)
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:S] = S # plocha průřezu
     VV[:S_str] = S_str # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
     VV[:sigmaDt] = sigmaDt # dovolené napětí
     VV[:sigmaDt_info] = "Dovolené napětí"
-    VV[:sigma] = sigma # skutečné napětí v tahu
-    VV[:sigma_str] = sigma_str # textový popis výpočtu sigma (pro zobrazení v textu)
+    VV[:sigma] = V2[:sigma] # skutečné napětí v tahu
+    VV[:sigma_str] = V2[:sigma_str] # textový popis výpočtu sigma (pro zobrazení v textu)
     VV[:sigma_info] = "Skutečné napětí v tahu"
-    VV[:epsilon] = epsilon # poměrné prodloužení
-    VV[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""
+    VV[:epsilon] = V2[:epsilon] # poměrné prodloužení
+    VV[:epsilon_str] = V2[:epsilon_str] # textový popis výpočtu epsilon (pro zobrazení v textu)
     VV[:epsilon_info] = "Poměrné prodloužení"
-    VV[:bezpecnost] = k # součinitel bezpečnosti
-    VV[:bezpecnost_str] = k_str
+    VV[:bezpecnost] = V2[:k] # součinitel bezpečnosti k
+    VV[:bezpecnost_str] = V2[:k_str] # textový popis výpočtu k (pro zobrazení v textu)
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] = verdict
+    VV[:verdict] = V2[:verdict] # závěr o bezpečnosti spoje
     VV[:verdict_info] = "Bezpečnost spoje"
     VV[:E] = E # Youngův modul
     VV[:E_info] = "Youngův modul"
@@ -309,12 +288,12 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:mat_info] = "Materiál"
     VV[:L0] = L0 # počáteční délka
     VV[:L0_info] = "Počáteční délka"
-    VV[:deltaL] = deltaL # skutečné prodloužení
-    VV[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""
-    VV[:deltaL_info] = deltaL === nothing ? "" : "Skutečné prodloužení"
-    VV[:L] = L # délka po deformaci
-    VV[:L_str] = @isdefined(L_str) ? L_str : ""
-    VV[:L_info] = L === nothing ? "" : "Délka po deformaci"
+    VV[:deltaL] = V2[:deltaL] # skutečné prodloužení
+    VV[:deltaL_str] = V2[:deltaL_str] # textový popis výpočtu deltaL (pro zobrazení v textu)
+    VV[:deltaL_info] = "Skutečné prodloužení"
+    VV[:L] = V2[:L] # délka po prodloužení
+    VV[:L_str] = V2[:L_str] # textový popis výpočtu L (pro zobrazení v textu)
+    VV[:L_info] = "Délka po deformaci"
     VV[:profil] = profil === nothing ? "" : profil
     VV[:profil_info] = profil_info 
     if return_text
@@ -323,4 +302,62 @@ function namahanitah(; F=nothing, S=nothing, sigmaDt=nothing,
     else
         return VV
     end
+end
+
+function namahanitahvypocet(; F=nothing, S=nothing, sigmaDt=nothing, 
+    E=nothing, L0=nothing, k_uziv=nothing)
+
+sigma_str = "F / S"
+sigma = F / S
+sigma = uconvert(u"MPa", sigma)
+k_str = "sigmaDt / sigma"
+k = sigmaDt / sigma
+epsilon = nothing
+if E !== nothing
+    epsilon_str = "sigma / E"
+    epsilon = sigma / E
+    epsilon = ustrip(epsilon)  # bez jednotky
+end
+deltaL = nothing
+L = nothing
+if L0 !== nothing && epsilon !== nothing
+    deltaL_str = "epsilon * L0"
+    deltaL = epsilon * L0
+    deltaL = uconvert(u"mm", deltaL)
+    L_str = "L0 + deltaL"
+    L = L0 + deltaL
+    L = uconvert(u"mm", L)
+end
+if k_uziv === nothing
+    verdict =   if k >= 1.5
+                    "Spoj je bezpečný"
+                elseif k >= 1.0
+                    "Spoj je na hranici bezpečnosti"
+                else
+                    "Spoj není bezpečný!"
+                end
+else
+    verdict =   if k >= k_uziv + 0.5
+                    "Spoj je bezpečný"
+                elseif k >= k_uziv
+                    "Spoj je na hranici bezpečnosti"
+                else
+                    "Spoj není bezpečný!"
+                end # konec if
+end
+
+vypocet = Dict{Symbol,Any}()
+vypocet[:sigma_str] = sigma_str
+vypocet[:sigma] = sigma
+vypocet[:k_str] = k_str
+vypocet[:k] = k
+vypocet[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""
+vypocet[:epsilon] = epsilon
+vypocet[:deltaL_str] = @isdefined(deltaL_str) ? deltaL_str : ""
+vypocet[:deltaL] = deltaL
+vypocet[:L_str] = @isdefined(L_str) ? L_str : ""
+vypocet[:L] = L
+vypocet[:verdict] = verdict
+return vypocet
+
 end
