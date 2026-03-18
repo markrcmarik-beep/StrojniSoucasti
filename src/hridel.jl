@@ -28,9 +28,11 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, material=nothing)
+function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, 
+    mat=nothing, tauDk=nothing, G=nothing, Re=nothing,
+    zatizeni::AbstractString="statický", return_text=true)
 
-    if D === nothing || d === nothing || L === nothing || material === nothing
+    if D === nothing || d === nothing || L === nothing || mat === nothing
         error("All parameters (D, d, L, material) must be provided.")
     end
     if Mk !== nothing
@@ -39,9 +41,40 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, material=nothing)
             error("Mk musí být kladná hodnota.")
         end
     else
-        error("mk musí být číslo nebo Unitful.Quantity")
+        error("Mk musí být číslo nebo Unitful.Quantity")
     end
+    if D !== nothing
+        D = attach_unit(D, u"mm")
+        if D <= 0u"mm"
+            error("D musí být kladná hodnota.")
+        end
+    else
+        error("D musí být číslo nebo Unitful.Quantity")
+    end
+    if d !== nothing
+        d = attach_unit(d, u"mm")
+        if d <= 0u"mm"
+            error("d musí být kladná hodnota.")
+        end
+    end
+    if L !== nothing
+        L = attach_unit(L, u"mm")
+        if L <= 0u"mm"
+            error("L musí být kladná hodnota.")
+        end
+    end
+
+    if D !== nothing && d === nothing
+        profil1 = "TRKR $D"
+    elseif D !== nothing && d !== nothing
+        profil1 = "TRKR $Dxd"
+    else
+        error("Nesprávné kombinace D a d. Musí být buď D nebo D a d.")
+    end
+
+    VV = namahanikrut(Mk = Mk, profil = profil1, L0 = L, mat = mat, 
+    zatizeni=zatizeni, return_text = false)
     
-    return Dict("D" => D, "d" => d, "L" => L, "material" => material)
+    return Dict("D" => D, "d" => d, "L" => L, "material" => mat)
 
 end
