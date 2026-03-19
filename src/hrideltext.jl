@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet namáhání v krutu pro strojní součásti. Generování 
-# textového výpisu výpočtu.
+# Funkce hrideltext() slouží k vytvoření textového výstupu s 
+# popisem výpočtu namáhání kroucením hřídele.
 # ver: 2026-03-19
 ## Funkce: hrideltext()
 ## Autor: Martin
@@ -27,7 +27,7 @@
 #
 using Printf: @sprintf
 
-function namahanikruttext(VV::Dict{Symbol,Any})
+function hrideltext(VV::Dict{Symbol,Any})
     lines = String[] # pole pro textový výstup
     push!(lines, "Výpočet: $(VV[:info])") # název výpočtu z VV[:info]
     push!(lines, "----------------------------------------------------------------")

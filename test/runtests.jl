@@ -1,4 +1,4 @@
-﻿# ver: 2026-02-28
+﻿# ver: 2026-03-19
 using Test
 
     # materialy
@@ -29,6 +29,7 @@ using Test
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
+    include("hridel_test.jl")
     include("ulozvypis_test.jl")
     # tolerance
     include("tolerance_test.jl")
