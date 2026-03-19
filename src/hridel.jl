@@ -155,8 +155,8 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     VV[:phi] = VV1[:phi] # úhel zkroucení
     VV[:phi_str] = VV1[:phi_str] # vzorec pro výpočet phi
     VV[:phi_info] = "Úhel zkroucení"
-    VV[:bezpecnost] = VV1[:k] # součinitel bezpečnosti
-    VV[:bezpecnost_str] = VV1[:k_str] # vzorec pro výpočet součinitele bezpečnosti
+    VV[:bezpecnost] = VV1[:bezpecnost] # součinitel bezpečnosti
+    VV[:bezpecnost_str] = VV1[:bezpecnost_str] # vzorec pro výpočet součinitele bezpečnosti
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
     VV[:verdict] =  VV1[:verdict] # textové hodnocení bezpečnosti spoje
     VV[:verdict_info] = "Bezpečnost spoje"
