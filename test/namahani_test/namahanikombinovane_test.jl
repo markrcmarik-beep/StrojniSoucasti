@@ -1,4 +1,4 @@
-# ver: 2026-02-03
+# ver: 2026-03-20
 # Testovací skript pro funkci namahanikombinovane.jl
 # Testuje kombinovaná namáhání dle Huber-Mises-Hencky a Tresca kritérií
 
@@ -40,7 +40,7 @@ end
 
     # Příprava vstupních dat
     prof1 = "KR 25"
-    mat1 = "16440"
+    mat1 = materialy("16440")
     VVtah1, _ = namahanitah(F=20u"kN", profil=prof1, mat=mat1)
     VVtlak1, _ = namahanitlak(F=20u"kN", profil=prof1, mat=mat1)
     VVstrih1, _ = namahanistrih(F=10u"kN", profil=prof1, mat=mat1)
