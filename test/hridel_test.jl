@@ -53,8 +53,8 @@ using StrojniSoucasti, Unitful, Test
     end
 
     @testset "input validation" begin
-        #@test_throws ErrorException StrojniSoucasti.hridel(D=40, d=20, tauDk=120, return_text=false)
-        @test_throws ErrorException StrojniSoucasti.hridel(Mk=10, d=20, tauDk=120, return_text=false)
-        @test_throws ErrorException StrojniSoucasti.hridel(Mk=-10, D=40, d=20, tauDk=120, return_text=false)
+        @test_throws ErrorException StrojniSoucasti.hridel(D=40, d=20, tauDk=120, return_text=false) # missing Mk
+        @test_throws ErrorException StrojniSoucasti.hridel(Mk=10, d=20, tauDk=120, return_text=false) # missing D
+        @test_throws ErrorException StrojniSoucasti.hridel(Mk=-10, D=40, d=20, tauDk=120, return_text=false) # negative Mk
     end
 end
