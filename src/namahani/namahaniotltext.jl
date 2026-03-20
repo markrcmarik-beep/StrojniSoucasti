@@ -76,7 +76,7 @@ function namahaniotltext(VV::Dict{Symbol,Any})
     catch
         k
     end
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", get(VV, :bezpecnost_str, "sigmaDotl / sigma"),
+    push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", get(VV, :bezpecnost_str, "sigmaDotl / sigma"),
         kval, get(VV, :bezpecnost_info, ""), get(VV, :verdict_info, "Výsledek"),
         get(VV, :verdict, "")))
 

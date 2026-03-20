@@ -76,7 +76,7 @@ function namahanitlaktext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("L = %s = %g   %s", VV[:L_str], VV[:L], VV[:L_info]))
     end
     k = VV[:bezpecnost]
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", VV[:bezpecnost_str], ustrip(k), 
+    push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", VV[:bezpecnost_str], ustrip(k), 
         VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
     
     return join(lines, "\n")
