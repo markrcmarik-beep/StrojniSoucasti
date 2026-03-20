@@ -126,6 +126,24 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     if Re === nothing
         Re = VV1[:Re] # mez kluzu
     end
+    k = VV1[:bezpecnost]
+    if k_uziv === nothing
+    verdict =   if k >= 1.5
+                    "Hřídel je bezpečný"
+                elseif k >= 1.0
+                    "Hřídel je na hranici bezpečnosti"
+                else
+                    "Hřídel není bezpečný!"
+                end # konec if
+    else
+        verdict =   if k >= k_uziv + 0.5
+                        "Hřídel je bezpečný"
+                    elseif k >= k_uziv
+                        "Hřídel je na hranici bezpečnosti"
+                    else
+                        "Hřídel není bezpečný!"
+                    end # konec if
+    end
     # ---------------------------------------------------------
     # výstup
     # ---------------------------------------------------------
@@ -158,8 +176,8 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     VV[:bezpecnost] = VV1[:bezpecnost] # součinitel bezpečnosti
     VV[:bezpecnost_str] = VV1[:bezpecnost_str] # vzorec pro výpočet součinitele bezpečnosti
     VV[:bezpecnost_info] = "Součinitel bezpečnosti"
-    VV[:verdict] =  VV1[:verdict] # textové hodnocení bezpečnosti spoje
-    VV[:verdict_info] = "Bezpečnost spoje"
+    VV[:verdict] =  verdict # textové hodnocení bezpečnosti spoje
+    VV[:verdict_info] = "Bezpečnost součásti"
     VV[:G] = G # smykový modul
     VV[:G_info] = "Smykový modul"
     VV[:Re] = Re # mez kluzu
