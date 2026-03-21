@@ -15,6 +15,42 @@ function assert_namahanitah_text_common(txt::String, VV::Dict{Symbol,Any})
 end
 
 @testset "namahanitah" begin
+    expected_txt1 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 240 MPa   Dovolené napětí
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 16   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt2 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 240 MPa   Dovolené napětí
+L0 = 500 mm   Počáteční délka
+E = 200 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.5 %   Poměrné prodloužení
+deltaL = epsilon * L0 = 37.5 mm   Skutečné prodloužení
+L = L0 + deltaL = 537.5 mm   Délka po deformaci
+k = sigmaDt / sigma = 16   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
 
     # Test 1: Základní výpočet bez jednotek
     @testset "základní výpočet bez jednotek" begin
@@ -161,6 +197,7 @@ end
     @testset "textovy vystup - struktura a podminene radky" begin
         VV1, txt1 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
         assert_namahanitah_text_common(txt1, VV1)
+        @test txt1 == expected_txt1
         @test !occursin("epsilon =", txt1)
         @test !occursin("deltaL =", txt1)
         @test !occursin(r"^L ="m, txt1)
@@ -168,6 +205,7 @@ end
         VV2, txt2 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa",
             E=200u"GPa", L0=500u"mm")
         assert_namahanitah_text_common(txt2, VV2)
+        @test txt2 == expected_txt2
         @test occursin("L0 = ", txt2)
         @test occursin("epsilon = $(VV2[:epsilon_str])", txt2)
         @test occursin("deltaL = $(VV2[:deltaL_str])", txt2)
