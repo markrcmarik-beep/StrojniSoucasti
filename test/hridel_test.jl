@@ -5,7 +5,8 @@ using StrojniSoucasti, Unitful, Test
 
 @testset "hridel" begin
     @testset "basic hollow shaft" begin
-        VV, txt = StrojniSoucasti.hridel(Mk=200, D=40, d=20, tauDk=120, return_text=true)
+        VV, txt = StrojniSoucasti.hridel(Mk=200, D=40, d=20, 
+            tauDk=120, return_text=true)
         @test isa(VV, Dict)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
@@ -41,14 +42,16 @@ Bezpečnost součásti: Hřídel je bezpečný"""
     end
 
     @testset "solid shaft" begin
-        VV = StrojniSoucasti.hridel(Mk=150u"N*m", D=30u"mm", tauDk=100u"MPa", return_text=false)
+        VV = StrojniSoucasti.hridel(Mk=150u"N*m", D=30u"mm", 
+            tauDk=100u"MPa", return_text=false)
         @test VV[:d] === nothing
         @test VV[:D] == 30u"mm"
         @test VV[:tau] > 0u"MPa"
     end
 
     @testset "solid shaft text" begin
-        VV, txt = StrojniSoucasti.hridel(Mk=200, D=40, tauDk=120, return_text=true)
+        VV, txt = StrojniSoucasti.hridel(Mk=200, D=40, tauDk=120, 
+            return_text=true)
         @test isa(VV, Dict)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
@@ -81,27 +84,71 @@ Bezpečnost součásti: Hřídel je bezpečný"""
     end
 
     @testset "angle of twist" begin
-        VV = StrojniSoucasti.hridel(
-            Mk=150u"N*m",
-            D=50u"mm",
-            d=30u"mm",
-            tauDk=100u"MPa",
-            G=80u"GPa",
-            L=100u"mm",
-            return_text=false,
-        )
+        VV, txt = StrojniSoucasti.hridel(Mk=150u"N*m", D=50u"mm", d=30u"mm",
+            tauDk=100u"MPa", G=80u"GPa", L=100u"mm", return_text=true)
         @test VV[:phi] !== nothing
         @test VV[:theta] !== nothing
         @test uconvert(u"rad", VV[:phi]) isa Quantity
         @test uconvert(u"rad/m", VV[:theta]) isa Quantity
+        @test isa(txt, String)
+        @test !isempty(txt)
+        expected_txt = """
+Výpočet: hřídel dutý
+----------------------------------------------------------------
+materiál: 
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mk = 150 m N   Krouticí moment
+D = 50 mm   Vnější průměr hřídele
+d = 30 mm   Vnitřní průměr hřídele
+Wk = π/16*(D⁴ - d⁴)/D = 21362.8 mm^3   Průřezový modul v krutu
+Ip = π/32*(D⁴ - d⁴) = 534071 mm^4   Polární moment setrvačnosti
+tauDk = 100 MPa   Dovolené napětí v krutu
+G = 80 GPa   Smykový modul
+-----------------------------------------------------------------
+výpočet:
+tau = Mk / Wk = 7.02154 MPa   Napětí v krutu
+phi = (Mk * L0) / (G * Ip) = 0.000351077 rad   Úhel zkroucení
+phi = 0.0201152°   Úhel zkroucení
+theta = Mk / (G * Ip) = 0.00351077 rad m^-1   Poměrné zkroucení
+theta = 0.201152 ° m^-1   Poměrné zkroucení
+k = tauDk / tau = 14.2419   Součinitel bezpečnosti
+Bezpečnost součásti: Hřídel je bezpečný"""
+        @test txt == expected_txt
     end
 
     @testset "material input" begin
-        VV = StrojniSoucasti.hridel(Mk=120u"N*m", D=45u"mm", d=25u"mm", mat="11373", return_text=false)
+        VV, txt = StrojniSoucasti.hridel(Mk=120u"N*m", D=45u"mm", 
+            d=25u"mm", mat="11373", return_text=true)
         @test VV[:mat] == "11373"
         @test VV[:Re] > 0u"MPa"
         @test VV[:G] > 0u"GPa"
         @test VV[:tauDk] > 0u"MPa"
+        @test isa(txt, String)
+        @test !isempty(txt)
+        expected_txt = """
+Výpočet: hřídel dutý
+----------------------------------------------------------------
+materiál: 11373
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mk = 120 m N   Krouticí moment
+D = 45 mm   Vnější průměr hřídele
+d = 25 mm   Vnitřní průměr hřídele
+Wk = π/16*(D⁴ - d⁴)/D = 16187.9 mm^3   Průřezový modul v krutu
+Ip = π/32*(D⁴ - d⁴) = 364228 mm^4   Polární moment setrvačnosti
+tauDk = 96.225 MPa   Dovolené napětí v krutu
+G = 81 GPa   Smykový modul
+-----------------------------------------------------------------
+výpočet:
+tau = Mk / Wk = 7.41293 MPa   Napětí v krutu
+theta = Mk / (G * Ip) = 0.00406745 rad m^-1   Poměrné zkroucení
+theta = 0.233048 ° m^-1   Poměrné zkroucení
+k = tauDk / tau = 12.9807   Součinitel bezpečnosti
+Bezpečnost součásti: Hřídel je bezpečný"""
+        @test txt == expected_txt
     end
 
     @testset "input validation" begin
