@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-10
+﻿# ver: 2026-03-22
 # Testovací skript pro funkci namahanitah.jl
 # Testuje namáhání v tahu s různými typy zatížení
 

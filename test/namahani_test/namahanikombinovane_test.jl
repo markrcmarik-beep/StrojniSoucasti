@@ -1,4 +1,4 @@
-# ver: 2026-03-20
+# ver: 2026-03-22
 # Testovací skript pro funkci namahanikombinovane.jl
 # Testuje kombinovaná namáhání dle Huber-Mises-Hencky a Tresca kritérií
 

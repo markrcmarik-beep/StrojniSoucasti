@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-10
+﻿# ver: 2026-03-22
 # Testovací skript pro funkci namahanitlak.jl
 # Testuje namáhání v tlaku s různými typy zatížení
 
