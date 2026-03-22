@@ -1,4 +1,4 @@
-# ver: 2026-03-19
+# ver: 2026-03-22
 # Test script for hridel.jl
 
 using StrojniSoucasti, Unitful, Test
@@ -19,26 +19,25 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:bezpecnost] > 0
         @test isa(txt, String)
         @test !isempty(txt)
-        expected_lines = [
-            "Výpočet: hřídel dutý",
-            "----------------------------------------------------------------",
-            "materiál: ",
-            "zatížení: statický",
-            "----------------------------------------------------------------",
-            "zadání:",
-            "Mk = 200 m N   Krouticí moment",
-            "D = 40 mm   Vnější průměr hřídele",
-            "d = 20 mm   Vnitřní průměr hřídele",
-            "Wk = π/16*(D⁴ - d⁴)/D = 11781 mm^3   Průřezový modul v krutu",
-            "Ip = π/32*(D⁴ - d⁴) = 235619 mm^4   Polární moment setrvačnosti",
-            "tauDk = 120 MPa   Dovolené napětí v krutu",
-            "-----------------------------------------------------------------",
-            "výpočet:",
-            "tau = Mk / Wk = 16.9765 MPa   Napětí v krutu",
-            "k = tauDk / tau = 7.06858   Součinitel bezpečnosti",
-            "Bezpečnost součásti: Hřídel je bezpečný",
-        ]
-        @test txt == join(expected_lines, "\n")
+        expected_txt = """
+Výpočet: hřídel dutý
+----------------------------------------------------------------
+materiál: 
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mk = 200 m N   Krouticí moment
+D = 40 mm   Vnější průměr hřídele
+d = 20 mm   Vnitřní průměr hřídele
+Wk = π/16*(D⁴ - d⁴)/D = 11781 mm^3   Průřezový modul v krutu
+Ip = π/32*(D⁴ - d⁴) = 235619 mm^4   Polární moment setrvačnosti
+tauDk = 120 MPa   Dovolené napětí v krutu
+-----------------------------------------------------------------
+výpočet:
+tau = Mk / Wk = 16.9765 MPa   Napětí v krutu
+k = tauDk / tau = 7.06858   Součinitel bezpečnosti
+Bezpečnost součásti: Hřídel je bezpečný"""
+        @test txt == expected_txt
     end
 
     @testset "solid shaft" begin
@@ -61,25 +60,24 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:bezpecnost] > 0
         @test isa(txt, String)
         @test !isempty(txt)
-        expected_lines = [
-            "Výpočet: hřídel",
-            "----------------------------------------------------------------",
-            "materiál: ",
-            "zatížení: statický",
-            "----------------------------------------------------------------",
-            "zadání:",
-            "Mk = 200 m N   Krouticí moment",
-            "D = 40 mm   Vnější průměr hřídele",
-            "Wk = π/16*D³ = 12566.4 mm^3   Průřezový modul v krutu",
-            "Ip = π/32*D⁴ = 251327 mm^4   Polární moment setrvačnosti",
-            "tauDk = 120 MPa   Dovolené napětí v krutu",
-            "-----------------------------------------------------------------",
-            "výpočet:",
-            "tau = Mk / Wk = 15.9155 MPa   Napětí v krutu",
-            "k = tauDk / tau = 7.53982   Součinitel bezpečnosti",
-            "Bezpečnost součásti: Hřídel je bezpečný",
-        ]
-        @test txt == join(expected_lines, "\n")
+        expected_txt = """
+Výpočet: hřídel
+----------------------------------------------------------------
+materiál: 
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mk = 200 m N   Krouticí moment
+D = 40 mm   Vnější průměr hřídele
+Wk = π/16*D³ = 12566.4 mm^3   Průřezový modul v krutu
+Ip = π/32*D⁴ = 251327 mm^4   Polární moment setrvačnosti
+tauDk = 120 MPa   Dovolené napětí v krutu
+-----------------------------------------------------------------
+výpočet:
+tau = Mk / Wk = 15.9155 MPa   Napětí v krutu
+k = tauDk / tau = 7.53982   Součinitel bezpečnosti
+Bezpečnost součásti: Hřídel je bezpečný"""
+        @test txt == expected_txt
     end
 
     @testset "angle of twist" begin
