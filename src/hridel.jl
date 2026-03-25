@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce hridel() slouží k výpočtu namáhání kroucením hřídele 
 # a k vytvoření textového výstupu s popisem výpočtu.
-# ver: 2026-03-19
+# ver: 2026-03-25
 ## Funkce: hridel()
 ## Autor: Martin
 #
@@ -29,7 +29,7 @@ using Unitful
 
 function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, 
     mat=nothing, tauDk=nothing, G=nothing, Re=nothing, k=nothing,
-    zatizeni::AbstractString="statický", return_text=true)
+    zatizeni::AbstractString="statický", druh="hybný", return_text=true)
     # ---------------------------------------------------------
     # pomocné
     # ---------------------------------------------------------
@@ -151,6 +151,8 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     VV[:info] = info
     VV[:zatizeni] = zatizeni # způsob zatížení
     VV[:zatizeni_info] = "Způsob zatížení"
+    VV[:druh] = druh # druh hřídele dle zatížení
+    VV[:druh_info] = "druh hřídele"
     VV[:Mk] = Mk # krouticí moment
     VV[:Mk_info] = "Krouticí moment"
     VV[:D] = D # vnější průměr
