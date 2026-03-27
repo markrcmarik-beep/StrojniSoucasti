@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce hrideltext() slouží k vytvoření textového výstupu s 
 # popisem výpočtu namáhání kroucením hřídele.
-# ver: 2026-03-19
+# ver: 2026-03-27
 ## Funkce: hrideltext()
 ## Autor: Martin
 #
@@ -40,6 +40,9 @@ function hrideltext(VV::Dict{Symbol,Any})
     push!(lines, @sprintf("D = %g   %s", VV[:D], VV[:D_info]))
     if VV[:d] !== nothing
         push!(lines, @sprintf("d = %g   %s", VV[:d], VV[:d_info]))
+    end
+    if VV[:L0] !== nothing
+        push!(lines, @sprintf("L = %g   %s", VV[:L0], VV[:L0_info]))
     end
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))

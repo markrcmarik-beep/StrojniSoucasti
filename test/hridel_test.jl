@@ -1,4 +1,4 @@
-# ver: 2026-03-22
+# ver: 2026-03-27
 # Test script for hridel.jl
 
 using StrojniSoucasti, Unitful, Test
@@ -102,6 +102,7 @@ zadání:
 Mk = 150 m N   Krouticí moment
 D = 50 mm   Vnější průměr hřídele
 d = 30 mm   Vnitřní průměr hřídele
+L = 100 mm   Délka hřídele
 Wk = π/16*(D⁴ - d⁴)/D = 21362.8 mm^3   Průřezový modul v krutu
 Ip = π/32*(D⁴ - d⁴) = 534071 mm^4   Polární moment setrvačnosti
 tauDk = 100 MPa   Dovolené napětí v krutu
