@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce hridel() slouží k výpočtu namáhání kroucením hřídele 
 # a k vytvoření textového výstupu s popisem výpočtu.
-# ver: 2026-03-27
+# ver: 2026-03-28
 ## Funkce: hridel()
 ## Autor: Martin
 #
@@ -41,41 +41,41 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     # vstupy – jednotky
     # ---------------------------------------------------------
     if druh == "nosný"
-    if Fr !== nothing
-        Fr = attach_unit(Fr, u"N")
-        if Fr <= 0u"N"
-            error("Fr musí být kladná hodnota.")
+        if Fr !== nothing
+            Fr = attach_unit(Fr, u"N")
+            if Fr <= 0u"N"
+                error("Fr musí být kladná hodnota.")
+            end
+        else
+            error("Fr musí být číslo nebo Unitful.Quantity")
         end
-    else
-        error("Fr musí být číslo nebo Unitful.Quantity")
-    end
-    if L1 !== nothing
-        L1 = attach_unit(L1, u"N")
-        if L1 <= 0u"N"
-            error("L1 musí být kladná hodnota.")
+        if L1 !== nothing
+            L1 = attach_unit(L1, u"N")
+            if L1 <= 0u"N"
+                error("L1 musí být kladná hodnota.")
+            end
+        else
+            error("L1 musí být číslo nebo Unitful.Quantity")
         end
-    else
-        error("L1 musí být číslo nebo Unitful.Quantity")
-    end
-    if L2 !== nothing
-        L2 = attach_unit(L2, u"N")
-        if L2 <= 0u"N"
-            error("L2 musí být kladná hodnota.")
+        if L2 !== nothing
+            L2 = attach_unit(L2, u"N")
+            if L2 <= 0u"N"
+                error("L2 musí být kladná hodnota.")
+            end
+        else
+            error("L2 musí být číslo nebo Unitful.Quantity")
         end
-    else
-        error("L2 musí být číslo nebo Unitful.Quantity")
-    end
     elseif druh == "hybný"
-    if Mk !== nothing
-        Mk = attach_unit(Mk, u"N*m")
-        if Mk <= 0u"N*m"
-            error("Mk musí být kladná hodnota.")
+        if Mk !== nothing
+            Mk = attach_unit(Mk, u"N*m")
+            if Mk <= 0u"N*m"
+                error("Mk musí být kladná hodnota.")
+            end
+        else
+            error("Mk musí být číslo nebo Unitful.Quantity")
         end
     else
-        error("Mk musí být číslo nebo Unitful.Quantity")
-    end
-    else
-        error("Chybný druh hřídele.")
+        error("Chybný druh hřídele: $druh.")
     end
 
     if D !== nothing
@@ -156,7 +156,7 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     # výstup
     # ---------------------------------------------------------
     VV = Dict{Symbol,Any}()
-    VV[:info] = info
+    VV[:info] = "$druh $info"
     VV[:zatizeni] = zatizeni # způsob zatížení
     VV[:zatizeni_info] = "Způsob zatížení"
     VV[:druh] = druh # druh hřídele dle zatížení
@@ -178,11 +178,11 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     VV[:k] = k_uziv
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
     VV[:Wk] = vypocet[:Wk] # průřezový modul v krutu
-    VV[:Wk_info] = "Průřezový modul v krutu"
     VV[:Wk_str] = vypocet[:Wk_str] # textový popis Wk (např. z profilu)
+    VV[:Wk_info] = "Průřezový modul v krutu"
     VV[:Ip] = vypocet[:Ip] # polární moment setrvačnosti
-    VV[:Ip_info] = "Polární moment setrvačnosti"
     VV[:Ip_str] = vypocet[:Ip_str] # textový popis Ip (např. z profilu)
+    VV[:Ip_info] = "Polární moment setrvačnosti"
     VV[:tauDk] = vypocet[:tauDk]
     VV[:tauDk_info] = "Dovolené napětí v krutu"
     VV[:tau] = vypocet[:tau] # smykové napětí v krutu
@@ -288,6 +288,10 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
         F1 = Fr*L2*(L1+L2)
         F2_str = "Fr*L1*(L1+L2)"
         F2 = Fr*L1*(L1+L2)
+        Mo1_str = "F1*L1"
+        Mo1 = F1*L1
+        Mo2_str = "F2*L2"
+        Mo2 = F2*L2
     end
     VV1 = namahanikrut(Mk = Mk, profil = profil1, L0 = L, mat = mat, 
     tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k=k_uziv, return_text=false)
@@ -330,6 +334,10 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
     vypocet[:F1_str] = F1_str
     vypovet[:F2] = F2
     vypocet[:F2_str] = F2_str
+    vypocet[:Mo1] = Mo1
+    vypocet[:Mo1_str] = Mo1_str
+    vypocet[:Mo2] = Mo2
+    vypocet[:Mo2_str] = Mo2_str
     vypocet[:Wk] = VV1[:Wk] # průřezový modul v krutu
     vypocet[:Wk_str] = VV1[:Wk_str] # textový popis Wk (např. z profilu)
     vypocet[:Ip] = VV1[:Ip] # polární moment setrvačnosti

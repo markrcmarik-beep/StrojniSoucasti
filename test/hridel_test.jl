@@ -1,4 +1,4 @@
-# ver: 2026-03-27
+# ver: 2026-03-28
 # Test script for hridel.jl
 
 using StrojniSoucasti, Unitful, Test
@@ -21,7 +21,7 @@ using StrojniSoucasti, Unitful, Test
         @test isa(txt, String)
         @test !isempty(txt)
         expected_txt = """
-Výpočet: hřídel dutý
+Výpočet: hybný hřídel dutý
 ----------------------------------------------------------------
 materiál: 
 zatížení: statický
@@ -64,7 +64,7 @@ Bezpečnost součásti: Hřídel je bezpečný"""
         @test isa(txt, String)
         @test !isempty(txt)
         expected_txt = """
-Výpočet: hřídel
+Výpočet: hybný hřídel
 ----------------------------------------------------------------
 materiál: 
 zatížení: statický
@@ -93,7 +93,7 @@ Bezpečnost součásti: Hřídel je bezpečný"""
         @test isa(txt, String)
         @test !isempty(txt)
         expected_txt = """
-Výpočet: hřídel dutý
+Výpočet: hybný hřídel dutý
 ----------------------------------------------------------------
 materiál: 
 zatížení: statický
@@ -129,7 +129,7 @@ Bezpečnost součásti: Hřídel je bezpečný"""
         @test isa(txt, String)
         @test !isempty(txt)
         expected_txt = """
-Výpočet: hřídel dutý
+Výpočet: hybný hřídel dutý
 ----------------------------------------------------------------
 materiál: 11373
 zatížení: statický
