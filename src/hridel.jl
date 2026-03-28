@@ -124,7 +124,6 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
             error("k musí být kladná bezrozměrná hodnota.")
         end
     end
-if druh == "nosný"
     # ---------------------------------------------------------
     # profil
     # ---------------------------------------------------------
@@ -146,41 +145,13 @@ if druh == "nosný"
     # ---------------------------------------------------------
     # výpočet
     # ---------------------------------------------------------
-    F1 = nothing
-    F2 = nothing
-    if Fr !== nothing && L1 !== nothing && L2 !== nothing
-        F1_str = "Fr*L2*(L1+L2)"
-        F1 = Fr*L2*(L1+L2)
-        F2_str = "Fr*L1*(L1+L2)"
-        F2 = Fr*L1*(L1+L2)
+    if druh == "nosný"
+        vypocet=hridelnosnyvypocet(; Fr=Fr, profil1=profil1, L1=L1, L2=L2, mat=mat,
+            tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
+    elseif druh == "hybný"
+        vypocet=hridelhybnyvypocet(; Mk=Mk, profil1=profil1, L=L, mat=mat,
+            tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
     end
-    vypocet=hridelhybnyvypocet(; Mk=Mk, profil1=profil1, L=L, mat=mat,
-        tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
-elseif druh == "hybný"
-    # ---------------------------------------------------------
-    # profil
-    # ---------------------------------------------------------
-    if D !== nothing && d === nothing
-        D_mm = ustrip(u"mm", D)
-        profil1 = "KR $(D_mm)"
-        info = "hřídel"
-        profil1info = "Hřídel s vnějším průměrem D=$D"
-    elseif D !== nothing && d !== nothing
-        t = (D - d) / 2
-        D_mm = ustrip(u"mm", D)
-        t_mm = ustrip(u"mm", t)
-        profil1 = "TRKR $(D_mm)x$(t_mm)"
-        info = "hřídel dutý"
-        profil1info = "Dutý Hřídel s vnějším průměrem D=$D a vnitřním průměrem d=$d"
-    else
-        error("Nesprávné kombinace D a d. Musí být buď D nebo D a d.")
-    end
-    # ---------------------------------------------------------
-    # výpočet
-    # ---------------------------------------------------------
-    vypocet=hridelhybnyvypocet(; Mk=Mk, profil1=profil1, L=L, mat=mat,
-        tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
-end
     # ---------------------------------------------------------
     # výstup
     # ---------------------------------------------------------
@@ -192,6 +163,14 @@ end
     VV[:druh_info] = "druh hřídele"
     VV[:Mk] = Mk # krouticí moment
     VV[:Mk_info] = "Krouticí moment"
+    VV[:Fr] = Fr
+    VV[:Fr_info] = "Radiální síla"
+    VV[:F1] = haskey(vypocet, :F1) ? vypocet[:F1] : nothing
+    VV[:F1_str] = haskey(vypocet, :F1_str) ? something(vypocet[:F1_str], "") : ""
+    VV[:F1_info] = "Reakční radiální síla na konci 1"
+    VV[:F2] = haskey(vypocet, :F2) ? vypocet[:F2] : nothing
+    VV[:F2_str] = haskey(vypocet, :F2_str) ? something(vypocet[:F2_str], "") : ""
+    VV[:F2_info] = "Reakční radiální síla na konci 2"
     VV[:D] = D # vnější průměr
     VV[:D_info] = "Vnější průměr hřídele"
     VV[:d] = d # vnitřní průměr
@@ -225,6 +204,10 @@ end
     VV[:mat_info] = "Materiál"
     VV[:L0] = L # délka pro výpočet úhlu zkroucení
     VV[:L0_info] = "Délka hřídele"
+    VV[:L1] = L1
+    VV[:L1_info] = "Délka části 1"
+    VV[:L2] = L2
+    VV[:L2_info] = "Délka části 2"
     VV[:theta] = vypocet[:theta] # poměrné zkroucení
     VV[:theta_str] = vypocet[:theta_str] # vzorec pro výpočet poměrného zkroucení
     VV[:theta_info] = "Poměrné zkroucení"
@@ -280,6 +263,73 @@ function hridelhybnyvypocet(; Mk=nothing, profil1=nothing, L=nothing, mat=nothin
     vypocet[:k] = k
     vypocet[:k_str] = k_str
     vypocet[:verdict] = verdict # textové hodnocení bezpečnosti spoje
+    vypocet[:Wk] = VV1[:Wk] # průřezový modul v krutu
+    vypocet[:Wk_str] = VV1[:Wk_str] # textový popis Wk (např. z profilu)
+    vypocet[:Ip] = VV1[:Ip] # polární moment setrvačnosti
+    vypocet[:Ip_str] = VV1[:Ip_str] # textový popis Ip (např. z profilu)
+    vypocet[:tau] = VV1[:tau] # smykové napětí v krutu
+    vypocet[:tau_str] = VV1[:tau_str] # vzorec pro výpočet tau
+    vypocet[:phi] = VV1[:phi] # úhel zkroucení
+    vypocet[:phi_str] = VV1[:phi_str] # vzorec pro výpočet phi
+    vypocet[:theta] = VV1[:theta] # poměrné zkroucení
+    vypocet[:theta_str] = VV1[:theta_str] # vzorec pro výpočet poměrného zkroucení
+    return vypocet
+
+end
+
+function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothing,
+    mat=nothing, tauDk=nothing, G=nothing, Re=nothing, zatizeni=nothing, k_uziv=nothing)
+    F1 = nothing
+    F1_str = nothing
+    F2 = nothing
+    F2_str = nothing
+    if Fr !== nothing && L1 !== nothing && L2 !== nothing
+        F1_str = "Fr*L2*(L1+L2)"
+        F1 = Fr*L2*(L1+L2)
+        F2_str = "Fr*L1*(L1+L2)"
+        F2 = Fr*L1*(L1+L2)
+    end
+    VV1 = namahanikrut(Mk = Mk, profil = profil1, L0 = L, mat = mat, 
+    tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k=k_uziv, return_text=false)
+    if tauDk === nothing
+        tauDk = VV1[:tauDk] # dovolené smykové napětí v krutu
+    end
+    if G === nothing
+        G = VV1[:G] # smykový modul
+    end
+    if Re === nothing
+        Re = VV1[:Re] # mez kluzu
+    end
+    k = VV1[:bezpecnost]
+    k_str = VV1[:bezpecnost_str]
+    if k_uziv === nothing
+    verdict =   if k >= 1.5
+                    "Hřídel je bezpečný"
+                elseif k >= 1.0
+                    "Hřídel je na hranici bezpečnosti"
+                else
+                    "Hřídel není bezpečný!"
+                end # konec if
+    else
+        verdict =   if k >= k_uziv + 0.5
+                        "Hřídel je bezpečný"
+                    elseif k >= k_uziv
+                        "Hřídel je na hranici bezpečnosti"
+                    else
+                        "Hřídel není bezpečný!"
+                    end # konec if
+    end
+    vypocet = Dict{Symbol,Any}()
+    vypocet[:tauDk] = tauDk
+    vypocet[:G] = G
+    vypocet[:Re] = Re
+    vypocet[:k] = k
+    vypocet[:k_str] = k_str
+    vypocet[:verdict] = verdict # textové hodnocení bezpečnosti spoje
+    vypovet[:F1] = F1
+    vypocet[:F1_str] = F1_str
+    vypovet[:F2] = F2
+    vypocet[:F2_str] = F2_str
     vypocet[:Wk] = VV1[:Wk] # průřezový modul v krutu
     vypocet[:Wk_str] = VV1[:Wk_str] # textový popis Wk (např. z profilu)
     vypocet[:Ip] = VV1[:Ip] # polární moment setrvačnosti
