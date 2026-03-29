@@ -28,7 +28,7 @@
 using Unitful
 
 function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, 
-    Fr=nothing, L1=nothing, L2=nothing,
+    Fr=nothing, L1=nothing, L2=nothing, E=nothing,
     mat=nothing, tauDk=nothing, G=nothing, Re=nothing, k=nothing,
     zatizeni::AbstractString="statický", druh="hybný", return_text=true)
     # ---------------------------------------------------------
@@ -75,7 +75,7 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
             error("Mk musí být číslo nebo Unitful.Quantity")
         end
     else
-        error("Chybný druh hřídele: $druh.")
+        error("Chybný druh zatížení hřídele: $druh.")
     end
 
     if D !== nothing
@@ -147,7 +147,7 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     # ---------------------------------------------------------
     if druh == "nosný"
         vypocet=hridelnosnyvypocet(; Fr=Fr, profil1=profil1, L1=L1, L2=L2, mat=mat,
-            tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
+            sigmaDo=sigmaDo, E=E, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
     elseif druh == "hybný"
         vypocet=hridelhybnyvypocet(; Mk=Mk, profil1=profil1, L=L, mat=mat,
             tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k_uziv=k_uziv)
@@ -278,7 +278,7 @@ function hridelhybnyvypocet(; Mk=nothing, profil1=nothing, L=nothing, mat=nothin
 end
 
 function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothing,
-    mat=nothing, tauDk=nothing, G=nothing, Re=nothing, zatizeni=nothing, k_uziv=nothing)
+    mat=nothing, tauDk=nothing, sigmaDo=nothing, E=nothing, Re=nothing, zatizeni=nothing, k_uziv=nothing)
     F1 = nothing
     F1_str = nothing
     F2 = nothing
@@ -293,13 +293,13 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
         Mo2_str = "F2*L2"
         Mo2 = F2*L2
     end
-    VV1 = namahanikrut(Mk = Mk, profil = profil1, L0 = L, mat = mat, 
-    tauDk=tauDk, G=G, Re=Re, zatizeni=zatizeni, k=k_uziv, return_text=false)
-    if tauDk === nothing
-        tauDk = VV1[:tauDk] # dovolené smykové napětí v krutu
+    VV1 = namahaniohyb(Mo = Mo1, profil = profil1, L0 = L1, mat = mat, 
+    sigmaDo=sigmaDo, E=E, Re=Re, zatizeni=zatizeni, k=k_uziv, return_text=false)
+    if sigmaDo === nothing
+        sigmaDo = VV1[:sigmaDo] # dovolené smykové napětí v krutu
     end
-    if G === nothing
-        G = VV1[:G] # smykový modul
+    if E === nothing
+        E = VV1[:E] # modul pružnosti v tahu
     end
     if Re === nothing
         Re = VV1[:Re] # mez kluzu

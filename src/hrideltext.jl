@@ -29,7 +29,7 @@ using Printf: @sprintf
 
 function hrideltext(VV::Dict{Symbol,Any})
     lines = String[] # pole pro textový výstup
-if VV[:druh] == "hybný"
+
     push!(lines, "Výpočet: $(VV[:info])") # název výpočtu z VV[:info]
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "materiál: $(VV[:mat] === nothing ? "" : string(VV[:mat]))")
@@ -37,7 +37,11 @@ if VV[:druh] == "hybný"
     push!(lines, "zatížení: $(VV[:zatizeni])") # přidat info o zatížení do textového výstupu
     push!(lines, "----------------------------------------------------------------")
     push!(lines, "zadání:") # přidat info o zadání výpočtu
-    push!(lines, @sprintf("Mk = %g   %s", VV[:Mk], VV[:Mk_info]))
+    if VV[:druh] == "hybný"
+        push!(lines, @sprintf("Mk = %g   %s", VV[:Mk], VV[:Mk_info]))
+    elseif VV[:druh] == "nosný"
+        push!(lines, @sprintf("Fr = %g   %s", VV[:Fr], VV[:Fr_info]))
+    end
     push!(lines, @sprintf("D = %g   %s", VV[:D], VV[:D_info]))
     if VV[:d] !== nothing
         push!(lines, @sprintf("d = %g   %s", VV[:d], VV[:d_info]))
@@ -95,8 +99,5 @@ if VV[:druh] == "hybný"
     end
     push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", VV[:bezpecnost_str], 
         VV[:bezpecnost], VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
-else
-    error("Neznámý druh zatížení: $(VV[:druh])")
-end
     return join(lines, "\n")
 end
