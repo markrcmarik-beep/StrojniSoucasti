@@ -189,10 +189,10 @@ function namahaniohyb(;
             error("Chybí sigmaDo, Re, mat - nelze stanovit dovolené napětí.")
         end
         if isdefined(@__MODULE__, :dovoleneNapeti)
-            if matinfo !== nothing
-                sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
-            elseif Re !== nothing
+            if Re !== nothing
                 sigmaDo = dovoleneNapeti("ohyb", zatizeni; Re=Re)
+            elseif matinfo !== nothing
+                sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
             end
         else
             error("Funkce dovoleneNapeti není definována.")

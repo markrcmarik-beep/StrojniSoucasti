@@ -164,31 +164,29 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
+    matinfo = nothing
     if mat !== nothing
         if mat isa AbstractString
             if !isdefined(@__MODULE__, :materialy)
                 error("Funkce materialy(mat) není definována.")
             end
             matinfo = materialy(mat)
+        elseif isstructtype(typeof(mat))
+            matinfo = mat # předpokládáme, že uživatel zadal přímo dict nebo objekt s vlastnostmi materiálu
         else
-            matinfo = mat
+            error("Neplatný formát pro mat. Očekává se řetězec (název materiálu) nebo struktura s vlastnostmi materiálu.")
         end
-        if matinfo === nothing
-            error("Materiál '$mat' nebyl nalezen.")
-        end
-        if matinfo isa AbstractDict
-            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
-            G_raw = haskey(matinfo, :G) ? matinfo[:G] : get(matinfo, "G", nothing)
-            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
-        else
+        if matinfo !== nothing
             Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
             G_raw = hasproperty(matinfo, :G) ? getproperty(matinfo, :G) : nothing
             matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        else
+            Re_raw = nothing
+            G_raw = nothing
         end
         Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
         G = G_raw === nothing ? G : attach_unit(G_raw, u"GPa")
-     else
-        matinfo = nothing
+    else
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
@@ -199,10 +197,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             error("Chybí tauDk, Re, mat - nelze stanovit dovolené napětí.")
         end
         if isdefined(@__MODULE__, :dovoleneNapeti)
-            if matinfo !== nothing
-                tauDk = dovoleneNapeti("střih", zatizeni; mat=matinfo)
-            elseif Re !== nothing
+            if Re !== nothing
                 tauDk = dovoleneNapeti("střih", zatizeni; Re=Re)
+            elseif matinfo !== nothing
+                tauDk = dovoleneNapeti("střih", zatizeni; mat=matinfo)
             end
         else
             error("Funkce dovoleneNapeti není definována.")
