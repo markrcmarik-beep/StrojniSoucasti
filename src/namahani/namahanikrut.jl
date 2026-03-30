@@ -252,7 +252,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             end
         end
     end
-        # kontrola
+    # kontrola
     if Wk === nothing
         error("Chybí Wk (ani profil nebyl použit).")
     end
