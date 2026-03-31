@@ -60,7 +60,7 @@ function namahanistrihtext(VV::Dict{Symbol,Any})
         push!(lines,@sprintf("gamma = %s = %g   %s",VV[:gamma_str],VV[:gamma],VV[:gamma_info]))
     end
     k = VV[:bezpecnost]
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", VV[:bezpecnost_str], ustrip(k), 
+    push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", VV[:bezpecnost_str], ustrip(k), 
         VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
 
     return join(lines,"\n")

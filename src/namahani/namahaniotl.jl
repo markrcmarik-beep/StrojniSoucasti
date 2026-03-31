@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Kontrola namáhání na otlačení (plošný tlak).
-# ver: 2026-03-13
+# ver: 2026-03-30
 ## Funkce: namahaniotl()
 ## Autor: Martin
 #
@@ -124,45 +124,45 @@ function namahaniotl(;F=nothing, S=nothing, sigmaDotl=nothing,
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
+    matinfo = nothing
     if mat !== nothing
         if mat isa AbstractString
             if !isdefined(@__MODULE__, :materialy)
                 error("Funkce materialy(mat) není definována.")
             end
             matinfo = materialy(mat)
+        elseif isstructtype(typeof(mat))
+            matinfo = mat # předpokládáme, že uživatel zadal přímo dict nebo objekt s vlastnostmi materiálu
         else
-            matinfo = mat
+            error("Neplatný formát pro mat. Očekává se řetězec (název materiálu) nebo struktura s vlastnostmi materiálu.")
         end
-        if matinfo === nothing
-            error("Materiál '$mat' nebyl nalezen.")
-        end
-        if matinfo isa AbstractDict
-            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
-            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
-        else
+        if matinfo !== nothing
             Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
             matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        else
+            Re_raw = nothing
         end
         Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
     else
-        matinfo = nothing
         matName = ""
     end
     # ---------------------------------------------------------
     # dovolené napětí
     # ---------------------------------------------------------
     if sigmaDotl === nothing
+        if Re === nothing && mat === nothing
+            error("Chybí sigmaDotl, Re, mat - nelze stanovit dovolené napětí.")
+        end
         if isdefined(@__MODULE__, :dovoleneNapeti)
-            if matinfo !== nothing
-                sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
-            elseif Re !== nothing
+            if Re !== nothing
                 sigmaDotl = dovoleneNapeti("otlačení", zatizeni; Re=Re)
+            elseif matinfo !== nothing
+                sigmaDotl = dovoleneNapeti("otlačení", zatizeni; mat=matinfo)
             end
         else
-            error("Funkce dovoleneNapeti není definována, nelze určit dovolené napětí.")
+            error("Funkce dovoleneNapeti není definována.")
         end
     end
-    sigmaDotl !== nothing || error("Chybí dovolené napětí na otlačení.")
     # ---------------------------------------------------------
     # profil (automatické volání profily)
     # ---------------------------------------------------------
@@ -178,8 +178,10 @@ function namahaniotl(;F=nothing, S=nothing, sigmaDotl=nothing,
             end
         end
     end
-
-    S !== nothing || error("Chybí kontaktní plocha S.")
+    # kontrola, že máme všechny potřebné vstupy pro výpočet
+    if S === nothing
+        error("Chybí S (ani profil nebyl použit).")
+    end
     # ----------------------------------------------------------
     # výpočty
     # ----------------------------------------------------------

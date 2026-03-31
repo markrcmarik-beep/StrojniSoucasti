@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-03-13
+# ver: 2026-03-30
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
@@ -154,31 +154,29 @@ function namahaniohyb(;
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
+    matinfo = nothing
     if mat !== nothing
         if mat isa AbstractString
             if !isdefined(@__MODULE__, :materialy)
                 error("Funkce materialy(mat) není definována.")
             end
             matinfo = materialy(mat)
+        elseif isstructtype(typeof(mat))
+            matinfo = mat # předpokládáme, že uživatel zadal přímo dict nebo objekt s vlastnostmi materiálu
         else
-            matinfo = mat
+            error("Neplatný formát pro mat. Očekává se řetězec (název materiálu) nebo struktura s vlastnostmi materiálu.")
         end
-        if matinfo === nothing
-            error("Materiál '$mat' nebyl nalezen.")
-        end
-        if matinfo isa AbstractDict
-            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
-            E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
-            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
-        else
+        if matinfo !== nothing
             Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
             E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
             matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        else
+            Re_raw = nothing
+            E_raw = nothing
         end
         Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
         E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
      else
-        matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
@@ -189,10 +187,10 @@ function namahaniohyb(;
             error("Chybí sigmaDo, Re, mat - nelze stanovit dovolené napětí.")
         end
         if isdefined(@__MODULE__, :dovoleneNapeti)
-            if matinfo !== nothing
-                sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
-            elseif Re !== nothing
+            if Re !== nothing
                 sigmaDo = dovoleneNapeti("ohyb", zatizeni; Re=Re)
+            elseif matinfo !== nothing
+                sigmaDo = dovoleneNapeti("ohyb", zatizeni; mat=matinfo)
             end
         else
             error("Funkce dovoleneNapeti není definována.")

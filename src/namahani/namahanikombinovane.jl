@@ -6,7 +6,7 @@
 # pomocí HMH nebo Tresca kritéria. Funkce využívá výstupy
 # z již existujících funkcí namáhání (namahanitah, namahanitlak,
 # namahanistrih, namahanikrut, namahaniohyb).
-# ver: 2026-03-05
+# ver: 2026-03-31
 ## Funkce: namahanikombinovane()
 ## Autor: Martin
 #
@@ -371,17 +371,16 @@ end
 # ---------------------------------------------------------
 if sigmaD === nothing
     if Re === nothing
-        error("Chybí sigmaD i Re - nelze stanovit bezpečnost.")
+        error("Chybí sigmaD, Re - nelze stanovit dovolené napětí.")
     end
-    if !isdefined(Main, :dovoleneNapeti)
+    if isdefined(@__MODULE__, :dovoleneNapeti)
+        if Re !== nothing
+            sigmaD = dovoleneNapeti(namahanizkr, zatizeni; Re=Re)
+            sigmaD = uconvert(u"MPa", sigmaD)
+        end
+    else
         error("Funkce dovoleneNapeti není definována.")
     end
-    sigmaD = dovoleneNapeti(namahanizkr, zatizeni; Re=Re)
-end
-if sigmaD !== nothing
-    sigmaD = uconvert(u"MPa", sigmaD)
-else
-    error("Nenalezeno dovolené napětí: sigmaD = $sigmaD")
 end
 # ---------------------------------------------------------
 # ekvivalentní napětí

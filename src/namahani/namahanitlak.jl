@@ -5,7 +5,7 @@
 # zadat zatěžující sílu, plochu průřezu nebo profil, dovolené 
 # napětí nebo materiál, délku namáhaného profilu a typ zatížení. 
 # Vrací slovník s výsledky výpočtu a volitelně i textový výpis.
-# ver: 2026-03-13
+# ver: 2026-03-30
 ## Funkce: namahanitlak()
 ## Autor: Martin
 #
@@ -122,7 +122,7 @@ namahanitlak(F=1000u"N", S=50u"mm^2", mat="S235")
 function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing, 
     E=nothing, Re=nothing, L0=nothing, Imin=nothing, mat=nothing,
     zatizeni::AbstractString="statický", profil=nothing,
-    k=nothing, return_text::Bool=true)
+    k=nothing, kp=nothing, return_text::Bool=true)
     # ---------------------------------------------------------
     # pomocné
     # ---------------------------------------------------------
@@ -188,31 +188,29 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # ---------------------------------------------------------
     # materiál
     # ---------------------------------------------------------
+    matinfo = nothing
     if mat !== nothing # pokud je mat zadán, pokusíme se získat informace o materiálu
         if mat isa AbstractString # pokud je mat řetězec, pokusíme se získat informace o materiálu pomocí funkce materialy(mat)
             if !isdefined(@__MODULE__, :materialy)
                 error("Funkce materialy(mat) není definována.")
             end
             matinfo = materialy(mat)
-        else # pokud je mat již dict nebo struct s potřebnými informacemi, použijeme ho přímo a nebudeme volat materialy(mat)
-            matinfo = mat
+        elseif isstructtype(typeof(mat))
+            matinfo = mat # předpokládáme, že uživatel zadal přímo dict nebo objekt s vlastnostmi materiálu
+        else
+            error("Neplatný formát pro mat. Očekává se řetězec (název materiálu) nebo struktura s vlastnostmi materiálu.")
         end
-        if matinfo === nothing
-            error("Materiál '$mat' nebyl nalezen.")
-        end
-        if matinfo isa AbstractDict # pokud je matinfo dict, získáme hodnoty z dictu s použitím haskey a get, abychom se vyhnuli chybám při přístupu k neexistujícím klíčům
-            Re_raw = haskey(matinfo, :Re) ? matinfo[:Re] : get(matinfo, "Re", nothing)
-            E_raw = haskey(matinfo, :E) ? matinfo[:E] : get(matinfo, "E", nothing)
-            matName = haskey(matinfo, :name) ? matinfo[:name] : get(matinfo, "name", "")
-        else # pokud je matinfo struct, získáme hodnoty z vlastností struct pomocí hasproperty a getproperty, abychom se vyhnuli chybám při přístupu k neexistujícím vlastnostem
+        if matinfo !== nothing
             Re_raw = hasproperty(matinfo, :Re) ? getproperty(matinfo, :Re) : nothing
             E_raw = hasproperty(matinfo, :E) ? getproperty(matinfo, :E) : nothing
             matName = hasproperty(matinfo, :name) ? getproperty(matinfo, :name) : ""
+        else
+            Re_raw = nothing
+            E_raw = nothing
         end
         Re = Re_raw === nothing ? Re : attach_unit(Re_raw, u"MPa")
         E = E_raw === nothing ? E : attach_unit(E_raw, u"GPa")
     else # pokud není mat zadán, nemáme informace o materiálu
-        matinfo = nothing
         matName = "" # prázdný řetězec, pokud není materiál zadán
     end
     # ---------------------------------------------------------
@@ -223,10 +221,10 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
             error("Chybí sigmaDt, Re,  mat - nelze stanovit dovolené napětí.")
         end
         if isdefined(@__MODULE__, :dovoleneNapeti)
-            if matinfo !== nothing
-                sigmaDt = dovoleneNapeti("tlak", zatizeni; mat=matinfo)
-            elseif Re !== nothing
+            if Re !== nothing
                 sigmaDt = dovoleneNapeti("tlak", zatizeni; Re=Re)
+            elseif matinfo !== nothing
+                sigmaDt = dovoleneNapeti("tlak", zatizeni; mat=matinfo)
             end
         else
             error("Funkce dovoleneNapeti není definována.")
@@ -294,7 +292,7 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     # výpočet
     # ---------------------------------------------------------
     V2 = namahanitlakvypocet(F=F, S=S, sigmaDt=sigmaDt, E=E, Re=Re, 
-        L0=L0, Imin=Imin, k_uziv=k_uziv)
+        L0=L0, Imin=Imin, kp=kp, k_uziv=k_uziv)
     # ---------------------------------------------------------
     # VÝSTUPNÍ DICT
     # ---------------------------------------------------------
@@ -305,6 +303,8 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:F_info] = "Zatěžující síla"
     VV[:k] = k_uziv # uživatelský požadavek bezpečnosti
     VV[:k_info] = "Uživatelský požadavek bezpečnosti"
+    VV[:kp] = kp
+    VV[:kp_info] = "druh"
     VV[:S] = S # plocha průřezu
     VV[:S_str] = S_str # textový popis výpočtu S (např. z profilu)
     VV[:S_info] = "Plocha průřezu"
@@ -335,6 +335,9 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
     VV[:deltaL] = V2[:deltaL] # skutečné zkrácení
     VV[:deltaL_str] = V2[:deltaL_str] # textový popis výpočtu deltaL (např. z epsilon a L0)
     VV[:deltaL_info] = "Skutečné zkrácení"
+    VV[:Nkr] = V2[:Nkr]
+    VV[:Nkr_str] = V2[:Nkr_str]
+    VV[:Nkr_info] = "Kritická síla"
     VV[:L] = V2[:L] # délka po zkrácení
     VV[:L_str] = V2[:L_str] # textový popis výpočtu L (např. z L0 a deltaL)
     VV[:L_info] = "Délka po deformaci"
@@ -350,8 +353,9 @@ function namahanitlak(; F=nothing, S=nothing, sigmaDt=nothing,
 end
 
 function namahanitlakvypocet(; F=nothing, S=nothing, sigmaDt=nothing, 
-    E=nothing, Re=nothing, L0=nothing, Imin=nothing, k_uziv=nothing)
-
+    E=nothing, Re=nothing, L0=nothing, Imin=nothing, k_uziv=nothing,
+    kp=nothing)
+#kp=1 # první případ
 sigma_str = "F / S"
 sigma = F / S
 sigma = uconvert(u"MPa", sigma)
@@ -374,6 +378,14 @@ if L0 !== nothing
     L = L0 + deltaL
     L = uconvert(u"mm", L)
 end
+# kritická síla
+Nkr = nothing
+if Imin !== nothing && L0 !== nothing && E !== nothing && kp !== nothing
+    #al = kp * pi / 2
+    Nkr_str = "kp^2*pi^2*E*Imin/(4*L0^2)"
+    Nkr = kp^2*pi^2*E*Imin/(4*L0^2)
+    Nkr = uconvert(u"mm", Nkr)
+end
 if k_uziv === nothing
     verdict =   if k >= 1.5
                     "Spoj je bezpečný"
@@ -395,6 +407,8 @@ end
 vypocet = Dict{Symbol,Any}()
 vypocet[:sigma_str] = sigma_str
 vypocet[:sigma] = sigma
+vypocet[:Nkr] = Nkr
+vypocet[:Nkr_str] = @isdefined(Nkr_str) ? Nkr_str : ""
 vypocet[:k_str] = k_str
 vypocet[:k] = k
 vypocet[:epsilon_str] = @isdefined(epsilon_str) ? epsilon_str : ""

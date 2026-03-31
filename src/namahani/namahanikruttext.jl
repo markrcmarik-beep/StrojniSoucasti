@@ -65,7 +65,7 @@ function namahanikruttext(VV::Dict{Symbol,Any})
         push!(lines, @sprintf("theta = %g   %s", uconvert(u"deg/m", VV[:theta]), 
             VV[:theta_info]))
     end
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", VV[:bezpecnost_str], 
+    push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", VV[:bezpecnost_str], 
         VV[:bezpecnost], VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
 
     return join(lines, "\n")
