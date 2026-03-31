@@ -192,14 +192,14 @@ zadání:
 Mk = 400 m N   Krouticí moment
 Wk = π/16*D³ = 3067.96 mm^3   Průřezový modul v krutu
 Ip = π/32*D⁴ = 38349.5 mm^4   Polární moment setrvačnosti
-tauDk = 153.96 MPa   Dovolené napětí v krutu
+tauDk = 135.847 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 130.38 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.12877 rad m^-1   Poměrné zkroucení
 theta = 7.37798 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 1.18086   Součinitel bezpečnosti
+k = tauDk / tau = 1.04193   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je na hranici bezpečnosti
 ----------------------------------------------------------------
 kritérium: Huber-Mises-Hencky
@@ -249,14 +249,14 @@ zadání:
 Mk = 400 m N   Krouticí moment
 Wk = π/16*D³ = 3067.96 mm^3   Průřezový modul v krutu
 Ip = π/32*D⁴ = 38349.5 mm^4   Polární moment setrvačnosti
-tauDk = 153.96 MPa   Dovolené napětí v krutu
+tauDk = 135.847 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 130.38 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.12877 rad m^-1   Poměrné zkroucení
 theta = 7.37798 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 1.18086   Součinitel bezpečnosti
+k = tauDk / tau = 1.04193   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je na hranici bezpečnosti
 ----------------------------------------------------------------
 kritérium: Huber-Mises-Hencky
@@ -422,14 +422,14 @@ zadání:
 Mk = 400 m N   Krouticí moment
 Wk = π/16*D³ = 3067.96 mm^3   Průřezový modul v krutu
 Ip = π/32*D⁴ = 38349.5 mm^4   Polární moment setrvačnosti
-tauDk = 153.96 MPa   Dovolené napětí v krutu
+tauDk = 135.847 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 130.38 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.12877 rad m^-1   Poměrné zkroucení
 theta = 7.37798 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 1.18086   Součinitel bezpečnosti
+k = tauDk / tau = 1.04193   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je na hranici bezpečnosti
 ----------------------------------------------------------------
 kritérium: Huber-Mises-Hencky
@@ -517,14 +517,14 @@ zadání:
 Mk = 400 m N   Krouticí moment
 Wk = π/16*D³ = 3067.96 mm^3   Průřezový modul v krutu
 Ip = π/32*D⁴ = 38349.5 mm^4   Polární moment setrvačnosti
-tauDk = 153.96 MPa   Dovolené napětí v krutu
+tauDk = 135.847 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 130.38 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.12877 rad m^-1   Poměrné zkroucení
 theta = 7.37798 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 1.18086   Součinitel bezpečnosti
+k = tauDk / tau = 1.04193   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je na hranici bezpečnosti
 ----------------------------------------------------------------
 Výpočet namáhání v ohybu

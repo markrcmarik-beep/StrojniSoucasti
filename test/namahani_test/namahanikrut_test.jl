@@ -40,11 +40,11 @@ zatížení: statický
 zadání:
 Mk = 200 m N   Krouticí moment
 Wk =  = 400 mm^3   Průřezový modul v krutu
-tauDk = 92.376 MPa   Dovolené napětí v krutu
+tauDk = 81.5083 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 500 MPa   Napětí v krutu
-k = tauDk / tau = 0.184752   Součinitel bezpečnosti
+k = tauDk / tau = 0.163017   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt3 = """Výpočet namáhání v krutu
@@ -57,14 +57,14 @@ zadání:
 Mk = 120 m N   Krouticí moment
 Wk =  = 2200 mm^3   Průřezový modul v krutu
 Ip =  = 25000 mm^4   Polární moment setrvačnosti
-tauDk = 96.225 MPa   Dovolené napětí v krutu
+tauDk = 84.9045 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 54.5455 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.0592593 rad m^-1   Poměrné zkroucení
 theta = 3.39531 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 1.76413   Součinitel bezpečnosti
+k = tauDk / tau = 1.55658   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt4 = """Výpočet namáhání v krutu
@@ -81,7 +81,7 @@ Mk = 300 m N   Krouticí moment
 k = 5   Uživatelský požadavek bezpečnosti
 Wk = π/16*(D⁴ - d⁴)/D = 8590.29 mm^3   Průřezový modul v krutu
 Ip = π/32*(D⁴ - d⁴) = 171806 mm^4   Polární moment setrvačnosti
-tauDk = 76.98 MPa   Dovolené napětí v krutu
+tauDk = 72.1688 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
@@ -90,7 +90,7 @@ phi = (Mk * L0) / (G * Ip) = 0.00194017 rad   Úhel zkroucení
 phi = 0.111164°   Úhel zkroucení
 theta = Mk / (G * Ip) = 0.0215575 rad m^-1   Poměrné zkroucení
 theta = 1.23515 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 2.20427   Součinitel bezpečnosti
+k = tauDk / tau = 2.0665   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt5 = """Výpočet namáhání v krutu
@@ -102,11 +102,11 @@ zatížení: pulzní
 zadání:
 Mk = 200 m N   Krouticí moment
 Wk =  = 400 mm^3   Průřezový modul v krutu
-tauDk = 69.282 MPa   Dovolené napětí v krutu
+tauDk = 62.9837 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 500 MPa   Napětí v krutu
-k = tauDk / tau = 0.138564   Součinitel bezpečnosti
+k = tauDk / tau = 0.125967   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt6 = """Výpočet namáhání v krutu
@@ -118,11 +118,11 @@ zatížení: dynamický
 zadání:
 Mk = 200 m N   Krouticí moment
 Wk =  = 400 mm^3   Průřezový modul v krutu
-tauDk = 55.4256 MPa   Dovolené napětí v krutu
+tauDk = 51.32 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 500 MPa   Napětí v krutu
-k = tauDk / tau = 0.110851   Součinitel bezpečnosti
+k = tauDk / tau = 0.10264   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt7 = """Výpočet namáhání v krutu
@@ -134,11 +134,11 @@ zatížení: rázový
 zadání:
 Mk = 200 m N   Krouticí moment
 Wk =  = 400 mm^3   Průřezový modul v krutu
-tauDk = 46.188 MPa   Dovolené napětí v krutu
+tauDk = 43.3013 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 500 MPa   Napětí v krutu
-k = tauDk / tau = 0.092376   Součinitel bezpečnosti
+k = tauDk / tau = 0.0866025   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt8 = """Výpočet namáhání v krutu
