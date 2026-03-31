@@ -140,14 +140,14 @@ D = 45 mm   Vnější průměr hřídele
 d = 25 mm   Vnitřní průměr hřídele
 Wk = π/16*(D⁴ - d⁴)/D = 16187.9 mm^3   Průřezový modul v krutu
 Ip = π/32*(D⁴ - d⁴) = 364228 mm^4   Polární moment setrvačnosti
-tauDk = 96.225 MPa   Dovolené napětí v krutu
+tauDk = 84.9045 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 7.41293 MPa   Napětí v krutu
 theta = Mk / (G * Ip) = 0.00406745 rad m^-1   Poměrné zkroucení
 theta = 0.233048 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 12.9807   Součinitel bezpečnosti
+k = tauDk / tau = 11.4536   Součinitel bezpečnosti
 Bezpečnost součásti: Hřídel je bezpečný"""
         @test txt == expected_txt
     end
