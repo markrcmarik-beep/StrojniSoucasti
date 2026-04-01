@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet torzní konstanty Ip pro různé tvary profilů.
-# ver: 2026-03-02
+# ver: 2026-04-01
 ## Funkce: profilyvlcnIp()
 ## Autor: Martin
 #
@@ -15,7 +15,8 @@
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
 #   :a, :b, :t, :D, :d, :s - parametry profilu (v závislosti na tvaru)
-# velicina - symbol určující, kterou veličinu chceme vypočítat (
+# velicina - hledaná veličina: 
+#    :Ip - Polární moment průřezu [mm⁴]
 ## Výstupní proměnné:
 # výsledek výpočtu a textový popis vzorce použitý pro výpočet
 ## Použité balíčky:
@@ -29,7 +30,7 @@
 #
 using Unitful
 
-function profilyvlcnIp(tvar1::Dict, velicina::Symbol)
+function profilyvlcnIp(tvar1::Dict, velicina::Symbol = :Ip)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
@@ -47,7 +48,7 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol)
             elseif (a/b) > 10
                 return a*b^3 /3, "a*b³ /3" # Torzní konstanta
             else
-                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: $velicina")
+                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: Ip")
             end
         else
             if 1 <= (b/a) && (b/a) <= 10
@@ -56,7 +57,7 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol)
             elseif (b/a) > 10
                 return b*a^3 /3, "b*a³ /3" # Torzní konstanta
             else
-                error("Neznámý výpočet. Tvar: $info pro veličinu: $velicina")
+                error("Neznámý výpočet. Tvar: $info pro veličinu: Ip")
             end
         end
     # -----------------------------------------------------------
@@ -91,7 +92,7 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol)
             if isa(Ip_num, Number) && !isnan(Ip_num)
                 return Ip_num*u"mm^4", "num. řešení"
             else
-                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: $velicina. 
+                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: Ip. 
                     Selhalo numerické řešení. 'a'=$a 'b'=$b 't'=$t")
             end
         end
@@ -104,7 +105,7 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol)
     # -----------------------------------------------------------
     # neznámý tvar
     else
-        error("Neznámý tvar: $info pro veličinu $velicina")
+        error("Neznámý tvar: $info pro veličinu Ip")
     end
 
 end

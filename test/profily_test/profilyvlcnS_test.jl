@@ -53,23 +53,23 @@ using Unitful
     )
 
     @testset "zakladni tvary" begin
-        S, txt = StrojniSoucasti.profilyvlcnS(PLO_01, :S)
+        S, txt = StrojniSoucasti.profilyvlcnS(PLO_01)
         @test S == 200u"mm^2"
         @test txt == "a*b"
 
-        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01, :S)
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01)
         @test S2 ≈ pi*(20u"mm"/2)^2
         @test occursin("D", txt2)
 
-        S3, txt3 = StrojniSoucasti.profilyvlcnS(TRKR_01, :S)
+        S3, txt3 = StrojniSoucasti.profilyvlcnS(TRKR_01)
         @test S3 ≈ pi*((20u"mm")^2 - (10u"mm")^2)/4
         @test occursin("D", txt3) && occursin("d", txt3)
 
-        S4, txt4 = StrojniSoucasti.profilyvlcnS(_4HR_01, :S)
+        S4, txt4 = StrojniSoucasti.profilyvlcnS(_4HR_01)
         @test S4 == 400u"mm^2"
         @test txt4 == "a²"
 
-        S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01, :S)
+        S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01)
         @test S5 == 300u"mm^2"
         @test txt5 == "3/4*s²"
 

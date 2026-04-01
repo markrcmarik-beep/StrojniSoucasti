@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet plochy pro různé tvary dle zkratky označeni.
-# ver: 2026-02-27
+# ver: 2026-04-01
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -37,7 +37,7 @@
 #
 using Unitful
 
-function profilyvlcnS(tvar1::Dict, velicina::Symbol)
+function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
@@ -89,7 +89,7 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol)
     # -----------------------------------------------------------
     # neznámý tvar
     else
-        error("Neznámý tvar: $info pro veličinu $velicina")
+        error("Neznámý tvar: $info pro veličinu: S")
     end
 
 end

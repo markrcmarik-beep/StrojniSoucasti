@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-02-01
+# ver: 2026-04-01
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -52,13 +52,13 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # S - Plocha [mm²]
     # -----------------------------------------------------------
     if velicina == :S  # Plocha [mm²]
-        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1, velicina)
+        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
         return S_hod, S_str
     # -----------------------------------------------------------
     # Ip - Polární moment [mm⁴]
     # -----------------------------------------------------------
     elseif velicina == :Ip  # Polární moment [mm⁴]
-        Ip_hod, Ip_str = StrojniSoucasti.profilyvlcnIp(tvar1, velicina)
+        Ip_hod, Ip_str = StrojniSoucasti.profilyvlcnIp(tvar1)
         return Ip_hod, Ip_str
     # -----------------------------------------------------------
     # Wk - Modul v krutu [mm³]

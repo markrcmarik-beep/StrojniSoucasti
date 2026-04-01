@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezový modul v krutu pro různé tvary dle zkratky označeni.
-# ver: 2026-02-27
+# ver: 2026-04-01
 ## Funkce: profilyvlcnWk()
 ## Autor: Martin
 #
@@ -39,7 +39,7 @@
 #
 using Unitful
 
-function profilyvlcnWk(tvar1::Dict, velicina::Symbol)
+function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wk)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing

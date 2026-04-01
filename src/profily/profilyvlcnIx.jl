@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-02-28
+# ver: 2026-04-01
 ## Funkce: profilyvlcnIx()
 ## Autor: Martin
 #
@@ -19,7 +19,10 @@
 #    Dict("info" => "4HR", "a" => 20u"mm")
 #    Dict("info" => "6HR", "s" => 20u"mm")
 #    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
-# velicina - hledaná veličina: :Ix, :Iy, :Ixy
+# velicina - hledaná veličina: 
+#    :Ix - Kvadratický moment průřezu [mm⁴]
+#    :Iy - Kvadratický moment průřezu [mm⁴]
+#    :Ixy - Kvadratický moment průřezu [mm⁴]
 ## Výstupní proměnné:
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi. V tomto případě Ix, Iy, Ixy.
@@ -34,7 +37,7 @@
 #
 using Unitful
 
-function profilyvlcnIx(tvar1::Dict, velicina::Symbol, natoceni=0)
+function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
     info = tvar1[:info] # Ziskani informace o tvaru
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
 
