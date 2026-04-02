@@ -28,7 +28,9 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-#
+# StrojniSoucasti.profilyvlcnS(), StrojniSoucasti.profilyvlcnIp(), 
+# StrojniSoucasti.profilyvlcnWk(), StrojniSoucasti.profilyvlcnIx(), 
+# StrojniSoucasti.profilyvlcnIminImax(), StrojniSoucasti.profilyvlcnWo()
 ## Příklad:
 # tvar = Dict("info" => "KR", "D" => 30u"mm") # Definice tvaru kruhové tyče o průměru 30 mm
 # S, vzorec = profilyvlcn(tvar, :S) # Plocha kruhové tyče
