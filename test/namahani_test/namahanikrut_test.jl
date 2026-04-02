@@ -220,6 +220,21 @@ Bezpečnost spoje: Spoj není bezpečný!"""
         @test txt == expected_txt3
     end
 
+    # Test 3b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", Ip=25000u"mm^4", mat=A1)
+        @test haskey(VV, :tau)
+        @test haskey(VV, :tauDk)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :G)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:G] > 0u"GPa"
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+    end
+
     # Test 4: Výpočet s profilem a délkou (úhel zkroucení)
     @testset "výpočet s profilem a délkou" begin
         VV, txt = namahanikrut(Mk=300u"N*m", profil="TRKR 40x5", mat="16440", L0=90u"mm", zatizeni="rázový", k=5)

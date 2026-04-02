@@ -263,6 +263,21 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
         @test txt == expected_txt3
     end
 
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Ix=600u"mm^4", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test haskey(VV, :delta)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+    end
+
     # Test 5: Výpočet s profilem a délkou
     @testset "výpočet s profilem a délkou" begin
         VV, txt = namahaniohyb(Mo=600u"N*m", profil="TRKR 76x5", mat="11373", 

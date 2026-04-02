@@ -167,6 +167,17 @@ Výsledek posouzení: Spoj je bezpečný"""
         @test txt == expected_txt3
     end
 
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniotl(F=5000u"N", S=120u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :sigmaDotl)
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+    end
+
     # Test 5: Výpočet s profilem
     @testset "výpočet s profilem" begin
         VV, txt = namahaniotl(F=5000u"N", profil="PLO 20x20", mat="11373")
