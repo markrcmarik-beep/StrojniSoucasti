@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-02-28
+# ver: 2026-03-19
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -57,6 +57,8 @@ include("namahani/namahanikombinovane.jl") # namáhání kombinovaně
 include("namahani/namahanikombinovanetext.jl") #
 include("namahani/namahaniotl.jl") # namáhání otlačením
 include("namahani/namahaniotltext.jl") # textový výpis namáhání otlačením
+include("hridel.jl")
+include("hrideltext.jl")
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
 include("tolerance/tolerance.jl") # tolerance
@@ -68,8 +70,8 @@ tvarprofilu, profily,
 # namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 
-# 
-ulozvypis, zavity,
+# strojni soucasti
+hridel, ulozvypis, zavity,
 # tolerance
 tolerance
 
@@ -77,3 +79,5 @@ tolerance
 #using .Zavity
 
 end # module StrojniSoucasti
+
+

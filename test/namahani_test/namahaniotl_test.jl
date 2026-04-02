@@ -1,10 +1,106 @@
-# ver: 2026-03-11
+﻿# ver: 2026-03-11
 # Testovací skript pro funkci namahaniotl.jl
 # Testuje namáhání na otlačení (plošný tlak) s různými typy zatížení
 
 using StrojniSoucasti, Unitful, Test
 
+function assert_namahaniotl_text_common(txt::String, VV::Dict{Symbol,Any})
+    @test !isempty(txt)
+    @test occursin("F = ", txt)
+    @test occursin("S = ", txt)
+    @test occursin("sigmaDotl = ", txt)
+    @test occursin("sigma = $(VV[:sigma_str])", txt)
+    @test occursin("k = $(VV[:bezpecnost_str])", txt)
+    @test occursin(string(VV[:verdict]), txt)
+end
+
 @testset "namahaniotl" begin
+    expected_txt1 = """Výpočet namáhání na otlačení
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 5000 N   Zatěžující síla
+S = 120 mm^2   Kontaktní plocha
+sigmaDotl = 240 MPa   Dovolené napětí na otlačení
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 41.6667 MPa   Skutečné napětí na otlačení
+k = sigmaDt / sigma = 5.76   Součinitel bezpečnosti
+Výsledek posouzení: Spoj je bezpečný"""
+
+    expected_txt2 = """Výpočet namáhání na otlačení
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 5000 N   Zatěžující síla
+S = 120 mm^2   Kontaktní plocha
+sigmaDotl = 240 MPa   Dovolené napětí na otlačení
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 41.6667 MPa   Skutečné napětí na otlačení
+k = sigmaDt / sigma = 5.76   Součinitel bezpečnosti
+Výsledek posouzení: Spoj je bezpečný"""
+
+    expected_txt3 = """Výpočet namáhání na otlačení
+--------------------------------------------------------------
+materiál: 11 373
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 5000 N   Zatěžující síla
+S = 120 mm^2   Kontaktní plocha
+sigmaDotl = 250 MPa   Dovolené napětí na otlačení
+Re = 250 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 41.6667 MPa   Skutečné napětí na otlačení
+k = sigmaDt / sigma = 6   Součinitel bezpečnosti
+Výsledek posouzení: Spoj je bezpečný"""
+
+    expected_txt4 = """Výpočet namáhání na otlačení
+--------------------------------------------------------------
+materiál: 11 373
+profil: PLO 20x20
+  a = 20.0 mm
+  b = 20.0 mm
+  R = 0 mm
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 5000 N   Zatěžující síla
+S = a*b - 4*S(R) = 400 mm^2   Kontaktní plocha
+sigmaDotl = 250 MPa   Dovolené napětí na otlačení
+Re = 250 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 12.5 MPa   Skutečné napětí na otlačení
+k = sigmaDt / sigma = 20   Součinitel bezpečnosti
+Výsledek posouzení: Spoj je bezpečný"""
+
+    expected_txt5 = """Výpočet namáhání na otlačení
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: dynamický
+--------------------------------------------------------------
+zadání:
+F = 5000 N   Zatěžující síla
+S = 120 mm^2   Kontaktní plocha
+sigmaDotl = 184.615 MPa   Dovolené napětí na otlačení
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 41.6667 MPa   Skutečné napětí na otlačení
+k = sigmaDt / sigma = 4.43077   Součinitel bezpečnosti
+Výsledek posouzení: Spoj je bezpečný"""
 
     # Test 1: Základní výpočet bez jednotek
     @testset "základní výpočet bez jednotek" begin
@@ -17,6 +113,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:bezpecnost] > 0
         @test isa(txt, String)
         @test !isempty(txt)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 2: Výpočet s jednotkami
@@ -28,6 +126,8 @@ using StrojniSoucasti, Unitful, Test
         @test uconvert(u"mm^2", VV[:S]) == 120u"mm^2"
         @test uconvert(u"MPa", VV[:sigmaDotl]) == 240u"MPa"
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 3: Výpočet s Re
@@ -38,6 +138,8 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :bezpecnost)
         @test VV[:sigma] > 0u"MPa"
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt2
     end
 
     # Test 4: Výpočet s materiálem
@@ -48,6 +150,21 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :info)
         @test VV[:info] == "namáhání na otlačení"
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt3
+    end
+
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniotl(F=5000u"N", S=120u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :sigmaDotl)
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt3
     end
 
     # Test 4b: Výpočet s materiálem jako proměnná
@@ -69,6 +186,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:S] > 0u"mm^2"
         @test haskey(VV, :profil)
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt4
     end
 
     # Test 6: Statické zatížení (výchozí)
@@ -77,6 +196,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:zatizeni] == "statický"
         @test haskey(VV, :sigmaDotl)
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt2
     end
 
     # Test 7: Dynamické zatížení
@@ -85,6 +206,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:zatizeni] == "dynamický"
         @test haskey(VV, :sigmaDotl)
         @test isa(txt, String)
+        assert_namahaniotl_text_common(txt, VV)
+        @test txt == expected_txt5
     end
 
     # Test 8: Výstup bez textu

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
-# ver: 2026-02-27
+# ver: 2026-04-01
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
@@ -19,7 +19,8 @@
 #    Dict("info" => "4HR", "a" => 20u"mm")
 #    Dict("info" => "6HR", "s" => 20u"mm")
 #    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
-# velicina - hledaná veličina: :Wo
+# velicina - hledaná veličina: 
+#    :Wo - Průřezový modul v ohybu [mm³]
 ## Výstupní proměnné:
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi. V tomto případě Wo.
@@ -37,7 +38,7 @@
 #
 using Unitful
 
-function profilyvlcnWo(tvar1::Dict, velicina::Symbol, natoceni=0)
+function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing

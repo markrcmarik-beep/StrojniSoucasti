@@ -42,6 +42,9 @@ function namahanitlaktext(VV::Dict{Symbol,Any})
     if VV[:k] !== nothing
         push!(lines, @sprintf("k = %g   %s", VV[:k], VV[:k_info]))
     end
+    if VV[:kp] !== nothing
+        push!(lines, @sprintf("kp = %g   %s", VV[:kp], VV[:kp_info]))
+    end
     if VV[:S] !== nothing
         if VV[:S_str] != ""
             push!(lines, @sprintf("S = %s = %g   %s", VV[:S_str], VV[:S], VV[:S_info]))
@@ -75,8 +78,11 @@ function namahanitlaktext(VV::Dict{Symbol,Any})
     if VV[:L] !== nothing
         push!(lines, @sprintf("L = %s = %g   %s", VV[:L_str], VV[:L], VV[:L_info]))
     end
+    if VV[:Nkr] !== nothing
+        push!(lines, @sprintf("Nkr = %s = %g   %s", VV[:Nkr_str], VV[:Nkr], VV[:Nkr_info]))
+    end
     k = VV[:bezpecnost]
-    push!(lines, @sprintf("k = %s = %g   %s\n%s:  %s", VV[:bezpecnost_str], ustrip(k), 
+    push!(lines, @sprintf("k = %s = %g   %s\n%s: %s", VV[:bezpecnost_str], ustrip(k), 
         VV[:bezpecnost_info], VV[:verdict_info], VV[:verdict]))
     
     return join(lines, "\n")

@@ -1,6 +1,6 @@
 name = "StrojniSoucasti"
 uuid = "10255254-1473-4e7e-b938-74a6d2bcadf3"
-version = "0.1.13"
+version = "0.1.14"
 authors = ["Martin"]
 
 [deps]
@@ -19,4 +19,4 @@ julia = "1.12"
 
 Printf = "1"
 TOML = "1"
-Unitful = "1.27"
+Unitful = "1"

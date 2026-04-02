@@ -1,4 +1,4 @@
-# ver: 2026-03-10
+﻿# ver: 2026-03-22
 # Testovací skript pro funkci namahanitah.jl
 # Testuje namáhání v tahu s různými typy zatížení
 
@@ -13,8 +13,217 @@ function assert_namahanitah_text_common(txt::String, VV::Dict{Symbol,Any})
     @test occursin("k = $(VV[:bezpecnost_str])", txt)
     @test occursin(string(VV[:verdict]), txt)
 end
-
 @testset "namahanitah" begin
+    expected_txt1 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 240 MPa   Dovolené napětí
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 16   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt2 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: pulzní
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 141.176 MPa   Dovolené napětí
+L0 = 220 mm   Počáteční délka
+Re = 240 MPa   Mez kluzu
+E = 210 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.14286 %   Poměrné prodloužení
+deltaL = epsilon * L0 = 15.7143 mm   Skutečné prodloužení
+L = L0 + deltaL = 235.714 mm   Délka po deformaci
+k = sigmaDt / sigma = 9.41176   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt3 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 240 MPa   Dovolené napětí
+L0 = 500 mm   Počáteční délka
+E = 200 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.5 %   Poměrné prodloužení
+deltaL = epsilon * L0 = 37.5 mm   Skutečné prodloužení
+L = L0 + deltaL = 537.5 mm   Délka po deformaci
+k = sigmaDt / sigma = 16   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt4 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 11 373
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 192.308 MPa   Dovolené napětí
+Re = 250 MPa   Mez kluzu
+E = 210 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.14286 %   Poměrné prodloužení
+k = sigmaDt / sigma = 12.8205   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt5 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 11 373
+profil: TRKR 76x5
+  D = 76.0 mm
+  d = 66.0 mm
+  t = 5.0 mm
+zatížení: dynamický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+k = 5   Uživatelský požadavek bezpečnosti
+S = π*(D² - d²)/4 = 1115.27 mm^2   Plocha průřezu
+sigmaDt = 125 MPa   Dovolené napětí
+L0 = 210 mm   Počáteční délka
+Re = 250 MPa   Mez kluzu
+E = 210 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 5.37989 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 2.56185 %   Poměrné prodloužení
+deltaL = epsilon * L0 = 5.37989 mm   Skutečné prodloužení
+L = L0 + deltaL = 215.38 mm   Délka po deformaci
+k = sigmaDt / sigma = 23.2347   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt6 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 184.615 MPa   Dovolené napětí
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 12.3077   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt7 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: pulzní
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 141.176 MPa   Dovolené napětí
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 9.41176   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt8 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: dynamický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 120 MPa   Dovolené napětí
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 8   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt9 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: rázový
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 96 MPa   Dovolené napětí
+Re = 240 MPa   Mez kluzu
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+k = sigmaDt / sigma = 6.4   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt10 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 100 MPa   Dovolené napětí
+E = 200 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.5 %   Poměrné prodloužení
+k = sigmaDt / sigma = 6.66667   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
+
+    expected_txt11 = """Výpočet namáhání v tahu
+--------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+--------------------------------------------------------------
+zadání:
+F = 6000 N   Zatěžující síla
+S = 400 mm^2   Plocha průřezu
+sigmaDt = 100 MPa   Dovolené napětí
+L0 = 500 mm   Počáteční délka
+E = 200 GPa   Youngův modul
+--------------------------------------------------------------
+výpočet:
+sigma = F / S = 15 MPa   Skutečné napětí v tahu
+epsilon = sigma / E = 7.5 %   Poměrné prodloužení
+deltaL = epsilon * L0 = 37.5 mm   Skutečné prodloužení
+L = L0 + deltaL = 537.5 mm   Délka po deformaci
+k = sigmaDt / sigma = 6.66667   Součinitel bezpečnosti
+Bezpečnost spoje: Spoj je bezpečný"""
 
     # Test 1: Základní výpočet bez jednotek
     @testset "základní výpočet bez jednotek" begin
@@ -27,6 +236,8 @@ end
         @test VV[:bezpecnost] > 0
         @test isa(txt, String)
         @test !isempty(txt)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 2: Výpočet s jednotkami
@@ -38,6 +249,8 @@ end
         @test uconvert(u"mm^2", VV[:S]) == 400u"mm^2"
         @test uconvert(u"MPa", VV[:sigmaDt]) == 240u"MPa"
         @test isa(txt, String)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 3: Výpočet s Re a pulzním zatížením
@@ -49,6 +262,8 @@ end
         @test VV[:zatizeni] == "pulzní"
         @test VV[:sigma] > 0u"MPa"
         @test isa(txt, String)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt2
     end
 
     # Test 4: Výpočet s materiálem
@@ -60,6 +275,24 @@ end
         @test VV[:Re] > 0u"MPa"
         @test VV[:E] > 0u"GPa"
         @test isa(txt, String)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt4
+    end
+
+    # Test 4b: Výpočet s materiálem jako struct z materialy()
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt4
     end
 
     # Test 4b: Výpočet s materiálem jako struct z materialy()
@@ -89,6 +322,8 @@ end
         @test VV[:L] !== nothing
         @test uconvert(u"mm", VV[:L]) isa Quantity
         @test VV[:k] == 5
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt5
     end
 
     # Test 6: Statické zatížení (výchozí)
@@ -97,6 +332,8 @@ end
         @test VV[:zatizeni] == "statický"
         @test haskey(VV, :sigmaDt)
         @test isa(txt, String)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt6
     end
 
     # Test 7: Pulzní zatížení
@@ -104,6 +341,8 @@ end
         VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", zatizeni="pulzní")
         @test VV[:zatizeni] == "pulzní"
         @test haskey(VV, :sigmaDt)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt7
     end
 
     # Test 8: Dynamické zatížení
@@ -111,6 +350,8 @@ end
         VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", zatizeni="dynamický")
         @test VV[:zatizeni] == "dynamický"
         @test haskey(VV, :sigmaDt)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt8
     end
 
     # Test 9: Rázové zatížení
@@ -118,6 +359,8 @@ end
         VV, txt = namahanitah(F=6000u"N", S=400u"mm^2", Re=240u"MPa", zatizeni="rázový")
         @test VV[:zatizeni] == "rázový"
         @test haskey(VV, :sigmaDt)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt9
     end
 
     # Test 10: Výstup bez textu
@@ -134,6 +377,8 @@ end
         @test haskey(VV, :epsilon)
         @test VV[:epsilon] !== nothing
         @test isa(VV[:epsilon], Number)
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt10
     end
 
     # Test 12: Prodloužení součásti
@@ -146,6 +391,8 @@ end
         @test VV[:L] !== nothing
         @test uconvert(u"mm", VV[:L]) isa Quantity
         @test VV[:L] > VV[:L0]
+        assert_namahanitah_text_common(txt, VV)
+        @test txt == expected_txt11
     end
 
     # Test 13: Ověření vzorců
@@ -161,17 +408,12 @@ end
     @testset "textovy vystup - struktura a podminene radky" begin
         VV1, txt1 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa")
         assert_namahanitah_text_common(txt1, VV1)
-        @test !occursin("epsilon =", txt1)
-        @test !occursin("deltaL =", txt1)
-        @test !occursin(r"^L ="m, txt1)
+        @test txt1 == expected_txt1
 
         VV2, txt2 = namahanitah(F=6000u"N", S=400u"mm^2", sigmaDt=240u"MPa",
             E=200u"GPa", L0=500u"mm")
         assert_namahanitah_text_common(txt2, VV2)
-        @test occursin("L0 = ", txt2)
-        @test occursin("epsilon = $(VV2[:epsilon_str])", txt2)
-        @test occursin("deltaL = $(VV2[:deltaL_str])", txt2)
-        @test occursin("L = $(VV2[:L_str])", txt2)
+        @test txt2 == expected_txt3
     end
 
     # Test 14: Bezpečnost - bezpečný spoj
@@ -239,3 +481,16 @@ end
     end
 
 end
+
+
+
+
+
+
+
+
+
+
+
+
+

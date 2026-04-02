@@ -1,10 +1,195 @@
-# ver: 2026-03-11
+﻿# ver: 2026-03-22
 # Testovací skript pro funkci namahaniohyb.jl
 # Testuje namáhání v ohybu s různými typy zatížení
 
 using StrojniSoucasti, Unitful, Test
 
+function assert_namahaniohyb_text_common(txt::String, VV::Dict{Symbol,Any})
+    @test !isempty(txt)
+    @test occursin("Mo = ", txt)
+    @test occursin("Wo = ", txt)
+    @test occursin("sigmaDo = ", txt)
+    @test occursin("sigma = $(VV[:sigma_str])", txt)
+    @test occursin("k = $(VV[:bezpecnost_str])", txt)
+    @test occursin(string(VV[:verdict]), txt)
+end
+
 @testset "namahaniohyb" begin
+    expected_txt1 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+sigmaDo = 240 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.16   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt2 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: pulzní
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Re = 240 MPa   Mez kluzu
+sigmaDo = 120 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.08   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt3 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 11 373
+profil:
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Ix = 600 mm^4   Moment setrvačnosti
+Re = 250 MPa   Mez kluzu
+E = 210 GPa   Modul pružnosti
+sigmaDo = 166.667 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+delta = Mo / (E * Ix) = 4.7619 m^-1   Relativní průhyb
+k = sigmaDo / sigma = 0.111111   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt4 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 11 373
+profil: TRKR 76x5
+  D = 76.0 mm
+  d = 66.0 mm
+  t = 5.0 mm
+zatížení: dynamický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+k = 5   Uživatelský požadavek bezpečnosti
+natočení = 0 rad   Natočení profilu
+Wo = π/32*(D⁴ - d⁴)/D = 18585.3 mm^3   Průřezový modul v ohybu
+Ix = pi/64*(D^4 - d^4) = 706242 mm^4   Moment setrvačnosti
+Re = 250 MPa   Mez kluzu
+E = 210 GPa   Modul pružnosti
+Lo = 200 mm   Délka nosníku
+sigmaDo = 100 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 32.2836 MPa   Napětí v ohybu
+delta = Mo / (E * Ix) = 0.00404556 m^-1   Relativní průhyb
+y = Mo * Lo^2 / (3 * E * Ix) = 0.0539408 mm   Průhyb na volném konci
+alfa = Mo * Lo / (2 * E * Ix) = 0.000404556 rad = 0.0231793°   Úhel natočení průřezu
+k = sigmaDo / sigma = 3.09755   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Spoj není bezpečný!"""
+
+    expected_txt5 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Re = 240 MPa   Mez kluzu
+sigmaDo = 160 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.106667   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt6 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: dynamický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Re = 240 MPa   Mez kluzu
+sigmaDo = 96 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.064   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt7 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: rázový
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Re = 240 MPa   Mez kluzu
+sigmaDo = 80 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.0533333   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt8 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 0 rad   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Ix = 600 mm^4   Moment setrvačnosti
+E = 200 GPa   Modul pružnosti
+sigmaDo = 120 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+delta = Mo / (E * Ix) = 5 m^-1   Relativní průhyb
+k = sigmaDo / sigma = 0.08   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
+
+    expected_txt9 = """Výpočet namáhání v ohybu
+----------------------------------------------------------------
+materiál: 
+profil:
+zatížení: statický
+----------------------------------------------------------------
+zadání:
+Mo = 600 m N   Ohybový moment
+natočení = 45°   Natočení profilu
+Wo = 400 mm^3   Průřezový modul v ohybu
+Re = 240 MPa   Mez kluzu
+sigmaDo = 160 MPa   Dovolené napětí v ohybu
+----------------------------------------------------------------
+výpočet:
+sigma = Mo / Wo = 1500 MPa   Napětí v ohybu
+k = sigmaDo / sigma = 0.106667   Součinitel bezpečnosti
+Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
     # Test 1: Základní výpočet bez jednotek
     @testset "základní výpočet bez jednotek" begin
@@ -17,6 +202,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:bezpecnost] > 0
         @test isa(txt, String)
         @test !isempty(txt)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 2: Výpočet s jednotkami
@@ -28,6 +215,8 @@ using StrojniSoucasti, Unitful, Test
         @test uconvert(u"mm^3", VV[:Wo]) == 400u"mm^3"
         @test uconvert(u"MPa", VV[:sigmaDo]) == 240u"MPa"
         @test isa(txt, String)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt1
     end
 
     # Test 3: Výpočet s Re a pulzním zatížením
@@ -39,6 +228,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:zatizeni] == "pulzní"
         @test VV[:sigma] > 0u"MPa"
         @test isa(txt, String)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt2
     end
 
     # Test 4: Výpočet s materiálem a momentem setrvačnosti
@@ -51,6 +242,25 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:Re] > 0u"MPa"
         @test VV[:E] > 0u"GPa"
         @test isa(txt, String)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt3
+    end
+
+    # Test 4b: Výpočet s materiálem jako proměnná
+    @testset "výpočet s materiálem jako proměnná" begin
+        A1 = materialy("11373")
+        @test A1 !== nothing
+        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Ix=600u"mm^4", mat=A1)
+        @test haskey(VV, :sigma)
+        @test haskey(VV, :Re)
+        @test haskey(VV, :E)
+        @test haskey(VV, :delta)
+        @test VV[:Re] > 0u"MPa"
+        @test VV[:E] > 0u"GPa"
+        @test VV[:mat] == A1.name
+        @test isa(txt, String)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt3
     end
 
     # Test 4b: Výpočet s materiálem jako proměnná
@@ -82,6 +292,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:alfa] !== nothing
         @test uconvert(u"rad", VV[:alfa]) isa Quantity
         @test VV[:k] == 5
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt4
     end
 
     # Test 6: Statické zatížení (výchozí)
@@ -90,6 +302,8 @@ using StrojniSoucasti, Unitful, Test
         @test VV[:zatizeni] == "statický"
         @test haskey(VV, :sigmaDo)
         @test isa(txt, String)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt5
     end
 
     # Test 7: Pulzní zatížení
@@ -97,6 +311,8 @@ using StrojniSoucasti, Unitful, Test
         VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", zatizeni="pulzní")
         @test VV[:zatizeni] == "pulzní"
         @test haskey(VV, :sigmaDo)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt2
     end
 
     # Test 8: Dynamické zatížení
@@ -104,6 +320,8 @@ using StrojniSoucasti, Unitful, Test
         VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", zatizeni="dynamický")
         @test VV[:zatizeni] == "dynamický"
         @test haskey(VV, :sigmaDo)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt6
     end
 
     # Test 9: Rázové zatížení
@@ -111,6 +329,8 @@ using StrojniSoucasti, Unitful, Test
         VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", zatizeni="rázový")
         @test VV[:zatizeni] == "rázový"
         @test haskey(VV, :sigmaDo)
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt7
     end
 
     # Test 10: Výstup bez textu
@@ -127,6 +347,8 @@ using StrojniSoucasti, Unitful, Test
         @test haskey(VV, :delta)
         @test VV[:delta] !== nothing
         @test uconvert(u"m^-1", VV[:delta]) isa Quantity
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt8
     end
 
     # Test 12: Průhyb na volném konci
@@ -186,9 +408,11 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 19: Natočení profilu
     @testset "natočení profilu" begin
-        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", natoceni=45u"°")
+        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", natoceni=45u"deg")
         @test haskey(VV, :natoceni)
         @test VV[:natoceni] !== nothing
+        assert_namahaniohyb_text_common(txt, VV)
+        @test txt == expected_txt9
     end
 
 end
