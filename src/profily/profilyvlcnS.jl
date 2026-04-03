@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet plochy pro různé tvary dle zkratky označeni.
-# ver: 2026-04-01
+# ver: 2026-04-03
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -19,7 +19,7 @@
 #    Dict("info" => "4HR", "a" => 20u"mm")
 #    Dict("info" => "6HR", "s" => 20u"mm")
 #    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
-# velicina - hledaná veličina: 
+# velicina - hledaná veličina: (nepovinné, default :S)
 #    :S - Plocha průřezu [mm²]
 ## Výstupní proměnné:
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
@@ -47,23 +47,23 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         a, b = getv(:a), getv(:b)
         if getv(:R) === missing
-            return a*b, "a*b"
+            return a*b, "a*b" # Vrátí plochu a vzorec pro plochou tyč bez zaoblení
         else
             R = getv(:R)
-            Sr = StrojniSoucasti.hrana(string("R",ustrip(u"mm",R)))
+            Sr = StrojniSoucasti.hrana(string("R",ustrip(u"mm",R))) # Výpočet plochy zaoblení pomocí funkce hrana a převod na mm²
             Sr = Sr[:S] * u"mm^2"
-            return a*b-4*Sr, "a*b - 4*S(R)"
+            return a*b-4*Sr, "a*b - 4*S(R)" # Vrátí plochu a vzorec pro plochu s odečtením zaoblení (4 zaoblení pro 4 rohy)
         end
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
         D = getv(:D)
-        return pi*(D/2)^2, "π*(D/2)²"
+        return pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
         D, d = getv(:D), getv(:d)
-        return pi*(D^2 - d^2)/4, "π*(D² - d²)/4"
+        return pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
@@ -74,22 +74,22 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
             R = getv(:R)
             Sr = StrojniSoucasti.hrana(string("R",ustrip(u"mm",R)))
             Sr = Sr[:S] * u"mm^2"
-            return a^2-4*Sr, "a² - 4*S(R)"
+            return a^2-4*Sr, "a² - 4*S(R)" # Vrátí plochu a vzorec pro plochu čtyřhranné tyče s odečtením zaoblení (4 zaoblení pro 4 rohy)
         end
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
         s = getv(:s)
-        return (3/4)*s^2, "3/4*s²"
+        return (3/4)*s^2, "3/4*s²" # Vrátí plochu a vzorec pro plochu šestihranné tyče
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR" # Trubka čtyřhranná
         a, b, t = getv(:a), getv(:b), getv(:t)
-        return a*b - (a-2t)*(b-2t), "a*b - (a-2t)*(b-2t)"
+        return a*b - (a-2t)*(b-2t), "a*b - (a-2t)*(b-2t)" # Vrátí plochu a vzorec pro plochu čtyřhranné trubky
     # -----------------------------------------------------------
     # neznámý tvar
     else
-        error("Neznámý tvar: $info pro veličinu: S")
+        error("Neznámý tvar: $info pro veličinu: S") # Vyhodí chybu pro neznámý tvar a veličinu S
     end
 
 end
