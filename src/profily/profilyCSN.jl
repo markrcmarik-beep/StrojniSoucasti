@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-01-31
+# ver: 2026-04-04
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -16,7 +16,7 @@
 # inputStr - Textové označení tvaru dle ČSN.
 #  Podporované tvary:
 #   "PLO" - obdélníkový profil
-#   "PLO _a_x_b_" - "PLO 20x10" - obdélníkový profil
+#   "PLO {a}x{b}" - "PLO 20x10" - obdélníkový profil
 #   "PLO _a_x_b_R_r_" - "PLO 20x10R3" - obdélníkový profil s rádiusem
 #   "OBD" - obdélníkový profil
 #   "OBD _a_x_b_" - "OBD 20x10" - obdélníkový profil

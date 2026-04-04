@@ -25,7 +25,7 @@
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi. V tomto případě Imin a Imax.
 ## Použité balíčky:
-# Unitful
+# ---
 ## Použité uživatelské funkce:
 # profilyvlcnIx
 ## Příklad:
@@ -34,12 +34,15 @@
 ## Použité proměnné vnitřní:
 #
 ###############################################################
-
-using Unitful
-
 function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
     info = tvar1[:info]
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing
+    to_num(v, name::Symbol) = begin
+        v === missing && error("Chybi parametr: $name")
+        v isa Number || error("Parametr $name musi byt cislo.")
+        v / oneunit(v)
+    end
+    getn(k::Symbol) = to_num(getv(k), k)
 
     if velicina != :Imin && velicina != :Imax
         error("Neznama velicina: $velicina")
@@ -51,8 +54,6 @@ function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
         Ix, Ixtext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, 0)
         Iy, Iytext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, pi/2)
         Ixy, Ixytext = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy)
-        Ixy = Ixy * u"mm^4"
-
         if velicina == :Imin
             Imin_val = (Ix + Iy)/2 - sqrt(((Ix - Iy)/2)^2 + Ixy^2)
             Imin_str = "-sqrt((1//4)*((-(1//12)*(a^3)*b + (1//12)*a*(b^3))^2)) + (1//2)*((1//12)*(a^3)*b + (1//12)*a*(b^3))"
@@ -66,29 +67,29 @@ function profilyvlcnIminImax(tvar1::Dict, velicina::Symbol, natoceni=0)
     # -----------------------------------------------------------
     # Kruhova tyc
     elseif info == "KR"
-        D = getv(:D)
+        D = getn(:D)
         return pi/64*D^4, "pi/64*D^4"
 
     # -----------------------------------------------------------
     # Trubka kruhova
     elseif info == "TRKR"
-        D, d = getv(:D), getv(:d)
+        D, d = getn(:D), getn(:d)
         return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
 
     # -----------------------------------------------------------
     # čtvercový průřez
     elseif info == "4HR"
-        a = getv(:a)
+        a = getn(:a)
         return a^4/12, "a^4/12"
     # -----------------------------------------------------------
     # šestihranný průřez
     elseif info == "6HR"
-        s = getv(:s)
+        s = getn(:s)
         return s^4/6, "s^4/6"
     # -----------------------------------------------------------
     # trubka čtyřhranná
     elseif info == "TR4HR"
-        a, b, t = getv(:a), getv(:b), getv(:t)
+        a, b, t = getn(:a), getn(:b), getn(:t)
         return (a*b^3 - (a-2t)*(b-2t)^3)/12, "(a*b^3 - (a-2t)*(b-2t)^3)/12"
     # -----------------------------------------------------------
     # Neznámý tvar

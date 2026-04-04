@@ -128,7 +128,7 @@ using Unitful
 
         # Přímé volání profilyvlcnIx pro :Iy (delegace na :Ix s natočením)
         Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
-        @test Iy_direct == 10u"mm" * (20u"mm")^3 / 12
+        @test Iy_direct == 10 * 20^3 / 12
         @test txt_direct == "b*a^3/12"
     end
 

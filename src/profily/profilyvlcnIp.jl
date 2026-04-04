@@ -20,7 +20,7 @@
 ## Výstupní proměnné:
 # výsledek výpočtu a textový popis vzorce použitý pro výpočet
 ## Použité balíčky:
-# Unitful
+# ---
 ## Použité uživatelské funkce:
 # StrojniSoucasti.torsion_J_TR4HR_numeric(),
 ## Příklad:
@@ -28,17 +28,21 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful
-
 function profilyvlcnIp(tvar1::Dict, velicina::Symbol = :Ip)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
-    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
+    to_num(v, name::Symbol) = begin
+        v === missing && error("Chybi parametr: $name")
+        v isa Number || error("Parametr $name musi byt cislo.")
+        v / oneunit(v)
+    end
+    getn(k::Symbol) = to_num(getv(k), k)
 
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-        a, b = getv(:a), getv(:b)
+        a, b = getn(:a), getn(:b)
         if a >= b
             if 1 <= (a/b) && (a/b) <= 10
                 return a*b^3 *(1/3 - 0.21*b/a*(1 - b^4/12/a^4)), 
@@ -63,22 +67,22 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol = :Ip)
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
-        D = getv(:D)
+        D = getn(:D)
         return pi/32*D^4, "π/32*D⁴"
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
-        D, d = getv(:D), getv(:d)
+        D, d = getn(:D), getn(:d)
         return pi/32*(D^4 - d^4), "π/32*(D⁴ - d⁴)"
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
-        a = getv(:a)
+        a = getn(:a)
         return 0.1406*a^4, "0.1406*a⁴" # Torzní konstanta
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR"
-        a, b, t = getv(:a), getv(:b), getv(:t)
+        a, b, t = getn(:a), getn(:b), getn(:t)
         if min(a,b)*0.1 >= t
             return 2*(a-t)^2*(b-t)^2*t/((a-t)+(b-t)), 
                 "2*(a-t)²*(b-t)²*t/((a-t)+(b-t))" # ideálně t≤0.05min⁡(a,b) t≤0.05min(a,b) při t>0.1min⁡(a,b) t>0.1min(a,b) už chyba rychle roste
@@ -86,11 +90,11 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol = :Ip)
             return 2*(a-t)^2*(b-t)^2*t/((a-t)+(b-t))+2/3*(a+b)*t^3, 
                 "2*(a-t)²*(b-t)²*t/((a-t)+(b-t))+2/3*(a+b)*t³"
         else
-            Ip_num=StrojniSoucasti.torsion_J_TR4HR_numeric(ustrip(u"mm", a),
-                ustrip(u"mm", b), ustrip(u"mm", t),
+            Ip_num=StrojniSoucasti.torsion_J_TR4HR_numeric(a,
+                b, t,
                 nx=150, ny=150, tol=1e-2, maxiter=50000) # numerické řeš.
             if isa(Ip_num, Number) && !isnan(Ip_num)
-                return Ip_num*u"mm^4", "num. řešení"
+                return Ip_num, "num. řešení"
             else
                 error("Nedefinovaný výpočet. Tvar: $info pro veličinu: Ip. 
                     Selhalo numerické řešení. 'a'=$a 'b'=$b 't'=$t")
@@ -99,7 +103,7 @@ function profilyvlcnIp(tvar1::Dict, velicina::Symbol = :Ip)
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
-        s = getv(:s)
+        s = getn(:s)
         return 0.133*sqrt(3)/2*s^4, "0.133*sqrt(3)/2*s⁴"
         #return 0.154*s^4, "0.154*s⁴" # Torzní konstanta
     # -----------------------------------------------------------
