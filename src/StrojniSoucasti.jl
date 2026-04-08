@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-03-19
+# ver: 2026-04-08
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -31,17 +31,17 @@ include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("profily/profil_text_lines.jl") #
-include("profily/tvarvlcn.jl") #
-include("profily/tvarCSN.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnIp.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnIx.jl")
 include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
-include("profily/tvarprofilu.jl") # tvary profilů
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
+include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
+include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
+include("profily/prurezovyModulKrutBodu.jl") # modul v krutu z obrysovych bodu
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
 include("namahani/namahanitahtext.jl")
@@ -66,7 +66,7 @@ include("tolerance/tolerance.jl") # tolerance
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
 # profily
-tvarprofilu, profily,
+profily, plochaBodu, polarniMomentBodu, prurezovyModulKrutBodu,
 # namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 

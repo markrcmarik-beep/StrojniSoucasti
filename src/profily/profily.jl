@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-02-23
+# ver: 2026-04-08
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -37,7 +37,12 @@
 #   "TR4HR _a_x_b_x_t_" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
 #   "TR4HR _a_x_b_x_t_R_r_" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
 # args... - Volitelné názvy vlastností k výpočtu.
-#   Např: "S", "Ix", "Iy", "Ip", "Wk", ...
+#   "S" - plocha průřezu [mm^2]
+#   "Ix" - moment setrvačnosti Ix [mm^4]
+#   "Iy" - moment setrvačnosti Iy [mm^4]
+#   "Ip" - polární moment setrvačnosti [mm^4]
+#   "Wk" - průřezový modul pro krut [mm^3]
+#   "Wo" - průřezový modul pro ohyb [mm^3]
 ## Výstupní proměnné:
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi.

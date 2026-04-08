@@ -3,38 +3,37 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-08
-## Funkce: profilyCSN()
-## Autor: Martin
+# ver: 2026-01-21
+## Funkce: tvarCSN()
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyCSN.jl
+# balicek/src/tvarCSN.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyCSN(vstupni_promenne)
+## vystupni_promenne = tvarCSN(vstupni_promenne)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru dle ČSN.
 #  Podporované tvary:
 #   "PLO" - obdélníkový profil
-#       "PLO {a}x{b}" - "PLO 20x10" - obdélníkový profil
-#       "PLO {a}x{b}R{r}" - "PLO 20x10R3" - obdélníkový profil s rádiusem
+#   "PLO _a_x_b_" - "PLO 20x10" - obdélníkový profil
+#   "PLO _a_x_b_R_r_" - "PLO 20x10R3" - obdélníkový profil s rádiusem
 #   "OBD" - obdélníkový profil
-#       "OBD {a}x{b}" - "OBD 20x10" - obdélníkový profil
-#       "OBD {a}x{b}R{r}" - "OBD 20x10R3" - obdélníkový profil s rádiusem
+#   "OBD _a_x_b_" - "OBD 20x10" - obdélníkový profil
+#   "OBD _a_x_b_R_r_" - "OBD 20x10R3" - obdélníkový profil s rádiusem
 #   "KR" - kruhový profil
-#       "KR {D}" - "KR 20" - kruhový profil
+#   "KR _D_" - "KR 20" - kruhový profil
 #   "TRKR" - trubkový kruhový profil
-#       "TRKR {D}x{t}" - "TRKR 20x2" - trubkový kruhový profil
+#   "TRKR _D_x_t_" - "TRKR 20x2" - trubkový kruhový profil
 #   "4HR" - čtyřhranný profil
-#       "4HR {a}" - "4HR 20" - čtyřhranný profil
-#       "4HR {a}R{r}" - "4HR 20R3" - čtyřhranný profil s rádiusem
-#       "4HR {a}x{b}" - "4HR 20x10" - čtyřhranný profil obdélníkový
-#       "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
+#   "4HR _a_" - "4HR 20" - čtyřhranný profil
+#   "4HR _a_R_r_" - "4HR 20R3" - čtyřhranný profil s rádiusem
+#   "4HR _a_x_b_" - "4HR 20x10" - čtyřhranný profil obdélníkový
+#   "4HR _a_x_b_R_r_" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
 #   "6HR" - šestihranný profil
-#       "6HR {s}" - "6HR 20" - šestihranný profil
+#   "6HR _s_" - "6HR 20" - šestihranný profil
 #   "TR4HR" - trubkový čtyřhranný profil
-#       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
-#       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
+#   "TR4HR _a_x_b_x_t_" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
+#   "TR4HR _a_x_b_x_t_R_r_" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
 #   args... - (nepoužito)
 ## Výstupní proměnné:
 #
@@ -50,7 +49,7 @@
 
 using Unitful
 
-function profilyCSN(inputStr::AbstractString)
+function tvarCSN(inputStr::AbstractString)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
@@ -72,24 +71,19 @@ function profilyCSN(inputStr::AbstractString)
         # PLO / OBD : a x b (+ R)
         # -------------------------------------------------------
         (
-            r"^(PLO|OBD)(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(?:R(\d+(?:\.\d+)?))?$",
-            function (m)
-                a = parse(Float64, m.captures[2])
-                b = parse(Float64, m.captures[3])
-                r = m.captures[4] === nothing ? nothing : parse(Float64, m.captures[4])
-                if r !== nothing
-                    if r > min(a, b) / 2
-                        return false
-                    end
-                    dims[:R] = r * u"mm"
-                else
-                    dims[:R] = 0u"mm"
-                end
-                dims[:info] = m.captures[1]
-                dims[:a] = a * u"mm"
-                dims[:b] = b * u"mm"
-                return true
-            end
+    r"^(PLO|OBD)(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(?:R(\d+(?:\.\d+)?))?$",
+    function (m)
+        a = parse(Float64, m.captures[2])
+        b = parse(Float64, m.captures[3])
+        r = m.captures[4] === nothing ? 0.0 : parse(Float64, m.captures[4])
+
+        @assert r ≤ min(a, b) / 2 "Rádius R = $r mm je příliš velký"
+
+        dims[:info] = m.captures[1]
+        dims[:a]    = a * u"mm"
+        dims[:b]    = b * u"mm"
+        dims[:R]    = r * u"mm"
+    end
         ),
         # -------------------------------------------------------
         # KR : D
@@ -101,7 +95,6 @@ function profilyCSN(inputStr::AbstractString)
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
                 #dims[:D] = mmval(m.captures[1]) * u"mm"
-                return true
             end
         ),
         # -------------------------------------------------------
@@ -112,14 +105,11 @@ function profilyCSN(inputStr::AbstractString)
             function (m)
                 D = parse(Float64, m.captures[1])
                 t = parse(Float64, m.captures[2])
-                if D <= 2t
-                    return false
-                end
+                @assert D > 2t "Neplatná trubka: D ≤ 2t"
                 dims[:info] = "TRKR"
                 dims[:D] = D * u"mm"
                 dims[:t] = t * u"mm"
                 dims[:d] = (D - 2t) * u"mm"
-                return true
             end
         ),
         # -------------------------------------------------------
@@ -129,19 +119,12 @@ function profilyCSN(inputStr::AbstractString)
             r"^4HR(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
             function (m)
                 a = parse(Float64, m.captures[1])
-                r = m.captures[3] === nothing ? nothing : parse(Float64, m.captures[3])
-                if r !== nothing
-                    if r > a / 2
-                        return false
-                    end
-                    dims[:R] = r * u"mm"
-                else
-                    dims[:R] = 0u"mm"
-                end
+                r = m.captures[3] === nothing ? 0 : parse(Float64, m.captures[3])
+                @assert r ≤ a/2 "Rádius R=$r mm je příliš velký"
                 dims[:info] = "4HR"
                 dims[:a] = a * u"mm"
                 dims[:b] = a * u"mm"
-                return true
+                dims[:R] = r * u"mm"
             end
         ),
         # -------------------------------------------------------
@@ -154,8 +137,7 @@ function profilyCSN(inputStr::AbstractString)
                 dims[:info] = "6HR"
                 dims[:s] = s1 * u"mm"
                 dims[:a] = s1 * u"mm"
-                dims[:R] = 0u"mm"
-                return true
+                dims[:R] = 0 * u"mm"
             end
         ),
         # -------------------------------------------------------
@@ -167,12 +149,7 @@ function profilyCSN(inputStr::AbstractString)
                 a = parse(Float64, m.captures[1])
                 b = parse(Float64, m.captures[2])
                 t = parse(Float64, m.captures[3])
-                r = m.captures[5] === nothing ? nothing : parse(Float64, m.captures[5])
-                if r !== nothing
-                    if r > min(a, b) / 2
-                        return false
-                    end
-                end
+                r = m.captures[5] === nothing ? 0 : parse(Float64, m.captures[5])
                 # Zkusit databázi standardních profilů
                 A = profilTR4HR(s)
                 if A !== nothing
@@ -182,21 +159,14 @@ function profilyCSN(inputStr::AbstractString)
                     dims[:t] = A.t * u"mm"
                     dims[:R] = A.R * u"mm"
                 else
-                    if a <= 2t || b <= 2t
-                        return false
-                    end
-                    
+                    @assert a > 2t && b > 2t "Tloušťka stěny je příliš velká"
+                    @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
                     dims[:info] = "TR4HR"
                     dims[:a] = a * u"mm"
                     dims[:b] = b * u"mm"
                     dims[:t] = t * u"mm"
-                    if r !== nothing
-                        dims[:R] = r * u"mm"
-                    else
-                        dims[:R] = 0u"mm"
-                    end
+                    dims[:R] = r * u"mm"
                 end
-                return true
             end
         ),
         (
@@ -205,12 +175,7 @@ function profilyCSN(inputStr::AbstractString)
                 a = parse(Float64, m.captures[1])
                 b = a
                 t = parse(Float64, m.captures[2])
-                r = m.captures[4] === nothing ? nothing : parse(Float64, m.captures[4])
-                if r !== nothing
-                    if r > min(a, b) / 2
-                        return false
-                    end
-                end
+                r = m.captures[4] === nothing ? 0 : parse(Float64, m.captures[4])
                 # Zkusit databázi standardních profilů
                 A = profilTR4HR(s)
                 if A !== nothing
@@ -220,20 +185,14 @@ function profilyCSN(inputStr::AbstractString)
                     dims[:t] = A.t * u"mm"
                     dims[:R] = A.R * u"mm"
                 else
-                    if a <= 2t || b <= 2t
-                        return false
-                    end
+                    @assert a > 2t && b > 2t "Tloušťka stěny je příliš velká"
+                    @assert r ≤ min(a,b)/2 "Rádius R=$r mm je příliš velký"
                     dims[:info] = "TR4HR"
                     dims[:a] = a * u"mm"
                     dims[:b] = b * u"mm"
                     dims[:t] = t * u"mm"
-                    if r !== nothing
-                        dims[:R] = r * u"mm"
-                    else
-                        dims[:R] = 0u"mm"
-                    end
+                    dims[:R] = r * u"mm"
                 end
-                return true
             end
         )
     ]
@@ -243,12 +202,12 @@ function profilyCSN(inputStr::AbstractString)
     for (regex, handler) in parsers
         m = match(regex, s)
         if m !== nothing
-            ok = handler(m)
-            return ok ? dims : nothing
+            handler(m)
+            return dims
         end
     end
     # -----------------------------------------------------------
     # 6) Neznámý tvar
     # -----------------------------------------------------------
-    return nothing
+    error("Neznámé nebo nepodporované označení profilu: \"$inputStr\"")
 end
