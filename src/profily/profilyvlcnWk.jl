@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezový modul v krutu pro různé tvary dle zkratky označeni.
-# ver: 2026-04-01
+# ver: 2026-04-04
 ## Funkce: profilyvlcnWk()
 ## Autor: Martin
 #
@@ -26,7 +26,7 @@
 # případně i s vypočtenými vlastnostmi. V tomto případě 
 # průřezový modul v krutu Wk.
 ## Použité balíčky:
-# Unitful
+#
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -37,38 +37,42 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful
-
 function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wk)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
-    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
+    to_num(v, name::Symbol) = begin
+        v === missing && error("Chybi parametr: $name")
+        v isa Number || error("Parametr $name musi byt cislo.")
+        v / oneunit(v)
+    end
+    getn(k::Symbol) = to_num(getv(k), k)
 
     # -----------------------------------------------------------
     # Kruhová tyč
     if info == "KR" # Kruhová tyč
-        D = getv(:D) # Průměr
+        D = getn(:D) # Průměr
         return pi/16*D^3, "π/16*D³"
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
-        D, d = getv(:D), getv(:d) # Vnější a vnitřní průměr
+        D, d = getn(:D), getn(:d) # Vnější a vnitřní průměr
         return pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
-        a = getv(:a) # Strana
+        a = getn(:a) # Strana
         return 0.208*a^3, "0.208*a³"
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     elseif info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-        a, b = getv(:a), getv(:b) # Šířka a výška
+        a, b = getn(:a), getn(:b) # Šířka a výška
         return a*b^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
             "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
-        s = getv(:s) # Strana
+        s = getn(:s) # Strana
         return 0.17*s^3, "0.17*s³" # ??????????????????
     # -----------------------------------------------------------
     # neznámý tvar

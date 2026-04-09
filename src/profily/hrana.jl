@@ -5,7 +5,7 @@
 # plochu vnitřní nebo vnější dle tvaru stažení, zaoblení. Pro 
 # zaoblení vrací délku stěny do špičky (k hraně vznikající bez 
 # zaoblení). Pro sražení rovnostranné možné nahrazující zaoblení.
-# ver: 2026-01-29
+# ver: 2026-04-04
 ## Funkce: hrana()
 ## Autor: Martin
 #
@@ -29,7 +29,7 @@
 #       zadáno zaoblení [mm]
 #   .R - Alternativa zaoblení pokud je zadáno rovnoměrné srážení [mm]
 ## Použité balíčky
-# Unitful, Unitful.DefaultSymbols
+# ---
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -45,7 +45,6 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-#using Unitful, Unitful.DefaultSymbols
 
 function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
 
@@ -59,11 +58,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
     # -----------------------------------------------------------
     dims = Dict{Symbol,Any}()
     # -----------------------------------------------------------
-    # 3) Pomocné funkce
-    # -----------------------------------------------------------
-    mmval(x) = parse(Int, x) * u"mm"
-    # -----------------------------------------------------------
-    # 4) Tabulka parserů (regex → handler)
+    # 3) Tabulka parserů (regex → handler)
     # -----------------------------------------------------------
     parsers = [
         # -------------------------------------------------------
@@ -147,7 +142,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
     )
     ]
     # -----------------------------------------------------------
-    # 5) Vyhodnocení parserů
+    # 4) Vyhodnocení parserů
     # -----------------------------------------------------------
     for (regex, handler) in parsers
         m = match(regex, s)
@@ -157,7 +152,7 @@ function hrana(inputStr::String, uhel::Real=pi/2, smer::String="out")
         end
     end
     # -----------------------------------------------------------
-    # 6) Neznámý tvar
+    # 5) Neznámý tvar
     # -----------------------------------------------------------
     error("Neznámé nebo nepodporované označení profilu: \"$inputStr\"")
 end

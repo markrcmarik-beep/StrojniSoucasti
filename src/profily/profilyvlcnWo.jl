@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
-# ver: 2026-04-01
+# ver: 2026-04-04
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
@@ -25,7 +25,7 @@
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi. V tomto případě Wo.
 ## Použité balíčky:
-# Unitful
+# ---
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -36,17 +36,21 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Unitful
-
 function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
-    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
+    getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
+    to_num(v, name::Symbol) = begin
+        v === missing && error("Chybi parametr: $name")
+        v isa Number || error("Parametr $name musi byt cislo.")
+        v / oneunit(v)
+    end
+    getn(k::Symbol) = to_num(getv(k), k)
 
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
-        a, b = getv(:a), getv(:b)
+        a, b = getn(:a), getn(:b)
         if natoceni in (0, pi, 2*pi)
             return a*b^2/6, "a*b²/6"
         elseif natoceni in (pi/2, 3*pi/2)
@@ -57,17 +61,17 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
-        D = getv(:D)
+        D = getn(:D)
         return pi/32*D^3, "π/32*D³"
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
-        D, d = getv(:D), getv(:d)
+        D, d = getn(:D), getn(:d)
         return pi/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
-        a = getv(:a)
+        a = getn(:a)
         if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
             return a^3/6, "a³/6"
         else
@@ -76,7 +80,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
-        s = getv(:s)
+        s = getn(:s)
         if natoceni in (0, 2*pi/6, 4*pi/6, 6*pi/6, 8*pi/6, 10*pi/6, 12*pi/6)
             return 5*sqrt(3)/72*s^3, "5√3/72*s³"
         elseif natoceni in (pi/6, 3*pi/6, 5*pi/6, 7*pi/6, 9*pi/6, 11*pi/6)
@@ -87,7 +91,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR" # Trubka čtyřhranná
-        a, b, t = getv(:a), getv(:b), getv(:t)
+        a, b, t = getn(:a), getn(:b), getn(:t)
         if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
             return (a*b^2/6) - ((a-2t)*(b-2t)^2/6), "(a*b²/6)-((a-2t)*(b-2t)²/6)"
         else

@@ -1,4 +1,4 @@
-# ver: 2026-02-26
+# ver: 2026-04-03
 using Test
 using StrojniSoucasti
 using Unitful
@@ -12,6 +12,11 @@ using Unitful
         :info => "PLO",
         :a => 20u"mm",
         :b => 10u"mm"
+    )
+    PLO_01_BEZ_JEDNOTKY = Dict(
+        :info => "PLO",
+        :a => 20,
+        :b => 10
     )
 
     PLO_02 = Dict(
@@ -60,9 +65,12 @@ using Unitful
     # ------------------------------------------------------------
     @testset "S – plocha" begin
         S, txt = StrojniSoucasti.profilyvlcn(PLO_01, :S)
-        @test ustrip(u"mm^2", S) == 200
+        @test ustrip(u"mm^2", S) == 200 # Test plochy pro obdélníkovou tyč 20 mm x 10 mm
         @test txt == "a*b"
- 
+        S_bez_jednotky, txt_bez_jednotky = StrojniSoucasti.profilyvlcn(PLO_01_BEZ_JEDNOTKY, :S)
+        @test S_bez_jednotky == 200u"mm^2"
+        @test txt_bez_jednotky == "a*b"
+
         S, txt = StrojniSoucasti.profilyvlcn(PLO_02, :S)
         @test ustrip(u"mm^2", S) >= 196.5 && ustrip(u"mm^2", S) <= 196.6
         @test txt == "a*b - 4*S(R)"
@@ -100,11 +108,14 @@ using Unitful
     @testset "Ix – kvadratický moment" begin
         Ix0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=0)
         Ix90, txt90 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/2)
+        Ix450, txt450 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=5*pi/2)
 
         @test Ix0 == 20u"mm" * (10u"mm")^3 / 12
         @test Ix90 == 10u"mm" * (20u"mm")^3 / 12
+        @test Ix450 == Ix90 # Ověření periodicity natočení (450° == 90°)
         @test txt0 == "a*b^3/12"
         @test txt90 == "b*a^3/12"
+        @test txt450 == txt90 # Ověření, že vzorec pro Ix se správně mění s natočením
     end
 
     # ------------------------------------------------------------
@@ -117,7 +128,7 @@ using Unitful
 
         # Přímé volání profilyvlcnIx pro :Iy (delegace na :Ix s natočením)
         Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
-        @test Iy_direct == 10u"mm" * (20u"mm")^3 / 12
+        @test Iy_direct == 10 * 20^3 / 12
         @test txt_direct == "b*a^3/12"
     end
 
@@ -130,21 +141,21 @@ using Unitful
         Iy_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Iy)
         Ixy_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Ixy)
         @test Ix_k == Iy_k
-        @test Ixy_k == 0
+        @test Ixy_k == 0u"mm^4"
 
         # Trubka kruhová (TRKR) – Ix == Iy a Ixy == 0
         Ix_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ix)
         Iy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Iy)
         Ixy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ixy)
         @test Ix_tr == Iy_tr
-        @test Ixy_tr == 0
+        @test Ixy_tr == 0u"mm^4"
 
         # Čtyřhranná tyč (4HR) – čtverec  (Ix == Iy a Ixy == 0)
         Ix_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Ix, natoceni=0)
         Iy_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Iy)
         Ixy_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Ixy)
         @test Ix_4 == Iy_4
-        @test Ixy_4 == 0
+        @test Ixy_4 == 0u"mm^4"
     end
 
     # ------------------------------------------------------------
