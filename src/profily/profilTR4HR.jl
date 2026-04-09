@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Profil struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-01-18
+# ver: 2026-04-09
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -18,7 +18,7 @@
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
-# profilTR4HRtypes.jl, profilTR4HR.toml
+# profilTR4HRtypes.jl, profilTR4HR.toml, num_to_string()
 ## Příklad:
 # prof = profilTR4HR("TR4HR 20x20x2")
 # println(prof.a)  # 20.0
@@ -33,15 +33,6 @@ using TOML
 include("profiltypes.jl")
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
-
-# Pomocná funkce pro konverzi čísla na string bez zbytečných nul
-function num_to_string(x::Float64)::String
-    if x == floor(x)
-        return string(Int(x))  # celočíslo bez tečky
-    else
-        return string(x)  # desetinné číslo
-    end
-end
 
 function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
 
@@ -103,4 +94,13 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
         R_val, # poloměr
         get(row, "material", String[])::Vector{String}
     )
+end
+
+# Pomocná funkce pro konverzi čísla na string bez zbytečných nul
+function num_to_string(x::Float64)::String
+    if x == floor(x)
+        return string(Int(x))  # celočíslo bez tečky
+    else
+        return string(x)  # desetinné číslo
+    end
 end

@@ -1,4 +1,4 @@
-# ver: 2026-01-18
+# ver: 2026-04-09
 using Test
 using StrojniSoucasti
 
@@ -6,6 +6,7 @@ profilTR4HR_tests = [
     ("TR4HR20x20x2", 20, 20, 2),
     ("TR4HR30x20x3", 30, 20, 3),
     ("TR4HR25x3", 25, 25, 3),
+    ("TR4HR40x40x5", 40, 40, 5),
     ("TR4HR40x5", 40, 40, 5),
     ("TR4HR15x10x1.5", 15, 10, 1.5),
     ("TR4HR10x1", 10, 10, 1),
