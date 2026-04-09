@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-08
+# ver: 2026-04-09
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -32,6 +32,12 @@
 #       "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
 #   "6HR" - šestihranný profil
 #       "6HR {s}" - "6HR 20" - šestihranný profil
+#   "I" - I profil dle tabulky
+#       "IPE {n}" - "IPE 100"
+#       "IPN {n}" - "IPN 100"
+#       "HEA {n}" - "HEA 100"
+#       "HEB {n}" - "HEB 100"
+#       "HEM {n}" - "HEM 100"
 #   "TR4HR" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
@@ -41,7 +47,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# profilTR4HR
+# profilTR4HR, profilI
 ## Příklad:
 #
 ###############################################################
@@ -155,6 +161,28 @@ function profilyCSN(inputStr::AbstractString)
                 dims[:s] = s1 * u"mm"
                 dims[:a] = s1 * u"mm"
                 dims[:R] = 0u"mm"
+                return true
+            end
+        ),
+        # -------------------------------------------------------
+        # I : IPE/IPN/HEA/HEB/HEM
+        # -------------------------------------------------------
+        (
+            r"^(IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$",
+            function (m)
+                A = profilI(s)
+                A === nothing && return false
+
+                dims[:info] = "I"
+                dims[:serie] = A.serie
+                dims[:h] = A.h * u"mm"
+                dims[:b] = A.b * u"mm"
+                dims[:tw] = A.tw * u"mm"
+                dims[:tf] = A.tf * u"mm"
+                dims[:r] = A.r * u"mm"
+                dims[:R] = A.r * u"mm"
+                dims[:standard] = A.standard
+                dims[:material] = A.material
                 return true
             end
         ),

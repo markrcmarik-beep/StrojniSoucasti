@@ -69,7 +69,28 @@ using StrojniSoucasti, Unitful, Test
     @test dims10[:a] == 30u"mm"
     @test dims10[:R] == 0u"mm"
 
+    dims11 = StrojniSoucasti.profilyCSN("IPE100")
+    @test dims11[:info] == "I"
+    @test dims11[:serie] == "IPE"
+    @test dims11[:h] == 100u"mm"
+    @test dims11[:b] == 55u"mm"
+    @test dims11[:tw] == 4.1u"mm"
+    @test dims11[:tf] == 5.7u"mm"
+    @test dims11[:R] == 7u"mm"
+    @test dims11[:standard] == "EN 10365"
+    @test dims11[:material] == ["S235JR", "S355JR"]
+
+    dims12 = StrojniSoucasti.profilyCSN("hea 100")
+    @test dims12[:info] == "I"
+    @test dims12[:serie] == "HEA"
+    @test dims12[:h] == 96u"mm"
+    @test dims12[:b] == 100u"mm"
+    @test dims12[:tw] == 5u"mm"
+    @test dims12[:tf] == 8u"mm"
+    @test dims12[:R] == 12u"mm"
+
     @test StrojniSoucasti.profilyCSN("NEEXISTUJICI 10x10") === nothing
     @test StrojniSoucasti.profilyCSN("PLO 10x10R10") === nothing
     @test StrojniSoucasti.profilyCSN("TRKR 20x10") === nothing
+    @test StrojniSoucasti.profilyCSN("HEM100") === nothing
 end

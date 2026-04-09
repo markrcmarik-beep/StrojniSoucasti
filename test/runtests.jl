@@ -17,6 +17,7 @@ using Test
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profilTR4HR_test.jl")
+    include("profily_test/profilI_test.jl")
     include("profily_test/profilyvlcn_test.jl")
     include("profily_test/profilyvlcnS_test.jl")
     include("profily_test/profilyvlcnIp_test.jl")

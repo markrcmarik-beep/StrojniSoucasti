@@ -15,6 +15,14 @@
 # - name::AbstractString: Označení profilu (např. "TR4HR 20x20x2", "TR4HR20x2")
 ## Výstupní proměnné:
 # - Profil struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+#   Vlastnosti Profil struct:
+#   - name::String: Název profilu
+#   - standard::String: Norma (nepovinné)
+#   - a::Float64: Rozměr a
+#   - b::Float64: Rozměr b
+#   - t::Float64: Tloušťka
+#   - R::Float64: Poloměr (buď z databáze, nebo vypočítaný jako min(t + t/3, 8.0))
+#   - material::Vector{String}: Seznam materiálů (nepovinné)
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
@@ -24,13 +32,14 @@
 # println(prof.a)  # 20.0
 # println(prof.b)  # 20.0
 # println(prof.t)  # 2.0
+# println(prof.R)  # 2.666...
 ###############################################################
 ## Použité proměnné vnitřní:
 #
 
 using TOML
 
-include("profiltypes.jl")
+isdefined(@__MODULE__, :Profil_TR4HR) || include("profiltypes.jl")
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
 
@@ -79,11 +88,12 @@ function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
     end
     idx = findfirst(==(t), t_vec) # najít index tloušťky
     t = t_vec[idx] # vybraná tloušťka
-    R_val = t/3 + t # výchozí poloměr
-    if R_val >= 8
-        R_val = 8
+    R_vec = get(row, "R", nothing)
+    R_val = if R_vec isa AbstractVector && idx <= length(R_vec)
+        Float64(R_vec[idx]) # poloměr z databáze (pokud je uveden)
+    else
+        min(t + t/3, 8.0) # výchozí poloměr
     end
-    #R_val = row["R"][idx] # odpovídající poloměr
 
     return Profil_TR4HR(
         string(oznaceni), # název profilu
