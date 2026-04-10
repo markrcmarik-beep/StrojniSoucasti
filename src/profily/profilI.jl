@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Profil_I struct s vlastnostmi I profilu z databáze.
-# ver: 2026-04-09
+# ver: 2026-04-10
 ## Funkce: profilI()
 ## Autor: Martin
 #
@@ -30,21 +30,13 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 
-const I_DB = TOML.parsefile(joinpath(@__DIR__, "profilI.toml"))
-
-function _num_key(x::Float64)::String
-    if x == floor(x)
-        return string(Int(x))
-    else
-        return string(x)
-    end
-end
+const I_DB = TOML.parsefile(joinpath(@__DIR__, "profilI_CSN425550.toml"))
 
 function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))
     s = replace(s, r"\s+" => "")
 
-    m = match(r"^(IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$", s)
+    m = match(r"^(I|IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$", s)
     m === nothing && return nothing
 
     serie = m.captures[1]
@@ -63,12 +55,36 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     return Profil_I(
         string(serie, " ", size_part),
         serie,
-        get(row, "standard", "")::String,
-        Float64(get(row, "h", 0.0)),
-        Float64(get(row, "b", 0.0)),
-        Float64(get(row, "tw", 0.0)),
-        Float64(get(row, "tf", 0.0)),
-        Float64(get(row, "r", 0.0)),
-        get(row, "material", String[])::Vector{String}
+        #get(row, "standard", "")::String, # norma - textová hodnota
+        "ČSN 42 5550",
+        "norma - textová hodnota", # další informace o normě - textová hodnota
+        Float64(get(row, "b", 0.0)), # b - šířka pásnice [mm]
+        "mm",
+        "šířka pásnice [mm]", # další informace o šířce pásnice - textová hodnota
+        Float64(get(row, "h", 0.0)), # h  - výška profilu [mm]
+        "mm",
+        "výška profilu [mm]", # další informace o výšce profilu - textová hodnota
+        Float64(get(row, "t1", 0.0)), # t1 - tloušťka stojiny [mm]
+        "mm",
+        "tloušťka stojiny [mm]", # další informace o tloušťce stojiny - textová hodnota
+        Float64(get(row, "t2", 0.0)), # t2 - střední tloušťka pásnice [mm]
+        "mm",
+        "střední tloušťka pásnice [mm]", # další informace o tloušťce pásnice - textová hodnota
+        Float64(get(row, "R", 0.0)), # R - poloměr zaoblení výškové spojnice [mm]
+        "mm",
+        "poloměr zaoblení výškové spojnice [mm]", # další informace o poloměru zaoblení výškové spojnice - textová hodnota
+        Float64(get(row, "R1", 0.0)), # R1 - poloměr zaoblení vnitřní šířky pásnice [mm]
+        "mm",
+        "poloměr zaoblení vnitřní šířky pásnice [mm]", # další informace o poloměru zaoblení vnitřní šířky pásnice - textová hodnota
+        get(row, "material", String[])::Vector{String}, # material - materiály - všechny textové hodnoty
+        "materiály - všechny textové hodnoty" # další informace o materiálu - textová hodnota
     )
+end
+
+function _num_key(x::Float64)::String
+    if x == floor(x)
+        return string(Int(x))
+    else
+        return string(x)
+    end
 end

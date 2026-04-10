@@ -165,22 +165,22 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # I : IPE/IPN/HEA/HEB/HEM
+        # I : I/IPE/IPN/HEA/HEB/HEM
         # -------------------------------------------------------
         (
-            r"^(IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$",
+            r"^(I|IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$",
             function (m)
                 A = profilI(s)
                 A === nothing && return false
 
                 dims[:info] = "I"
                 dims[:serie] = A.serie
-                dims[:h] = A.h * u"mm"
                 dims[:b] = A.b * u"mm"
-                dims[:tw] = A.tw * u"mm"
-                dims[:tf] = A.tf * u"mm"
-                dims[:r] = A.r * u"mm"
-                dims[:R] = A.r * u"mm"
+                dims[:h] = A.h * u"mm"
+                dims[:t1] = A.t1 * u"mm"
+                dims[:t2] = A.t2 * u"mm"
+                dims[:R] = A.R * u"mm"
+                dims[:R1] = A.R1 * u"mm"
                 dims[:standard] = A.standard
                 dims[:material] = A.material
                 return true
