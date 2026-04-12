@@ -1,4 +1,4 @@
-# ver: 2026-02-09
+# ver: 2026-04-12
 using StrojniSoucasti, Unitful, Test
 
 @testset "profilyCSN" begin
@@ -29,7 +29,7 @@ using StrojniSoucasti, Unitful, Test
     @test dims5[:a] == 20u"mm"
     @test dims5[:b] == 20u"mm"
     @test dims5[:t] == 2u"mm"
-    #@test isapprox(dims5[:R], (8 / 3)u"mm"; atol = 1e-6u"mm")
+    # @test isapprox(dims5[:R], (8 / 3)u"mm"; atol = 1e-6u"mm")
 
     dims6 = StrojniSoucasti.profilyCSN("TR4HR 20.5 x 20 x 2 R 4.5") # mimo DB
     @test dims6[:info] == "TR4HR"
@@ -71,25 +71,35 @@ using StrojniSoucasti, Unitful, Test
 
     dims11 = StrojniSoucasti.profilyCSN("I80")
     @test dims11[:info] == "I"
-    #@test dims11[:serie] == "IPE"
     @test dims11[:h] == 80u"mm"
     @test dims11[:b] == 42u"mm"
     @test dims11[:t1] == 3.9u"mm"
     @test dims11[:t2] == 5.9u"mm"
     @test dims11[:R] == 3.9u"mm"
-    @test dims11[:standard] == "ČSN 42 5550"
+    @test dims11[:standard] == "\u010CSN 42 5550"
     @test dims11[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
 
     dims12 = StrojniSoucasti.profilyCSN("I 100")
     @test dims12[:info] == "I"
-    #@test dims12[:serie] == "HEA"
     @test dims12[:h] == 100u"mm"
     @test dims12[:b] == 50u"mm"
     @test dims12[:t1] == 4.5u"mm"
     @test dims12[:t2] == 6.8u"mm"
     @test dims12[:R] == 4.5u"mm"
-    @test dims12[:standard] == "ČSN 42 5550"
+    @test dims12[:standard] == "\u010CSN 42 5550"
     @test dims12[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
+
+    dims13 = StrojniSoucasti.profilyCSN("IPE100")
+    @test dims13[:info] == "I"
+    @test dims13[:serie] == "IPE"
+    @test dims13[:h] == 100u"mm"
+    @test dims13[:b] == 55u"mm"
+    @test dims13[:t1] == 4.1u"mm"
+    @test dims13[:t2] == 5.7u"mm"
+    @test dims13[:R] == 7u"mm"
+    @test dims13[:R1] == 0u"mm"
+    @test dims13[:standard] == "\u010CSN 42 5553"
+    @test dims13[:material] == ["11 373", "11 375", "11 503", "11 523", "15 217"]
 
     @test StrojniSoucasti.profilyCSN("NEEXISTUJICI 10x10") === nothing
     @test StrojniSoucasti.profilyCSN("PLO 10x10R10") === nothing

@@ -30,7 +30,8 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 
-const I_DB = TOML.parsefile(joinpath(@__DIR__, "profilI_CSN425550.toml"))
+const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profilI_CSN425550.toml"))
+const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profilIPE_CSN425553.toml"))
 
 function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))
@@ -42,42 +43,58 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     serie = m.captures[1]
     size_raw = m.captures[2]
 
-    key = string(serie, size_raw)
-    if !haskey(I_DB, key)
-        size_val = parse(Float64, size_raw)
-        key = string(serie, _num_key(size_val))
-        haskey(I_DB, key) || return nothing
-    end
+    key_candidates = String[string(serie, size_raw)]
+    size_val = parse(Float64, size_raw)
+    normalized_key = string(serie, _num_key(size_val))
+    normalized_key != key_candidates[1] && push!(key_candidates, normalized_key)
 
-    row = I_DB[key]
+    db_candidates = serie == "IPE" ?
+        ((IPE_DB_CSN425553, "\u010CSN 42 5553"), (I_DB_CSN425550, "\u010CSN 42 5550")) :
+        ((I_DB_CSN425550, "\u010CSN 42 5550"),)
+
+    row = nothing
+    key = ""
+    standard = ""
+    for (db, db_standard) in db_candidates
+        for key_candidate in key_candidates
+            if haskey(db, key_candidate)
+                row = db[key_candidate]
+                key = key_candidate
+                standard = db_standard
+                break
+            end
+        end
+        row === nothing || break
+    end
+    row === nothing && return nothing
+
     size_part = key[length(serie)+1:end]
 
     return Profil_I(
         string(serie, " ", size_part),
         serie,
-        #get(row, "standard", "")::String, # norma - textová hodnota
-        "ČSN 42 5550",
-        "norma - textová hodnota", # další informace o normě - textová hodnota
-        Float64(get(row, "b", 0.0)), # b - šířka pásnice [mm]
+        standard,
+        "norma - textova hodnota",
+        Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
-        "šířka pásnice [mm]", # další informace o šířce pásnice - textová hodnota
-        Float64(get(row, "h", 0.0)), # h  - výška profilu [mm]
+        "vyska profilu [mm]",
+        Float64(get(row, "b", 0.0)), # b - sirka pasnice [mm]
         "mm",
-        "výška profilu [mm]", # další informace o výšce profilu - textová hodnota
-        Float64(get(row, "t1", 0.0)), # t1 - tloušťka stojiny [mm]
+        "sirka pasnice [mm]",
+        Float64(get(row, "t1", 0.0)), # t1 - tloustka stojiny [mm]
         "mm",
-        "tloušťka stojiny [mm]", # další informace o tloušťce stojiny - textová hodnota
-        Float64(get(row, "t2", 0.0)), # t2 - střední tloušťka pásnice [mm]
+        "tloustka stojiny [mm]",
+        Float64(get(row, "t2", 0.0)), # t2 - stredni tloustka pasnice [mm]
         "mm",
-        "střední tloušťka pásnice [mm]", # další informace o tloušťce pásnice - textová hodnota
-        Float64(get(row, "R", 0.0)), # R - poloměr zaoblení výškové spojnice [mm]
+        "stredni tloustka pasnice [mm]",
+        Float64(get(row, "R", 0.0)), # R - polomer zaobleni vyskove spojnice [mm]
         "mm",
-        "poloměr zaoblení výškové spojnice [mm]", # další informace o poloměru zaoblení výškové spojnice - textová hodnota
-        Float64(get(row, "R1", 0.0)), # R1 - poloměr zaoblení vnitřní šířky pásnice [mm]
+        "polomer zaobleni vyskove spojnice [mm]",
+        Float64(get(row, "R1", 0.0)), # R1 - polomer zaobleni vnitrni sirky pasnice [mm]
         "mm",
-        "poloměr zaoblení vnitřní šířky pásnice [mm]", # další informace o poloměru zaoblení vnitřní šířky pásnice - textová hodnota
-        get(row, "material", String[])::Vector{String}, # material - materiály - všechny textové hodnoty
-        "materiály - všechny textové hodnoty" # další informace o materiálu - textová hodnota
+        "polomer zaobleni vnitrni sirky pasnice [mm]",
+        get(row, "material", String[])::Vector{String},
+        "materialy - vsechny textove hodnoty"
     )
 end
 

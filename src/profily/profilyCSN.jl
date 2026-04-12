@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-09
+# ver: 2026-04-12
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
