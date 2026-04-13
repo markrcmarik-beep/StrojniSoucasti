@@ -35,7 +35,7 @@ struct Profil_I
     R1::Float64                     # poloměr zaoblení vnitřní [mm]
     R1_unit::String                 # jednotka poloměru vnitřního
     R1_info::String                 # další informace o poloměru vnitřního (např. "poloměr zaoblení vnitřní šířky pásnice")
-    sp::float64                     # sklon příruby [%]
+    sp::Float64                     # sklon příruby [%]
     sp_unit::String                 # jednotka sklonu příruby
     sp_info::String                 # další informace o sklonu příruby (např. "sklon příruby [%]")
     m::Float64                      # hmotnost [kg/m]

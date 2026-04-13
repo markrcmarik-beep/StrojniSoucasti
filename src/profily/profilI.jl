@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Profil_I struct s vlastnostmi I profilu z databáze.
-# ver: 2026-04-10
+# ver: 2026-04-13
 ## Funkce: profilI()
 ## Autor: Martin
 #
@@ -40,8 +40,8 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     m = match(r"^(I|IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$", s)
     m === nothing && return nothing
 
-    serie = m.captures[1]
-    size_raw = m.captures[2]
+    serie = String(m.captures[1])
+    size_raw = String(m.captures[2])
 
     key_candidates = String[string(serie, size_raw)]
     size_val = parse(Float64, size_raw)
@@ -93,8 +93,38 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
         Float64(get(row, "R1", 0.0)), # R1 - polomer zaobleni vnitrni sirky pasnice [mm]
         "mm",
         "polomer zaobleni vnitrni sirky pasnice [mm]",
+        Float64(get(row, "sp", 0.0)), # sp - sklon priruby [%]
+        "%",
+        "sklon priruby [%]",
+        Float64(get(row, "m", 0.0)), # m - hmotnost [kg/m]
+        "kg/m",
+        "hmotnost [kg/m]",
         get(row, "material", String[])::Vector{String},
-        "materialy - vsechny textove hodnoty"
+        "materialy - vsechny textove hodnoty",
+        Float64(get(row, "S", 0.0)), # S - plocha prurezu [mm^2]
+        "mm^2",
+        "plocha prurezu [mm^2]",
+        Float64(get(row, "Ix", 0.0)), # Ix - moment setrvacnosti podle osy x [mm^4]
+        "mm^4",
+        "moment setrvacnosti podle osy x [mm^4]",
+        Float64(get(row, "Wx", 0.0)), # Wx - prurezovy modul podle osy x [mm^3]
+        "mm^3",
+        "prurezovy modul podle osy x [mm^3]",
+        Float64(get(row, "ix", 0.0)), # ix - polomer setrvacnosti podle osy x [mm]
+        "mm",
+        "polomer setrvacnosti podle osy x [mm]",
+        Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
+        "mm^4",
+        "moment setrvacnosti podle osy y [mm^4]",
+        Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
+        "mm^3",
+        "prurezovy modul podle osy y [mm^3]",
+        Float64(get(row, "iy", 0.0)), # iy - polomer setrvacnosti podle osy y [mm]
+        "mm",
+        "polomer setrvacnosti podle osy y [mm]",
+        Float64(get(row, "Sx", get(row, "sx", 0.0))), # Sx - staticky moment podle osy x [mm^3]
+        "mm^3",
+        "staticky moment prurezu podle osy x [mm^3]"
     )
 end
 
