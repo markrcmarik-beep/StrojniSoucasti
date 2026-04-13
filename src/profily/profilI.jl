@@ -37,7 +37,7 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))
     s = replace(s, r"\s+" => "")
 
-    m = match(r"^(I|IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$", s)
+    m = match(r"^(I|IPE)(\d+(?:\.\d+)?)$", s)
     m === nothing && return nothing
 
     serie = String(m.captures[1])
