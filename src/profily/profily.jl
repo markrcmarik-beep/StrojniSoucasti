@@ -12,7 +12,7 @@
 # balicek/src/profily/profily.jl
 #
 ## Vzor:
-## vystupni_promenne = profily(vstupni_promenne)
+## vystupni_promenne = profily(inputStr, args...)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru profilu dle ČSN.
 #   Podporované tvary:

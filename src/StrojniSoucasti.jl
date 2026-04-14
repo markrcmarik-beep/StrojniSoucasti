@@ -40,6 +40,7 @@ include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
+include("profily/obloukBodu.jl") # body kruhoveho oblouku
 include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
 include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
 include("profily/prurezovyModulKrutBodu.jl") # modul v krutu z obrysovych bodu
@@ -67,7 +68,7 @@ include("tolerance/tolerance.jl") # tolerance
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
 # profily
-profily, plochaBodu, polarniMomentBodu, prurezovyModulKrutBodu,
+profily,
 # namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 
