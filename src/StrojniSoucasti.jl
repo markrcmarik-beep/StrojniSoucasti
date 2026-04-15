@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-04-09
+# ver: 2026-04-15
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -43,6 +43,7 @@ include("profily/hrana.jl") # hrany
 include("profily/obloukBodu.jl") # body kruhoveho oblouku
 include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
 include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
+include("profily/polygon_metrics.jl") # plocha, teziste, momenty setrvacnosti z obrysovych bodu
 include("profily/prurezovyModulKrutBodu.jl") # modul v krutu z obrysovych bodu
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
