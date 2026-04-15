@@ -1,26 +1,33 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet po sobe jdoucich bodu na kruhovem oblouku.
-# ver: 2026-04-14
+# Výpočet po sobě jdoucich bodů na kruhovém oblouku.
+# ver: 2026-04-15
 ## Funkce: obloukBodu()
 ## Autor: Martin + Codex
 #
-## Cesta uvnitr balicku:
+## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/profily/obloukBodu.jl
 #
 ## Vzor:
 # body = obloukBodu((x1, y1), (x2, y2), R, "+", 0.5)
 #
-## Vstupni promenne:
+## Vstupní proměnné:
 # prvni_bod   - Prvni bod oblouku (x, y).
 # posledni_bod - Posledni bod oblouku (x, y).
 # polomer     - Polomer kruznice.
 # smer        - "+" = proti smeru hodin (CCW), "-" = po smeru hodin (CW).
 # presnost    - Maximalni delka jednoho dilku po oblouku.
 #
-## Vystupni promenne:
+## Výstupní proměnné:
 # body - Vektor bodu [(x, y), ...] vcetne prvniho i posledniho bodu.
+## Použité balíčky:
+#
+## Použite uživatelské funkce:
+# _oblouk_point_xy - Pomocna funkce pro ziskani x, y ze zadaneho formatu bodu.
+## Příklad:
+# body = obloukBodu((0, 0), (1, 1), 1.0, "+", 0.5)
+# => body = [(0.0, 0.0), (0.2928932188134524, 0.7071067811865475), (1.0, 1.0)]
 ###############################################################
 
 function obloukBodu(prvni_bod, posledni_bod, polomer::Real, smer::String="+", presnost::Real=1.0)
