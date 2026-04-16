@@ -27,7 +27,8 @@ include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/mezUnavy.jl") # mez únavy
 ## --- profily ---
 include("profily/profilTR4HR.jl") # profily TR4HR
-include("profily/profilI.jl") # profily I
+include("profily/profil_I_CSN425550.jl") # profily I dle CSN 42 5550
+include("profily/profil_IPE_CSN425553.jl") # profily IPE dle CSN 42 5553
 include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů

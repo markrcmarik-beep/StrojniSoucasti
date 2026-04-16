@@ -1,29 +1,28 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vrátí Profil_I struct s vlastnostmi I profilu z databáze.
-# ver: 2026-04-13
-## Funkce: profilI()
+# Vrati Profil_I struct s vlastnostmi I profilu z databaze CSN 42 5550.
+# ver: 2026-04-16
+## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
-## Cesta uvnitř balíčku:
-# balicek/src/profil/profilI.jl
+## Cesta uvnitr balicku:
+# balicek/src/profily/profil_I_CSN425550.jl
 #
 ## Vzor:
-## vystupni_promenne = profilI(vstupni_promenne)
-## Vstupní proměnné:
-# - name::AbstractString: Označení profilu (např. "IPE100", "IPE 100", "hea100")
-## Výstupní proměnné:
+## vystupni_promenne = profil_I_CSN425550(vstupni_promenne)
+## Vstupni promenne:
+# - name::AbstractString: Oznaceni profilu (napr. "I100", "I 100")
+## Vystupni promenne:
 # - Profil_I struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
-## Použité balíčky:
+## Pouzite balicky:
 # TOML
-## Použité uživatelské funkce:
-# profiltypes.jl, profilI.toml
-## Příklad:
-# prof = profilI("IPE 100")
+## Pouzite uzivatelske funkce:
+# profiltypes.jl
+## Priklad:
+# prof = profil_I_CSN425550("I 100")
 # println(prof.h)  # 100.0
-# println(prof.b)  # 55.0
-# println(prof.r)  # 7.0
+# println(prof.b)  # 50.0
 ###############################################################
 
 using TOML
@@ -31,45 +30,49 @@ using TOML
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 
 const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profilI_CSN425550.toml"))
-const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profilIPE_CSN425553.toml"))
 
-function profilI(name::AbstractString)::Union{Profil_I, Nothing}
+function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))
     s = replace(s, r"\s+" => "")
 
-    m = match(r"^(I|IPE)(\d+(?:\.\d+)?)$", s)
+    m = match(r"^I(\d+(?:\.\d+)?)$", s)
     m === nothing && return nothing
 
-    serie = String(m.captures[1])
-    size_raw = String(m.captures[2])
+    size_raw = String(m.captures[1])
+    key_candidates = _profil_i_key_candidates("I", size_raw)
 
-    key_candidates = String[string(serie, size_raw)]
-    size_val = parse(Float64, size_raw)
-    normalized_key = string(serie, _num_key(size_val))
-    normalized_key != key_candidates[1] && push!(key_candidates, normalized_key)
-
-    db_candidates = serie == "IPE" ?
-        ((IPE_DB_CSN425553, "\u010CSN 42 5553"), (I_DB_CSN425550, "\u010CSN 42 5550")) :
-        ((I_DB_CSN425550, "\u010CSN 42 5550"),)
-
-    row = nothing
-    key = ""
-    standard = ""
-    for (db, db_standard) in db_candidates
-        for key_candidate in key_candidates
-            if haskey(db, key_candidate)
-                row = db[key_candidate]
-                key = key_candidate
-                standard = db_standard
-                break
-            end
-        end
-        row === nothing || break
-    end
+    row, key = _profil_i_find_row(I_DB_CSN425550, key_candidates)
     row === nothing && return nothing
 
-    size_part = key[length(serie)+1:end]
+    size_part = key[2:end]
+    return _profil_i_from_row(row, "I", size_part, "\u010CSN 42 5550")
+end
 
+# Zpetna kompatibilita puvodniho API.
+function profilI(name::AbstractString)::Union{Profil_I, Nothing}
+    prof = profil_IPE_CSN425553(name)
+    prof === nothing || return prof
+    return profil_I_CSN425550(name)
+end
+
+function _profil_i_key_candidates(serie::String, size_raw::String)::Vector{String}
+    key_candidates = String[string(serie, size_raw)]
+    size_val = parse(Float64, size_raw)
+    normalized_key = string(serie, _profil_i_num_key(size_val))
+    normalized_key != key_candidates[1] && push!(key_candidates, normalized_key)
+    return key_candidates
+end
+
+function _profil_i_find_row(db, key_candidates::Vector{String})
+    for key_candidate in key_candidates
+        if haskey(db, key_candidate)
+            return db[key_candidate], key_candidate
+        end
+    end
+    return nothing, ""
+end
+
+function _profil_i_from_row(row, serie::String, size_part::String, standard::String)::Profil_I
     return Profil_I(
         string(serie, " ", size_part),
         serie,
@@ -128,7 +131,7 @@ function profilI(name::AbstractString)::Union{Profil_I, Nothing}
     )
 end
 
-function _num_key(x::Float64)::String
+function _profil_i_num_key(x::Float64)::String
     if x == floor(x)
         return string(Int(x))
     else

@@ -34,10 +34,7 @@
 #       "6HR {s}" - "6HR 20" - šestihranný profil
 #   "I" - I profil dle tabulky
 #       "IPE {n}" - "IPE 100"
-#       "IPN {n}" - "IPN 100"
-#       "HEA {n}" - "HEA 100"
-#       "HEB {n}" - "HEB 100"
-#       "HEM {n}" - "HEM 100"
+#       "I {n}" - "I 100"
 #   "TR4HR" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
@@ -47,7 +44,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# profilTR4HR, profilI
+# profilTR4HR, profil_I_CSN425550, profil_IPE_CSN425553
 ## Příklad:
 #
 ###############################################################
@@ -165,12 +162,13 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # I : I/IPE/IPN/HEA/HEB/HEM
+        # I : I/IPE
         # -------------------------------------------------------
         (
-            r"^(I|IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$",
+            r"^(I|IPE)(\d+(?:\.\d+)?)$",
             function (m)
-                A = profilI(s)
+                serie = String(m.captures[1])
+                A = serie == "IPE" ? profil_IPE_CSN425553(s) : profil_I_CSN425550(s)
                 A === nothing && return false
 
                 dims[:info] = "I"
