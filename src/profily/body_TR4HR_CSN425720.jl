@@ -44,17 +44,17 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
         x = 0
         y = 0
     elseif uchyceni == "stred"
-        x = -b/2
-        y = -h/2
+        x = -a/2
+        y = -b/2
     elseif uchyceni == "lu"
         x = 0
-        y = -h
+        y = -b
     elseif uchyceni == "rd"
-        x = -b
+        x = -a
         y = 0
     elseif uchyceni == "ru"
-        x = -b
-        y = -h
+        x = -a
+        y = -b
     else
         throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
@@ -62,21 +62,36 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
 
     # (x, y) levý spodní roh
     b_plus1 = StrojniSoucasti.obloukBodu(
-        (x + b/2 + t1/2 + R, y + t2), (x + b/2 + t1/2, y + t2 + R), 
+        (x, y + R), (x + R, y), 
         R, "-", 0.01)
     b_plus2 = StrojniSoucasti.obloukBodu(
-        (x + b/2 + t1/2, y + h - t2 - R), (x + b/2 + t1/2 + R, y + h - t2), 
+        (x + a - R, y), (x + a, y + R), 
         R, "-", 0.01)
     b_plus3 = StrojniSoucasti.obloukBodu(
-        (x + b/2 - t1/2 - R, y + h - t2), (x + b/2 - t1/2, y + h - t2 - R), 
+        (x + a, y + b - R), (x + a - R, y + b), 
         R, "-", 0.01)
     b_plus4 = StrojniSoucasti.obloukBodu(
-        (x + b/2 - t1/2, y + t2 + R), (x + b/2 - t1/2 - R, y + t2), 
+        (x + R, y + b), (x, y + b - R), 
         R, "-", 0.01)
-    body = [(x, y), (x+b, y), (x+b, y+t2), 
+    body = [
         b_plus1..., b_plus2..., 
-        (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
         b_plus3..., b_plus4...,
-        (x, y+t2)]
+        ]
+    b2_plus1 = StrojniSoucasti.obloukBodu(
+        (x + t, y + t + R), (x + t + R, y + t), 
+        R, "-", 0.01)
+    b2_plus2 = StrojniSoucasti.obloukBodu(
+        (x + a - t - R, y + t), (x + a - t, y + t + R), 
+        R, "-", 0.01)
+    b2_plus3 = StrojniSoucasti.obloukBodu(
+        (x + a - t, y + b - t - R), (x + a - t - R, y + b - t), 
+        R, "-", 0.01)
+    b2_plus4 = StrojniSoucasti.obloukBodu(
+        (x + t + R, y + b - t), (x + t, y + b - t - R), 
+        R, "-", 0.01)
+    body2 = [
+        b2_plus1..., b2_plus2...,
+        b2_plus3..., b2_plus4...,
+    ]
     return body
 end

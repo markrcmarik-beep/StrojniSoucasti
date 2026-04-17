@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-12
+# ver: 2026-04-17
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -200,7 +200,7 @@ function profilyCSN(inputStr::AbstractString)
                     end
                 end
                 # Zkusit databázi standardních profilů
-                A = profilTR4HR(s)
+                A = profil_TR4HR_CSN425720(s)
                 if A !== nothing
                     dims[:info] = "TR4HR"
                     dims[:a] = A.a * u"mm"
@@ -238,7 +238,7 @@ function profilyCSN(inputStr::AbstractString)
                     end
                 end
                 # Zkusit databázi standardních profilů
-                A = profilTR4HR(s)
+                A = profil_TR4HR_CSN425720(s)
                 if A !== nothing
                     dims[:info] = "TR4HR"
                     dims[:a] = A.a * u"mm"

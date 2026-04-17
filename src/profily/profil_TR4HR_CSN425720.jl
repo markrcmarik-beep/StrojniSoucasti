@@ -41,9 +41,9 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_TR4HR) || include("profiltypes.jl")
 
-const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN.toml"))
+const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml"))
 
-function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
+function profil_TR4HR_CSN425720(name::AbstractString)::Union{Profil_TR4HR, Nothing}
 
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
