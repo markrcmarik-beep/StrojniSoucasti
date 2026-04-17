@@ -18,7 +18,7 @@
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
-# profiltypes.jl
+# profiltypes.jl, profil_I_common.jl
 ## Priklad:
 # prof = profil_I_CSN425550("I 100")
 # println(prof.h)  # 100.0
@@ -28,6 +28,7 @@
 using TOML
 
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
+isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
 
 const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
 
@@ -45,38 +46,10 @@ function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
     row === nothing && return nothing
 
     size_part = key[2:end]
-    return _profil_i_from_row(row, "I", size_part, "\u010CSN 42 5550")
-end
-
-# Zpetna kompatibilita puvodniho API.
-function profilI(name::AbstractString)::Union{Profil_I, Nothing}
-    prof = profil_IPE_CSN425553(name)
-    prof === nothing || return prof
-    return profil_I_CSN425550(name)
-end
-
-function _profil_i_key_candidates(serie::String, size_raw::String)::Vector{String}
-    key_candidates = String[string(serie, size_raw)]
-    size_val = parse(Float64, size_raw)
-    normalized_key = string(serie, _profil_i_num_key(size_val))
-    normalized_key != key_candidates[1] && push!(key_candidates, normalized_key)
-    return key_candidates
-end
-
-function _profil_i_find_row(db, key_candidates::Vector{String})
-    for key_candidate in key_candidates
-        if haskey(db, key_candidate)
-            return db[key_candidate], key_candidate
-        end
-    end
-    return nothing, ""
-end
-
-function _profil_i_from_row(row, serie::String, size_part::String, standard::String)::Profil_I
     return Profil_I(
-        string(serie, " ", size_part),
-        serie,
-        standard,
+        string("I", " ", size_part),
+        "I",
+        "\u010CSN 42 5550",
         "norma - textova hodnota",
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
@@ -131,10 +104,9 @@ function _profil_i_from_row(row, serie::String, size_part::String, standard::Str
     )
 end
 
-function _profil_i_num_key(x::Float64)::String
-    if x == floor(x)
-        return string(Int(x))
-    else
-        return string(x)
-    end
+# Zpetna kompatibilita puvodniho API.
+function profilI(name::AbstractString)::Union{Profil_I, Nothing}
+    prof = profil_IPE_CSN425553(name)
+    prof === nothing || return convert(Profil_I, prof)
+    return profil_I_CSN425550(name)
 end

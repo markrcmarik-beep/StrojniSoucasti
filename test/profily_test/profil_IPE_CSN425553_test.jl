@@ -6,10 +6,12 @@ profil_IPE_CSN425553_tests = [
     ("IPE80", "IPE", "\u010CSN 42 5553", 80.0, 46.0, 3.8, 5.2, 5.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
     ("IPE 100", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
     ("ipe100.0", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
+    ("ipe 100.0", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
 ]
 
 function _test_profil_ipe_csn425553_common(prof, exp_serie, exp_standard, exp_h, exp_b, exp_t1, exp_t2, exp_R, exp_R1, exp_material)
     @test prof !== nothing
+    @test prof isa StrojniSoucasti.IPE_CSN425553
     @test prof.serie == exp_serie
     @test prof.standard == exp_standard
     @test prof.h == exp_h
