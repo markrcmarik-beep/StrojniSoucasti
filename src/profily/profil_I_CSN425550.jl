@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati Profil_I struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-04-16
+# ver: 2026-04-17
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -29,7 +29,7 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 
-const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profilI_CSN425550.toml"))
+const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
 
 function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))

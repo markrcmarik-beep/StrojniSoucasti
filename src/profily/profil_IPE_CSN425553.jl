@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati Profil_I struct s vlastnostmi IPE profilu z databaze CSN 42 5553.
-# ver: 2026-04-16
+# ver: 2026-04-17
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -29,7 +29,7 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 
-const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profilIPE_CSN425553.toml"))
+const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profil_IPE_CSN425553.toml"))
 
 function profil_IPE_CSN425553(name::AbstractString)::Union{Profil_I, Nothing}
     s = uppercase(strip(name))

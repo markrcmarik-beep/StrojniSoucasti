@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí Profil struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-04-09
+# ver: 2026-04-17
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -41,7 +41,7 @@ using TOML
 
 isdefined(@__MODULE__, :Profil_TR4HR) || include("profiltypes.jl")
 
-const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profilTR4HR.toml"))
+const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN.toml"))
 
 function profilTR4HR(name::AbstractString)::Union{Profil_TR4HR, Nothing}
 
