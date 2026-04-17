@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vypocet prurezoveho modulu v krutu obecneho tvaru
 # (jednoducheho polygonu) pomoci bodu na obrysu.
-# ver: 2026-04-08
+# ver: 2026-04-17
 ## Funkce: prurezovyModulKrutBodu()
 ## Autor: Martin
 #
@@ -23,7 +23,7 @@ Poznamka:
 - vyuziva sdilene helpery ze souboru `plochaBodu.jl`.
 """
 function prurezovyModulKrutBodu(body::Union{AbstractVector,AbstractMatrix})
-    m = _polygon_metrics(body)
+    m = polygon_metrics(body)
     rmax = _max_radius_from_centroid(body, m.cx, m.cy)
     iszero(rmax) && throw(ArgumentError("Nelze urcit prurezovy modul v krutu: rmax je nulove."))
     return m.Jp / rmax

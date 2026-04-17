@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vypocet polarniho momentu plochy obecneho tvaru
 # (jednoducheho polygonu) pomoci bodu na obrysu.
-# ver: 2026-04-08
+# ver: 2026-04-17
 ## Funkce: polarniMomentBodu()
 ## Autor: Martin
 #
@@ -21,6 +21,6 @@ Poznamka:
 - vyuziva sdileny vypocet geometrie ze souboru `plochaBodu.jl`.
 """
 function polarniMomentBodu(body::Union{AbstractVector,AbstractMatrix})
-    return _polygon_metrics(body).Jp
+    return polygon_metrics(body).Jp
 end
 

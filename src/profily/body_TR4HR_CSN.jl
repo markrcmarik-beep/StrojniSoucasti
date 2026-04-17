@@ -36,10 +36,9 @@
 
 function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
 
+    a = prof.a
     b = prof.b
-    h = prof.h
-    t1 = prof.t1
-    t2 = prof.t2
+    t = prof.t
     R = prof.R
     if uchyceni == "ld"
         x = 0
@@ -61,11 +60,6 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
     end
 
-    #b = 100
-    #h = 200
-    #t1 = 5.6
-    #t2 = 8.5
-    #R = 12
     # (x, y) levý spodní roh
     b_plus1 = StrojniSoucasti.obloukBodu(
         (x + b/2 + t1/2 + R, y + t2), (x + b/2 + t1/2, y + t2 + R), 
