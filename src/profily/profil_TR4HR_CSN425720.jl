@@ -41,11 +41,21 @@ using TOML
 
 struct TR4HR_CSN425720
     name::String
+    series::String
     standard::String
+    standard_info::String
     a::Float64
+    a_unit::String
+    a_info::String
     b::Float64
+    b_unit::String
+    b_info::String
     t::Float64
+    t_unit::String
+    t_info::String
     R::Float64
+    R_unit::String
+    R_info::String
     material::Vector{String}
 end
 
@@ -105,11 +115,21 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
 
     return TR4HR_CSN425720(
         string(oznaceni), # název profilu
-        get(row, "standard", "")::String, # norma (nepovinné)
+        "TR4HR", # série
+        "\u010CSN 42 5720", # norma
+        "norma - textova hodnota", # info o normě
         a, # rozměr a
+        "mm", # jednotka a
+        "rozměr a", # info a
         b, # rozměr b
+        "mm", # jednotka b
+        "rozměr b", # info b
         t, # tloušťka
+        "mm", # jednotka t
+        "tloušťka", # info t
         R_val, # poloměr
+        "mm", # jednotka R
+        "poloměr", # info R
         get(row, "material", String[])::Vector{String}
     )
 end

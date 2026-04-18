@@ -103,10 +103,10 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
 
     size_part = key[2:end]
     return I_CSN425550(
-        string("I", " ", size_part),
-        "I",
-        "\u010CSN 42 5550",
-        "norma - textova hodnota",
+        string("I", " ", size_part), # název profilu
+        "I", # série
+        "\u010CSN 42 5550", # norma
+        "norma - textova hodnota", # info o normě
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
         "vyska profilu [mm]",
