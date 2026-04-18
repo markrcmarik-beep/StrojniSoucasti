@@ -1,4 +1,4 @@
-# ver: 2026-04-16
+# ver: 2026-04-18
 using Test
 using StrojniSoucasti
 
@@ -11,6 +11,7 @@ profil_I_CSN425550_tests = [
 
 function _test_profil_i_csn425550_common(prof, exp_serie, exp_standard, exp_h, exp_b, exp_t1, exp_t2, exp_R, exp_R1, exp_material)
     @test prof !== nothing
+    @test prof isa StrojniSoucasti.I_CSN425550
     @test prof.serie == exp_serie
     @test prof.standard == exp_standard
     @test prof.h == exp_h

@@ -1,4 +1,4 @@
-# ver: 2026-04-17
+# ver: 2026-04-18
 using Test
 using StrojniSoucasti
 
@@ -22,6 +22,7 @@ profil_TR4HR_CSN425720_tests = [
     for (name1, exp_a, exp_b, exp_t, exp_standard, exp_material) in profil_TR4HR_CSN425720_tests
         prof = StrojniSoucasti.profil_TR4HR_CSN425720(name1)
         @test prof !== nothing
+        @test prof isa StrojniSoucasti.TR4HR_CSN425720
         @test prof.a == exp_a
         @test prof.b == exp_b
         @test prof.t == exp_t

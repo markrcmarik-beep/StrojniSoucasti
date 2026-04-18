@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN 42 5553.
-# ver: 2026-04-17
+# ver: 2026-04-18
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -18,7 +18,7 @@
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
-# profiltypes.jl, profil_I_common.jl (sdilene interni helpery)
+# profil_I_common.jl (sdilene interni helpery)
 ## Priklad:
 # prof = profil_IPE_CSN425553("IPE 100")
 # println(prof.h)  # 100.0
@@ -27,7 +27,6 @@
 
 using TOML
 
-isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
 
 struct IPE_CSN425553
@@ -159,9 +158,4 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         "mm^3",
         "staticky moment prurezu podle osy x [mm^3]"
     )
-end
-
-function Base.convert(::Type{Profil_I}, prof::IPE_CSN425553)::Profil_I
-    values = ntuple(i -> getfield(prof, i), fieldcount(IPE_CSN425553))
-    return Profil_I(values...)
 end

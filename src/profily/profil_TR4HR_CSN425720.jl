@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vrátí Profil struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-04-17
+# Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
+# ver: 2026-04-18
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -14,8 +14,8 @@
 ## Vstupní proměnné:
 # - name::AbstractString: Označení profilu (např. "TR4HR 20x20x2", "TR4HR20x2")
 ## Výstupní proměnné:
-# - Profil struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
-#   Vlastnosti Profil struct:
+# - TR4HR_CSN425720 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+#   Vlastnosti TR4HR_CSN425720 struct:
 #   - name::String: Název profilu
 #   - standard::String: Norma (nepovinné)
 #   - a::Float64: Rozměr a
@@ -26,7 +26,7 @@
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
-# profilTR4HRtypes.jl, profilTR4HR.toml, num_to_string()
+# profil_TR4HR_CSN425720.toml, num_to_string()
 ## Příklad:
 # prof = profilTR4HR("TR4HR 20x20x2")
 # println(prof.a)  # 20.0
@@ -39,11 +39,19 @@
 
 using TOML
 
-isdefined(@__MODULE__, :Profil_TR4HR) || include("profiltypes.jl")
+struct TR4HR_CSN425720
+    name::String
+    standard::String
+    a::Float64
+    b::Float64
+    t::Float64
+    R::Float64
+    material::Vector{String}
+end
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml"))
 
-function profil_TR4HR_CSN425720(name::AbstractString)::Union{Profil_TR4HR, Nothing}
+function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, Nothing}
 
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
@@ -95,7 +103,7 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{Profil_TR4HR, Nothi
         min(t + t/3, 8.0) # výchozí poloměr
     end
 
-    return Profil_TR4HR(
+    return TR4HR_CSN425720(
         string(oznaceni), # název profilu
         get(row, "standard", "")::String, # norma (nepovinné)
         a, # rozměr a

@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vrati Profil_I struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-04-17
+# Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
+# ver: 2026-04-18
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -14,11 +14,11 @@
 ## Vstupni promenne:
 # - name::AbstractString: Oznaceni profilu (napr. "I100", "I 100")
 ## Vystupni promenne:
-# - Profil_I struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+# - I_CSN425550 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
-# profiltypes.jl, profil_I_common.jl
+# profil_I_common.jl
 ## Priklad:
 # prof = profil_I_CSN425550("I 100")
 # println(prof.h)  # 100.0
@@ -27,12 +27,68 @@
 
 using TOML
 
-isdefined(@__MODULE__, :Profil_I) || include("profiltypes.jl")
 isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
+
+struct I_CSN425550
+    name::String
+    serie::String
+    standard::String
+    standard_info::String
+    h::Float64
+    h_unit::String
+    h_info::String
+    b::Float64
+    b_unit::String
+    b_info::String
+    t1::Float64
+    t1_unit::String
+    t1_info::String
+    t2::Float64
+    t2_unit::String
+    t2_info::String
+    R::Float64
+    R_unit::String
+    R_info::String
+    R1::Float64
+    R1_unit::String
+    R1_info::String
+    sp::Float64
+    sp_unit::String
+    sp_info::String
+    m::Float64
+    m_unit::String
+    m_info::String
+    material::Vector{String}
+    material_info::String
+    S::Float64
+    S_unit::String
+    S_info::String
+    Ix::Float64
+    Ix_unit::String
+    Ix_info::String
+    Wx::Float64
+    Wx_unit::String
+    Wx_info::String
+    ix::Float64
+    ix_unit::String
+    ix_info::String
+    Iy::Float64
+    Iy_unit::String
+    Iy_info::String
+    Wy::Float64
+    Wy_unit::String
+    Wy_info::String
+    iy::Float64
+    iy_unit::String
+    iy_info::String
+    Sx::Float64
+    Sx_unit::String
+    Sx_info::String
+end
 
 const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
 
-function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
+function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     s = uppercase(strip(name))
     s = replace(s, r"\s+" => "")
 
@@ -46,7 +102,7 @@ function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
     row === nothing && return nothing
 
     size_part = key[2:end]
-    return Profil_I(
+    return I_CSN425550(
         string("I", " ", size_part),
         "I",
         "\u010CSN 42 5550",
@@ -105,8 +161,8 @@ function profil_I_CSN425550(name::AbstractString)::Union{Profil_I, Nothing}
 end
 
 # Zpetna kompatibilita puvodniho API.
-function profilI(name::AbstractString)::Union{Profil_I, Nothing}
+function profilI(name::AbstractString)
     prof = profil_IPE_CSN425553(name)
-    prof === nothing || return convert(Profil_I, prof)
+    prof === nothing || return prof
     return profil_I_CSN425550(name)
 end
