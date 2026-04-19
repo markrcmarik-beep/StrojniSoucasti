@@ -44,6 +44,7 @@ include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
 include("profily/obloukBodu.jl") # body kruhoveho oblouku
 include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
+include("profily/kvadratickyMomentBodu.jl") # kvadraticke momenty z obrysovych bodu
 include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
 include("profily/polygon_metrics.jl") # plocha, teziste, momenty setrvacnosti z obrysovych bodu
 include("profily/prurezovyModulKrutBodu.jl") # modul v krutu z obrysovych bodu

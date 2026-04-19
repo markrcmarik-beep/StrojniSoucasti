@@ -1,10 +1,12 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet plochy obecneho tvaru (jednoducheho polygonu)
-# pomoci bodu na obrysu. Sdilene helpery v tomto souboru
+# Vypocet plochy obecneho tvaru (polygonu)
+# pomoci bodu na obrysu. Umoznuje i vstup ve tvaru
+# vnejsi obrys + jeden nebo vice vnitrnich otvoru.
+# Sdilene helpery v tomto souboru
 # pouzivaji i dalsi funkce v samostatnych souborech.
-# ver: 2026-04-17
+# ver: 2026-04-19
 ## Funkce: plochaBodu()
 ## Autor: Martin
 #
@@ -32,3 +34,40 @@
 function plochaBodu(body::Union{AbstractVector,AbstractMatrix})
     return polygon_metrics(body).S
 end
+
+function plochaBodu(body::NamedTuple{(:obrys, :otvory)})
+    S = polygon_metrics(body.obrys).S
+    for otvor in _plochaBodu_normalizuj_otvory(body.otvory)
+        S -= polygon_metrics(otvor).S
+    end
+    return S
+end
+
+function _plochaBodu_normalizuj_otvory(otvory::AbstractMatrix)
+    return (otvory,)
+end
+
+function _plochaBodu_normalizuj_otvory(otvory::Union{AbstractVector,Tuple})
+    if isempty(otvory)
+        return ()
+    end
+    first_item = first(otvory)
+    if _plochaBodu_je_bod(first_item)
+        return (otvory,)
+    end
+    for otvor in otvory
+        if !(otvor isa AbstractVector || otvor isa AbstractMatrix || otvor isa Tuple)
+            throw(ArgumentError("Kazdy otvor musi byt polygon (vektor bodu nebo matice Nx2)."))
+        end
+    end
+    return otvory
+end
+
+function _plochaBodu_normalizuj_otvory(otvory)
+    throw(ArgumentError("`otvory` musi byt polygon nebo kolekce polygonu."))
+end
+
+_plochaBodu_je_bod(p::NTuple{2,Any}) = true
+_plochaBodu_je_bod(p::Tuple) = length(p) == 2
+_plochaBodu_je_bod(p::AbstractVector) = length(p) == 2
+_plochaBodu_je_bod(::Any) = false

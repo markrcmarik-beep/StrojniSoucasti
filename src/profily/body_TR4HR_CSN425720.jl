@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-17
+# ver: 2026-04-19
 ## Funkce: body_TR4HR_CSN()
 ## Autor: Martin
 #
@@ -73,7 +73,7 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     b_plus4 = StrojniSoucasti.obloukBodu(
         (x + R, y + b), (x, y + b - R), 
         R, "-", 0.01)
-    body = [
+    obrys = [
         b_plus1..., b_plus2..., 
         b_plus3..., b_plus4...,
         ]
@@ -89,9 +89,10 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     b2_plus4 = StrojniSoucasti.obloukBodu(
         (x + t + R, y + b - t), (x + t, y + b - t - R), 
         R, "-", 0.01)
-    body2 = [
+    otvor = [
         b2_plus1..., b2_plus2...,
         b2_plus3..., b2_plus4...,
     ]
+    body = (obrys = obrys, otvory = [otvor])
     return body
 end

@@ -1,4 +1,4 @@
-# ver: 2026-04-08
+# ver: 2026-04-19
 using Test
 using StrojniSoucasti, Unitful
 
@@ -47,6 +47,44 @@ using StrojniSoucasti, Unitful
     # Unitful vstup
     S5 = StrojniSoucasti.plochaBodu([(0u"mm", 0u"mm"), (4u"mm", 0u"mm"), (4u"mm", 3u"mm"), (0u"mm", 3u"mm")])
     @test S5 == 12.0u"mm^2"
+
+    # Obrys + otvor zadane v jedne promenne
+    body7 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = [[(3, 3), (7, 3), (7, 7), (3, 7)]],
+    )
+    S7 = StrojniSoucasti.plochaBodu(body7)
+    @test S7 == 84.0
+
+    # Jeden otvor lze zadat i primo jako polygon
+    body8 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = [(3, 3), (7, 3), (7, 7), (3, 7)],
+    )
+    S8 = StrojniSoucasti.plochaBodu(body8)
+    @test S8 == 84.0
+
+    # Vice otvoru (kolekce polygonu)
+    body9 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = [
+            [(1, 1), (3, 1), (3, 3), (1, 3)],   # 4
+            [(5, 5), (9, 5), (9, 9), (5, 9)],   # 16
+        ],
+    )
+    S9 = StrojniSoucasti.plochaBodu(body9)
+    @test S9 == 80.0
+
+    # Vice otvoru lze zadat i jako tuple polygonu
+    body10 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = (
+            [(1, 1), (3, 1), (3, 3), (1, 3)],
+            [(5, 5), (9, 5), (9, 9), (5, 9)],
+        ),
+    )
+    S10 = StrojniSoucasti.plochaBodu(body10)
+    @test S10 == 80.0
 
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.plochaBodu([(0, 0), (1, 0)])

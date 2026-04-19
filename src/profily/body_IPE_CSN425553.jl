@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-16
+# ver: 2026-04-19
 ## Funkce: body_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -79,10 +79,11 @@ function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
     b_plus4 = StrojniSoucasti.obloukBodu(
         (x + b/2 - t1/2, y + t2 + R), (x + b/2 - t1/2 - R, y + t2), 
         R, "-", 0.01)
-    body = [(x, y), (x+b, y), (x+b, y+t2), 
+    obrys = [(x, y), (x+b, y), (x+b, y+t2), 
         b_plus1..., b_plus2..., 
         (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
         b_plus3..., b_plus4...,
         (x, y+t2)]
+    body = (obrys = obrys, otvory = ())
     return body
 end

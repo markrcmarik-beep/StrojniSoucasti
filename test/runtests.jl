@@ -30,6 +30,7 @@ using Test
     include("profily_test/hrana_test.jl")
     include("profily_test/obloukBodu_test.jl")
     include("profily_test/plochaBodu_test.jl")
+    include("profily_test/kvadratickyMomentBodu_test.jl")
     include("profily_test/polarniMomentBodu_test.jl")
     include("profily_test/polygon_metrics_test.jl")
     include("profily_test/prurezovyModulKrutBodu_test.jl")
