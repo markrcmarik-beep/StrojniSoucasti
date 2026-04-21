@@ -19,5 +19,4 @@ using StrojniSoucasti, Unitful, Test
     @test B[1] ≈ 9.9497 atol=1e-4
     @test B[2] ≈ 9.9497 atol=1e-4
 
-    return B
 end
