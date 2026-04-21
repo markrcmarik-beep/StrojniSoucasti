@@ -13,6 +13,8 @@ using Test
     include("namahani_test/namahaniohyb_test.jl")
     include("namahani_test/namahaniotl_test.jl")
     include("namahani_test/namahanikombinovane_test.jl")
+    # body
+    include("body_test/bdu2b_test.jl")
     # profily
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")
