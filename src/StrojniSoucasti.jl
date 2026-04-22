@@ -27,6 +27,7 @@ include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/mezUnavy.jl") # mez únavy
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
+include("body/bux2b.jl") # souřadnice bodu B z bodu A, vzdálenosti ve směru osy x a úhlu (2D)
 ## --- profily ---
 include("profily/profil_TR4HR_CSN425720.jl") # profily TR4HR dle CSN 42 5720
 include("profily/profil_I_common.jl") # sdilene helpery pro I/IPE profily
