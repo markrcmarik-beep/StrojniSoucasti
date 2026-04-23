@@ -28,11 +28,11 @@ using StrojniSoucasti, Unitful
     @test isapprox(S6a, 2724.799; atol=0.001)
     
     R = 12
-    b_plus = StrojniSoucasti.obloukBodu((50+5.6/2+R, 8.5), (50+5.6/2, 8.5+R), R, "-", 0.8)
-    b_plus1 = StrojniSoucasti.obloukBodu((50+5.6/2+R, 8.5), (50+5.6/2, 8.5+R), R, "-", 0.01)
-    b_plus2 = StrojniSoucasti.obloukBodu((50+5.6/2, 200-8.5-R), (50+5.6/2+R, 200-8.5), R, "-", 0.01)
-    b_plus3 = StrojniSoucasti.obloukBodu((50-5.6/2-R, 200-8.5), (50-5.6/2, 200-8.5-R), R, "-", 0.01)
-    b_plus4 = StrojniSoucasti.obloukBodu((50-5.6/2, 8.5+R), (50-5.6/2-R, 8.5), R, "-", 0.01)
+    b_plus = StrojniSoucasti.oblouk2body((50+5.6/2+R, 8.5), (50+5.6/2, 8.5+R), R, "-", 0.8)
+    b_plus1 = StrojniSoucasti.oblouk2body((50+5.6/2+R, 8.5), (50+5.6/2, 8.5+R), R, "-", 0.01)
+    b_plus2 = StrojniSoucasti.oblouk2body((50+5.6/2, 200-8.5-R), (50+5.6/2+R, 200-8.5), R, "-", 0.01)
+    b_plus3 = StrojniSoucasti.oblouk2body((50-5.6/2-R, 200-8.5), (50-5.6/2, 200-8.5-R), R, "-", 0.01)
+    b_plus4 = StrojniSoucasti.oblouk2body((50-5.6/2, 8.5+R), (50-5.6/2-R, 8.5), R, "-", 0.01)
     S6b = StrojniSoucasti.plochaBodu([(0, 0), (100, 0), (100, 8.5), 
         b_plus1..., b_plus2..., 
         (100, 200-8.5), (100, 200), (0, 200), (0, 200-8.5), 
