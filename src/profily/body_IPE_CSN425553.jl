@@ -67,16 +67,16 @@ function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
     #t2 = 8.5
     #R = 12
     # (x, y) levý spodní roh
-    b_plus1 = StrojniSoucasti.obloukBodu(
+    b_plus1 = StrojniSoucasti.oblouk2body(
         (x + b/2 + t1/2 + R, y + t2), (x + b/2 + t1/2, y + t2 + R), 
         R, "-", 0.01)
-    b_plus2 = StrojniSoucasti.obloukBodu(
+    b_plus2 = StrojniSoucasti.oblouk2body(
         (x + b/2 + t1/2, y + h - t2 - R), (x + b/2 + t1/2 + R, y + h - t2), 
         R, "-", 0.01)
-    b_plus3 = StrojniSoucasti.obloukBodu(
+    b_plus3 = StrojniSoucasti.oblouk2body(
         (x + b/2 - t1/2 - R, y + h - t2), (x + b/2 - t1/2, y + h - t2 - R), 
         R, "-", 0.01)
-    b_plus4 = StrojniSoucasti.obloukBodu(
+    b_plus4 = StrojniSoucasti.oblouk2body(
         (x + b/2 - t1/2, y + t2 + R), (x + b/2 - t1/2 - R, y + t2), 
         R, "-", 0.01)
     obrys = [(x, y), (x+b, y), (x+b, y+t2), 

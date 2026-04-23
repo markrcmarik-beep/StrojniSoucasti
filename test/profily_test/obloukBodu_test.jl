@@ -1,6 +1,7 @@
 # ver: 2026-04-14
-using Test
-using StrojniSoucasti
+# Test script for obloukBodu.jl
+
+using StrojniSoucasti, Test
 
 @testset "obloukBodu" begin
     b_plus = StrojniSoucasti.obloukBodu((1, 0), (0, 1), 1.0, "+", 0.8)

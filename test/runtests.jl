@@ -1,4 +1,4 @@
-﻿# ver: 2026-04-17
+﻿# ver: 2026-04-23
 using Test
 
     # materialy
@@ -16,6 +16,8 @@ using Test
     # body
     include("body_test/bdu2b_test.jl")
     include("body_test/bux2b_test.jl")
+    include("body_test/buur2bb_test.jl")
+    include("body_test/oblouk2body_test.jl")
     # profily
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")
@@ -31,7 +33,6 @@ using Test
     include("profily_test/profilyvlcnWo_test.jl")
     include("profily_test/profilyvlcnIminlmax_test.jl")
     include("profily_test/hrana_test.jl")
-    include("profily_test/obloukBodu_test.jl")
     include("profily_test/plochaBodu_test.jl")
     include("profily_test/kvadratickyMomentBodu_test.jl")
     include("profily_test/polarniMomentBodu_test.jl")

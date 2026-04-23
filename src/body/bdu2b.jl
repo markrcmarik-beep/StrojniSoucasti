@@ -1,7 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-#
+# Vypočítá souřadnice bodu B z bodu A, vzdálenosti a úhlu (alfa) od 
+# osy x ve směru "+" (proti směru hodin) (2D).
 # ver: 2026-04-22
 ## Funkce: B = bdu2b(A, d, alfa)
 ## Autor: Martin
@@ -24,7 +25,7 @@
 ## Příklad:
 # A = (10.0, 20.0) # souřadnice bodu A
 # d = 5.0 # vzdálenost mezi body A a B [mm]
-# alfa = 30.0 # úhel mezi přímkou AB a vodorovnou osou (osa x) [rad]
+# alfa = 30*pi/180 # úhel mezi přímkou AB a vodorovnou osou (osa x) [rad]
 # B = bdu2b(A, d, alfa)
 # println("Souřadnice bodu B: ", B)
 ###############################################################

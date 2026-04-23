@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-04-21
+# ver: 2026-04-23
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -28,6 +28,8 @@ include("materialy/mezUnavy.jl") # mez únavy
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
 include("body/bux2b.jl") # souřadnice bodu B z bodu A, vzdálenosti ve směru osy x a úhlu (2D)
+include("body/buur2bb.jl") # souřadnice bodů B a C z bodu A, úhlů a vzdálenosti (2D)
+include("body/oblouk2body.jl") # po sobě jdoucí body na kruhovém oblouku
 ## --- profily ---
 include("profily/profil_TR4HR_CSN425720.jl") # profily TR4HR dle CSN 42 5720
 include("profily/profil_I_common.jl") # sdilene helpery pro I/IPE profily
@@ -45,7 +47,6 @@ include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
-include("profily/obloukBodu.jl") # body kruhoveho oblouku
 include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
 include("profily/kvadratickyMomentBodu.jl") # kvadraticke momenty z obrysovych bodu
 include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
@@ -75,7 +76,7 @@ include("tolerance/tolerance.jl") # tolerance
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
 # body
-bdu2b, 
+ 
 # profily
 profily,
 # namahani
