@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-19
+# ver: 2026-04-24
 ## Funkce: body_TR4HR_CSN()
 ## Autor: Martin
 #
@@ -63,16 +63,16 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     # (x, y) levý spodní roh
     b_plus1 = StrojniSoucasti.oblouk2body(
         (x, y + R), (x + R, y), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b_plus2 = StrojniSoucasti.oblouk2body(
         (x + a - R, y), (x + a, y + R), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b_plus3 = StrojniSoucasti.oblouk2body(
         (x + a, y + b - R), (x + a - R, y + b), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b_plus4 = StrojniSoucasti.oblouk2body(
         (x + R, y + b), (x, y + b - R), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     obrys = [
         b_plus1..., b_plus2..., 
         b_plus3..., b_plus4...,
@@ -80,16 +80,16 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     # vypočet otvoru
     b2_plus1 = StrojniSoucasti.oblouk2body(
         (x + t, y + t + R), (x + t + R, y + t), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b2_plus2 = StrojniSoucasti.oblouk2body(
         (x + a - t - R, y + t), (x + a - t, y + t + R), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b2_plus3 = StrojniSoucasti.oblouk2body(
         (x + a - t, y + b - t - R), (x + a - t - R, y + b - t), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     b2_plus4 = StrojniSoucasti.oblouk2body(
         (x + t + R, y + b - t), (x + t, y + b - t - R), 
-        R, "-", 0.01)
+        R, "+", 0.01)
     otvor = [
         b2_plus1..., b2_plus2...,
         b2_plus3..., b2_plus4...,

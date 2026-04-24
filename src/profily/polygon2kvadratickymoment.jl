@@ -3,17 +3,17 @@
 ## Popis funkce:
 # Vypocet kvadratickych momentu plochy obecneho tvaru
 # (polygonu) pomoci bodu na obrysu.
-# ver: 2026-04-19
-## Funkce: kvadratickyMomentBodu()
+# ver: 2026-04-24
+## Funkce: polygon2kvadratickymoment()
 ## Autor: Martin
 #
 ## Cesta uvnitr balicku:
-# StrojniSoucasti/src/profily/kvadratickyMomentBodu.jl
+# StrojniSoucasti/src/profily/polygon2kvadratickymoment.jl
 ###############################################################
 
 """
-    kvadratickyMomentBodu(body::AbstractVector | AbstractMatrix)
-    kvadratickyMomentBodu(body::NamedTuple{(:obrys, :otvory)})
+    polygon2kvadratickymoment(body::AbstractVector | AbstractMatrix)
+    polygon2kvadratickymoment(body::NamedTuple{(:obrys, :otvory)})
 
 Vrati kvadraticke momenty plochy vzhledem k tezisti:
 `(Ix = ..., Iy = ...)`.
@@ -23,12 +23,12 @@ Podporovane vstupy:
 - slozeny profil `(obrys = ..., otvory = ...)`, kde `otvory` muze byt
   jeden polygon otvoru nebo kolekce polygonu otvoru.
 """
-function kvadratickyMomentBodu(body::Union{AbstractVector,AbstractMatrix})
+function polygon2kvadratickymoment(body::Union{AbstractVector,AbstractMatrix})
     sums = _kvadraticky_moment_ring_sums(body, +1)
     return _kvadraticky_moment_finalize(sums)
 end
 
-function kvadratickyMomentBodu(body::NamedTuple{(:obrys, :otvory)})
+function polygon2kvadratickymoment(body::NamedTuple{(:obrys, :otvory)})
     sums = _kvadraticky_moment_ring_sums(body.obrys, +1)
     for otvor in _kvadraticky_moment_normalizuj_otvory(body.otvory)
         hole_sums = _kvadraticky_moment_ring_sums(otvor, -1)

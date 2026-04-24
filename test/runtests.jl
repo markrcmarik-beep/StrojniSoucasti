@@ -1,4 +1,4 @@
-﻿# ver: 2026-04-23
+﻿# ver: 2026-04-24
 using Test
 
     # materialy
@@ -33,11 +33,11 @@ using Test
     include("profily_test/profilyvlcnWo_test.jl")
     include("profily_test/profilyvlcnIminlmax_test.jl")
     include("profily_test/hrana_test.jl")
-    include("profily_test/plochaBodu_test.jl")
-    include("profily_test/kvadratickyMomentBodu_test.jl")
-    include("profily_test/polarniMomentBodu_test.jl")
+    include("profily_test/polygon2plocha_test.jl")
+    include("profily_test/polygon2kvadratickymoment_test.jl")
+    include("profily_test/polygon2polarnimoment_test.jl")
     include("profily_test/polygon_metrics_test.jl")
-    include("profily_test/prurezovyModulKrutBodu_test.jl")
+    include("profily_test/polygon2prurezovymodulkrut_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
