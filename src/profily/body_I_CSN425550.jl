@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-24
+# ver: 2026-04-25
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -66,19 +66,11 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
 
     # (x, y) levý spodní roh
     uhel = atan(sp/100) # převod sklonu z procent na úhel v radiánech
-    println("uhel: ", uhel, " rad, ", uhel*180/pi, "°")
     A1 = (x + b*3/4, y + t2) # bod v pravo spodní pásnice na výšce t2
-    println("A1: ", A1)
     A1r = StrojniSoucasti.bux2b(A1, -uhel, b*1/4) # bod v pravém horním rohu zaoblení spodní pásnice
-    println("A1r: ", A1r)
     A01, A02 = StrojniSoucasti.buur2bb(A1r, -pi/2, pi-uhel, R1) # body v pravém horním zaoblení spodní pásnice
-    println("A01: ", A01)
-    println("A02: ", A02)
     A3r = StrojniSoucasti.bux2b(A1, pi-uhel, -(b*1/4-t1/2)) # bod v pravém spodním zaoblení střední pásnice
-    println("A2r: ", A3r)
     A03, A04 = StrojniSoucasti.buur2bb(A3r, -uhel, pi/2, R) # body v pravém spodním zaoblení střední pásnice
-    println("A03: ", A03)
-    println("A04: ", A04)
 
     b_plus1 = StrojniSoucasti.oblouk2body(
         A01, A02, R1, "+", 0.01)

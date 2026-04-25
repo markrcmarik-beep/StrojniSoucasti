@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-24
+# ver: 2026-04-25
 ## Funkce: body_TR4HR_CSN()
 ## Autor: Martin
 #
@@ -78,18 +78,22 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
         b_plus3..., b_plus4...,
         ]
     # vypočet otvoru
+    Ro = R - t
+    if Ro < 0
+        Ro = 0
+    end
     b2_plus1 = StrojniSoucasti.oblouk2body(
-        (x + t, y + t + R), (x + t + R, y + t), 
-        R, "+", 0.01)
+        (x + t, y + t + Ro), (x + t + Ro, y + t), 
+        Ro, "+", 0.01)
     b2_plus2 = StrojniSoucasti.oblouk2body(
-        (x + a - t - R, y + t), (x + a - t, y + t + R), 
-        R, "+", 0.01)
+        (x + a - t - Ro, y + t), (x + a - t, y + t + Ro), 
+        Ro, "+", 0.01)
     b2_plus3 = StrojniSoucasti.oblouk2body(
-        (x + a - t, y + b - t - R), (x + a - t - R, y + b - t), 
-        R, "+", 0.01)
+        (x + a - t, y + b - t - Ro), (x + a - t - Ro, y + b - t), 
+        Ro, "+", 0.01)
     b2_plus4 = StrojniSoucasti.oblouk2body(
-        (x + t + R, y + b - t), (x + t, y + b - t - R), 
-        R, "+", 0.01)
+        (x + t + Ro, y + b - t), (x + t, y + b - t - Ro), 
+        Ro, "+", 0.01)
     otvor = [
         b2_plus1..., b2_plus2...,
         b2_plus3..., b2_plus4...,

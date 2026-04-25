@@ -1,10 +1,10 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypočítá souřadnice bodů B a C z bodu A, úhlů (alfa, beta) od 
-# osy x ve směru "+" (proti směru hodin) a vzdálenosti (2D).
-# ver: 2026-04-23
-## Funkce: B, C = buur2bb(A, d, alfa)
+# Vypočítá souřadnice okrajových bodů B a C z vrcholu bodu A, úhlů (alfa, beta) od 
+# osy x ve směru "+" (proti směru hodin) a poloměru zaoblemí (2D).
+# ver: 2026-04-25
+## Funkce: B, C = buur2bb(A, alfa, beta, r)
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
@@ -48,15 +48,18 @@ function buur2bb(A, alfa, beta, r)
     if beta < 0 || beta > 2*pi
         beta = mod(beta, 2*pi) # převod úhlu na interval [0, 2*pi]
     end
+    u = uu2u(alfa, beta)
+    a = abs(r / tan(u/2))
     # Výpočet souřadnic bodu B
-    B_x = A[1] + r * cos(alfa)
-    B_y = A[2] + r * sin(alfa)
+    B_x = A[1] + a * cos(alfa)
+    B_y = A[2] + a * sin(alfa)
     B = (B_x, B_y)
 
     # Výpočet souřadnic bodu C
-    C_x = A[1] + r * cos(beta)
-    C_y = A[2] + r * sin(beta)
+    C_x = A[1] + a * cos(beta)
+    C_y = A[2] + a * sin(beta)
     C = (C_x, C_y)
+        
 
     return B, C
 end
