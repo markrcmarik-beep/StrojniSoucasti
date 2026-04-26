@@ -1,8 +1,12 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet po sobě jdoucich bodů na kruhovém oblouku.
-# ver: 2026-04-23
+# Výpočet po sobě jdoucich bodů na kruhovém oblouku. Od počátečního 
+# bodu A až po bod B. Ve směru "+" (proti směru hodin) nebo "-" 
+# (po směru hodin) rotace po poloměru R určuje zakřivení oblouku. 
+# Presnost určuje maximální délku jednoho dílku po oblouku.
+#
+# ver: 2026-04-26
 ## Funkce: oblouk2body()
 ## Autor: Martin + Codex
 #
@@ -10,15 +14,14 @@
 # StrojniSoucasti/src/body/oblouk2body.jl
 #
 ## Vzor:
-# body = oblouk2body((x1, y1), (x2, y2), R, "+", 0.5)
+# body = oblouk2body(A, B, R, "+", 0.5)
 #
 ## Vstupní proměnné:
-# prvni_bod   - Prvni bod oblouku (x, y).
-# posledni_bod - Posledni bod oblouku (x, y).
-# polomer     - Polomer kruznice.
-# smer        - "+" = proti smeru hodin (CCW), "-" po smeru hodin (CW).
-# presnost    - Maximalni delka jednoho dilku po oblouku.
-#
+# A - souřadnice bodu A (tuple s dvěma prvky)
+# B - souřadnice bodu B (tuple s dvěma prvky)
+# R - poloměr kružnice, na které leží body B a C (kladné číslo)
+# smer - směr rotace: "+" pro proti směru hodin, "-" pro po směru hodin (řetězec)
+# presnost - maximální délka jednoho dílku po oblouku (kladné číslo)
 ## Výstupní proměnné:
 # body - Vektor bodu [(x, y), ...] vcetne prvniho i posledniho bodu.
 ## Použité balíčky:
@@ -30,13 +33,15 @@
 # => body = [(0.0, 0.0), (0.2928932188134524, 0.7071067811865475), (1.0, 1.0)]
 ###############################################################
 
-function oblouk2body(prvni_bod, posledni_bod, polomer::Real, smer::String="+", presnost::Real=1.0)
+function oblouk2body(A::NTuple{2,<:Real}, B::NTuple{2,<:Real}, 
+    polomer::Real, smer::String="+", presnost::Real=1.0)
+
     polomer > 0 || throw(ArgumentError("Polomer musi byt kladny."))
     presnost > 0 || throw(ArgumentError("Presnost musi byt kladna."))
     (smer == "+" || smer == "-") || throw(ArgumentError("Smer musi byt '+' (proti smeru hodin) nebo '-' (po smeru hodin)."))
 
-    x1_raw, y1_raw = _oblouk_point_xy(prvni_bod)
-    x2_raw, y2_raw = _oblouk_point_xy(posledni_bod)
+    x1_raw, y1_raw = _oblouk_point_xy(A)
+    x2_raw, y2_raw = _oblouk_point_xy(B)
 
     x1 = Float64(x1_raw)
     y1 = Float64(y1_raw)

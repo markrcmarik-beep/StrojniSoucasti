@@ -71,14 +71,20 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
     A01, A02 = StrojniSoucasti.buur2bb(A1r, -pi/2, pi-uhel, R1) # body v pravém horním zaoblení spodní pásnice
     A3r = StrojniSoucasti.bux2b(A1, pi-uhel, -(b*1/4-t1/2)) # bod v pravém spodním zaoblení střední pásnice
     A03, A04 = StrojniSoucasti.buur2bb(A3r, -uhel, pi/2, R) # body v pravém spodním zaoblení střední pásnice
+    B1 = (x + b*3/4, y + h - t2) # bod v pravo horní pásnici na výšce h-t2
+    B1r = StrojniSoucasti.bux2b(B1, pi+uhel, -(b*1/4-t1/2)) # bod v pravém horním zaoblení střední pásnice
+    B01, B02 = StrojniSoucasti.buur2bb(B1r, 3*pi/2, uhel, R) # body v pravém horním zaoblení střední pásnice
+    B3r = StrojniSoucasti.bux2b(B1, uhel, b*1/4) # bod v pravém spodním rohu zaoblení horní pásnice
+    B03, B04 = StrojniSoucasti.buur2bb(B3r, pi+uhel, pi/2, R1) # body v pravém spodním zaoblení horní pásnice
 
     b_plus1 = StrojniSoucasti.oblouk2body(
         A01, A02, R1, "+", 0.01)
     b2_plus1 = StrojniSoucasti.oblouk2body(
         A03, A04, R, "-", 0.01)
     b_plus2 = StrojniSoucasti.oblouk2body(
-        (x + b/2 + t1/2, y + h - t2 - R), (x + b/2 + t1/2 + R, y + h - t2), 
-        R, "-", 0.01)
+        B01, B02, R, "-", 0.01)
+    b2_plus2 = StrojniSoucasti.oblouk2body(
+        B03, B04, R1, "+", 0.01)
     b_plus3 = StrojniSoucasti.oblouk2body(
         (x + b/2 - t1/2 - R, y + h - t2), (x + b/2 - t1/2, y + h - t2 - R), 
         R, "-", 0.01)
@@ -90,8 +96,8 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
     
     
     obrys = [(x, y), (x+b, y),
-        b_plus1..., A1, b2_plus1..., b_plus2..., 
-        (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
+        b_plus1..., A1, b2_plus1..., b_plus2..., B1, b2_plus2...,
+        (x+b, y+h), (x, y+h), (x, y+h-t2), 
         b_plus3..., b_plus4...,
         (x, y+t2)]
     body = (obrys = obrys, otvory = ())

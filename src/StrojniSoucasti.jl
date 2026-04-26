@@ -28,7 +28,8 @@ include("materialy/mezUnavy.jl") # mez únavy
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
 include("body/bux2b.jl") # souřadnice bodu B z bodu A, vzdálenosti ve směru osy x a úhlu (2D)
-include("body/buur2bb.jl") # souřadnice bodů B a C z bodu A, úhlů a vzdálenosti (2D)
+include("body/buub2b.jl") # souřadnice bodu C z bodu A, úhlů a bodu B (2D)
+include("body/ubru2bb.jl") # souřadnice bodů B a C z bodu A, úhlů a vzdálenosti (2D)
 include("body/uu2u.jl") # úhel mezi dvěma úhly (2D)
 include("body/oblouk2body.jl") # po sobě jdoucí body na kruhovém oblouku
 ## --- profily ---

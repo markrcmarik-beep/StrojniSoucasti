@@ -16,7 +16,8 @@ using Test
     # body
     include("body_test/bdu2b_test.jl")
     include("body_test/bux2b_test.jl")
-    include("body_test/buur2bb_test.jl")
+    include("body_test/buub2b_test.jl")
+    include("body_test/ubru2bb_test.jl")
     include("body_test/uu2u_test.jl")
     include("body_test/oblouk2body_test.jl")
     # profily
