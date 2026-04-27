@@ -27,6 +27,7 @@ include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/mezUnavy.jl") # mez únavy
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
+include("body/burub2body.jl") # body mezi dvěma přímkami spojenými kruhovým obloukem
 include("body/bux2b.jl") # souřadnice bodu B z bodu A, vzdálenosti ve směru osy x a úhlu (2D)
 include("body/buub2b.jl") # souřadnice bodu C z bodu A, úhlů a bodu B (2D)
 include("body/ubru2bb.jl") # souřadnice bodů B a C z bodu A, úhlů a vzdálenosti (2D)

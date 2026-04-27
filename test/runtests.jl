@@ -15,6 +15,7 @@ using Test
     include("namahani_test/namahanikombinovane_test.jl")
     # body
     include("body_test/bdu2b_test.jl")
+    include("body_test/burub2body_test.jl")
     include("body_test/bux2b_test.jl")
     include("body_test/buub2b_test.jl")
     include("body_test/ubru2bb_test.jl")

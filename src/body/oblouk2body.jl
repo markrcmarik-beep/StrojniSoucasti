@@ -2,11 +2,11 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet po sobě jdoucich bodů na kruhovém oblouku. Od počátečního 
-# bodu A až po bod B. Ve směru "+" (proti směru hodin) nebo "-" 
+# bodu A po bod B. Ve směru "+" (proti směru hodin) nebo "-" 
 # (po směru hodin) rotace po poloměru R určuje zakřivení oblouku. 
-# Presnost určuje maximální délku jednoho dílku po oblouku.
+# Přesnost určuje maximální délku jednoho dílku po oblouku.
 #
-# ver: 2026-04-26
+# ver: 2026-04-27
 ## Funkce: oblouk2body()
 ## Autor: Martin + Codex
 #
@@ -23,7 +23,7 @@
 # smer - směr rotace: "+" pro proti směru hodin, "-" pro po směru hodin (řetězec)
 # presnost - maximální délka jednoho dílku po oblouku (kladné číslo)
 ## Výstupní proměnné:
-# body - Vektor bodu [(x, y), ...] vcetne prvniho i posledniho bodu.
+# body - Vektor bodu [(x, y), ...] včetně prvního i posledního bodu.
 ## Použité balíčky:
 #
 ## Použite uživatelské funkce:
@@ -33,7 +33,7 @@
 # => body = [(0.0, 0.0), (0.2928932188134524, 0.7071067811865475), (1.0, 1.0)]
 ###############################################################
 
-function oblouk2body(A::NTuple{2,<:Real}, B::NTuple{2,<:Real}, 
+function oblouk2body(A::Tuple{<:Real,<:Real}, B::Tuple{<:Real,<:Real}, 
     polomer::Real, smer::String="+", presnost::Real=1.0)
 
     polomer > 0 || throw(ArgumentError("Polomer musi byt kladny."))

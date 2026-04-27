@@ -32,7 +32,7 @@
 ## Použité proměnné vnitřní:
 #
 
-function ubru2bb(alfa::Real, A::NTuple{2,<:Real},
+function ubru2bb(alfa::Real, A::Tuple{<:Real,<:Real},
     r::Real, beta::Real)
 
     r > 0 || throw(ArgumentError("r musí být kladné"))

@@ -7,7 +7,7 @@
 # Definované body A, B nejsou součástí výstupu.
 # Úhel měří ve směru "+" (proti směru hodin) od osy x [rad].
 #
-# ver: 2026-04-26
+# ver: 2026-04-27
 ## Funkce: burub2body()
 ## Autor: Martin
 #
@@ -34,20 +34,42 @@
 ## Použité proměnné vnitřní:
 #
 
-function burub2body(A, u1, R, u2, B)
+function burub2body(
+    A::Tuple{<:Real,<:Real},
+    u1::Real,
+    R::Real,
+    u2::Real,
+    B::Tuple{<:Real,<:Real},
+    presnost::Real = 0.01
+)
 
-    u = uu2u(u1, u2)
-    if u < pi
-        smer = "-"
-    elseif u > pi
+    R > 0 || throw(ArgumentError("R musí být kladné"))
+    presnost > 0 || throw(ArgumentError("presnost musí být kladná"))
+
+    # průsečík přímek
+    P = buub2b(A, u1, u2, B)
+
+    # úhel mezi přímkami
+    u = mod(u2 - u1, 2π)
+
+    # degenerace
+    if u < 1e-8 || abs(u - 2π) < 1e-8
+        throw(ArgumentError("Přímky jsou rovnoběžné"))
+    end
+
+    # vezmeme vnitřní úhel
+    if u > π
+        u = 2π - u
         smer = "+"
     else
-        error("Neplatná hodnota u: $u. Musí být v rozsahu (0, 2*pi) a nesmí být rovna 0, pi.")
+        smer = "-"
     end
-    C = buub2b(A, u1, u2, B) # průsečík přímek
-    B, C = ubru2bb(u1, C, R, u2) # body dotyku kružnice s přímkami
 
-    body = [0 0; 1 0; 1 1; 0 1] # Příklad čtverce, nahraďte skutečnými body
+    # tečné body
+    T1, T2 = ubru2bb(u1, P, R, u2)
+
+    # oblouk
+    body = oblouk2body(T1, T2, R, smer, presnost)
 
     return body
 end

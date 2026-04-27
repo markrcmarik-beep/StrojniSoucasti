@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-25
+# ver: 2026-04-27
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -66,16 +66,24 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
 
     # (x, y) levý spodní roh
     uhel = atan(sp/100) # převod sklonu z procent na úhel v radiánech
+    A0 = (x + b, y) # bod v pravém spodním rohu
     A1 = (x + b*3/4, y + t2) # bod v pravo spodní pásnice na výšce t2
+    body1 = StrojniSoucasti.burub2body(A0, pi/2, R1, pi-uhel, A1) # body po oblouku mezi A1 a A0
     A1r = StrojniSoucasti.bux2b(A1, -uhel, b*1/4) # bod v pravém horním rohu zaoblení spodní pásnice
-    A01, A02 = StrojniSoucasti.buur2bb(A1r, -pi/2, pi-uhel, R1) # body v pravém horním zaoblení spodní pásnice
+    A01, A02 = StrojniSoucasti.ubru2bb(-pi/2, A1r, R1, pi-uhel) # body v pravém horním zaoblení spodní pásnice
     A3r = StrojniSoucasti.bux2b(A1, pi-uhel, -(b*1/4-t1/2)) # bod v pravém spodním zaoblení střední pásnice
-    A03, A04 = StrojniSoucasti.buur2bb(A3r, -uhel, pi/2, R) # body v pravém spodním zaoblení střední pásnice
+    A03, A04 = StrojniSoucasti.ubru2bb(-uhel, A3r, R, pi/2) # body v pravém spodním zaoblení střední pásnice
+    B0 = (x + b, y + h) # bod v pravém horním rohu
     B1 = (x + b*3/4, y + h - t2) # bod v pravo horní pásnici na výšce h-t2
     B1r = StrojniSoucasti.bux2b(B1, pi+uhel, -(b*1/4-t1/2)) # bod v pravém horním zaoblení střední pásnice
-    B01, B02 = StrojniSoucasti.buur2bb(B1r, 3*pi/2, uhel, R) # body v pravém horním zaoblení střední pásnice
+    B01, B02 = StrojniSoucasti.ubru2bb(3*pi/2, B1r, R, uhel) # body v pravém horním zaoblení střední pásnice
     B3r = StrojniSoucasti.bux2b(B1, uhel, b*1/4) # bod v pravém spodním rohu zaoblení horní pásnice
-    B03, B04 = StrojniSoucasti.buur2bb(B3r, pi+uhel, pi/2, R1) # body v pravém spodním zaoblení horní pásnice
+    B03, B04 = StrojniSoucasti.ubru2bb(pi+uhel, B3r, R1, pi/2) # body v pravém spodním zaoblení horní pásnice
+    C0 = (x, y + h) # bod levý horní roh
+    C1 = (x + b/4, y + h - t2) # bod v levém horním rohu horní pásnice
+    body5 = StrojniSoucasti.burub2body(C0, -pi/2, R1, -uhel, C1) # body po oblouku mezi C1 a A1
+    D0 = (x, y) # bod v levém spodním rohu
+    D1 = (x + b/4, y + t2) # bod v levém spodním rohu spodní pásnice
 
     b_plus1 = StrojniSoucasti.oblouk2body(
         A01, A02, R1, "+", 0.01)
@@ -95,9 +103,9 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
     
     
     
-    obrys = [(x, y), (x+b, y),
+    obrys = [D0, A0,
         b_plus1..., A1, b2_plus1..., b_plus2..., B1, b2_plus2...,
-        (x+b, y+h), (x, y+h), (x, y+h-t2), 
+        B0, C0, body5..., C1,
         b_plus3..., b_plus4...,
         (x, y+t2)]
     body = (obrys = obrys, otvory = ())

@@ -1,12 +1,12 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Z vstupního bodu A vede přímku pod úhlem u1. Poté vede přímku 
-# pod úhlem u2 do bodu B. Funkce vypočítá souřadnice bodu C, 
+# Z vstupního bodu A vede přímku pod úhlem u1. Z bodu B vede 
+# přímku pod úhlem u2. Funkce vypočítá souřadnice bodu C, 
 # který je průsečíkem těchto dvou přímek.
 # Úhel měří ve směru "+" (proti směru hodin) od osy x [rad].
 #
-# ver: 2026-04-26
+# ver: 2026-04-27
 ## Funkce: buub2b()
 ## Autor: Martin
 #
@@ -32,26 +32,29 @@
 ## Použité proměnné vnitřní:
 #
 
-function buub2b(A::NTuple{2,<:Real}, u1::Real, u2::Real, 
-    B::NTuple{2,<:Real})
-
+function buub2b(
+    A::NTuple{2,<:Real},
+    u1::Real,
+    u2::Real,
+    B::NTuple{2,<:Real}
+)
     # směrové vektory
-    d1 = (cos(u1), sin(u1)) # jednotkový vektor ve směru u1
-    d2 = (cos(u2), sin(u2)) # jednotkový vektor ve směru u2
+    d1 = (cos(u1), sin(u1))
+    d2 = (cos(u2), sin(u2))
 
-    # determinant (2D "cross product")
-    det = d1[1]*d2[2] - d1[2]*d2[1] #
+    # determinant
+    det = d1[1]*d2[2] - d1[2]*d2[1]
 
-    abs(det) < 1e-12 && error("Přímky jsou rovnoběžné")
+    if abs(det) < 1e-12
+        throw(ArgumentError("Přímky jsou rovnoběžné nebo téměř rovnoběžné"))
+    end
 
-    # řešení parametru t
-    dx = B[1] - A[1] # rozdíl x souřadnic mezi B a A
-    dy = B[2] - A[2] # rozdíl y souřadnic mezi B a A
+    # rozdíl bodů
+    dx = B[1] - A[1]
+    dy = B[2] - A[2]
 
-    t = (dx * d2[2] - dy * d2[1]) / det # parametr pro přímku 1
+    # parametr
+    t = (dx * d2[2] - dy * d2[1]) / det
 
-    Cx = A[1] + t * d1[1] # x souřadnice průsečíku
-    Cy = A[2] + t * d1[2] # y souřadnice průsečíku
-
-    return (Cx, Cy)
+    return (A[1] + t*d1[1], A[2] + t*d1[2])
 end
