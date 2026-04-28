@@ -1,4 +1,4 @@
-﻿# ver: 2026-04-25
+﻿# ver: 2026-04-28
 using Test
 
     # materialy
@@ -20,7 +20,7 @@ using Test
     include("body_test/buub2b_test.jl")
     include("body_test/ubru2bb_test.jl")
     include("body_test/uu2u_test.jl")
-    include("body_test/oblouk2body_test.jl")
+    include("body_test/brsb2body_test.jl")
     # profily
     include("profily_test/profily_test.jl")
     include("profily_test/profilyCSN_test.jl")

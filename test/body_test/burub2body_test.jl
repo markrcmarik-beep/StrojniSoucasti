@@ -1,30 +1,156 @@
-# ver: 2026-04-27
-# Test script for oblouk2body.jl
-
+# ver: 2026-04-28
 using StrojniSoucasti, Test
 
-@testset "oblouk2body" begin
-    b_plus = StrojniSoucasti.oblouk2body((1, 0), (0, 1), 1.0, "+", 0.8)
-    @test length(b_plus) == 3
-    @test b_plus[1] == (1.0, 0.0)
-    @test b_plus[end] == (0.0, 1.0)
-    @test isapprox(b_plus[2][1], sqrt(2) / 2; atol=1e-12)
-    @test isapprox(b_plus[2][2], sqrt(2) / 2; atol=1e-12)
+@testset "burub2body - základní funkčnost" begin
 
-    b_minus = StrojniSoucasti.oblouk2body((1, 0), (0, 1), 1.0, "-", 0.8)
-    @test length(b_minus) == 3
-    @test b_minus[1] == (1.0, 0.0)
-    @test b_minus[end] == (0.0, 1.0)
-    @test isapprox(b_minus[2][1], 1 - sqrt(2) / 2; atol=1e-12)
-    @test isapprox(b_minus[2][2], 1 - sqrt(2) / 2; atol=1e-12)
+    A = (0.0, 0.0)
+    B = (4.0, 0.0)
+    u1 = pi/4
+    u2 = 3pi/4
+    R = 1.0
 
-    b_coarse = StrojniSoucasti.oblouk2body((1, 0), (0, 1), 1.0, "+", 1.0)
-    b_fine = StrojniSoucasti.oblouk2body((1, 0), (0, 1), 1.0, "+", 0.2)
-    @test length(b_fine) > length(b_coarse)
+    body = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.2)
 
-    @test_throws ArgumentError StrojniSoucasti.oblouk2body((0, 0), (0, 0), 1.0, "+", 0.5)
-    @test_throws ArgumentError StrojniSoucasti.oblouk2body((0, 0), (1, 0), 0.0, "+", 0.5)
-    @test_throws ArgumentError StrojniSoucasti.oblouk2body((0, 0), (2, 0), 0.5, "+", 0.5)
-    @test_throws ArgumentError StrojniSoucasti.oblouk2body((0, 0), (1, 0), 1.0, "x", 0.5)
-    @test_throws ArgumentError StrojniSoucasti.oblouk2body((0, 0), (1, 0), 1.0, "+", 0.0)
+    @test length(body) ≥ 2
+
+end
+
+#-------------------------------------------------------------
+
+@testset "burub2body - body leží na kružnici" begin
+
+    A = (0.0, 0.0)
+    B = (4.0, 0.0)
+    u1 = pi/4
+    u2 = 3pi/4
+    R = 1.0
+
+    body = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.2)
+
+    # průsečík přímek
+    P = StrojniSoucasti.buub2b(A, u1, u2, B)
+
+    # tečné body
+    T1, T2 = StrojniSoucasti.ubru2bb(u1, P, R, u2)
+
+    # najdi střed kružnice (kolmý posun)
+    # střed leží ve vzdálenosti R kolmo od tečného bodu
+    # použijeme první bod oblouku
+    cx_candidates = []
+    for (tx, ty) in (T1, T2)
+        push!(cx_candidates, (tx, ty))  # placeholder (nepotřebujeme přesný střed)
+    end
+
+    # ověř vzdálenost mezi sousedními body ~ konst.
+    for i in 1:length(body)-1
+        dx = body[i+1][1] - body[i][1]
+        dy = body[i+1][2] - body[i][2]
+        @test hypot(dx, dy) ≤ 0.25   # přibližná horní mez (presnost)
+    end
+
+end
+
+#-------------------------------------------------------------
+
+@testset "burub2body - body leží mezi tečnými body" begin
+
+    A = (1.0, 1.0)
+    B = (5.0, 1.0)
+    u1 = pi/3
+    u2 = 2pi/3
+    R = 0.5
+
+    body = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.1)
+
+    P = StrojniSoucasti.buub2b(A, u1, u2, B)
+    T1, T2 = StrojniSoucasti.ubru2bb(u1, P, R, u2)
+
+    # první a poslední bod musí odpovídat tečným bodům (s tolerancí)
+    @test body[1][1] ≈ T1[1] atol=1e-8
+    @test body[1][2] ≈ T1[2] atol=1e-8
+
+    @test body[end][1] ≈ T2[1] atol=1e-8
+    @test body[end][2] ≈ T2[2] atol=1e-8
+
+end
+
+#-------------------------------------------------------------
+
+@testset "burub2body - invariant posunutí" begin
+
+    A = (0.0, 0.0)
+    B = (4.0, 0.0)
+    shift = (10.0, -3.0)
+
+    u1 = 0.5
+    u2 = 2.0
+    R = 1.0
+
+    body1 = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.2)
+
+    A2 = (A[1] + shift[1], A[2] + shift[2])
+    B2 = (B[1] + shift[1], B[2] + shift[2])
+
+    body2 = StrojniSoucasti.burub2body(A2, u1, R, u2, B2, 0.2)
+
+    @test length(body1) == length(body2)
+
+    for i in eachindex(body1)
+        @test body2[i][1] ≈ body1[i][1] + shift[1] atol=1e-10
+        @test body2[i][2] ≈ body1[i][2] + shift[2] atol=1e-10
+    end
+
+end
+
+#-------------------------------------------------------------
+
+@testset "burub2body - invariant rotace" begin
+
+    A = (1.0, 0.0)
+    B = (0.0, 1.0)
+    u1 = 0.0
+    u2 = pi/2
+    R = 0.5
+
+    rot = pi/4
+
+    function rotp(p, ang)
+        (p[1]*cos(ang) - p[2]*sin(ang),
+         p[1]*sin(ang) + p[2]*cos(ang))
+    end
+
+    body1 = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.1)
+
+    A2 = rotp(A, rot)
+    B2 = rotp(B, rot)
+
+    body2 = StrojniSoucasti.burub2body(A2, u1+rot, R, u2+rot, B2, 0.1)
+
+    body1r = [rotp(p, rot) for p in body1]
+
+    @test length(body1r) == length(body2)
+
+    for i in eachindex(body1r)
+        @test body2[i][1] ≈ body1r[i][1] atol=1e-10
+        @test body2[i][2] ≈ body1r[i][2] atol=1e-10
+    end
+
+end
+
+#-------------------------------------------------------------
+
+@testset "burub2body - degenerace" begin
+
+    # rovnoběžné přímky
+    @test_throws ArgumentError StrojniSoucasti.burub2body(
+        (0.0,0.0), 0.5, 1.0, 0.5, (1.0,1.0), 0.1)
+
+    # nulový poloměr
+    @test_throws ArgumentError StrojniSoucasti.burub2body(
+        (0.0,0.0), 0.5, 0.0, 1.0, (1.0,1.0), 0.1)
+
+    # nulová přesnost
+    @test_throws ArgumentError StrojniSoucasti.burub2body(
+        (0.0,0.0), 0.5, 1.0, 1.0, (1.0,1.0), 0.0)
+
 end

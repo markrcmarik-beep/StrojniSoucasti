@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-27
+# ver: 2026-04-28
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -68,6 +68,8 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
     uhel = atan(sp/100) # převod sklonu z procent na úhel v radiánech
     A0 = (x + b, y) # bod v pravém spodním rohu
     A1 = (x + b*3/4, y + t2) # bod v pravo spodní pásnice na výšce t2
+    A2 = (x + b/2 + t1/2, y + h/2) # bod pravém střední pásnice uprostřed výšky
+    A3 = (x + b*3/4, y + h - t2) # bod v pravo sphorní pásnice na výšce t2
     body1 = StrojniSoucasti.burub2body(A0, pi/2, R1, pi-uhel, A1) # body po oblouku mezi A1 a A0
     A1r = StrojniSoucasti.bux2b(A1, -uhel, b*1/4) # bod v pravém horním rohu zaoblení spodní pásnice
     A01, A02 = StrojniSoucasti.ubru2bb(-pi/2, A1r, R1, pi-uhel) # body v pravém horním zaoblení spodní pásnice
@@ -81,30 +83,35 @@ function body_I_CSN425550(prof, uchyceni::String="ld", args...)
     B03, B04 = StrojniSoucasti.ubru2bb(pi+uhel, B3r, R1, pi/2) # body v pravém spodním zaoblení horní pásnice
     C0 = (x, y + h) # bod levý horní roh
     C1 = (x + b/4, y + h - t2) # bod v levém horním rohu horní pásnice
-    body5 = StrojniSoucasti.burub2body(C0, -pi/2, R1, -uhel, C1) # body po oblouku mezi C1 a A1
+    body5 = StrojniSoucasti.burub2body(C0, -pi/2, R1, -uhel, C1, 0.01) # body po oblouku mezi C1 a A1
     D0 = (x, y) # bod v levém spodním rohu
     D1 = (x + b/4, y + t2) # bod v levém spodním rohu spodní pásnice
 
-    b_plus1 = StrojniSoucasti.oblouk2body(
-        A01, A02, R1, "+", 0.01)
-    b2_plus1 = StrojniSoucasti.oblouk2body(
-        A03, A04, R, "-", 0.01)
-    b_plus2 = StrojniSoucasti.oblouk2body(
-        B01, B02, R, "-", 0.01)
-    b2_plus2 = StrojniSoucasti.oblouk2body(
-        B03, B04, R1, "+", 0.01)
-    b_plus3 = StrojniSoucasti.oblouk2body(
-        (x + b/2 - t1/2 - R, y + h - t2), (x + b/2 - t1/2, y + h - t2 - R), 
-        R, "-", 0.01)
-    b_plus4 = StrojniSoucasti.oblouk2body(
-        (x + b/2 - t1/2, y + t2 + R), (x + b/2 - t1/2 - R, y + t2), 
-        R, "-", 0.01)
+    b_plus1 = StrojniSoucasti.brsb2body(
+        A01, R1, "+", A02, 0.01)
+    b2_plus1 = StrojniSoucasti.brsb2body(
+        A03, R, "-", A04, 0.01)
+    b_plus2 = StrojniSoucasti.brsb2body(
+        B01, R, "-", B02, 0.01)
+    b2_plus2 = StrojniSoucasti.brsb2body(
+        B03, R1, "+", B04, 0.01)
+    b_plus3 = StrojniSoucasti.brsb2body(
+        (x + b/2 - t1/2 - R, y + h - t2), R, "-", 
+        (x + b/2 - t1/2, y + h - t2 - R), 0.01)
+    b_plus4 = StrojniSoucasti.brsb2body(
+        (x + b/2 - t1/2, y + t2 + R), R, "-", 
+        (x + b/2 - t1/2 - R, y + t2), 0.01)
     
-    
-    
+    body1 = StrojniSoucasti.burub2body(A0, pi/2, R1, pi-uhel, A1, 0.01) # body po oblouku mezi D1 a D0
     
     obrys = [D0, A0,
-        b_plus1..., A1, b2_plus1..., b_plus2..., B1, b2_plus2...,
+        StrojniSoucasti.burub2body(A0, pi/2, R1, pi-uhel, A1, 0.01)..., # body po oblouku mezi D1 a D0
+        A1, 
+        StrojniSoucasti.burub2body(A1, pi-uhel, R, pi/2, A2, 0.01)..., 
+        A2,
+        StrojniSoucasti.burub2body(A2, pi/2, R, uhel, A3, 0.01)...,
+        A3,
+        b2_plus2...,
         B0, C0, body5..., C1,
         b_plus3..., b_plus4...,
         (x, y+t2)]

@@ -1,20 +1,21 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# bod, poloměr, směr, bod, přesnost -> body
 # Výpočet po sobě jdoucich bodů na kruhovém oblouku. Od počátečního 
 # bodu A po bod B. Ve směru "+" (proti směru hodin) nebo "-" 
 # (po směru hodin) rotace po poloměru R určuje zakřivení oblouku. 
 # Přesnost určuje maximální délku jednoho dílku po oblouku.
 #
-# ver: 2026-04-27
-## Funkce: oblouk2body()
+# ver: 2026-04-28
+## Funkce: brsb2body()
 ## Autor: Martin + Codex
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/body/oblouk2body.jl
+# StrojniSoucasti/src/body/brsb2body.jl
 #
 ## Vzor:
-# body = oblouk2body(A, B, R, "+", 0.5)
+# body = brsb2body(A, R, "+", B, 0.5)
 #
 ## Vstupní proměnné:
 # A - souřadnice bodu A (tuple s dvěma prvky)
@@ -29,12 +30,17 @@
 ## Použite uživatelské funkce:
 # _oblouk_point_xy - Pomocna funkce pro ziskani x, y ze zadaneho formatu bodu.
 ## Příklad:
-# body = oblouk2body((0, 0), (1, 1), 1.0, "+", 0.5)
+# body = brsb2body((0, 0), 1.0, "+", (1, 1), 0.5)
 # => body = [(0.0, 0.0), (0.2928932188134524, 0.7071067811865475), (1.0, 1.0)]
 ###############################################################
 
-function oblouk2body(A::Tuple{<:Real,<:Real}, B::Tuple{<:Real,<:Real}, 
-    polomer::Real, smer::String="+", presnost::Real=1.0)
+function brsb2body(
+    A::Tuple{<:Real,<:Real},
+    polomer::Real,
+    smer::String,
+    B::Tuple{<:Real,<:Real},
+    presnost::Real = 0.01,
+)
 
     polomer > 0 || throw(ArgumentError("Polomer musi byt kladny."))
     presnost > 0 || throw(ArgumentError("Presnost musi byt kladna."))

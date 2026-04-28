@@ -1,13 +1,14 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# bod, úhel, poloměr, úhel, bod -> body
 # Z bodu A vede přímku pod úhlem u1, z bodu B vede přímku pod 
 # úhlem u2. Vloží kružnici o poloměru R. Vytvoří tělo bodů, 
 # které tvoří obrys poloměru R mezi těmito dvěma přímkami. 
 # Definované body A, B nejsou součástí výstupu.
 # Úhel měří ve směru "+" (proti směru hodin) od osy x [rad].
 #
-# ver: 2026-04-27
+# ver: 2026-04-28
 ## Funkce: burub2body()
 ## Autor: Martin
 #
@@ -69,7 +70,7 @@ function burub2body(
     T1, T2 = ubru2bb(u1, P, R, u2)
 
     # oblouk
-    body = oblouk2body(T1, T2, R, smer, presnost)
+    body = brsb2body(T1, R, smer, T2, presnost)
 
     return body
 end

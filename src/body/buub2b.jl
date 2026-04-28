@@ -1,12 +1,13 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# bod, úhel, úhel, bod -> bod
 # Z vstupního bodu A vede přímku pod úhlem u1. Z bodu B vede 
 # přímku pod úhlem u2. Funkce vypočítá souřadnice bodu C, 
 # který je průsečíkem těchto dvou přímek.
 # Úhel měří ve směru "+" (proti směru hodin) od osy x [rad].
 #
-# ver: 2026-04-27
+# ver: 2026-04-28
 ## Funkce: buub2b()
 ## Autor: Martin
 #
@@ -33,10 +34,10 @@
 #
 
 function buub2b(
-    A::NTuple{2,<:Real},
+    A::Tuple{<:Real,<:Real},
     u1::Real,
     u2::Real,
-    B::NTuple{2,<:Real}
+    B::Tuple{<:Real,<:Real}
 )
     # směrové vektory
     d1 = (cos(u1), sin(u1))
