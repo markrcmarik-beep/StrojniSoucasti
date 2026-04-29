@@ -46,18 +46,14 @@ function burub2body(
 
     R > 0 || throw(ArgumentError("R musí být kladné"))
     presnost > 0 || throw(ArgumentError("presnost musí být kladná"))
-
     # průsečík přímek
     P = buub2b(A, u1, u2, B)
-
     # úhel mezi přímkami
     u = mod(u2 - u1, 2π)
-
     # degenerace
     if u < 1e-8 || abs(u - 2π) < 1e-8
         throw(ArgumentError("Přímky jsou rovnoběžné"))
     end
-
     # vezmeme vnitřní úhel
     if u > π
         u = 2π - u
@@ -65,10 +61,8 @@ function burub2body(
     else
         smer = "-"
     end
-
     # tečné body
     T1, T2 = ubru2bb(u1, P, R, u2)
-
     # oblouk
     body = brsb2body(T1, R, smer, T2, presnost)
 

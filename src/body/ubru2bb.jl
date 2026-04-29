@@ -32,35 +32,22 @@
 ## Použité proměnné vnitřní:
 #
 
-function ubru2bb(alfa::Real, A::Tuple{<:Real,<:Real},
-    r::Real, beta::Real)
+function ubru2bb(alfa::Real, A::NTuple{2,<:Real}, r::Real, beta::Real)
 
     r > 0 || throw(ArgumentError("r musí být kladné"))
-
-    # úhel mezi přímkami (orientovaný)
-    u = mod(beta - alfa, 2π)
-
-    # vezmeme vnitřní úhel
-    if u > π
-        u = 2π - u
-    end
-
-    # degenerace
+    # orientovaný úhel
+    u_raw = mod(beta - alfa, 2π)
+    # vnitřní úhel
+    u = u_raw > π ? 2π - u_raw : u_raw
     if u < 1e-8
         throw(ArgumentError("Přímky jsou téměř rovnoběžné"))
     end
     if abs(u - π) < 1e-8
         throw(ArgumentError("Přímky jsou téměř v přímce"))
     end
-
-    # vzdálenost tečných bodů
     a = r / tan(u/2)
-
-    # směrové vektory
     d1 = (cos(alfa), sin(alfa))
     d2 = (cos(beta), sin(beta))
-
-    # body dotyku
     B = (A[1] + a*d1[1], A[2] + a*d1[2])
     C = (A[1] + a*d2[1], A[2] + a*d2[2])
 
