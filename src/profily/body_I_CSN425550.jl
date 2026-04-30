@@ -1,8 +1,9 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# Vrátí body definující obrys profilu I podle normy ČSN 42 5550.
 #
-# ver: 2026-04-28
+# ver: 2026-04-30
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #

@@ -1,8 +1,9 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# Vrátí body definující obrys profilu TR4HR podle normy ČSN 42 5720.
 #
-# ver: 2026-04-25
+# ver: 2026-04-30
 ## Funkce: body_TR4HR_CSN()
 ## Autor: Martin
 #
@@ -40,19 +41,19 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     b = prof.b
     t = prof.t
     R = prof.R
-    if uchyceni == "ld"
+    if uchyceni == "ld" # levý dolní roh
         x = 0
         y = 0
-    elseif uchyceni == "stred"
+    elseif uchyceni == "stred" # střed
         x = -a/2
         y = -b/2
-    elseif uchyceni == "lu"
+    elseif uchyceni == "lu" # levý horní roh
         x = 0
         y = -b
-    elseif uchyceni == "rd"
+    elseif uchyceni == "rd" # pravý dolní roh
         x = -a
         y = 0
-    elseif uchyceni == "ru"
+    elseif uchyceni == "ru" # pravý horní roh
         x = -a
         y = -b
     else
@@ -61,42 +62,30 @@ function body_TR4HR_CSN(prof, uchyceni::String="ld", args...)
     end
     # vypočet obrysu
     # (x, y) levý spodní roh
-    b_plus1 = StrojniSoucasti.oblouk2body(
-        (x, y + R), (x + R, y), 
-        R, "+", 0.01)
-    b_plus2 = StrojniSoucasti.oblouk2body(
-        (x + a - R, y), (x + a, y + R), 
-        R, "+", 0.01)
-    b_plus3 = StrojniSoucasti.oblouk2body(
-        (x + a, y + b - R), (x + a - R, y + b), 
-        R, "+", 0.01)
-    b_plus4 = StrojniSoucasti.oblouk2body(
-        (x + R, y + b), (x, y + b - R), 
-        R, "+", 0.01)
+    A = (x, y) # levý spodní roh
+    B = (x+a, y) # pravý spodní roh
+    C = (x+a, y+b) # pravý horní roh
+    D = (x, y+b) # levý horní roh
     obrys = [
-        b_plus1..., b_plus2..., 
-        b_plus3..., b_plus4...,
+        StrojniSoucasti.burub2body(A, 0, R, pi/2, B)..., 
+        StrojniSoucasti.burub2body(B, pi/2, R, pi, C)...,
+        StrojniSoucasti.burub2body(C, pi, R, 3*pi/2, D)..., 
+        StrojniSoucasti.burub2body(D, 3*pi/2, R, 0, A)...,
         ]
     # vypočet otvoru
     Ro = R - t
     if Ro < 0
         Ro = 0
     end
-    b2_plus1 = StrojniSoucasti.oblouk2body(
-        (x + t, y + t + Ro), (x + t + Ro, y + t), 
-        Ro, "+", 0.01)
-    b2_plus2 = StrojniSoucasti.oblouk2body(
-        (x + a - t - Ro, y + t), (x + a - t, y + t + Ro), 
-        Ro, "+", 0.01)
-    b2_plus3 = StrojniSoucasti.oblouk2body(
-        (x + a - t, y + b - t - Ro), (x + a - t - Ro, y + b - t), 
-        Ro, "+", 0.01)
-    b2_plus4 = StrojniSoucasti.oblouk2body(
-        (x + t + Ro, y + b - t), (x + t, y + b - t - Ro), 
-        Ro, "+", 0.01)
+    A1 = (A[1] + t, A[2] + t) # levý spodní roh otvoru
+    B1 = (B[1] - t, B[2] + t) # pravý spodní roh otvoru
+    C1 = (C[1] - t, C[2] - t) # pravý horní roh otvoru
+    D1 = (D[1] + t, D[2] - t) # levý horní roh otvoru
     otvor = [
-        b2_plus1..., b2_plus2...,
-        b2_plus3..., b2_plus4...,
+        StrojniSoucasti.burub2body(A1, 0, Ro, pi/2, B1)..., 
+        StrojniSoucasti.burub2body(B1, pi/2, Ro, pi, C1)...,
+        StrojniSoucasti.burub2body(C1, pi, Ro, 3*pi/2, D1)..., 
+        StrojniSoucasti.burub2body(D1, 3*pi/2, Ro, 0, A1)...,
     ]
     body = (obrys = obrys, otvory = [otvor])
     return body

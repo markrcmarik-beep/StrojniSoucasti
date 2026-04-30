@@ -1,11 +1,14 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Z vrcholu bodu A vede polopřímky pod úhly (alfa, beta). Vypočítá 
-# souřadnice okrajových bodů B (alfa), C (beta) pro kružnici o poloměru r, 
-# která je osazena do vnitřního zaoblení (těsně) mezi těmito polopřímkami. 
+# Z bodu A vede polopřímky pod úhly (alfa, beta). Vypočítá 
+# souřadnice okrajových bodů B (alfa), C (beta) pro kružnici 
+# o poloměru r, která je osazena tečně do vnitřního zaoblení 
+# mezi těmito polopřímkami.
 # Úhel měří ve směru "+" (proti směru hodin) od osy x [rad].
-# ver: 2026-04-28
+# Pracuje v rovině (x, y).
+#
+# ver: 2026-04-30
 ## Funkce: B, C = ubru2bb(alfa, A, r, beta)
 ## Autor: Martin
 #

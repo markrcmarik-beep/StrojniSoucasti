@@ -1,4 +1,4 @@
-# ver: 2026-04-28
+# ver: 2026-04-30
 using StrojniSoucasti, Test
 
 @testset "burub2body - základní funkčnost" begin
@@ -63,14 +63,19 @@ end
     body = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.1)
 
     P = StrojniSoucasti.buub2b(A, u1, u2, B)
-    T1, T2 = StrojniSoucasti.ubru2bb(u1, P, R, u2)
 
-    # první a poslední bod musí odpovídat tečným bodům (s tolerancí)
-    @test body[1][1] ≈ T1[1] atol=1e-8
-    @test body[1][2] ≈ T1[2] atol=1e-8
+    function on_segment(Pt, X, Y; atol=1e-8)
+        XY = (Y[1] - X[1], Y[2] - X[2])
+        XPt = (Pt[1] - X[1], Pt[2] - X[2])
+        cross = XY[1]*XPt[2] - XY[2]*XPt[1]
+        dot = XY[1]*XPt[1] + XY[2]*XPt[2]
+        len2 = XY[1]^2 + XY[2]^2
+        return abs(cross) ≤ atol && dot ≥ -atol && dot ≤ len2 + atol
+    end
 
-    @test body[end][1] ≈ T2[1] atol=1e-8
-    @test body[end][2] ≈ T2[2] atol=1e-8
+    # první i poslední bod oblouku musí ležet mezi body A-P a B-P
+    @test on_segment(body[1], A, P)
+    @test on_segment(body[end], B, P)
 
 end
 
@@ -106,8 +111,8 @@ end
 
 @testset "burub2body - invariant rotace" begin
 
-    A = (1.0, 0.0)
-    B = (0.0, 1.0)
+    A = (-1.0, 0.0)
+    B = (0.0, -1.0)
     u1 = 0.0
     u2 = pi/2
     R = 0.5
@@ -139,6 +144,31 @@ end
 
 #-------------------------------------------------------------
 
+@testset "burub2body - tečné body leží na polopřímkách" begin
+
+    A = (0.0, 0.0)
+    B = (0.0, 2.0)
+    u1 = 0.0
+    u2 = 3pi/2
+    R = 0.5
+
+    body = StrojniSoucasti.burub2body(A, u1, R, u2, B, 0.1)
+
+    function on_ray(P, O, u; atol=1e-8)
+        d = (cos(u), sin(u))
+        v = (P[1] - O[1], P[2] - O[2])
+        cross = d[1]*v[2] - d[2]*v[1]
+        t = d[1]*v[1] + d[2]*v[2]
+        return abs(cross) ≤ atol && t ≥ -atol
+    end
+
+    @test on_ray(body[1], A, u1)
+    @test on_ray(body[end], B, u2)
+
+end
+
+#-------------------------------------------------------------
+
 @testset "burub2body - degenerace" begin
 
     # rovnoběžné přímky
@@ -152,5 +182,9 @@ end
     # nulová přesnost
     @test_throws ArgumentError StrojniSoucasti.burub2body(
         (0.0,0.0), 0.5, 1.0, 1.0, (1.0,1.0), 0.0)
+
+    # zadaný poloměr je příliš velký pro úsečky A-P a B-P
+    @test_throws ArgumentError StrojniSoucasti.burub2body(
+        (0.0,0.0), pi/4, 3.0, 3pi/4, (4.0,0.0), 0.1)
 
 end

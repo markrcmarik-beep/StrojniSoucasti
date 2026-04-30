@@ -1,8 +1,9 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
+# Vrátí body definující obrys profilu IPE podle normy ČSN 42 5553.
 #
-# ver: 2026-04-19
+# ver: 2026-04-30
 ## Funkce: body_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -36,24 +37,24 @@
 
 function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
 
-    b = prof.b
-    h = prof.h
-    t1 = prof.t1
-    t2 = prof.t2
-    R = prof.R
-    if uchyceni == "ld"
+    b = prof.b # šířka profilu
+    h = prof.h # výška profilu
+    t1 = prof.t1 # tloušťka pásnice
+    t2 = prof.t2 # tloušťka příruby
+    R = prof.R # poloměr zaoblení
+    if uchyceni == "ld" # levý dolní roh
         x = 0
         y = 0
-    elseif uchyceni == "stred"
+    elseif uchyceni == "stred" # střed
         x = -b/2
         y = -h/2
-    elseif uchyceni == "lu"
+    elseif uchyceni == "lu" # levý horní roh
         x = 0
         y = -h
-    elseif uchyceni == "rd"
+    elseif uchyceni == "rd" # pravý dolní roh
         x = -b
         y = 0
-    elseif uchyceni == "ru"
+    elseif uchyceni == "ru" # pravý horní roh
         x = -b
         y = -h
     else
@@ -67,23 +68,39 @@ function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
     #t2 = 8.5
     #R = 12
     # (x, y) levý spodní roh
-    b_plus1 = StrojniSoucasti.oblouk2body(
-        (x + b/2 + t1/2 + R, y + t2), (x + b/2 + t1/2, y + t2 + R), 
-        R, "-", 0.01)
-    b_plus2 = StrojniSoucasti.oblouk2body(
-        (x + b/2 + t1/2, y + h - t2 - R), (x + b/2 + t1/2 + R, y + h - t2), 
-        R, "-", 0.01)
-    b_plus3 = StrojniSoucasti.oblouk2body(
-        (x + b/2 - t1/2 - R, y + h - t2), (x + b/2 - t1/2, y + h - t2 - R), 
-        R, "-", 0.01)
-    b_plus4 = StrojniSoucasti.oblouk2body(
-        (x + b/2 - t1/2, y + t2 + R), (x + b/2 - t1/2 - R, y + t2), 
-        R, "-", 0.01)
-    obrys = [(x, y), (x+b, y), (x+b, y+t2), 
-        b_plus1..., b_plus2..., 
-        (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
-        b_plus3..., b_plus4...,
-        (x, y+t2)]
+    A = (x, y) # levý spodní roh
+    A1 = (A[1], A[2] + t2) # levý horní roh spodní pásnice
+    A2 = (x + b/2 - t1/2, A[2] + t2) # střední horní roh vlevo spodní pásnice
+    B = (x+b, y) # pravý spodní roh
+    B1 = (B[1], B[2] + t2) # pravý horní roh spodní pásnice
+    B2 = (x+b/2 + t1/2, B[2] + t2) # střední spodní roh vpravo svislé pásnice
+    C = (x+b, y+h) # pravý horní roh
+    C1 = (C[1], C[2] - t2) # pravý spodní roh horní pásnice
+    C2 = (x+b/2 + t1/2, C[2] - t2) # střední horní roh vpravo svislé pásnice
+    D = (x, y+h) # levý horní roh
+    D1 = (D[1], D[2] - t2) # levý spodní roh horní pásnice
+    D2 = (x+b/2 - t1/2, D[2] - t2) # střední horní roh vlevo svislé pásnice
+    b_plus1 = StrojniSoucasti.brsb2body(
+        (x + b/2 + t1/2 + R, y + t2), R, "-", (x + b/2 + t1/2, y + t2 + R), 0.01)
+    b_plus2 = StrojniSoucasti.brsb2body(
+        (x + b/2 + t1/2, y + h - t2 - R), R, "-", (x + b/2 + t1/2 + R, y + h - t2), 0.01)
+    b_plus3 = StrojniSoucasti.brsb2body(
+        (x + b/2 - t1/2 - R, y + h - t2), R, "-", (x + b/2 - t1/2, y + h - t2 - R), 0.01)
+    b_plus4 = StrojniSoucasti.brsb2body(
+        (x + b/2 - t1/2, y + t2 + R), R, "-", (x + b/2 - t1/2 - R, y + t2), 0.01)
+    #obrys = [(x, y), (x+b, y), (x+b, y+t2), 
+    #    b_plus1..., b_plus2..., 
+    #    (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
+    #    b_plus3..., b_plus4...,
+    #    (x, y+t2)]
+    obrys = [A, B, B1,
+        StrojniSoucasti.burub2body(B1, pi, R, pi/2, C2)..., 
+        StrojniSoucasti.burub2body(B2, pi/2, R, 0, C1)...,
+        C1, C, D, D1,
+        StrojniSoucasti.burub2body(D1, 0, R, -pi/2, A2)...,
+        StrojniSoucasti.burub2body(D2, -pi/2, R, pi, A1)...,
+        A1,
+    ]
     body = (obrys = obrys, otvory = ())
     return body
 end
