@@ -3,15 +3,15 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu IPE podle normy ČSN 42 5553.
 #
-# ver: 2026-04-30
+# ver: 2026-05-01
 ## Funkce: body_IPE_CSN425553()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/body_IPE_CSN425553.jl
+# StrojniSoucasti/src/profily/body_IPE_CSN425553.jl
 #
 ## Vzor:
-## vystupni_promenne = body_IPE_CSN425553(vstupni_promenne)
+## body = body_IPE_CSN425553(prof, uchyceni, args...)
 ## Vstupní proměnné:
 # prof - struktura s rozměry profilu (b, h, t1, t2, R)
 # uchyceni - volitelný řetězec určující umístění profilu v 
@@ -61,13 +61,7 @@ function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
         throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
     end
-
-    #b = 100
-    #h = 200
-    #t1 = 5.6
-    #t2 = 8.5
-    #R = 12
-    # (x, y) levý spodní roh
+    # vypočet obrysu
     A = (x, y) # levý spodní roh
     A1 = (A[1], A[2] + t2) # levý horní roh spodní pásnice
     A2 = (x + b/2 - t1/2, A[2] + t2) # střední horní roh vlevo spodní pásnice
@@ -80,19 +74,6 @@ function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
     D = (x, y+h) # levý horní roh
     D1 = (D[1], D[2] - t2) # levý spodní roh horní pásnice
     D2 = (x+b/2 - t1/2, D[2] - t2) # střední horní roh vlevo svislé pásnice
-    b_plus1 = StrojniSoucasti.brsb2body(
-        (x + b/2 + t1/2 + R, y + t2), R, "-", (x + b/2 + t1/2, y + t2 + R), 0.01)
-    b_plus2 = StrojniSoucasti.brsb2body(
-        (x + b/2 + t1/2, y + h - t2 - R), R, "-", (x + b/2 + t1/2 + R, y + h - t2), 0.01)
-    b_plus3 = StrojniSoucasti.brsb2body(
-        (x + b/2 - t1/2 - R, y + h - t2), R, "-", (x + b/2 - t1/2, y + h - t2 - R), 0.01)
-    b_plus4 = StrojniSoucasti.brsb2body(
-        (x + b/2 - t1/2, y + t2 + R), R, "-", (x + b/2 - t1/2 - R, y + t2), 0.01)
-    #obrys = [(x, y), (x+b, y), (x+b, y+t2), 
-    #    b_plus1..., b_plus2..., 
-    #    (x+b, y+h-t2), (x+b, y+h), (x, y+h), (x, y+h-t2), 
-    #    b_plus3..., b_plus4...,
-    #    (x, y+t2)]
     obrys = [A, B, B1,
         StrojniSoucasti.burub2body(B1, pi, R, pi/2, C2)..., 
         StrojniSoucasti.burub2body(B2, pi/2, R, 0, C1)...,

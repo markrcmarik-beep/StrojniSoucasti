@@ -3,25 +3,25 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu I podle normy ČSN 42 5550.
 #
-# ver: 2026-04-30
+# ver: 2026-05-01
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/body_I_CSN425550.jl
+# StrojniSoucasti/src/profily/body_I_CSN425550.jl
 #
 ## Vzor:
-## vystupni_promenne = body_I_CSN425550(vstupni_promenne)
+## body = body_I_CSN425550(prof , uchyceni, args...)
 ## Vstupní proměnné:
 # prof - struktura s rozměry profilu (b, h, t1, t2, R, R1, sp) 
 #   získaná z funkce profil_I_CSN425550()
 # uchyceni - volitelný řetězec určující umístění profilu v 
-#   souřadnicovém systému. Povolené hodnoty jsou: 
-#       "ld" (levý dolní roh), 
-#       "stred" (střed), 
-#       "lu" (levý horní roh),
-#       "rd" (pravý dolní roh),
-#       "ru" (pravý horní roh).
+#   souřadnicovém systému. (nepovinné) Povolené hodnoty jsou: 
+#       "ld" (levý dolní roh) 
+#       "stred" (střed)
+#       "lu" (levý horní roh)
+#       "rd" (pravý dolní roh) (výchozí hodnota)
+#       "ru" (pravý horní roh)
 # args... - další volitelné argumenty (zatím nevyužité)
 ## Výstupní proměnné:
 # body - pole (vektor) obsahující souřadnice bodů definujících 

@@ -1,4 +1,4 @@
-# ver: 2026-04-18
+# ver: 2026-05-01
 using Test
 using StrojniSoucasti
 
@@ -34,6 +34,12 @@ end
         prof = StrojniSoucasti.profil_I_CSN425550(name1)
         _test_profil_i_csn425550_common(prof, exp_serie, exp_standard, exp_h, exp_b, exp_t1, exp_t2, exp_R, exp_R1, exp_material)
     end
+
+    prof80 = StrojniSoucasti.profil_I_CSN425550("I80")
+    @test prof80 !== nothing
+    @test prof80.Sx == 11400.0
+    @test prof80.sx == 68.4
+    @test prof80.sx_unit == "mm"
 
     @test StrojniSoucasti.profil_I_CSN425550("IPE100") === nothing
     @test StrojniSoucasti.profil_I_CSN425550("I999") === nothing

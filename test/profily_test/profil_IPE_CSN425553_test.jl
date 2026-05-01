@@ -35,6 +35,12 @@ end
         _test_profil_ipe_csn425553_common(prof, exp_serie, exp_standard, exp_h, exp_b, exp_t1, exp_t2, exp_R, exp_R1, exp_material)
     end
 
+    prof80 = StrojniSoucasti.profil_IPE_CSN425553("IPE80")
+    @test prof80 !== nothing
+    @test prof80.Sx == 11600.0
+    @test prof80.sx == 69.0
+    @test prof80.sx_unit == "mm"
+
     @test StrojniSoucasti.profil_IPE_CSN425553("I100") === nothing
     @test StrojniSoucasti.profil_IPE_CSN425553("IPE999") === nothing
     @test StrojniSoucasti.profil_IPE_CSN425553("IPN100") === nothing

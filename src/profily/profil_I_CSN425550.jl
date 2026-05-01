@@ -69,6 +69,9 @@
 #   .Sx - statický moment podle osy x [mm^3]
 #   .Sx_unit - jednotka pro statický moment podle osy x
 #   .Sx_info - popis statického momentu podle osy x
+#   .sx - staticka hodnota sx [mm]
+#   .sx_unit - jednotka pro sx
+#   .sx_info - popis sx
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
@@ -88,56 +91,59 @@ struct I_CSN425550
     serie::String
     standard::String
     standard_info::String
-    h::Float64
+    h::Float64 # vyska profilu [mm]
     h_unit::String
     h_info::String
-    b::Float64
+    b::Float64 # sirka pasnice [mm]
     b_unit::String
     b_info::String
-    t1::Float64
+    t1::Float64 # tloustka stojiny [mm]
     t1_unit::String
     t1_info::String
-    t2::Float64
+    t2::Float64 # stredni tloustka pasnice [mm]
     t2_unit::String
     t2_info::String
-    R::Float64
+    R::Float64 # polomer zaobleni vyskove spojnice [mm]
     R_unit::String
     R_info::String
-    R1::Float64
+    R1::Float64 # polomer zaobleni vnitrni sirky pasnice [mm]
     R1_unit::String
     R1_info::String
-    sp::Float64
+    sp::Float64 # sklon příruby [%]
     sp_unit::String
     sp_info::String
-    m::Float64
+    m::Float64 # hmotnost [kg/m]
     m_unit::String
     m_info::String
     material::Vector{String}
     material_info::String
-    S::Float64
+    S::Float64 # plocha prurezu [mm^2]
     S_unit::String
     S_info::String
-    Ix::Float64
+    Ix::Float64 # moment setrvacnosti podle osy x [mm^4]
     Ix_unit::String
     Ix_info::String
-    Wx::Float64
+    Wx::Float64 # prurezovy modul podle osy x [mm^3]
     Wx_unit::String
     Wx_info::String
-    ix::Float64
+    ix::Float64 # polomer setrvacnosti podle osy x [mm]
     ix_unit::String
     ix_info::String
-    Iy::Float64
+    Iy::Float64 # moment setrvacnosti podle osy y [mm^4]
     Iy_unit::String
     Iy_info::String
-    Wy::Float64
+    Wy::Float64 # prurezovy modul podle osy y [mm^3]
     Wy_unit::String
     Wy_info::String
-    iy::Float64
+    iy::Float64 # polomer setrvacnosti podle osy y [mm]
     iy_unit::String
     iy_info::String
-    Sx::Float64
+    Sx::Float64 # staticky moment podle osy x [mm^3]
     Sx_unit::String
     Sx_info::String
+    sx::Float64 # staticka hodnota sx [mm]
+    sx_unit::String
+    sx_info::String
 end
 
 const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
@@ -156,6 +162,11 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     row === nothing && return nothing
 
     size_part = key[2:end]
+    sx_val = Float64(get(row, "sx", 0.0))
+    sx_mm = sx_val > 0.0 ? sx_val : 0.0
+    Sx_from_table = get(row, "Sx", nothing)
+    Sx_val = Sx_from_table === nothing ? (sx_mm > 0.0 ? Float64(get(row, "Ix", 0.0)) / sx_mm : 0.0) : Float64(Sx_from_table)
+
     return I_CSN425550(
         string("I", " ", size_part), # název profilu
         "I", # série
@@ -208,9 +219,12 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         Float64(get(row, "iy", 0.0)), # iy - polomer setrvacnosti podle osy y [mm]
         "mm",
         "polomer setrvacnosti podle osy y [mm]",
-        Float64(get(row, "Sx", get(row, "sx", 0.0))), # Sx - staticky moment podle osy x [mm^3]
+        Sx_val, # Sx - staticky moment podle osy x [mm^3]
         "mm^3",
-        "staticky moment prurezu podle osy x [mm^3]"
+        "staticky moment prurezu podle osy x [mm^3]",
+        sx_mm, # sx - staticka hodnota sx [mm]
+        "mm",
+        "staticka hodnota sx [mm]"
     )
 end
 
