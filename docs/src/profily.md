@@ -32,7 +32,7 @@ Funkce `profily.jl` slouží k analýze profilů a jejich vyhodnocení.
     6HR {s}
     s - rozteč rovnoběžek šestihrannu (na klíč)
 - **TR4HR** trubka čtyřhranná
-    TR4HR {a}x{t} , TR4HR {a}x{b}x{t}
+    TR4HR {a}x{t} , TR4HR {a}x{a}x{t} , TR4HR {a}x{b}x{t}
     a - strana obdélníku x, strana čtverce
     b - strana obdélníku y
     t - tloušťka

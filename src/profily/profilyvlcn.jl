@@ -55,7 +55,6 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrátí hodnotu nebo missing
     dopln_jednotku(hod, cil_jednotka) =
         (!(hod isa Unitful.AbstractQuantity) || unit(hod) == Unitful.NoUnits) ? hod * cil_jednotka : hod
-
     natoceni = mod(natoceni, 2*pi) # Normalizace úhlu do intervalu <0, 2*pi)
     # -----------------------------------------------------------
     # S - Plocha [mm²]

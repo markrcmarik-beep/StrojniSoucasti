@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-17
+# ver: 2026-05-03
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -72,7 +72,7 @@ function profilyCSN(inputStr::AbstractString)
     # -----------------------------------------------------------
     parsers = [
         # -------------------------------------------------------
-        # PLO / OBD : a x b (+ R)
+        # PLO / OBD : PLO{a}x{b} , PLO{a}x{b}R{r} , OBD{a}x{b} , OBD{a}x{b}R{r}
         # -------------------------------------------------------
         (
             r"^(PLO|OBD)(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(?:R(\d+(?:\.\d+)?))?$",
@@ -95,7 +95,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # KR : D
+        # KR : KR{D}
         # -------------------------------------------------------
         (
             r"^KR(\d+(?:\.\d+)?)$",
@@ -103,12 +103,26 @@ function profilyCSN(inputStr::AbstractString)
                 D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
-                #dims[:D] = mmval(m.captures[1]) * u"mm"
+                return true
+            end
+        ),
+        # KR : KR{D}/{d}
+        (
+            r"^KR(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$",
+            function (m)
+                D = parse(Float64, m.captures[1])
+                d = parse(Float64, m.captures[2])
+                if D <= d
+                    return false
+                end
+                dims[:info] = "KR"
+                dims[:D] = D * u"mm"
+                dims[:d] = d * u"mm"
                 return true
             end
         ),
         # -------------------------------------------------------
-        # TRKR : D x t
+        # TRKR : TRKR{D}x{t}
         # -------------------------------------------------------
         (
             r"^TRKR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)$",
@@ -126,7 +140,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # 4HR : a (+ R)
+        # 4HR : 4HR{a} , 4HR{a}R{r} , 4HR{a}x{a} , 4HR{a}x{a}R{r} , 4HR{a}x{b} , 4HR{a}x{b}R{r}
         # -------------------------------------------------------
         (
             r"^4HR(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
@@ -148,7 +162,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # 6HR : s
+        # 6HR : 6HR{s}
         # -------------------------------------------------------
         (
             r"^6HR(\d+(?:\.\d+)?)$",
@@ -162,7 +176,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # I : I/IPE
+        # I/IPE : I{n} , IPE{n}
         # -------------------------------------------------------
         (
             r"^(I|IPE)(\d+(?:\.\d+)?)$",
@@ -170,7 +184,6 @@ function profilyCSN(inputStr::AbstractString)
                 serie = String(m.captures[1])
                 A = serie == "IPE" ? profil_IPE_CSN425553(s) : profil_I_CSN425550(s)
                 A === nothing && return false
-
                 dims[:info] = "I"
                 dims[:serie] = A.serie
                 dims[:b] = A.b * u"mm"
@@ -185,7 +198,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # TR4HR : a x b x t (+ R)
+        # TR4HR : TR4HR{a}x{t} , TR4HR{a}x{b}x{t} , TR4HR{a}x{b}x{t}R{r}
         # -------------------------------------------------------
         (
             r"^TR4HR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
@@ -211,7 +224,6 @@ function profilyCSN(inputStr::AbstractString)
                     if a <= 2t || b <= 2t
                         return false
                     end
-                    
                     dims[:info] = "TR4HR"
                     dims[:a] = a * u"mm"
                     dims[:b] = b * u"mm"
