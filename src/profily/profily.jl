@@ -114,14 +114,28 @@ function profily(inputStr::AbstractString, args...)
         dims = Dict{Symbol,Any}()
         dims[:info] = profile
     end
+    dims = nothing # resetujeme dims, protože profilyCSN a profil_I_CSN425550 vrací Dict s rozměry
     # -----------------------------------------------------------
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
-    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR", "TR4HR"]
+    if profile in ["I"]
+        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
+        dims = StrojniSoucasti.profil_I_CSN425550(clean)
+    elseif profile in ["IPE"]
+        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
+        dims = StrojniSoucasti.profil_IPE_CSN425553(clean)
+    elseif profile in ["TR4HR"]
+        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
+        dims = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
+    end
+    if dims === nothing
+    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
         clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
         dims = StrojniSoucasti.profilyCSN(clean)
+
     else
         error("Neznámý profil: $profile. Podporované profily jsou PLO, OBD, KR, TRKR, 4HR, 6HR, TR4HR.")
+    end
     end
     if dims === nothing
         error("Profil: $clean nebyl nalezen.")
