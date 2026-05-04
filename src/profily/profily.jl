@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-04-08
+# ver: 2026-05-04
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -90,16 +90,30 @@ function profily(inputStr::AbstractString, args...)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
-    clean = replace(strip(inputStr), r"\s+" => " ") # odstraní nadbytečné mezery
-    parts = split(clean, " ") # rozdělí na profil a rozměry (např: SubString{String}["4HR", "50"])
-    if length(parts) < 2
-        error("Neplatný vstup: chybí rozměrová část oddělena mezerou např: PLO 40x10.")
+    #if occursin(r"^(OBD|PLO|KR|TRKF|TR4HR|I|IPE)", inputStr)
+    prefixes = ("OBD", "PLO", "4HR", "6HR",
+        "KR", "TRKR", 
+        "TR4HR", "IPE", "I")
+    if any(p -> startswith(inputStr, p), prefixes)
+        profile = first(filter(p -> startswith(inputStr, p), prefixes)) # najde první shodu s prefixem
+        dimPart = replace(inputStr, profile => "") |> strip # odstraní prefix a zbaví se mezer
+        #println("vstup:", profile)
+        # vstup začíná jedním z požadovaných prefixů
+        dims = Dict{Symbol,Any}()
+        dims[:info] = profile
+    else
+        clean = replace(strip(inputStr), r"\s+" => " ") # odstraní nadbytečné mezery
+        parts = split(clean, " ") # rozdělí na profil a rozměry (např: SubString{String}["4HR", "50"])
+        if length(parts) < 2
+            error("Neplatný vstup: chybí rozměrová část oddělena mezerou např: PLO 40x10.")
+        end
+        #println("nenalezen")
+        profile = uppercase(parts[1]) # první část je profil
+        dimPart = parts[2] # zbytek je dimenzionální část (profil + rozměry)
+        # Výsledná struktura jako Dict
+        dims = Dict{Symbol,Any}()
+        dims[:info] = profile
     end
-    profile = uppercase(parts[1]) # první část je profil
-    dimPart = parts[2] # zbytek je dimenzionální část (profil + rozměry)
-    # Výsledná struktura jako Dict
-    dims = Dict{Symbol,Any}()
-    dims[:info] = profile
     # -----------------------------------------------------------
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
