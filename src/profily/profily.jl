@@ -129,7 +129,7 @@ function profily(inputStr::AbstractString, args...)
         dims = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
     end
     if dims === nothing
-    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
+    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR", "TR4HR"]
         clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
         dims = StrojniSoucasti.profilyCSN(clean)
 

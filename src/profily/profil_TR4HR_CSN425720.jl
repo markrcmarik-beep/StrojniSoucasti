@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-04-18
+# ver: 2026-05-05
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -65,7 +65,6 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
 
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
-
     nadpDB = nothing
     oznaceni = nothing
     # Zkusit rozebrat formát TR4HR_a_x_b_x_t
@@ -75,14 +74,15 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
         b = parse(Float64, m.captures[2]) # rozměr
         t = parse(Float64, m.captures[3]) # tloušťka
         if a < b # zajistit a >= b
-            a, b = b, a  # zajistit a >= b
-        end
-        if a > b
+            #a, b = b, a  # zajistit a >= b
             nadpDB = num_to_string(a) * "x" * num_to_string(b) # nadpis v DB
-            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+            oznaceni = "TR4HR " * nadpDB * "x" * num_to_string(t) # označení
+        elseif a > b
+            nadpDB = num_to_string(a) * "x" * num_to_string(b) # nadpis v DB
+            oznaceni = "TR4HR " * nadpDB * "x" * num_to_string(t) # označení
         elseif a == b
             nadpDB = num_to_string(a) # nadpis v DB
-            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+            oznaceni = "TR4HR " * nadpDB * "x" * num_to_string(t) # označení
         end
     else
         # Zkusit rozebrat formát TR4HR_a_x_t
@@ -92,13 +92,11 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
             b = a
             t = parse(Float64, m.captures[2]) # tloušťka
             nadpDB = num_to_string(a) # nadpis v DB
-            oznaceni = "TR4HR " * nadpDB * "x" * string(t) # označení
+            oznaceni = "TR4HR " * nadpDB * "x" * num_to_string(t) # označení
         end
     end
-
     nadpDB === nothing && return nothing
     haskey(TR4HR_DB, nadpDB) || return nothing
-
     row = TR4HR_DB[nadpDB] # načíst řádek z DB
     t_vec = get(row, "t", Float64[]) # dostupné tloušťky
     if !(t in t_vec)
@@ -114,9 +112,9 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
     end
 
     return TR4HR_CSN425720(
-        string(oznaceni), # název profilu
-        "TR4HR", # série
-        "\u010CSN 42 5720", # norma
+        string(oznaceni), # name
+        "TR4HR", # serie
+        "\u010CSN 42 5720", # standard
         "norma - textova hodnota", # info o normě
         a, # rozměr a
         "mm", # jednotka a

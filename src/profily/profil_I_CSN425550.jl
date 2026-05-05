@@ -168,9 +168,9 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     Sx_val = Sx_from_table === nothing ? (sx_mm > 0.0 ? Float64(get(row, "Ix", 0.0)) / sx_mm : 0.0) : Float64(Sx_from_table)
 
     return I_CSN425550(
-        string("I", " ", size_part), # název profilu
-        "I", # série
-        "\u010CSN 42 5550", # norma
+        string("I", " ", size_part), # name
+        "I", # serie
+        "\u010CSN 42 5550", # standard
         "norma - textova hodnota", # info o normě
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",

@@ -111,10 +111,10 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
     Sx_val = Sx_from_table === nothing ? (sx_mm > 0.0 ? Float64(get(row, "Ix", 0.0)) / sx_mm : 0.0) : Float64(Sx_from_table)
 
     return IPE_CSN425553(
-        string("IPE", " ", size_part),
-        "IPE",
-        "\u010CSN 42 5553",
-        "norma - textova hodnota",
+        string("IPE", " ", size_part), # name
+        "IPE", # serie
+        "\u010CSN 42 5553", # standard
+        "norma - textova hodnota", # standard_info
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
         "vyska profilu [mm]",
