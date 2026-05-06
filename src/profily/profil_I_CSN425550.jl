@@ -87,10 +87,10 @@ using TOML
 isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
 
 struct I_CSN425550
-    name::String
-    serie::String
-    standard::String
-    standard_info::String
+    name::String # např. "I 100"
+    serie::String # např. "I"
+    standard::String # např. "ČSN 42 5550"
+    standard_info::String # popis standardu - textová informace
     h::Float64 # vyska profilu [mm]
     h_unit::String
     h_info::String

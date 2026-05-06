@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-05-04
+# ver: 2026-05-06
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -86,7 +86,7 @@
 #
 using Unitful
 
-function profily(inputStr::AbstractString, args...)
+function profily(inputStr::AbstractString, args...; natoceni = 0)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
@@ -145,6 +145,8 @@ function profily(inputStr::AbstractString, args...)
     # -----------------------------------------------------------
     if length(args) == 0
         return dims # pouze rozměry
+    #elseif length(args) >= 2
+    #    natoceni = args(2) # druhý argument je natočení
     end
     # -----------------------------------------------------------
     # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, Ip…) nebo hodnoty pro natočení, řeší profilyvlcn nebo přidá natočení
@@ -154,7 +156,7 @@ function profily(inputStr::AbstractString, args...)
             dims[:natoceni] = property
         elseif property isa AbstractString || property isa Symbol
             key = Symbol(property) # převod na Symbol
-            hodnota, vzorec = StrojniSoucasti.profilyvlcn(dims, key) # volání výpočtu vlastnosti
+            hodnota, vzorec = StrojniSoucasti.profilyvlcn(dims, key, natoceni=natoceni) # volání výpočtu vlastnosti
             dims[key] = hodnota # uložíme hodnotu vlastnosti
             dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
         else
