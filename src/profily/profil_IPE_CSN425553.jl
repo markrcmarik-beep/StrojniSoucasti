@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN 42 5553.
-# ver: 2026-04-18
+# ver: 2026-05-07
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -75,6 +75,9 @@ struct IPE_CSN425553
     Iy::Float64 # moment setrvacnosti podle osy y [mm^4]
     Iy_unit::String
     Iy_info::String
+    Ixy::Float64 # kvadratický moment setrvacnosti Ixy [mm^4]
+    Ixy_unit::String
+    Ixy_info::String
     Wy::Float64 # prurezovy modul podle osy y [mm^3]
     Wy_unit::String
     Wy_info::String
@@ -156,6 +159,9 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy y [mm^4]",
+        0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4",
+        "kvadratický moment setrvacnosti Ixy [mm^4]",
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
         "mm^3",
         "prurezovy modul podle osy y [mm^3]",

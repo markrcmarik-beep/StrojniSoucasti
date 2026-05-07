@@ -57,6 +57,9 @@ struct TR4HR_CSN425720
     R_unit::String
     R_info::String
     material::Vector{String}
+    Ixy::Float64 # kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+    Ixy_unit::String # jednotka pro kvadratický moment setrvacnosti Ixy
+    Ixy_info::String # popis kvadratického momentu setrvacnosti Ixy
 end
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml"))
@@ -128,7 +131,10 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
         R_val, # poloměr
         "mm", # jednotka R
         "poloměr", # info R
-        get(row, "material", String[])::Vector{String}
+        get(row, "material", String[])::Vector{String},
+        0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4", # jednotka pro kvadratický moment setrvacnosti Ixy
+        "kvadratický moment setrvacnosti Ixy [mm^4]" # popis kvadratického momentu setrvacnosti Ixy
     )
 end
 

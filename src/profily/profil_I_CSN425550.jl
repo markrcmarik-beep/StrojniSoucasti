@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-04-18
+# ver: 2026-05-07
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -132,6 +132,9 @@ struct I_CSN425550
     Iy::Float64 # moment setrvacnosti podle osy y [mm^4]
     Iy_unit::String
     Iy_info::String
+    Ixy::Float64 # kvadratický moment [mm^4]
+    Ixy_unit::String
+    Ixy_info::String
     Wy::Float64 # prurezovy modul podle osy y [mm^3]
     Wy_unit::String
     Wy_info::String
@@ -213,6 +216,9 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy y [mm^4]",
+        0, # Ixy - kvadratický moment [mm^4] - zatím není v tabulce, bude doplněno později
+        "mm^4",
+        "kvadratický moment [mm^4]",
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
         "mm^3",
         "prurezovy modul podle osy y [mm^3]",

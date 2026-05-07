@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-05-06
+# ver: 2026-05-07
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -102,9 +102,16 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Ixy - Kvadratický moment [mm⁴]
     # -----------------------------------------------------------
     elseif velicina == :Ixy  # Kvadratický moment [mm⁴]
-        Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, velicina)
-        Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
-        return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy (natočený o natoceni)
+        if hasproperty(tvar1, :Ixy)
+            Ixy_hod = getv(:Ixy)
+            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
+            Ixy_str = hasproperty(tvar1, :Ixy_str) ? tvar1[:Ixy_str] : ""
+            return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy
+        else
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, velicina)
+            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
+            return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy (natočený o natoceni)
+        end
     # -----------------------------------------------------------
     # Imin - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )")
     # -----------------------------------------------------------
