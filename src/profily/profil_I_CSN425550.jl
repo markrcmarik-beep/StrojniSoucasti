@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-05-07
+# ver: 2026-05-08
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -232,11 +232,4 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         "mm",
         "staticka hodnota sx [mm]"
     )
-end
-
-# Zpetna kompatibilita puvodniho API.
-function profilI(name::AbstractString)
-    prof = profil_IPE_CSN425553(name)
-    prof === nothing || return prof
-    return profil_I_CSN425550(name)
 end
