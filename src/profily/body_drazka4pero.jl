@@ -60,18 +60,6 @@ function body_drazka4pero(prof, uchyceni::String="stred", args...)
     R1 = prof.R1
     x0 = 0
     y0 = 0
-    if uchyceni == "teziste"
-        x0 = 0
-        y0 = 0
-    elseif uchyceni == "stred"
-        x0 = 0
-        y0 = 0
-    else
-        throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
-            jsou: \"teziste\", \"stred\"."))
-    end
-    # (x-x0)^2 + (y-y0)^2 == (D/2)^2 # rovnice kružnice pro obvod profilu
-    # y - y0 == sqrt((D/2)^2 - (x-x0)^2) # horní polovina kružnice
     S = (x0, y0) # střed profilu
     A = (x0, y0-D/2) # bod spodního kvadrantu na obvodě
     B = (x0+D/2, y0) # bod pravého kvadrantu na obvodě
@@ -92,51 +80,39 @@ function body_drazka4pero(prof, uchyceni::String="stred", args...)
             StrojniSoucasti.brsb2body(B, D/2, "+", Cr1, 0.01)..., # body pro oblouk pravý horní kvadrant s poloměrem D/2
             Cr2, # přímka pravé srážky
             Cl2, # přímka spodní srážky
-            Cl1, # přímka levé srážky
             StrojniSoucasti.brsb2body(Cl1, D/2, "+", E, 0.01)..., 
             StrojniSoucasti.brsb2body(E, D/2, "+", A, 0.01)...
             ]
     elseif n==2
         Alr = StrojniSoucasti.rotuj_body(Clr, pi, S=S) # body pro pravou srážku pootočené o 180°
-        b_plus1 = StrojniSoucasti.brsb2body(
-            Alr[3], D/2, "+", B, 0.01) # body pro oblouk pravý spodní kvadrant s poloměrem D/2
-        b_plus2 = StrojniSoucasti.brsb2body(
-            B, D/2, "+", Cr1, 0.01) # body pro oblouk pravý horní kvadrant s poloměrem D/2
-        b_plus5 = StrojniSoucasti.brsb2body(
-            Cl1, D/2, "+", E, 0.01)
-        b_plus6 = StrojniSoucasti.brsb2body(
-            E, D/2, "+", Alr[1], 0.01)
         obrys = [
             StrojniSoucasti.brsb2body(Alr[3], D/2, "+", B, 0.01)..., 
             StrojniSoucasti.brsb2body(B, D/2, "+", Cr1, 0.01)..., 
             Cr2, # přímka pravé srážky
             Cl2, # přímka spodní srážky
-            b_plus5..., 
-            b_plus6...,
+            StrojniSoucasti.brsb2body(Cl1, D/2, "+", E, 0.01)..., 
+            StrojniSoucasti.brsb2body(E, D/2, "+", Alr[1], 0.01)...,
             Alr[2], # přímka levé srážky
-            Alr[4], # přímka levé srážky
+            Alr[4] # přímka levé srážky
         ]
     elseif n==3
         EAlr = StrojniSoucasti.rotuj_body([Cr1, Cr2, Cl1, Cl2], 2*pi/3, 
             S=S) # body pro pravou srážku pootočené o 120°
         ABlr = StrojniSoucasti.rotuj_body([Cr1, Cr2, Cl1, Cl2], 4*pi/3, 
             S=S) # body pro pravou srážku pootočené o 240°
-        b_plus1 = StrojniSoucasti.brsb2body(
-            ABlr[3], D/2, "+", B, 0.01) # body pro oblouk pravý spodní kvadrant s poloměrem D/2
-        b_plus2 = StrojniSoucasti.brsb2body(
-            B, D/2, "+", Cr1, 0.01) # body pro oblouk pravý horní kvadrant s poloměrem D/2
-        b_plus5 = StrojniSoucasti.brsb2body(
-            Cl1, D/2, "+", E, 0.01)
-        b_plus6 = StrojniSoucasti.brsb2body(
-            E, D/2, "+", Alr[1], 0.01)
-        b_plus7 = StrojniSoucasti.brsb2body(
-            EAlr[3], D/2, "+", ABlr[1], 0.01) # body pro oblouk pravý spodní kvadrant s poloměrem D/2
-        obrys = [b_plus1..., b_plus2..., 
+        obrys = [
+            StrojniSoucasti.brsb2body(ABlr[3], D/2, "+", B, 0.01)..., 
+            StrojniSoucasti.brsb2body(B, D/2, "+", Cr1, 0.01)..., 
             Cr2, # přímka pravé srážky
             Cl2, # přímka spodní srážky
-            b_plus5..., b_plus6...,
-            Alr[2], # přímka levé srážky
-            Alr[4], # přímka levé srážky
+            StrojniSoucasti.brsb2body(Cl1, D/2, "+", E, 0.01)..., 
+            StrojniSoucasti.brsb2body(E, D/2, "+", EAlr[1], 0.01)...,
+            EAlr[2], # přímka levé srážky
+            EAlr[4], # přímka levé srážky
+            StrojniSoucasti.brsb2body(EAlr[3], D/2, "+", A, 0.01)...,
+            StrojniSoucasti.brsb2body(A, D/2, "+", ABlr[1], 0.01)...,
+            ABlr[2],
+            ABlr[4]
         ]
     else
         obrys = ()

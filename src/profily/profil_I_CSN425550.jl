@@ -75,7 +75,7 @@
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
-# profil_I_common.jl
+#
 ## Priklad:
 # prof = profil_I_CSN425550("I 100")
 # println(prof.h)  # 100.0
@@ -84,7 +84,7 @@
 
 using TOML
 
-isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
+isdefined(@__MODULE__, :_profil_i_key_candidates)
 
 struct I_CSN425550
     name::String # např. "I 100"

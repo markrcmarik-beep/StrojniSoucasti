@@ -18,7 +18,7 @@
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
-# profil_I_common.jl (sdilene interni helpery)
+#
 ## Priklad:
 # prof = profil_IPE_CSN425553("IPE 100")
 # println(prof.h)  # 100.0
@@ -27,7 +27,7 @@
 
 using TOML
 
-isdefined(@__MODULE__, :_profil_i_key_candidates) || include("profil_I_common.jl")
+isdefined(@__MODULE__, :_profil_i_key_candidates)
 
 struct IPE_CSN425553
     name::String # např. "IPE 100"
