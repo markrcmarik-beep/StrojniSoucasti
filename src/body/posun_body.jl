@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Posune body o zadanou vzdálenost ve směru x a y.
-# ver: 2026-05-08
+# ver: 2026-05-09
 ## Funkce: posun_body()
 ## Autor: Martin
 #

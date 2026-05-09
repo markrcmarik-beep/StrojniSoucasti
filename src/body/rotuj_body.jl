@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Rotuje body o zadaný úhel.
-# ver: 2026-05-08
+# ver: 2026-05-09
 ## Funkce: rotuj_body()
 ## Autor: Martin
 #
@@ -27,7 +27,7 @@
 ## Použité proměnné vnitřní:
 #
 
-function rotuj_body(body::Vector{<:Tuple{<:Real, <:Real}}, natoceni::Real; S::Tuple{<:Real, <:Real}=(0.0, 0.0))
+function rotuj_body(body::Vector{<:Tuple{<:Real, <:Real}}, natoceni::Real; S::Tuple{<:Real, <:Real}=(0, 0))
     rotovane_body = Vector{Tuple{Float64, Float64}}(undef, length(body))
     sx, sy = S
     for i in eachindex(body)
