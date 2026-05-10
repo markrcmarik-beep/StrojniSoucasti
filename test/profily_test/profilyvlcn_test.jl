@@ -18,48 +18,40 @@ using Unitful
         :a => 20,
         :b => 10
     )
-
     PLO_02 = Dict(
         :info => "PLO",
         :a => 20u"mm",
         :b => 10u"mm",
         :R => 2u"mm"
     )
-
     KR_01 = Dict(
         :info => "KR",
         :D => 20u"mm"
     )
-
     TRKR_01 = Dict(
         :info => "TRKR",
         :D => 20u"mm",
         :d => 10u"mm"
     )
-
     _4HR_01 = Dict(
         :info => "4HR",
         :a => 20u"mm"
     )
-
     _4HR_02 = Dict(
         :info => "4HR",
         :a => 20u"mm",
         :R => 3u"mm"
     )
-
     _6HR_01 = Dict(
         :info => "6HR",
         :s => 20u"mm"
     )
-
     TR4HR_01 = Dict(
         :info => "TR4HR",
         :a => 20u"mm",
         :b => 10u"mm",
         :t => 4u"mm"
     )
-
     # ------------------------------------------------------------
     # S – plocha průřezu
     # ------------------------------------------------------------
@@ -79,7 +71,6 @@ using Unitful
         @test S2 ≈ pi*( (20u"mm")^2 - (10u"mm")^2 )/4
         @test txt2 == "π*(D² - d²)/4"
     end
-
     # ------------------------------------------------------------
     # Ip – polární moment
     # ------------------------------------------------------------
@@ -92,7 +83,6 @@ using Unitful
         @test Ip2 > 0u"mm^4"
         @test isa(txt2, String)
     end
-
     # ------------------------------------------------------------
     # Wk – modul v krutu
     # ------------------------------------------------------------
@@ -101,7 +91,6 @@ using Unitful
         @test Wk ≈ pi/16 * ((20u"mm")^4 - (10u"mm")^4) / (20u"mm")
         @test txt == "π/16*(D⁴ - d⁴)/D"
     end
-
     # ------------------------------------------------------------
     # Ix – kvadratický moment
     # ------------------------------------------------------------
@@ -109,7 +98,6 @@ using Unitful
         Ix0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=0)
         Ix90, txt90 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/2)
         Ix450, txt450 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=5*pi/2)
-
         @test Ix0 == 20u"mm" * (10u"mm")^3 / 12
         @test Ix90 == 10u"mm" * (20u"mm")^3 / 12
         @test Ix450 == Ix90 # Ověření periodicity natočení (450° == 90°)
@@ -117,7 +105,6 @@ using Unitful
         @test txt90 == "b*a^3/12"
         @test txt450 == txt90 # Ověření, že vzorec pro Ix se správně mění s natočením
     end
-
     # ------------------------------------------------------------
     # Iy – kvadratický moment
     # ------------------------------------------------------------
@@ -125,13 +112,11 @@ using Unitful
         Iy0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :Iy)
         @test Iy0 == 10u"mm" * (20u"mm")^3 / 12
         @test txt0 == "b*a^3/12"
-
         # Přímé volání profilyvlcnIx pro :Iy (delegace na :Ix s natočením)
         Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
         @test Iy_direct == 10 * 20^3 / 12
         @test txt_direct == "b*a^3/12"
     end
-
     # ------------------------------------------------------------
     # Symetrické tvary – ověření Ix == Iy a Ixy == 0
     # ------------------------------------------------------------
@@ -142,14 +127,12 @@ using Unitful
         Ixy_k, _ = StrojniSoucasti.profilyvlcn(KR_01, :Ixy)
         @test Ix_k == Iy_k
         @test Ixy_k == 0u"mm^4"
-
         # Trubka kruhová (TRKR) – Ix == Iy a Ixy == 0
         Ix_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ix)
         Iy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Iy)
         Ixy_tr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ixy)
         @test Ix_tr == Iy_tr
         @test Ixy_tr == 0u"mm^4"
-
         # Čtyřhranná tyč (4HR) – čtverec  (Ix == Iy a Ixy == 0)
         Ix_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Ix, natoceni=0)
         Iy_4, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Iy)
@@ -157,7 +140,6 @@ using Unitful
         @test Ix_4 == Iy_4
         @test Ixy_4 == 0u"mm^4"
     end
-
     # ------------------------------------------------------------
     # Imin – minimální kvadratický moment
     # ------------------------------------------------------------
@@ -165,12 +147,10 @@ using Unitful
         Imin1, txt1 = StrojniSoucasti.profilyvlcn(TRKR_01, :Imin)
         @test Imin1 == pi/64 * ( (20u"mm")^4 - (10u"mm")^4 )
         @test txt1 == "pi/64*(D^4 - d^4)"
-
         Imin2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imin)
         @test Imin2 > 0u"mm^4"
         @test txt2 == "-sqrt((1//4)*((-(1//12)*(a^3)*b + (1//12)*a*(b^3))^2)) + (1//2)*((1//12)*(a^3)*b + (1//12)*a*(b^3))"
     end
-
     # ------------------------------------------------------------
     # Imax – minimální kvadratický moment
     # ------------------------------------------------------------
@@ -178,12 +158,10 @@ using Unitful
         Imax1, txt1 = StrojniSoucasti.profilyvlcn(TRKR_01, :Imax)
         @test Imax1 == pi/64 * ( (20u"mm")^4 - (10u"mm")^4 )
         @test txt1 == "pi/64*(D^4 - d^4)"
-
         Imax2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imax)
         @test Imax2 > 0u"mm^4"
         @test txt2 == "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
     end
-
     # ------------------------------------------------------------
     # Wo – průřezový modul v ohybu
     # ------------------------------------------------------------
@@ -192,7 +170,6 @@ using Unitful
         @test Wo == 20u"mm" * (10u"mm")^2 / 6
         @test txt == "a*b²/6"
     end
-
     # ------------------------------------------------------------
     # Chybové stavy
     # ------------------------------------------------------------
@@ -200,7 +177,6 @@ using Unitful
         @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :NeznamaVelicina)
         @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/4)
     end
-
     #S1 = StrojniSoucasti.profilyvlcn("PLO 20x30 R5", :S)
     #println(S1)
 

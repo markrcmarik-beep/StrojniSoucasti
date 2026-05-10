@@ -1,4 +1,4 @@
-# ver: 2026-05-06
+# ver: 2026-05-10
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -68,5 +68,24 @@ dims5 = profily("KR 30", "S")
 @test typeof(dims5[:S]) <: Unitful.AbstractQuantity # S je s jednotkou
 @test dims5[:info] == "KR"
 @test dims5[:D] == 30u"mm"
+
+dims6 = profily("I 80")
+@test haskey(dims6, :info)
+@test dims6[:info] == "I"
+@test dims6[:b] == 42u"mm"
+@test dims6[:h] == 80u"mm"
+#@test haskey(dims6, :info)
+#@test haskey(dims6, :b)
+
+dims7 = profily("IPE 80")
+@test dims7[:info] == "IPE"
+@test dims7[:b] == 46u"mm"
+@test dims7[:h] == 80u"mm"
+
+dims7a = profily("IPE 80", "S")
+@test dims7a[:info] == "IPE"
+@test dims7a[:b] == 46u"mm"
+@test dims7a[:h] == 80u"mm"
+@test dims7a[:S] == 764u"mm^2"
 
 end

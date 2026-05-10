@@ -114,28 +114,61 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
         dims = Dict{Symbol,Any}()
         dims[:info] = profile
     end
-    dims = nothing # resetujeme dims, protože profilyCSN a profil_I_CSN425550 vrací Dict s rozměry
+    dims = nothing # resetujeme dims, protože výsledkem má být Dict s rozměry
+    clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
     # -----------------------------------------------------------
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
-    if profile in ["I"]
-        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
-        dims = StrojniSoucasti.profil_I_CSN425550(clean)
-    elseif profile in ["IPE"]
-        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
-        dims = StrojniSoucasti.profil_IPE_CSN425553(clean)
-    elseif profile in ["TR4HR"]
-        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
-        dims = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
-    end
-    if dims === nothing
-    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR", "TR4HR"]
-        clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
+    if profile == "I"
+        A = StrojniSoucasti.profil_I_CSN425550(clean)
+        if A !== nothing
+            dims = Dict{Symbol,Any}()
+            dims[:info] = "I"
+            dims[:serie] = A.serie
+            dims[:b] = A.b * u"mm"
+            dims[:h] = A.h * u"mm"
+            dims[:t1] = A.t1 * u"mm"
+            dims[:t2] = A.t2 * u"mm"
+            dims[:R] = A.R * u"mm"
+            dims[:R1] = A.R1 * u"mm"
+            dims[:standard] = A.standard
+            dims[:material] = A.material
+            dims[:S] = A.S
+        end
+    elseif profile == "IPE"
+        A = StrojniSoucasti.profil_IPE_CSN425553(clean)
+        if A !== nothing
+            dims = Dict{Symbol,Any}()
+            dims[:info] = "IPE"
+            dims[:serie] = A.serie
+            dims[:b] = A.b * u"mm"
+            dims[:h] = A.h * u"mm"
+            dims[:t1] = A.t1 * u"mm"
+            dims[:t2] = A.t2 * u"mm"
+            dims[:R] = A.R * u"mm"
+            dims[:R1] = A.R1 * u"mm"
+            dims[:standard] = A.standard
+            dims[:material] = A.material
+            dims[:S] = A.S
+        end
+    elseif profile == "TR4HR"
+        A = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
+        if A !== nothing
+            dims = Dict{Symbol,Any}()
+            dims[:info] = "TR4HR"
+            dims[:a] = A.a * u"mm"
+            dims[:b] = A.b * u"mm"
+            dims[:t] = A.t * u"mm"
+            dims[:R] = A.R * u"mm"
+            dims[:standard] = A.standard
+            dims[:material] = A.material
+        else
+            dims = StrojniSoucasti.profilyCSN(clean)
+        end
+    elseif profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
         dims = StrojniSoucasti.profilyCSN(clean)
-
     else
-        error("Neznámý profil: $profile. Podporované profily jsou PLO, OBD, KR, TRKR, 4HR, 6HR, TR4HR.")
-    end
+        error("Neznámý profil: $profile. Podporované profily jsou PLO, OBD, KR, TRKR, 4HR, 6HR, TR4HR, I, IPE.")
     end
     if dims === nothing
         error("Profil: $clean nebyl nalezen.")
@@ -156,9 +189,19 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
             dims[:natoceni] = property
         elseif property isa AbstractString || property isa Symbol
             key = Symbol(property) # převod na Symbol
-            hodnota, vzorec = StrojniSoucasti.profilyvlcn(dims, key, natoceni=natoceni) # volání výpočtu vlastnosti
-            dims[key] = hodnota # uložíme hodnotu vlastnosti
-            dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
+            if haskey(dims, key)
+                # Hodnota je už zadaná (např. z tabulky I/IPE), nepřepočítáváme ji.
+                if key == :S && (!(dims[key] isa Unitful.AbstractQuantity) || unit(dims[key]) == Unitful.NoUnits)
+                    dims[key] = dims[key] * u"mm^2"
+                end
+                if !haskey(dims, Symbol(key, :_str))
+                    dims[Symbol(key, :_str)] = ""
+                end
+            else
+                hodnota, vzorec = StrojniSoucasti.profilyvlcn(dims, key, natoceni=natoceni) # volání výpočtu vlastnosti
+                dims[key] = hodnota # uložíme hodnotu vlastnosti
+                dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
+            end
         else
             error("Název vlastnosti musí být String, Symbol, Number nebo hodnota s jednotkami úhlu.")
         end
