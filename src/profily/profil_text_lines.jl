@@ -1,8 +1,8 @@
-## Funkce Julia
+## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Pomocná funkce pro výpis profil informací do textového výstupu.
-# ver: 2026-02-28
+# ver: 2026-05-13
 ## Funkce: profil_text_lines()
 ## Autor: Martin
 #
@@ -10,7 +10,7 @@
 # StrojniSoucasti/src/profily/profil_text_lines.jl
 #
 ## Vzor:
-## vystupni_promenne = nazev_funkce(vstupni_promenne)
+## lines = profil_text_lines(VV)
 ## Vstupní proměnné:
 # VV::Dict{Symbol,Any} - slovník vstupních a výstupních proměnných.
 ## Výstupní proměnné:
@@ -30,7 +30,7 @@ function profil_text_lines(VV::Dict{Symbol,Any})
     lines = String[] # výpis informací o profilu
     if VV[:profil] != ""
         push!(lines, "profil: $(VV[:profil])") # název profilu
-        selected_keys = [:a, :b, :D, :d, :t, :R] # běžné rozměry profilu
+        selected_keys = [:a, :b, :D, :d, :t, :t1, :t2, :h, :h1, :h2, :R, :R1, :R2, :n] # běžné rozměry profilu
         for k in selected_keys # výpis rozměrů profilu
             if haskey(VV[:profil_info], k)
                 v = VV[:profil_info][k] 

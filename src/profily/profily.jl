@@ -131,9 +131,18 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
             dims[:t2] = A.t2 * u"mm"
             dims[:R] = A.R * u"mm"
             dims[:R1] = A.R1 * u"mm"
+            dims[:m] = A.m * u"kg"/u"m"
             dims[:standard] = A.standard
             dims[:material] = A.material
-            dims[:S] = A.S
+            dims[:S] = A.S * u"mm^2"
+            dims[:Ix] = A.Ix * u"mm^4"
+            dims[:Iy] = A.Iy * u"mm^4"
+            dims[:Wx] = A.Wx * u"mm^3"
+            dims[:Wy] = A.Wy * u"mm^3"
+            dims[:ix] = A.ix * u"mm"
+            dims[:iy] = A.iy * u"mm"
+            dims[:Sx] = A.Sx * u"mm^3"
+            dims[:sx] = A.sx * u"mm"
         end
     elseif profile == "IPE"
         A = StrojniSoucasti.profil_IPE_CSN425553(clean)
@@ -147,9 +156,18 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
             dims[:t2] = A.t2 * u"mm"
             dims[:R] = A.R * u"mm"
             dims[:R1] = A.R1 * u"mm"
+            dims[:m] = A.m * u"kg"/u"m"
             dims[:standard] = A.standard
             dims[:material] = A.material
-            dims[:S] = A.S
+            dims[:S] = A.S * u"mm^2"
+            dims[:Ix] = A.Ix * u"mm^4"
+            dims[:Iy] = A.Iy * u"mm^4"
+            dims[:Wx] = A.Wx * u"mm^3"
+            dims[:Wy] = A.Wy * u"mm^3"
+            dims[:ix] = A.ix * u"mm"
+            dims[:iy] = A.iy * u"mm"
+            dims[:Sx] = A.Sx * u"mm^3"
+            dims[:sx] = A.sx * u"mm"
         end
     elseif profile == "TR4HR"
         A = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
@@ -160,8 +178,18 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
             dims[:b] = A.b * u"mm"
             dims[:t] = A.t * u"mm"
             dims[:R] = A.R * u"mm"
+            dims[:m] = A.m * u"kg"/u"m"
             dims[:standard] = A.standard
             dims[:material] = A.material
+            dims[:S] = A.S * u"mm^2"
+            dims[:Ix] = A.Ix * u"mm^4"
+            dims[:Iy] = A.Iy * u"mm^4"
+            dims[:Wx] = A.Wx * u"mm^3"
+            dims[:Wy] = A.Wy * u"mm^3"
+            dims[:ix] = A.ix * u"mm"
+            dims[:iy] = A.iy * u"mm"
+            dims[:Sx] = A.Sx * u"mm^3"
+            dims[:sx] = A.sx * u"mm"
         else
             dims = StrojniSoucasti.profilyCSN(clean)
         end
@@ -191,9 +219,9 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
             key = Symbol(property) # převod na Symbol
             if haskey(dims, key)
                 # Hodnota je už zadaná (např. z tabulky I/IPE), nepřepočítáváme ji.
-                if key == :S && (!(dims[key] isa Unitful.AbstractQuantity) || unit(dims[key]) == Unitful.NoUnits)
-                    dims[key] = dims[key] * u"mm^2"
-                end
+                #if key == :S && (!(dims[key] isa Unitful.AbstractQuantity) || unit(dims[key]) == Unitful.NoUnits)
+                #    dims[key] = dims[key] * u"mm^2"
+                #end
                 if !haskey(dims, Symbol(key, :_str))
                     dims[Symbol(key, :_str)] = ""
                 end

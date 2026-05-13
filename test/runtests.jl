@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-08
+﻿# ver: 2026-05-13
 using Test
 
     # materialy
@@ -25,6 +25,7 @@ using Test
     include("body_test/rotuj_body_test.jl")
     # profily
     include("profily_test/profily_test.jl")
+    include("profily_test/profil_text_lines_test.jl")
     include("profily_test/profilyCSN_test.jl")
     include("profily_test/profil_TR4HR_CSN425720_test.jl")
     include("profily_test/profil_I_CSN425550_test.jl")

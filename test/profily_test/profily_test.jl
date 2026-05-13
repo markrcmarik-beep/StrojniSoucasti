@@ -81,11 +81,14 @@ dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"
 @test dims7[:b] == 46u"mm"
 @test dims7[:h] == 80u"mm"
+@test dims7[:S] == 764u"mm^2"
+@test dims7[:Ix] == 801000u"mm^4"
 
 dims7a = profily("IPE 80", "S")
 @test dims7a[:info] == "IPE"
 @test dims7a[:b] == 46u"mm"
 @test dims7a[:h] == 80u"mm"
 @test dims7a[:S] == 764u"mm^2"
+@test dims7a[:Ix] == 801000u"mm^4"
 
 end
