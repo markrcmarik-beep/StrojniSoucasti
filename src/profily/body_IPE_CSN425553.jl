@@ -40,7 +40,7 @@ function body_IPE_CSN425553(prof::String, uchyceni::String="ld", args...)
     return body
 end
 
-function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
+function body_IPE_CSN425553(prof::IPE_CSN425553, uchyceni::String="ld", args...)
 
     b = prof.b # šířka profilu
     h = prof.h # výška profilu

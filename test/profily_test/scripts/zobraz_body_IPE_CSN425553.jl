@@ -2,7 +2,7 @@
 # ver: 2026-05-01
 
 include(joinpath(@__DIR__, "_zobraz_body_common.jl"))
-include(joinpath(_ZOBRAZ_BODY_PROFILY_DIR, "body_IPE_CSN425553.jl"))
+#include(joinpath(_ZOBRAZ_BODY_PROFILY_DIR, "body_IPE_CSN425553.jl"))
 
 const _SCRIPT_REL = replace(relpath(@__FILE__, _ZOBRAZ_BODY_ROOT), '\\' => '/')
 
@@ -12,6 +12,6 @@ spust_zobrazeni_body(
     default_profile="IPE 100",
     default_png="zobraz_IPE_CSN425553.png",
     nacti_profil=StrojniSoucasti.profil_IPE_CSN425553,
-    body_funkce=body_IPE_CSN425553,
+    body_funkce=StrojniSoucasti.body_IPE_CSN425553,
     tabulka="IPE",
 )

@@ -40,7 +40,7 @@ function body_TR4HR_CSN425720(prof::String, uchyceni::String="ld", args...)
     return body
 end
 
-function body_TR4HR_CSN425720(prof, uchyceni::String="ld", args...)
+function body_TR4HR_CSN425720(prof::TR4HR_CSN425720, uchyceni::String="ld", args...)
 
     a = prof.a
     b = prof.b
