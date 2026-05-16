@@ -1,8 +1,8 @@
-# ver: 2026-05-01
+# ver: 2026-05-16
 using Test
 using StrojniSoucasti
 
-include(joinpath(@__DIR__, "..", "..", "src", "profily", "body_I_CSN425550.jl"))
+#include(joinpath(@__DIR__, "..", "..", "src", "profily", "body_I_CSN425550.jl"))
 
 function _bbox(body)
     xs = first.(body)
@@ -22,7 +22,7 @@ end
     prof = StrojniSoucasti.profil_I_CSN425550("I 100")
     @test prof !== nothing
 
-    body = body_I_CSN425550(prof, "ld")
+    body = StrojniSoucasti.body_I_CSN425550(prof, "ld")
     @test body isa NamedTuple
     @test haskey(body, :obrys)
     @test haskey(body, :otvory)
@@ -38,7 +38,7 @@ end
 
 @testset "body_I_CSN425550 - uchyceni posunuje stejne body" begin
     prof = StrojniSoucasti.profil_I_CSN425550("I 100")
-    base = body_I_CSN425550(prof, "ld").obrys
+    base = StrojniSoucasti.body_I_CSN425550(prof, "ld").obrys
 
     by_anchor = Dict(
         "stred" => (-prof.b / 2, -prof.h / 2),
@@ -48,12 +48,12 @@ end
     )
 
     for (uchyceni, (dx, dy)) in by_anchor
-        shifted = body_I_CSN425550(prof, uchyceni).obrys
+        shifted = StrojniSoucasti.body_I_CSN425550(prof, uchyceni).obrys
         _assert_shifted_shape(base, shifted, dx, dy)
     end
 end
 
 @testset "body_I_CSN425550 - neplatne uchyceni" begin
     prof = StrojniSoucasti.profil_I_CSN425550("I 100")
-    @test_throws ArgumentError body_I_CSN425550(prof, "xyz")
+    @test_throws ArgumentError StrojniSoucasti.body_I_CSN425550(prof, "xyz")
 end

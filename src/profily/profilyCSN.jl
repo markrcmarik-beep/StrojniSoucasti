@@ -50,7 +50,6 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-
 using Unitful
 
 function profilyCSN(inputStr::AbstractString)

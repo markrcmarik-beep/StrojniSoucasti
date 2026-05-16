@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Pomocná funkce pro výpis profil informací do textového výstupu.
-# ver: 2026-05-13
+# ver: 2026-05-16
 ## Funkce: profil_text_lines()
 ## Autor: Martin
 #
@@ -16,7 +16,7 @@
 ## Výstupní proměnné:
 # lines - textový výstup s informacemi o profilu.
 ## Použité balíčky:
-# Printf: @sprintf
+#
 ## Použité uživatelské funkce:
 #
 ## Příklad:
@@ -24,7 +24,19 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using Printf: @sprintf
+function _profil_number_text(v::Number)::String
+    if isfinite(v) && isapprox(v, round(v); atol=1e-12, rtol=0.0)
+        return string(Int(round(v)))
+    end
+    return string(v)
+end
+
+function _profil_quantity_mm_text(v)
+    v2 = try uconvert(u"mm", v) catch v end
+    n = Unitful.ustrip(v2)
+    nstr = n isa Number ? _profil_number_text(n) : string(n)
+    return nstr * " " * string(Unitful.unit(v2))
+end
 
 function profil_text_lines(VV::Dict{Symbol,Any})
     lines = String[] # výpis informací o profilu
@@ -35,10 +47,10 @@ function profil_text_lines(VV::Dict{Symbol,Any})
             if haskey(VV[:profil_info], k)
                 v = VV[:profil_info][k] 
                 if isa(v, Unitful.AbstractQuantity)
-                    v2 = try uconvert(u"mm", v) catch v end
-                    push!(lines, "  $(k) = $(v2)") # výpis rozměru s jednotkami převedenými na mm pro lepší čitelnost
+                    push!(lines, "  $(k) = $(_profil_quantity_mm_text(v))") # výpis rozměru s jednotkami převedenými na mm bez zbytečných nul
                 else
-                    push!(lines, "  $(k) = $(v)") # výpis rozměru bez jednotek
+                    vtxt = v isa Number ? _profil_number_text(v) : string(v)
+                    push!(lines, "  $(k) = $(vtxt)") # výpis rozměru bez zbytečných nul
                 end
             end
         end

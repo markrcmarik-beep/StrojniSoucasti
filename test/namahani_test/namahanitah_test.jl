@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-22
+﻿# ver: 2026-05-16
 # Testovací skript pro funkci namahanitah.jl
 # Testuje namáhání v tahu s různými typy zatížení
 
@@ -96,9 +96,9 @@ Bezpečnost spoje: Spoj je bezpečný"""
 --------------------------------------------------------------
 materiál: 11 373
 profil: TRKR 76x5
-  D = 76.0 mm
-  d = 66.0 mm
-  t = 5.0 mm
+  D = 76 mm
+  d = 66 mm
+  t = 5 mm
 zatížení: dynamický
 --------------------------------------------------------------
 zadání:
@@ -481,6 +481,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
     end
 
 end
+
 
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# ver: 2026-05-01
+# ver: 2026-05-16
 
 include(joinpath(@__DIR__, "_zobraz_body_common.jl"))
 include(joinpath(_ZOBRAZ_BODY_PROFILY_DIR, "body_TR4HR_CSN425720.jl"))
@@ -12,6 +12,6 @@ spust_zobrazeni_body(
     default_profile="TR4HR20x20x2",
     default_png="zobraz_TR4HR_CSN425720.png",
     nacti_profil=StrojniSoucasti.profil_TR4HR_CSN425720,
-    body_funkce=body_TR4HR_CSN,
+    body_funkce=body_TR4HR_CSN425720,
     tabulka="TR4HR",
 )

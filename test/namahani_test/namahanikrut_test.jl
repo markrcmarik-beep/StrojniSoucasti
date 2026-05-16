@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-22
+﻿# ver: 2026-05-16
 # Testovací skript pro funkci namahanikrut.jl
 # Testuje namáhání v krutu s různými typy zatížení
 
@@ -71,9 +71,9 @@ Bezpečnost spoje: Spoj je bezpečný"""
 ----------------------------------------------------------------
 materiál: 16 440
 profil: TRKR 40x5
-  D = 40.0 mm
-  d = 30.0 mm
-  t = 5.0 mm
+  D = 40 mm
+  d = 30 mm
+  t = 5 mm
 zatížení: rázový
 ----------------------------------------------------------------
 zadání:
@@ -344,3 +344,4 @@ Bezpečnost spoje: Spoj není bezpečný!"""
     end
 
 end
+

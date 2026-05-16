@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu IPE podle normy ČSN 42 5553.
 #
-# ver: 2026-05-01
+# ver: 2026-05-16
 ## Funkce: body_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -34,6 +34,11 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+function body_IPE_CSN425553(prof::String, uchyceni::String="ld", args...)
+    prof1 = StrojniSoucasti.profil_IPE_CSN425553(prof)
+    body = body_IPE_CSN425553(prof1, uchyceni)
+    return body
+end
 
 function body_IPE_CSN425553(prof, uchyceni::String="ld", args...)
 

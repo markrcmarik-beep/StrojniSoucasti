@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu I podle normy ČSN 42 5550.
 #
-# ver: 2026-05-08
+# ver: 2026-05-16
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -13,8 +13,9 @@
 ## Vzor:
 ## body = body_I_CSN425550(prof , uchyceni, args...)
 ## Vstupní proměnné:
-# prof - struktura s rozměry profilu (b, h, t1, t2, R, R1, sp) 
-#   získaná z funkce profil_I_CSN425550()
+# 1) prof - struktura s rozměry profilu (b, h, t1, t2, R, R1, sp) 
+#           získaná z funkce profil_I_CSN425550()
+# 2) prof - text označení profilu např.: "I80"
 # uchyceni - volitelný řetězec určující umístění profilu v 
 #   souřadnicovém systému. (nepovinné) Povolené hodnoty jsou: 
 #       "ld" (levý dolní roh) 
@@ -35,16 +36,21 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+function body_I_CSN425550(prof::String, uchyceni::String="ld", args...)
+    prof1 = StrojniSoucasti.profil_I_CSN425550(prof)
+    body = body_I_CSN425550(prof1, uchyceni)
+    return body
+end
 
-function body_I_CSN425550(prof, uchyceni::String="ld", args...)
+function body_I_CSN425550(prof::I_CSN425550, uchyceni::String="ld", args...)
 
-    b = prof.b
-    h = prof.h
-    t1 = prof.t1
-    t2 = prof.t2
-    R = prof.R
-    R1 = prof.R1
-    sp = prof.sp
+    b = prof.b # šířka profilu
+    h = prof.h # výška profilu
+    t1 = prof.t1 # tloušťka pásnice
+    t2 = prof.t2 # tloušťka příruby
+    R = prof.R # poloměr zaoblení
+    R1 = prof.R1 # poloměr zaoblení
+    sp = prof.sp # úhel stoupání pásnice
     if uchyceni == "ld"
         x = 0
         y = 0

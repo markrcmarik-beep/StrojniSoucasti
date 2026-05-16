@@ -1,4 +1,4 @@
-# ver: 2026-05-13
+# ver: 2026-05-16
 using Test
 using StrojniSoucasti, Unitful
 
@@ -29,11 +29,11 @@ using StrojniSoucasti, Unitful
 
         @test lines == [
             "profil: TRKR 76x5",
-            "  a = 20.0",
+            "  a = 20",
             "  D = 76 mm",
             "  d = 66 mm",
             "  t = 5 mm",
-            "  R = 25.0 mm",
+            "  R = 25 mm",
             "  n = 3",
         ]
         @test !any(occursin("S =", line) for line in lines)

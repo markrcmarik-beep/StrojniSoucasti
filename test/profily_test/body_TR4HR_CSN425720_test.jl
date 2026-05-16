@@ -1,8 +1,8 @@
-# ver: 2026-05-01
+# ver: 2026-05-16
 using Test
 using StrojniSoucasti
 
-include(joinpath(@__DIR__, "..", "..", "src", "profily", "body_TR4HR_CSN425720.jl"))
+#include(joinpath(@__DIR__, "..", "..", "src", "profily", "body_TR4HR_CSN425720.jl"))
 
 function _bbox(body)
     xs = first.(body)
@@ -22,7 +22,7 @@ end
     prof = StrojniSoucasti.profil_TR4HR_CSN425720("TR4HR20x20x2")
     @test prof !== nothing
 
-    body = body_TR4HR_CSN(prof, "ld")
+    body = StrojniSoucasti.body_TR4HR_CSN425720(prof, "ld")
     @test body isa NamedTuple
     @test haskey(body, :obrys)
     @test haskey(body, :otvory)
@@ -45,7 +45,7 @@ end
 
 @testset "body_TR4HR_CSN425720 - uchyceni posunuje stejne body" begin
     prof = StrojniSoucasti.profil_TR4HR_CSN425720("TR4HR20x20x2")
-    base = body_TR4HR_CSN(prof, "ld")
+    base = StrojniSoucasti.body_TR4HR_CSN425720(prof, "ld")
     base_obrys = base.obrys
     base_otvor = base.otvory[1]
 
@@ -57,7 +57,7 @@ end
     )
 
     for (uchyceni, (dx, dy)) in by_anchor
-        shifted = body_TR4HR_CSN(prof, uchyceni)
+        shifted = StrojniSoucasti.body_TR4HR_CSN425720(prof, uchyceni)
         @test length(shifted.otvory) == 1
         _assert_shifted_shape(base_obrys, shifted.obrys, dx, dy)
         _assert_shifted_shape(base_otvor, shifted.otvory[1], dx, dy)
@@ -66,5 +66,5 @@ end
 
 @testset "body_TR4HR_CSN425720 - neplatne uchyceni" begin
     prof = StrojniSoucasti.profil_TR4HR_CSN425720("TR4HR20x20x2")
-    @test_throws ArgumentError body_TR4HR_CSN(prof, "xyz")
+    @test_throws ArgumentError StrojniSoucasti.body_TR4HR_CSN425720(prof, "xyz")
 end
