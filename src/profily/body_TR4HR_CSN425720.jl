@@ -36,7 +36,7 @@
 #
 function body_TR4HR_CSN425720(prof::String, uchyceni::String="ld", args...; natoceni = 0)
     prof1 = StrojniSoucasti.profil_TR4HR_CSN425720(prof)
-    body = body_TR4HR_CSN425720(prof1, uchyceni, natoceni)
+    body = body_TR4HR_CSN425720(prof1, uchyceni, natoceni=natoceni)
     return body
 end
 
@@ -65,6 +65,7 @@ function body_TR4HR_CSN425720(prof::TR4HR_CSN425720, uchyceni::String="ld", args
         throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
     end
+    S = (x+a/2, y+b/2)
     # vypočet obrysu
     # (x, y) levý spodní roh
     A = (x, y) # levý spodní roh
@@ -78,20 +79,25 @@ function body_TR4HR_CSN425720(prof::TR4HR_CSN425720, uchyceni::String="ld", args
         StrojniSoucasti.burub2body(D, 3*pi/2, R, 0, A)...,
         ]
     # vypočet otvoru
-    Ro = R - t
-    if Ro < 0
-        Ro = 0
-    end
+    Ro = max(R - t, 0)
     A1 = (A[1] + t, A[2] + t) # levý spodní roh otvoru
     B1 = (B[1] - t, B[2] + t) # pravý spodní roh otvoru
     C1 = (C[1] - t, C[2] - t) # pravý horní roh otvoru
     D1 = (D[1] + t, D[2] - t) # levý horní roh otvoru
-    otvor = [
-        StrojniSoucasti.burub2body(A1, 0, Ro, pi/2, B1)..., 
-        StrojniSoucasti.burub2body(B1, pi/2, Ro, pi, C1)...,
-        StrojniSoucasti.burub2body(C1, pi, Ro, 3*pi/2, D1)..., 
-        StrojniSoucasti.burub2body(D1, 3*pi/2, Ro, 0, A1)...,
-    ]
+    otvor = if Ro > 0
+        [
+            StrojniSoucasti.burub2body(A1, 0, Ro, pi/2, B1)..., 
+            StrojniSoucasti.burub2body(B1, pi/2, Ro, pi, C1)...,
+            StrojniSoucasti.burub2body(C1, pi, Ro, 3*pi/2, D1)..., 
+            StrojniSoucasti.burub2body(D1, 3*pi/2, Ro, 0, A1)...,
+        ]
+    else
+        [A1, B1, C1, D1]
+    end
+    if natoceni != 0
+        obrys = rotuj_body(obrys, natoceni, S=S)
+        otvor = rotuj_body(otvor, natoceni, S=S)
+    end
     body = (obrys = obrys, otvory = [otvor])
     return body
 end

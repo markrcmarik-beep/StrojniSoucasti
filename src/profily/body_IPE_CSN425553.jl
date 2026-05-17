@@ -36,7 +36,7 @@
 #
 function body_IPE_CSN425553(prof::String, uchyceni::String="ld", args...; natoceni = 0)
     prof1 = StrojniSoucasti.profil_IPE_CSN425553(prof)
-    body = body_IPE_CSN425553(prof1, uchyceni, natoceni)
+    body = body_IPE_CSN425553(prof1, uchyceni; natoceni=natoceni)
     return body
 end
 
@@ -66,7 +66,7 @@ function body_IPE_CSN425553(prof::IPE_CSN425553, uchyceni::String="ld", args...;
         throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
     end
-    S = [x+b/2, y+h/2]
+    S = (x+b/2, y+h/2)
     # vypočet obrysu
     A = (x, y) # levý spodní roh
     A1 = (A[1], A[2] + t2) # levý horní roh spodní pásnice
@@ -89,7 +89,7 @@ function body_IPE_CSN425553(prof::IPE_CSN425553, uchyceni::String="ld", args...;
         A1,
     ]
     if natoceni != 0
-        obrys = rotuj_body(obrys, natoceni, S)
+        obrys = rotuj_body(obrys, natoceni, S=S)
     end
     body = (obrys = obrys, otvory = ())
     return body

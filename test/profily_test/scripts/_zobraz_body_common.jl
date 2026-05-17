@@ -1,4 +1,4 @@
-# ver: 2026-04-24
+# ver: 2026-05-17
 import Pkg
 using Printf
 
@@ -32,9 +32,13 @@ if _PLOTS_AVAILABLE
     @eval import Plots
 end
 
-function _usage(script_name::AbstractString, priklad::AbstractString)
+function _usage(script_name::AbstractString, priklad::AbstractString; ma_natoceni::Bool=false)
     println("Pouziti:")
-    println("  julia $script_name [profil] [uchyceni] [vystup_png]")
+    if ma_natoceni
+        println("  julia $script_name [profil] [uchyceni] [vystup_png] [natoceni_rad]")
+    else
+        println("  julia $script_name [profil] [uchyceni] [vystup_png]")
+    end
     println("")
     println("Priklad:")
     println("  $priklad")
@@ -115,27 +119,47 @@ function spust_zobrazeni_body(;
     nacti_profil::Function,
     body_funkce::Function,
     tabulka::String,
+    povol_natoceni::Bool=false,
     args::Vector{String}=ARGS
 )
     if any(arg -> arg in ("-h", "--help"), args)
-        _usage(script_name, priklad)
+        _usage(script_name, priklad; ma_natoceni=povol_natoceni)
         return nothing
     end
 
     profil_name = length(args) >= 1 ? args[1] : default_profile
     uchyceni = length(args) >= 2 ? args[2] : "ld"
     vystup_png = length(args) >= 3 ? args[3] : joinpath(@__DIR__, default_png)
+    natoceni = 0.0
+    if povol_natoceni && length(args) >= 4
+        natoceni_raw = replace(strip(args[4]), ',' => '.')
+        try
+            natoceni = parse(Float64, natoceni_raw)
+        catch
+            throw(
+                ArgumentError(
+                    "Neplatna hodnota natoceni_rad '$natoceni_raw'. " *
+                    "Ocekavam cislo v radianech."
+                )
+            )
+        end
+    end
 
     prof = nacti_profil(profil_name)
     prof === nothing && error("Profil '$profil_name' nebyl nalezen v tabulce $tabulka.")
 
-    body = body_funkce(prof, uchyceni)
+    body = if povol_natoceni
+        body_funkce(prof, uchyceni; natoceni=natoceni)
+    else
+        body_funkce(prof, uchyceni)
+    end
     obrys = body.obrys
     otvory_raw = hasproperty(body, :otvory) ? body.otvory : ()
     otvory = _normalizuj_otvory(otvory_raw)
 
     println("Profil: ", prof.name)
     println("Uchyceni: ", uchyceni)
+    povol_natoceni && println("Natoceni [rad]: ", natoceni)
     println("Pocet bodu obrysu: ", length(obrys))
     println("Pocet otvoru: ", length(otvory))
     for (i, otvor) in enumerate(otvory)
@@ -157,6 +181,11 @@ function spust_zobrazeni_body(;
 
     try
         plots_mod = Plots
+        title_suffix = if povol_natoceni
+            "($(uchyceni), rot=$(natoceni) rad)"
+        else
+            "($(uchyceni))"
+        end
 
         xs, ys = _uzavri_ring(obrys)
         if isempty(otvory)
@@ -170,7 +199,7 @@ function spust_zobrazeni_body(;
                 aspect_ratio=:equal,
                 xlabel="x [mm]",
                 ylabel="y [mm]",
-                title="Body obrysu $(prof.name) ($(uchyceni))",
+                title="Body obrysu $(prof.name) $title_suffix",
                 grid=true,
                 size=(960, 640),
             )
@@ -186,7 +215,7 @@ function spust_zobrazeni_body(;
                 aspect_ratio=:equal,
                 xlabel="x [mm]",
                 ylabel="y [mm]",
-                title="Body obrysu $(prof.name) ($(uchyceni))",
+                title="Body obrysu $(prof.name) $title_suffix",
                 grid=true,
                 size=(960, 640),
             )

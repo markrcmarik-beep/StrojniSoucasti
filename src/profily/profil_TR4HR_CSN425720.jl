@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-05-05
+# ver: 2026-05-17
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -63,6 +63,60 @@ struct TR4HR_CSN425720
 end
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml"))
+const _RHO_OCEL_KG_NA_M_NA_MM2 = 0.00785
+const _KOEF_ROHU_TR4HR = 4 - pi
+
+function _hmotnost_z_radku(row::Dict, idx::Int, t::Real)::Union{Nothing, Float64}
+    t_val = Float64(t)
+
+    if haskey(row, "m")
+        m_raw = row["m"]
+        if m_raw isa AbstractVector && idx <= length(m_raw)
+            return Float64(m_raw[idx])
+        end
+    end
+
+    if haskey(row, "m_by_t")
+        m_by_t = row["m_by_t"]
+        if m_by_t isa AbstractDict
+            for key in (
+                string(t_val),
+                num_to_string(t_val),
+                string(round(t_val, digits=1)),
+                string(round(t_val, digits=2))
+            )
+                if haskey(m_by_t, key)
+                    return Float64(m_by_t[key])
+                end
+            end
+        end
+    end
+
+    return nothing
+end
+
+function _odhadni_R_z_hmotnosti(a::Real, b::Real, t::Real, m::Real)::Float64
+    a_val = Float64(a)
+    b_val = Float64(b)
+    t_val = Float64(t)
+    m_val = Float64(m)
+    t_val <= 0 && return 0.0
+
+    # Cilova plocha z tabulkove hmotnosti [kg/m] pro ocel ~7850 kg/m^3.
+    A_cil = m_val / _RHO_OCEL_KG_NA_M_NA_MM2 # [mm^2]
+    A0 = a_val*b_val - (a_val - 2t_val)*(b_val - 2t_val) # plocha TR4HR bez zaobleni rohu
+    A_cil >= A0 && return 0.0
+
+    delta = A0 - A_cil
+    delta_v_t = _KOEF_ROHU_TR4HR * t_val^2
+    R = if delta <= delta_v_t
+        sqrt(delta / _KOEF_ROHU_TR4HR)
+    else
+        (delta / _KOEF_ROHU_TR4HR + t_val^2) / (2t_val)
+    end
+
+    return clamp(R, 0.0, min(a_val, b_val)/2)
+end
 
 function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, Nothing}
 
@@ -108,10 +162,16 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
     idx = findfirst(==(t), t_vec) # najít index tloušťky
     t = t_vec[idx] # vybraná tloušťka
     R_vec = get(row, "R", nothing)
+    m_tab = _hmotnost_z_radku(row, idx, t)
     R_val = if R_vec isa AbstractVector && idx <= length(R_vec)
         Float64(R_vec[idx]) # poloměr z databáze (pokud je uveden)
     else
         min(t + t/3, 8.0) # výchozí poloměr
+    end
+
+    ma_R_v_tabulce = R_vec isa AbstractVector && idx <= length(R_vec)
+    if !ma_R_v_tabulce && m_tab !== nothing
+        R_val = _odhadni_R_z_hmotnosti(a, b, t, m_tab)
     end
 
     return TR4HR_CSN425720(

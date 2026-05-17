@@ -117,8 +117,8 @@ function body_drazka4pero(prof, uchyceni::String="stred", args...; natoceni = 0)
     else
         obrys = ()
     end
-    if natoceni != pi/2
-        obrys = StrojniSoucasti.rotuj_body(obrys, natoceni-pi/2, S=S)
+    if natoceni != 0
+        obrys = StrojniSoucasti.rotuj_body(obrys, natoceni, S=S)
     end
     if uchyceni == "teziste"
         if n==1

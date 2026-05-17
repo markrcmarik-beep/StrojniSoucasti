@@ -38,7 +38,7 @@
 #
 function body_I_CSN425550(prof::String, uchyceni::String="ld", args...; natoceni = 0)
     prof1 = StrojniSoucasti.profil_I_CSN425550(prof)
-    body = body_I_CSN425550(prof1, uchyceni, natoceni)
+    body = body_I_CSN425550(prof1, uchyceni, natoceni=natoceni)
     return body
 end
 
@@ -70,7 +70,7 @@ function body_I_CSN425550(prof::I_CSN425550, uchyceni::String="ld", args...; nat
         throw(ArgumentError("Neplatné uchycení: $uchyceni. Povolené hodnoty 
             jsou: \"ld\", \"stred\", \"lu\", \"rd\", \"ru\"."))
     end
-
+    S = (x+b/2, y+h/2)
     # (x, y) levý spodní roh
     uhel = atan(sp/100) # převod sklonu z procent na úhel v radiánech
     A0 = (x + b, y) # bod v pravém spodním rohu
@@ -99,7 +99,11 @@ function body_I_CSN425550(prof::I_CSN425550, uchyceni::String="ld", args...; nat
         StrojniSoucasti.burub2body(C2, -pi/2, R, uhel, D1, 0.01)...,
         D1,
         StrojniSoucasti.burub2body(D1, pi+uhel, R1, -pi/2, D0, 0.01)...,
-        D0]
+        D0
+    ]
+    if natoceni != 0
+        obrys = rotuj_body(obrys, natoceni, S=S)
+    end
     body = (obrys = obrys, otvory = ())
     return body
 end
