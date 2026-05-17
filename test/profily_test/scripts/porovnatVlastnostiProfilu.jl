@@ -1,4 +1,4 @@
-# ver: 2026-05-16
+# ver: 2026-05-17
 
 using StrojniSoucasti
 
@@ -16,10 +16,10 @@ println("S = ", A1c, "mm^2")
 I1 = StrojniSoucasti.polygon2kvadratickymoment(body_A1)
 println("Ix = ", I1.Ix, "mm^4")
 println("Iy = ", I1.Iy, "mm^4")
-Jp1 = StrojniSoucasti.polygon2polarnimoment(body_A1)
-println("Jp = ", Jp1, "mm^4")
-Wk1 = StrojniSoucasti.polygon2prurezovymodulkrut(body_A1)
-println("Jp = ", Wk1, "mm^3")
+#Jp1 = StrojniSoucasti.polygon2polarnimoment(body_A1)
+#println("Jp = ", Jp1, "mm^4")
+#Wk1 = StrojniSoucasti.polygon2prurezovymodulkrut(body_A1)
+#println("Wk = ", Wk1, "mm^3")
 
 println("--- IPE80 ---")
 A2 = profily("IPE80", "S")

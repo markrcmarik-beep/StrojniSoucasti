@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu I podle normy ČSN 42 5550.
 #
-# ver: 2026-05-16
+# ver: 2026-05-17
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -36,13 +36,13 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function body_I_CSN425550(prof::String, uchyceni::String="ld", args...)
+function body_I_CSN425550(prof::String, uchyceni::String="ld", args...; natoceni = 0)
     prof1 = StrojniSoucasti.profil_I_CSN425550(prof)
-    body = body_I_CSN425550(prof1, uchyceni)
+    body = body_I_CSN425550(prof1, uchyceni, natoceni)
     return body
 end
 
-function body_I_CSN425550(prof::I_CSN425550, uchyceni::String="ld", args...)
+function body_I_CSN425550(prof::I_CSN425550, uchyceni::String="ld", args...; natoceni = 0)
 
     b = prof.b # šířka profilu
     h = prof.h # výška profilu

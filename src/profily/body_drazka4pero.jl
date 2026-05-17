@@ -4,7 +4,7 @@
 # Vrátí body definující obrys profilu hřídele s drážkou pro pero.
 # Volitelně lze zadat umístění profilu v souřadnicovém systému.
 #
-# ver: 2026-05-08
+# ver: 2026-05-17
 ## Funkce: body_drazka4pero()
 ## Autor: Martin
 #
@@ -34,7 +34,7 @@
 ## Použité proměnné vnitřní:
 #
 
-function body_drazka4pero(prof, uchyceni::String="stred", args...)
+function body_drazka4pero(prof, uchyceni::String="stred", args...; natoceni = 0)
     obrys = ()
     otvory = ()
     if !(uchyceni in ["teziste", "stred"])

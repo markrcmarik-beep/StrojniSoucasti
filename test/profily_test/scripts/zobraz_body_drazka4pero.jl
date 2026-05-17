@@ -1,8 +1,8 @@
 ﻿#!/usr/bin/env julia
-# ver: 2026-05-08
+# ver: 2026-05-17
 
 include(joinpath(@__DIR__, "_zobraz_body_common.jl"))
-include(joinpath(_ZOBRAZ_BODY_PROFILY_DIR, "body_drazka4pero.jl"))
+#include(joinpath(_ZOBRAZ_BODY_PROFILY_DIR, "body_drazka4pero.jl"))
 
 const _SCRIPT_REL = replace(relpath(@__FILE__, _ZOBRAZ_BODY_ROOT), '\\' => '/')
 
@@ -36,7 +36,7 @@ spust_zobrazeni_body(
     default_profile="pero",
     default_png="zobraz_drazka4pero.png",
     nacti_profil=_nacti_profil_drazka4pero,
-    body_funkce=body_drazka4pero,
+    body_funkce=StrojniSoucasti.body_drazka4pero,
     tabulka="pero",
     args=_ARGS,
 )

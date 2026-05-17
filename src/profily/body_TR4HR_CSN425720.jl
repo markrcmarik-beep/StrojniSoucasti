@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu TR4HR podle normy ČSN 42 5720.
 #
-# ver: 2026-05-16
+# ver: 2026-05-17
 ## Funkce: body_TR4HR_CSN()
 ## Autor: Martin
 #
@@ -34,13 +34,13 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function body_TR4HR_CSN425720(prof::String, uchyceni::String="ld", args...)
+function body_TR4HR_CSN425720(prof::String, uchyceni::String="ld", args...; natoceni = 0)
     prof1 = StrojniSoucasti.profil_TR4HR_CSN425720(prof)
-    body = body_TR4HR_CSN425720(prof1, uchyceni)
+    body = body_TR4HR_CSN425720(prof1, uchyceni, natoceni)
     return body
 end
 
-function body_TR4HR_CSN425720(prof::TR4HR_CSN425720, uchyceni::String="ld", args...)
+function body_TR4HR_CSN425720(prof::TR4HR_CSN425720, uchyceni::String="ld", args...; natoceni = 0)
 
     a = prof.a
     b = prof.b
