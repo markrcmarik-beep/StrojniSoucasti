@@ -1,22 +1,23 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Rotuje body o zadaný úhel.
-# ver: 2026-05-09
+# Rotuje body o zadaný úhel. Rotace se provádí kolem zadaného 
+# středu (výchozí je (0, 0)).
+# ver: 2026-05-19
 ## Funkce: rotuj_body()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/body/rotuj_body.jl
+# StrojniSoucasti/src/body/rotuj_body.jl
 #
 ## Vzor:
 ## rotovane_body = rotuj_body(body, natoceni)
 ## Vstupní proměnné:
-# body - vektor obsahující souřadnice bodů, které mají být rotovány.
+# body - vektor obsahující souřadnice bodů, které mají být rotovány. [vektor obsahující n-tice (x, y)]
 # natoceni - úhel o který mají být body rotovány. [rad]
 # S - střed rotace (nepovinné) (výchozí hodnota je (0, 0))
 ## Výstupní proměnné:
-# rotovane_body - vektor obsahující souřadnice rotovaných bodů.
+# rotovane_body - vektor obsahující souřadnice rotovaných bodů. [vektor obsahující n-tice (x, y)]
 ## Použité balíčky:
 #
 ## Použité uživatelské funkce:

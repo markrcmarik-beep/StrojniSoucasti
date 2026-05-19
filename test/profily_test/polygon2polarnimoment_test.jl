@@ -1,4 +1,4 @@
-# ver: 2026-04-24
+# ver: 2026-05-19
 using Test
 using StrojniSoucasti, Unitful
 

@@ -1,12 +1,11 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet plochy obecneho tvaru (polygonu)
-# pomoci bodu na obrysu. Umoznuje i vstup ve tvaru
-# vnejsi obrys + jeden nebo vice vnitrnich otvoru.
-# Sdilene helpery v tomto souboru
-# pouzivaji i dalsi funkce v samostatnych souborech.
-# ver: 2026-04-24
+# Vypocet plochy obecneho tvaru (polygonu) pomoci bodu na obrysu. 
+# Umoznuje i vstup ve tvaru vnejsi obrys + jeden nebo vice 
+# vnitrnich otvoru. Sdilene helpery v tomto souboru pouzivaji 
+# i dalsi funkce v samostatnych souborech.
+# ver: 2026-05-19
 ## Funkce: polygon2plocha()
 ## Autor: Martin
 #
@@ -14,11 +13,11 @@
 # StrojniSoucasti/src/profily/polygon2plocha.jl
 #
 ## Vzor:
-## vystupni_promenne = polygon2plocha(body)
+## S = polygon2plocha(body)
 ## Vstupní proměnné:
 # body - Body na obrysu polygonu, zadane jako vektor bodu (x, y) nebo jako matice N x 2.
 ## Výstupní proměnné:
-# vystupni_promenne - Plocha polygonu (absolutni hodnota, bez ohledu na smer bodu).
+# S - Plocha polygonu (absolutni hodnota, bez ohledu na smer bodu).
 ## Použité balíčky
 #
 ## Použité uživatelské funkce:
@@ -30,6 +29,8 @@
 # polygon2plocha([0 0 0; 1 1 1; 2 2 2]) # => ArgumentError: Matice bodu musi mit presne 2 sloupce (x, y).
 # polygon2plocha([(0, 0, 0), (1, 0, 0), (1, 1, 0)]) # => ArgumentError: Kazdy bod musi mit presne 2 souradnice (x, y).
 ###############################################################
+## Použité proměnné vnitřní:
+#
 
 function polygon2plocha(body::Union{AbstractVector,AbstractMatrix})
     return polygon_metrics(body).S

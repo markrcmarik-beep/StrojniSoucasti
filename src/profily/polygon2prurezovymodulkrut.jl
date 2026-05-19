@@ -3,27 +3,31 @@
 ## Popis funkce:
 # Vypocet prurezoveho modulu v krutu obecneho tvaru
 # (jednoducheho polygonu) pomoci bodu na obrysu.
-# ver: 2026-04-24
+# ver: 2026-05-19
 ## Funkce: polygon2prurezovymodulkrut()
 ## Autor: Martin
 #
 ## Cesta uvnitr balicku:
 # StrojniSoucasti/src/profily/polygon2prurezovymodulkrut.jl
+#
+## Vzor:
+## Wk = polygon2prurezovymodulkrut(body)
+## Vstupní proměnné:
+# body - vektor obsahující souřadnice bodů, které tvoří obrys 
+#   polygonu. [vektor obsahující n-tice (x, y)]
+## Výstupní proměnné:
+# Wk - prurezovy modul v krutu obecneho tvaru (jednoducheho polygonu) 
+#   pomoci bodu na obrysu. [mm^3]
+## Použité balíčky
+#
+## Použité uživatelské funkce:
+# polygon2polarnimoment()
+## Příklad:
+#
 ###############################################################
+## Použité proměnné vnitřní:
+#
 
-"""
-    polygon2prurezovymodulkrut(body::AbstractVector | AbstractMatrix)
-    polygon2prurezovymodulkrut(body::NamedTuple{(:obrys, :otvory)})
-
-Vrati prurezovy modul v krutu z obrysovych bodu:
-`Wk = Jp / rmax`, kde `Jp` je polarni moment vzhledem k tezisti a
-`rmax` je nejvetsi vzdalenost obrysoveho bodu od teziste.
-
-Poznamka:
-- pro obecne ne-kruhove tvary jde o geometrickou aproximaci,
-- `Jp` a teziste se pocitaji z bodu polygonu,
-- podporuje i slozeny profil `(obrys = ..., otvory = ...)`.
-"""
 function polygon2prurezovymodulkrut(body::Union{AbstractVector,AbstractMatrix})
     m = polygon_metrics(body)
     rmax = _max_radius_from_centroid(body, m.cx, m.cy)

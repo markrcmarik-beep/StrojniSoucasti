@@ -8,17 +8,17 @@
 ## Autor: Martin
 #
 ## Cesta uvnitr balicku:
-# StrojniSoucasti/src/profily/polygon2kvadratickymoment.jl
+# StrojniSoucasti/src/profily/polygon2prurezovymodulohyb.jl
 #
 ## Vzor:
-## I = polygon2kvadratickymoment(body)
+## W = polygon2prurezovymodulohyb(body)
 ## Vstupní proměnné:
 # body - vektor obsahující souřadnice bodů, které tvoří obrys 
 #   polygonu. [vektor obsahující n-tice (x, y)]
 ## Výstupní proměnné:
-# I - kvadraticke momenty plochy obecneho tvaru (polygonu) pomoci bodu na obrysu. [mm^4]
-#   .Ix - kvadraticky moment vzhledem k ose x
-#   .Iy - kvadraticky moment vzhledem k ose y
+# W - prurezovy modul v ohybu obecneho tvaru (polygonu) pomoci bodu na obrysu. [mm^3]
+#   .Wx - prurezovy modul v ohybu vzhledem k ose x
+#   .Wy - prurezovy modul v ohybu vzhledem k ose y
 ## Použité balíčky
 #
 ## Použité uživatelské funkce:

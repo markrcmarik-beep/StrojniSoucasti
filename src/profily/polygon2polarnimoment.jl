@@ -1,27 +1,32 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet polarniho momentu plochy obecneho tvaru
-# (jednoducheho polygonu) pomoci bodu na obrysu.
-# ver: 2026-04-24
+# Výpočet polárního momentu plochy obecného tvaru
+# (jednoduchého polygonu) pomoci bodu na obrysu.
+# ver: 2026-05-19
 ## Funkce: polygon2polarnimoment()
 ## Autor: Martin
 #
-## Cesta uvnitr balicku:
+## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/profily/polygon2polarnimoment.jl
+#
+## Vzor:
+## Jp = polygon2polarnimoment(body)
+## Vstupní proměnné:
+# body - vektor obsahující souřadnice bodů, které tvoří obrys 
+#   polygonu. [vektor obsahující n-tice (x, y)]
+## Výstupní proměnné:
+# Jp - polární moment plochy obecného tvaru (jednoduchého polygonu) pomoci bodu na obrysu. [mm^4]
+## Použité balíčky:
+#
+## Použité uživatelské funkce:
+# polygon2kvadratickymoment()
+## Příklad:
+#
 ###############################################################
+## Použité proměnné vnitřní:
+#
 
-"""
-    polygon2polarnimoment(body::AbstractVector | AbstractMatrix)
-    polygon2polarnimoment(body::NamedTuple{(:obrys, :otvory)})
-
-Vrati polarni kvadraticky moment plochy `Jp = Ix + Iy` vzhledem k tezisti
-polygonu zadaneho obrysovymi body.
-
-Poznamka:
-- `Jp` se pocita z bodu polygonu pres kvadraticke momenty `Ix` a `Iy`,
-- podporuje i slozeny profil `(obrys = ..., otvory = ...)`.
-"""
 function polygon2polarnimoment(body::Union{AbstractVector,AbstractMatrix})
     m = polygon2kvadratickymoment(body)
     return m.Ix + m.Iy

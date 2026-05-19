@@ -1,4 +1,4 @@
-# ver: 2026-05-17
+# ver: 2026-05-19
 
 using StrojniSoucasti
 
