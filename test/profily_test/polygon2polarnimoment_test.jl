@@ -25,6 +25,22 @@ using StrojniSoucasti, Unitful
     Jp5 = StrojniSoucasti.polygon2polarnimoment(body_u)
     @test Jp5 == 25.0u"mm^4"
 
+    # Obrys + prazdne otvory (NamedTuple)
+    body6 = (
+        obrys = [(0, 0), (4, 0), (4, 3), (0, 3)],
+        otvory = (),
+    )
+    Jp6 = StrojniSoucasti.polygon2polarnimoment(body6)
+    @test Jp6 == 25.0
+
+    # Obrys + jeden otvor (soustredny ctverec)
+    body7 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = [[(3, 3), (7, 3), (7, 7), (3, 7)]],
+    )
+    Jp7 = StrojniSoucasti.polygon2polarnimoment(body7)
+    @test isapprox(Jp7, 1624.0; atol=1e-9)
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2polarnimoment([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2polarnimoment([0 0 0; 1 1 1; 2 2 2])

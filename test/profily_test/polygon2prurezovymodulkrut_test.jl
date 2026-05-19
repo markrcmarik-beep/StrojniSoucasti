@@ -27,6 +27,22 @@ using StrojniSoucasti, Unitful
     Wk5 = StrojniSoucasti.polygon2prurezovymodulkrut(body_u)
     @test Wk5 == 10.0u"mm^3"
 
+    # Obrys + prazdne otvory (NamedTuple)
+    body6 = (
+        obrys = [(0, 0), (4, 0), (4, 3), (0, 3)],
+        otvory = (),
+    )
+    Wk6 = StrojniSoucasti.polygon2prurezovymodulkrut(body6)
+    @test Wk6 == 10.0
+
+    # Obrys + jeden otvor (soustredny ctverec)
+    body7 = (
+        obrys = [(0, 0), (10, 0), (10, 10), (0, 10)],
+        otvory = [[(3, 3), (7, 3), (7, 7), (3, 7)]],
+    )
+    Wk7 = StrojniSoucasti.polygon2prurezovymodulkrut(body7)
+    @test isapprox(Wk7, 1624 / sqrt(50); atol=1e-9)
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2prurezovymodulkrut([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2prurezovymodulkrut([0 0 0; 1 1 1; 2 2 2])

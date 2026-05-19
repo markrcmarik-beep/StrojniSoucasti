@@ -13,14 +13,22 @@
 
 """
     polygon2polarnimoment(body::AbstractVector | AbstractMatrix)
+    polygon2polarnimoment(body::NamedTuple{(:obrys, :otvory)})
 
 Vrati polarni kvadraticky moment plochy `Jp = Ix + Iy` vzhledem k tezisti
 polygonu zadaneho obrysovymi body.
 
 Poznamka:
-- vyuziva sdileny vypocet geometrie ze souboru `plochaBodu.jl`.
+- `Jp` se pocita z bodu polygonu pres kvadraticke momenty `Ix` a `Iy`,
+- podporuje i slozeny profil `(obrys = ..., otvory = ...)`.
 """
 function polygon2polarnimoment(body::Union{AbstractVector,AbstractMatrix})
-    return polygon_metrics(body).Jp
+    m = polygon2kvadratickymoment(body)
+    return m.Ix + m.Iy
+end
+
+function polygon2polarnimoment(body::NamedTuple{(:obrys, :otvory)})
+    m = polygon2kvadratickymoment(body)
+    return m.Ix + m.Iy
 end
 
