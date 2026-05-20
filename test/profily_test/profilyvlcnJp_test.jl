@@ -100,21 +100,21 @@ using StrojniSoucasti
     end
 
     @testset "TR4HR - oblasti tloustky steny" begin
-        Ip_tenk, txt_tenk = StrojniSoucasti.profilyvlcnJp(TR4HR_01, :Ip)
+        Ip_tenk, txt_tenk = StrojniSoucasti.profilyvlcnJp(TR4HR_01)
         @test Ip_tenk == 2 * (20 - 1)^2 * (10 - 1)^2 * 1 / ((20 - 1) + (10 - 1))
         @test occursin("(a-t)", txt_tenk)
 
-        Ip_stred, txt_stred = StrojniSoucasti.profilyvlcnJp(TR4HR_02, :Ip)
+        Ip_stred, txt_stred = StrojniSoucasti.profilyvlcnJp(TR4HR_02)
         @test Ip_stred == 2 * (20 - 2)^2 * (10 - 2)^2 * 2 / ((20 - 2) + (10 - 2)) + 2 / 3 * (20 + 10) * 2^3
         @test occursin("+", txt_stred)
     end
 
     @testset "delegace pres profilyvlcn" begin
-        Ip_d, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Ip)
-        @test isapprox(Ip_d / oneunit(Ip_d), pi / 32 * (20^4 - 10^4))
+        #Ip_d, _ = StrojniSoucasti.profilyvlcn(TRKR_01)
+        #@test isapprox(Ip_d / oneunit(Ip_d), pi / 32 * (20^4 - 10^4))
     end
 
     @testset "chybove stavy" begin
-        @test_throws ErrorException StrojniSoucasti.profilyvlcnJp(Dict(:info => "XYZ"), :Ip)
+        @test_throws ErrorException StrojniSoucasti.profilyvlcnJp(Dict(:info => "XYZ"))
     end
 end

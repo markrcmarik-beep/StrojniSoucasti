@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-04-01
+# ver: 2026-05-20
 ## Funkce: profilyvlcnIx()
 ## Autor: Martin
 #
@@ -49,15 +49,20 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
     isrot(x, y) = isapprox(x, y; atol=1e-12, rtol=0.0) # Porovnani natočení s tolerancí
 
     # Podpora :Iy delegaci na :Ix (rotace o 90 deg)
-    if velicina == :Iy
-        return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
-    end
-
+    #if velicina == :Iy
+    #    return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+    #end
     # -----------------------------------------------------------
     # Plocha tyc nebo obdelnik
     if info in Set(["PLO", "OBD"])
         if velicina == :Ixy
-            return 0, "0"
+            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+            if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
+                return 0, "0"
+            else
+                return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
+            end
         elseif velicina == :Ix
             a, b = getn(:a), getn(:b)
             if isrot(angle, 0) || isrot(angle, pi)
@@ -65,10 +70,29 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
                 return b*a^3/12, "b*a^3/12"
             else
-                error("Neplatne natoceni profilu: $info $natoceni rad pro $velicina")
+                return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
+        elseif velicina == :Iy
+            if isrot(angle, 0) || isrot(angle, pi)
+                return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+            elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
+                return profilyvlcnIx(tvar1, :Ix, angle - pi/2) # Rotace Ix o -90 deg pro Iy
+            else
+                return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Delegace na Ix pro obecné natočení
+            end
+        elseif velicina == :Imin
+            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
+        elseif velicina == :Imax
+            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
+        else
+            error("Nepodporovana velicina: $velicina pro tvar $info")
         end
-
     # -----------------------------------------------------------
     # Kruhova tyc
     elseif info == "KR"
@@ -78,7 +102,6 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             D = getn(:D)
             return pi/64*D^4, "pi/64*D^4"
         end
-
     # -----------------------------------------------------------
     # Trubka kruhova
     elseif info == "TRKR"

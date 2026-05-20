@@ -1,16 +1,16 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypočet průřezový modul v krutu pro různé tvary dle zkratky označeni.
-# ver: 2026-04-04
-## Funkce: profilyvlcnWk()
+# Vypočet torzního modulu v krutu pro různé tvary dle zkratky označeni.
+# ver: 2026-05-20
+## Funkce: profilyvlcnWt()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnWk.jl
+# StrojniSoucasti/src/profily/profilyvlcnWt.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyvlcnWk(vstupni_promenne)
+## Wt_hod, Wt_str  = profilyvlcnWt(tvar1)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru, např.:
 #    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
@@ -20,8 +20,8 @@
 #    Dict("info" => "6HR", "s" => 20u"mm")
 #    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
 ## Výstupní proměnné:
-# Wk_hod - průřezový modul v krutu s jednotkami [mm³]
-# Wk_str - vzorec použitý pro výpočet průřezového modulu v krutu (string)
+# Wt_hod - torzní modul v krutu s jednotkami [mm³]
+# Wt_str - vzorec použitý pro výpočet torzní modulu v krutu (string)
 ## Použité balíčky:
 #
 ## Použité uživatelské funkce:
@@ -29,8 +29,8 @@
 ## Příklad:
 # tvar = Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm") # Definice 
 #   tvaru plošné tyče o rozměrech 20 mm x 10 mm
-# Wk, vzorec = profilyvlcnWk(tvar, :Wk) # Průřezový modul v krutu pro 
-#   plošnou tyč vrátí Wk a použitý vzorec
+# Wt, vzorec = profilyvlcnWk(tvar) # Průřezový modul v krutu pro 
+#   plošnou tyč vrátí Wt a použitý vzorec
 ###############################################################
 ## Použité proměnné vnitřní:
 #

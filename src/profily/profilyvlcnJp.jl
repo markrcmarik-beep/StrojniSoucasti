@@ -10,7 +10,7 @@
 # StrojniSoucasti/src/profily/profilyvlcnJp.jl
 #
 ## Vzor:
-## Jp_hod, Jp_str = profilyvlcnIp(tvar1)
+## Jp_hod, Jp_str = profilyvlcnJp(tvar1)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
@@ -27,7 +27,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Ip)
+function profilyvlcnJp(tvar1::Dict)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing

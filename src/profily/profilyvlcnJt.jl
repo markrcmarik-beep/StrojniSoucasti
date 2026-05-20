@@ -1,16 +1,16 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet torzní konstanty Ip pro různé tvary profilů.
+# Výpočet torzní konstanty Jt pro různé tvary profilů.
 # ver: 2026-05-20
 ## Funkce: profilyvlcnJt()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/profily/profilyvlcnJp.jl
+# StrojniSoucasti/src/profily/profilyvlcnJt.jl
 #
 ## Vzor:
-## Jt_hod, Jt_str = profilyvlcnIp(tvar1)
+## Jt_hod, Jt_str = profilyvlcnJt(tvar1)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
@@ -103,8 +103,8 @@ function profilyvlcnJt(tvar1::Dict, velicina::Symbol = :Jt)
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
         s = getn(:s)
-        return 0.133*sqrt(3)/2*s^4, "0.133*sqrt(3)/2*s⁴"
-        #return 0.154*s^4, "0.154*s⁴" # Torzní konstanta
+        #return 0.133*sqrt(3)/2*s^4, "0.133*sqrt(3)/2*s⁴"
+        return 0.154*s^4, "0.154*s⁴" # Torzní konstanta
     # -----------------------------------------------------------
     # neznámý tvar
     else

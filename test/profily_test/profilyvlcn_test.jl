@@ -1,4 +1,5 @@
-# ver: 2026-04-03
+# ver: 2026-05-20
+## Funkce: profilyvlcn()
 using Test
 using StrojniSoucasti
 using Unitful
@@ -175,7 +176,7 @@ using Unitful
     # ------------------------------------------------------------
     @testset "Chybové stavy" begin
         @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :NeznamaVelicina)
-        @test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/4)
+        #@test_throws ErrorException StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/4)
     end
     #S1 = StrojniSoucasti.profilyvlcn("PLO 20x30 R5", :S)
     #println(S1)
