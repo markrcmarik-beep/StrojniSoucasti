@@ -3,15 +3,15 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-05-03
+# ver: 2026-05-20
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyCSN.jl
+# StrojniSoucasti/src/profily/profilyCSN.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyCSN(vstupni_promenne)
+## vystupni_promenne = profilyCSN(inputStr)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru dle ČSN.
 #  Podporované tvary:
@@ -32,15 +32,15 @@
 #       "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
 #   "6HR" - šestihranný profil
 #       "6HR {s}" - "6HR 20" - šestihranný profil
-#   "I" - I profil dle tabulky
-#       "IPE {n}" - "IPE 100"
+#   "I" - I profil bez zaoblení
 #       "I {n}" - "I 100"
 #   "TR4HR" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
 #   args... - (nepoužito)
 ## Výstupní proměnné:
-#
+# dims - Struktura (Dict) s rozměry a informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:

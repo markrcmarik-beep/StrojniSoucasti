@@ -4,47 +4,53 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-05-06
+# ver: 2026-05-20
 ## Funkce: profily()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profily.jl
+# StrojniSoucasti/src/profily/profily.jl
 #
 ## Vzor:
-## vystupni_promenne = profily(inputStr, args...)
+## vystupni_promenne = profily(inputStr, args...; natoceni=0)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru profilu dle ČSN.
 #   Podporované tvary:
-#   "PLO" - obdélníkový profil
-#   "PLO _a_x_b_" - "PLO 20x10" - obdélníkový profil
-#   "PLO _a_x_b_R_r_" - "PLO 20x10R3" - obdélníkový profil s rádiusem
-#   "OBD" - obdélníkový profil
-#   "OBD _a_x_b_" - "OBD 20x10" - obdélníkový profil
-#   "OBD _a_x_b_R_r_" - "OBD 20x10R3" - obdélníkový profil s rádiusem
-#   "KR" - kruhový profil
-#   "KR _D_" - "KR 20" - kruhový profil
-#   "TRKR" - trubkový kruhový profil
-#   "TRKR _D_x_t_" - "TRKR 20x2" - trubkový kruhový profil
-#   "4HR" - čtyřhranný profil
-#   "4HR _a_" - "4HR 20" - čtyřhranný profil
-#   "4HR _a_R_r_" - "4HR 20R3" - čtyřhranný profil s rádiusem
-#   "4HR _a_x_b_" - "4HR 20x10" - čtyřhranný profil obdélníkový
-#   "4HR _a_x_b_R_r_" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
-#   "6HR" - šestihranný profil
-#   "6HR _s_" - "6HR 20" - šestihranný profil
-#   "TR4HR" - trubkový čtyřhranný profil
-#   "TR4HR _a_x_b_x_t_" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
-#   "TR4HR _a_x_b_x_t_R_r_" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
+#   "PLO {a}x{b}" - "PLO 20x10" - obdélníkový profil
+#   "PLO {a}x{b}R{r}" - "PLO 20x10R3" - obdélníkový profil s rádiusem
+#   "OBD {a}x{b}" - "OBD 20x10" - obdélníkový profil
+#   "OBD {a}x{b}R{r}" - "OBD 20x10R3" - obdélníkový profil s rádiusem
+#   "KR {D}" - "KR 20" - kruhový profil
+#   "KR {D}/{d}" - "KR 20/10" - kruhový profil s vnitřním průměrem (trubka)
+#   "TRKR {D}x{t}" - "TRKR 20x2" - trubkový kruhový profil
+#   "4HR {a}" - "4HR 20" - čtyřhranný profil
+#   "4HR {a}R{r}" - "4HR 20R3" - čtyřhranný profil s rádiusem
+#   "4HR {a}x{b}" - "4HR 20x10" - čtyřhranný profil obdélníkový
+#   "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rádiusem
+#   "6HR {s}" - "6HR 20" - šestihranný profil
+#   "TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2" - trubkový čtyřhranný profil dle ČSN 425720
+#   "TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2" - trubkový čtyřhranný profil
+#   "TR4HR {a}x{b}x{t}R{r}", "TR4HR {a}x{t}R{r}" - "TR4HR 20x20x2R3", "TR4HR 20x2R3" - trubkový čtyřhranný profil s rádiusem
+#   "I {n}" - I profil dle ČSN 425550
+#   "IPE {n}" - IPE profil dle ČSN 425553
 # args... - Volitelné názvy vlastností k výpočtu.
 #   "S" - plocha průřezu [mm^2]
+#   "I" - moment setrvačnosti (dle natoceni) [mm^4]
 #   "Ix" - moment setrvačnosti Ix [mm^4]
 #   "Iy" - moment setrvačnosti Iy [mm^4]
-#   "Ip" - polární moment setrvačnosti [mm^4]
+#   "Imin" - minimální moment setrvačnosti [mm^4] - zatím není implementováno
+#   "Imax" - maximální moment setrvačnosti [mm^4] - zatím není implementováno
+#   "Wo" - průřezový modul pro ohyb (dle natočení) [mm^3]
+#   "Wx" - průřezový modul pro ohyb pro osu x [mm^3] - zatím není implementováno
+#   "Wy" - průřezový modul pro ohyb pro osu y [mm^3] - zatím není implementováno
+#   "Ip", "Jp" - polární moment setrvačnosti [mm^4]
+#   "It", "Jt" - torzní moment [mm^3] (pro kruhové průřezy) - zatím není implementováno
+#   "J" - polární (torzní) moment setrvačnosti pro krut [mm^4] - zatím není implementováno
 #   "Wk" - průřezový modul pro krut [mm^3]
-#   "Wo" - průřezový modul pro ohyb [mm^3]
+#   "Wt" - torzní průřezový modul [mm^3] (pro kruhové průřezy) - zatím není implementováno
+# Natoceni - úhel natočení profilu (volitelný parametr pro výpočet Ix a Wo) (výchozí hodnota 0) [rad]
 ## Výstupní proměnné:
-# vystupni_promenne - Struktura (Dict) s rozměry profilu a
+# dims - Struktura (Dict) s rozměry profilu a
 #   případně i s vypočtenými vlastnostmi.
 ## Použité balíčky
 # Unitful

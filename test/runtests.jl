@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-13
+﻿# ver: 2026-05-20
 using Test
 
     # materialy
@@ -35,7 +35,7 @@ using Test
     include("profily_test/body_TR4HR_CSN425720_test.jl")
     include("profily_test/profilyvlcn_test.jl")
     include("profily_test/profilyvlcnS_test.jl")
-    include("profily_test/profilyvlcnIp_test.jl")
+    include("profily_test/profilyvlcnJp_test.jl")
     include("profily_test/torsion_J_TR4HR_numeric_test.jl")
     include("profily_test/profilyvlcnWk_test.jl")
     include("profily_test/profilyvlcnIx_test.jl")
