@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-05-20
+# ver: 2026-05-21
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -79,14 +79,14 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             return S_hod, S_str # Vrátí hodnotu a vzorec pro plochu
         end
     # -----------------------------------------------------------
-    # Ip - Polární moment [mm⁴]
+    # Jp - Polární moment [mm⁴]
     # -----------------------------------------------------------
     elseif velicina == :Ip  # Polární moment [mm⁴]
         Jp_hod, Jp_str = StrojniSoucasti.profilyvlcnJp(tvar1)
         Jp_hod = dopln_jednotku(Jp_hod, u"mm^4")
         return Jp_hod, Jp_str # Vrátí hodnotu a vzorec pro polární moment
     # -----------------------------------------------------------
-    # It - Torzní moment [mm³] (pro kruhové průřezy)
+    # Jt - Torzní moment [mm³] (pro kruhové průřezy)
     # -----------------------------------------------------------
     elseif velicina == :Jt  # Torzní moment [mm³] (pro kruhové průřezy)
         Jt_hod, Jt_str = StrojniSoucasti.profilyvlcnJt(tvar1)
@@ -117,7 +117,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Iy - Kvadratický moment [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Iy  # Kvadratický moment [mm⁴]
-        Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, natoceni+pi/2)
+        Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
         Iy_hod = dopln_jednotku(Iy_hod, u"mm^4")
         return Iy_hod, Iy_str # Vrátí hodnotu a vzorec pro kvadratický moment Iy (natočený o 90°)
     # ------------------------------------------------------------
@@ -130,7 +130,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             Ixy_str = hasproperty(tvar1, :Ixy_str) ? tvar1[:Ixy_str] : ""
             return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy
         else
-            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, velicina)
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
             Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
             return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy (natočený o natoceni)
         end
@@ -138,14 +138,14 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Imin - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
-        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnIminImax(tvar1, velicina)
+        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Imin, natoceni)
         Imin_hod = dopln_jednotku(Imin_hod, u"mm^4")
         return Imin_hod, Imin_str # Vrátí hodnotu a vzorec pro kvadratický moment Imin
         # --------------------------------------------------------
     # Imax - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imax  # Kvadratický moment mimimální [mm⁴]
-        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnIminImax(tvar1, velicina)
+        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Imax, natoceni)
         Imax_hod = dopln_jednotku(Imax_hod, u"mm^4")
         return Imax_hod, Imax_str # Vrátí hodnotu a vzorec pro kvadratický moment Imax
     # ------------------------------------------------------------

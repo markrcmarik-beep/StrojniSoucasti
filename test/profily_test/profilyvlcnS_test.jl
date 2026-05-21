@@ -1,4 +1,4 @@
-# ver: 2026-04-04
+# ver: 2026-05-21
 using Test
 using StrojniSoucasti
 
@@ -41,7 +41,7 @@ using StrojniSoucasti
 
     _6HR_01 = Dict(
         :info => "6HR",
-        :s => 20
+        :a => 20/sqrt(3) # s = 20
     )
 
     TR4HR_01 = Dict(
@@ -69,8 +69,8 @@ using StrojniSoucasti
         @test occursin("a", txt4)
 
         S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01)
-        @test S5 == 300
-        @test occursin("3/4*s", txt5)
+        @test S5 == 346.41016151377556
+        @test occursin("3/2*sqrt(3)*a²", txt5)
 
         S6, txt6 = StrojniSoucasti.profilyvlcnS(TR4HR_01, :S)
         @test S6 == 176

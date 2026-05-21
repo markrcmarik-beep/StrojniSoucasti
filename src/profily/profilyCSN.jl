@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-05-20
+# ver: 2026-05-21
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -166,10 +166,11 @@ function profilyCSN(inputStr::AbstractString)
         (
             r"^6HR(\d+(?:\.\d+)?)$",
             function (m)
-                s1 = parse(Float64, m.captures[1])
+                s = parse(Float64, m.captures[1])
                 dims[:info] = "6HR"
-                dims[:s] = s1 * u"mm"
-                dims[:a] = s1 * u"mm"
+                dims[:s] = s * u"mm" # Vzdálenost mezi protilehlými stranami šestihranu
+                dims[:a] = s / sqrt(3) * u"mm" # Délka strany šestihranu
+                dims[:e] = s / sqrt(3)*2 * u"mm" # Vzdálenost mezi protilehlými vrcholy šestihranu
                 dims[:R] = 0u"mm"
                 return true
             end

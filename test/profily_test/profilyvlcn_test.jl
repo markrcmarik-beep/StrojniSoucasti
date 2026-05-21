@@ -150,7 +150,7 @@ using Unitful
         @test txt1 == "pi/64*(D^4 - d^4)"
         Imin2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imin)
         @test Imin2 > 0u"mm^4"
-        @test txt2 == "-sqrt((1//4)*((-(1//12)*(a^3)*b + (1//12)*a*(b^3))^2)) + (1//2)*((1//12)*(a^3)*b + (1//12)*a*(b^3))"
+        @test txt2 == "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
     end
     # ------------------------------------------------------------
     # Imax – minimální kvadratický moment

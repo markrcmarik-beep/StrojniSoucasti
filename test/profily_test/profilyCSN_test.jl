@@ -1,4 +1,4 @@
-# ver: 2026-05-03
+# ver: 2026-05-21
 using StrojniSoucasti, Unitful, Test
 
 @testset "profilyCSN" begin
@@ -70,7 +70,7 @@ using StrojniSoucasti, Unitful, Test
     dims10 = StrojniSoucasti.profilyCSN("6HR30")
     @test dims10[:info] == "6HR"
     @test dims10[:s] == 30u"mm"
-    @test dims10[:a] == 30u"mm"
+    @test dims10[:a] == 17.320508075688775u"mm"
     @test dims10[:R] == 0u"mm"
 
     dims11 = StrojniSoucasti.profilyCSN("I80")

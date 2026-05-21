@@ -1,4 +1,4 @@
-# ver: 2026-04-04
+# ver: 2026-05-21
 using Test
 using StrojniSoucasti
 
@@ -66,6 +66,9 @@ using StrojniSoucasti
         Wo7, txt7 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/6)
         @test isapprox(Wo7, 5 / 48 * 20^3)
         @test occursin("5/48", txt7)
+        Wo6, txt6 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
+        @test isapprox(Wo6, 5 * sqrt(3) / 72 * 20^3)
+        @test occursin("(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))", txt6)
 
         Wo8, txt8 = StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, 0)
         @test Wo8 == (20 * 10^2 / 6) - ((20 - 2 * 4) * (10 - 2 * 4)^2 / 6)
@@ -73,10 +76,10 @@ using StrojniSoucasti
     end
 
     @testset "chybove stavy" begin
-        @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(PLO_01, :Wo, pi/4)
-        @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(_4HR_01, :Wo, pi/4)
-        @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
-        @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, pi/4)
+        #@test_throws ErrorException StrojniSoucasti.profilyvlcnWo(PLO_01, :Wo, pi/4)
+        #@test_throws ErrorException StrojniSoucasti.profilyvlcnWo(_4HR_01, :Wo, pi/4)
+        #@test_throws ErrorException StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
+        #@test_throws ErrorException StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, pi/4)
         @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(Dict(:info => "XYZ"), :Wo)
     end
 end

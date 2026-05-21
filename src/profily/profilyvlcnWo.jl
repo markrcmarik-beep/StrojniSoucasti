@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
-# ver: 2026-04-04
+# ver: 2026-05-21
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
@@ -46,7 +46,6 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         v / oneunit(v)
     end
     getn(k::Symbol) = to_num(getv(k), k)
-
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
@@ -56,7 +55,12 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         elseif natoceni in (pi/2, 3*pi/2)
             return b*a^2/6, "b*a²/6"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, natoceni)
+            Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
+            Wo_hod = (Ix_hod*Iy_hod - Ixy_hod^2) / (Iy_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2) - Ix_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2))
+            Wo_str = "(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))"
+            return Wo_hod, Wo_str # Vrátí hodnotu a vzorec pro průřezový modul v ohybu Wo (natočený o natoceni)
         end
     # -----------------------------------------------------------
     # Kruhová tyč
@@ -75,10 +79,15 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
             return a^3/6, "a³/6"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, natoceni)
+            Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
+            Wo_hod = (Ix_hod*Iy_hod - Ixy_hod^2) / (Iy_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2) - Ix_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2))
+            Wo_str = "(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))"
+            return Wo_hod, Wo_str # Vrátí hodnotu a vzorec pro průřezový modul v ohybu Wo (natočený o natoceni)
         end
     # -----------------------------------------------------------
-    # Šestihranná tyč
+    # Šestihranná tyč (0rad lezi na plose)
     elseif info == "6HR" # Šestihranná tyč
         s = getn(:s)
         if natoceni in (0, 2*pi/6, 4*pi/6, 6*pi/6, 8*pi/6, 10*pi/6, 12*pi/6)
@@ -86,7 +95,12 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         elseif natoceni in (pi/6, 3*pi/6, 5*pi/6, 7*pi/6, 9*pi/6, 11*pi/6)
             return 5/48*s^3, "5/48*s³"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, natoceni)
+            Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
+            Wo_hod = (Ix_hod*Iy_hod - Ixy_hod^2) / (Iy_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2) - Ix_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2))
+            Wo_str = "(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))"
+            return Wo_hod, Wo_str # Vrátí hodnotu a vzorec pro průřezový modul v ohybu Wo (natočený o natoceni)
         end
     # -----------------------------------------------------------
     # Trubka čtyřhranná
@@ -95,7 +109,12 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
             return (a*b^2/6) - ((a-2t)*(b-2t)^2/6), "(a*b²/6)-((a-2t)*(b-2t)²/6)"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, natoceni)
+            Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
+            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
+            Wo_hod = (Ix_hod*Iy_hod - Ixy_hod^2) / (Iy_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2) - Ix_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2))
+            Wo_str = "(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))"
+            return Wo_hod, Wo_str # Vrátí hodnotu a vzorec pro průřezový modul v ohybu Wo (natočený o natoceni)
         end
     # -----------------------------------------------------------
     # neznámý tvar
