@@ -45,10 +45,9 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         v isa Number || error("Parametr $name musi byt cislo.")
         v / oneunit(v)
     end
-    getn(k::Symbol) = to_num(getv(k), k)
-
-    angle = mod(natoceni, 2*pi)
-    isrot(x, y) = isapprox(x, y; atol=1e-12, rtol=0.0)
+    getn(k::Symbol) = to_num(getv(k), k) # Získání numerické hodnoty parametru
+    angle = mod(natoceni, 2*pi) # Normalizace úhlu do rozsahu [0, 2π)
+    isrot(x, y) = isapprox(x, y; atol=1e-12, rtol=0.0) # Porovnani s toleranci pro rotace
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
@@ -60,7 +59,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         else
             Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
             ymax = 0.5*(abs(a*sin(angle)) + abs(b*cos(angle)))
-            ymax > 0 || error("Nelze urcit ymax pro PLO/OBD.")
+            ymax > 0 || error("Nelze urcit ymax pro PLO/OBD.") # Kontrola (teoreticky vždy splneno)
             return Ix_hod / ymax, "Ix / ymax, kde ymax = (|a*sin(angle)| + |b*cos(angle)|)/2"
         end
     # -----------------------------------------------------------
@@ -82,7 +81,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         else
             Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
             ymax = 0.5*a*(abs(sin(angle)) + abs(cos(angle)))
-            ymax > 0 || error("Nelze urcit ymax pro 4HR.")
+            ymax > 0 || error("Nelze urcit ymax pro 4HR.") # Kontrola (teoreticky vždy splneno)
             return Ix_hod / ymax, "Ix / ymax, kde ymax = a*(|sin(angle)| + |cos(angle)|)/2"
         end
     # -----------------------------------------------------------
@@ -111,7 +110,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
                 yrot = x*sin(angle) + y*cos(angle)
                 ymax = max(ymax, abs(yrot))
             end
-            ymax > 0 || error("Nelze urcit ymax pro 6HR.")
+            ymax > 0 || error("Nelze urcit ymax pro 6HR.") # Kontrola (teoreticky vždy splneno)
             return Ix_hod / ymax, "Ix / ymax, kde Ix = 5*sqrt(3)/144*s^4 a ymax = max_i|x_i*sin(angle) + y_i*cos(angle)|"
         end
     # -----------------------------------------------------------
@@ -123,7 +122,7 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         else
             Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
             ymax = 0.5*(abs(a*sin(angle)) + abs(b*cos(angle)))
-            ymax > 0 || error("Nelze urcit ymax pro TR4HR.")
+            ymax > 0 || error("Nelze urcit ymax pro TR4HR.") # Kontrola (teoreticky vždy splneno)
             return Ix_hod / ymax, "Ix / ymax, kde ymax = (|a*sin(angle)| + |b*cos(angle)|)/2"
         end
     # -----------------------------------------------------------
