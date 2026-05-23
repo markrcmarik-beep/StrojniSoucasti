@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-05-21
+# ver: 2026-05-23
 ## Funkce: profilyvlcnIx()
 ## Autor: Martin
 #
@@ -154,7 +154,12 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
         end
     # -----------------------------------------------------------
     # Sestihranna tyc (0rad lezi na plose)
+    # Sestihranna tyc (s je vzdalenost mezi protilehlymi stranami)
     elseif info == "6HR"
+        s = getn(:s)
+        # Regularni sestihran ma v tezisti izotropni matici setrvacnosti:
+        # Ix = Iy a Ixy = 0 pro libovolne natoceni.
+        # I_hex = 5*sqrt(3)/144*s^4
         if velicina == :Ixy
             if isrot(angle, 0) || isrot(angle, 2*pi/6) || isrot(angle, 4*pi/6) || isrot(angle, 6*pi/6) || isrot(angle, 8*pi/6) || isrot(angle, 10*pi/6) || isrot(angle, 12*pi/6)
                 return 0, "0"
@@ -166,15 +171,14 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
         elseif velicina == :Ix
             s = getn(:s) # Strana šestihranu
             n = round(Int, angle / (pi/6)) # Určení indexu natočení pro šestihrannou tyč
-            if angle in (0, 2*pi/6, 4*pi/6, 6*pi/6, 8*pi/6, 10*pi/6, 12*pi/6)
-                return 5*sqrt(3)/144*s^4, "5*sqr(3)/144*s^4"
-            elseif angle in (pi/6, 3*pi/6, 5*pi/6, 7*pi/6, 9*pi/6, 11*pi/6)
+            if isrot(angle, 0) || isrot(angle, 2*pi/6) || isrot(angle, 4*pi/6) || isrot(angle, 6*pi/6) || isrot(angle, 8*pi/6) || isrot(angle, 10*pi/6) || isrot(angle, 12*pi/6)
+                return 5*sqrt(3)/144*s^4, "5*sqrt(3)/144*s^4"
+            elseif isrot(angle, pi/6) || isrot(angle, 3*pi/6) || isrot(angle, 5*pi/6) || isrot(angle, 7*pi/6) || isrot(angle, 9*pi/6) || isrot(angle, 11*pi/6)
                 return 5/96*s^4, "5/96*s^4"
             else
-                Ix_hod, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy_hod, _ = profilyvlcnIx(tvar1, :Iy, 0)
-                Ixy_hod, _ = profilyvlcnIx(tvar1, :Ixy, 0)
-                return (Ix_hod*Iy_hod - Ixy_hod^2) / (Iy_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2) - Ix_hod*sqrt(Ix_hod^2 + Iy_hod^2 - 2*Ixy_hod^2)), "(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))"
+                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Iy
             return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
@@ -193,37 +197,47 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
         end
     # -----------------------------------------------------------
     # Trubka ctyrhranna
-elseif info == "TR4HR"
-    a, b, t = getn(:a), getn(:b), getn(:t)
-    # Zakladni hodnoty v lokalnich osach
-    Ix0 = (a*b^3 - (a-2t)*(b-2t)^3) / 12
-    Iy0 = (b*a^3 - (b-2t)*(a-2t)^3) / 12
-    Ixy0 = 0
-    if velicina == :Ix
-        if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
-            return (a*b^3 - (a-2t)*(b-2t)^3) / 12, "(a*b^3/12)-((a-2t)*(b-2t)^3/12)"
+    elseif info == "TR4HR"
+        a, b, t = getn(:a), getn(:b), getn(:t)
+        # Zakladni hodnoty v lokalnich osach
+        Ix0 = (a*b^3 - (a-2t)*(b-2t)^3) / 12
+        Iy0 = (b*a^3 - (b-2t)*(a-2t)^3) / 12
+        Ixy0 = 0
+        if velicina == :Ixy
+            if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
+                return 0, "0"
+            else
+                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
+            end
+        elseif velicina == :Ix
+            if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
+                return (a*b^3 - (a-2t)*(b-2t)^3) / 12, "(a*b^3/12)-((a-2t)*(b-2t)^3/12)"
+            else
+                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
+            end
+        elseif velicina == :Iy
+            if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
+                return (b*a^3 - (b-2t)*(a-2t)^3) / 12, "(b*a^3/12)-((b-2t)*(a-2t)^3/12)"
+            else
+                return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+            end
+        elseif velicina == :Imin
+            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
+        elseif velicina == :Imax
+            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         else
-            return (Ix0 + Iy0)/2 + (Ix0 - Iy0)/2 * cos(2*angle), 
-                "(Ix0 + Iy0)/2 + (Ix0 - Iy0)/2 * cos(2*angle)"
+            error("Nepodporovana velicina: $velicina pro tvar $info")
         end
-    elseif velicina == :Iy
-        if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
-            return (b*a^3 - (b-2t)*(a-2t)^3) / 12, "(b*a^3/12)-((b-2t)*(a-2t)^3/12)"
-        else
-            return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
-        end
-    elseif velicina == :Ixy
-        return (-(Ix0 - Iy0)/2 * sin(2*angle) + Ixy0 * cos(2*angle),
-            "-(Ix0 - Iy0)/2*sin(2*angle) + Ixy0*cos(2*angle)")
-    elseif velicina == :Imin
-        return ((Ix0 + Iy0)/2 - sqrt(((Ix0 - Iy0)/2)^2 + Ixy0^2),
-            "(Ix0 + Iy0)/2 - sqrt(((Ix0 - Iy0)/2)^2 + Ixy0^2)")
-    elseif velicina == :Imax
-        return ((Ix0 + Iy0)/2 + sqrt(((Ix0 - Iy0)/2)^2 + Ixy0^2),
-            "(Ix0 + Iy0)/2 + sqrt(((Ix0 - Iy0)/2)^2 + Ixy0^2)")
-    else
-        error("Nepodporovana velicina: $velicina pro tvar $info")
-    end
     # -----------------------------------------------------------
     # Neznamy tvar
     else

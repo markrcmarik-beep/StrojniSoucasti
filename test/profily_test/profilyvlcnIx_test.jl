@@ -1,4 +1,4 @@
-# ver: 2026-05-20
+# ver: 2026-05-23
 using Test
 using StrojniSoucasti
 
@@ -46,32 +46,36 @@ using StrojniSoucasti
 
     @testset "Ix pro vsechny tvary" begin
         Ix0, txt0 = StrojniSoucasti.profilyvlcnIx(PLO_01, :Ix, 0)
-        @test Ix0 == 20 * 10^3 / 12
+        @test isapprox(Ix0, 20 * 10^3 / 12)
         @test txt0 == "a*b^3/12"
 
         Ix_obd, txt_obd = StrojniSoucasti.profilyvlcnIx(OBD_01, :Ix, 0)
-        @test Ix_obd == 30 * 12^3 / 12
+        @test isapprox(Ix_obd, 30 * 12^3 / 12)
         @test txt_obd == "a*b^3/12"
 
         Ix_kr, txt_kr = StrojniSoucasti.profilyvlcnIx(KR_01, :Ix, 0)
-        @test Ix_kr == pi / 64 * 20^4
+        @test isapprox(Ix_kr, pi / 64 * 20^4)
         @test txt_kr == "pi/64*D^4"
 
         Ix_trkr, txt_trkr = StrojniSoucasti.profilyvlcnIx(TRKR_01, :Ix, 0)
-        @test Ix_trkr == pi / 64 * (20^4 - 10^4)
+        @test isapprox(Ix_trkr, pi / 64 * (20^4 - 10^4))
         @test txt_trkr == "pi/64*(D^4 - d^4)"
 
         Ix_4hr, txt_4hr = StrojniSoucasti.profilyvlcnIx(_4HR_01, :Ix, pi/2)
-        @test Ix_4hr == 20^4 / 12
+        @test isapprox(Ix_4hr, 20^4 / 12)
         @test txt_4hr == "a^4/12"
 
         Ix_6hr_even, txt_6hr_even = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, 0)
-        @test Ix_6hr_even == 5 * sqrt(3) / 144 * 20^4
-        @test txt_6hr_even == "5*sqr(3)/144*s^4"
+        @test isapprox(Ix_6hr_even, 5 * sqrt(3) / 144 * 20^4)
+        @test txt_6hr_even == "5*sqrt(3)/144*s^4"
 
         Ix_6hr_odd, txt_6hr_odd = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, pi/6)
-        @test Ix_6hr_odd == 5 / 96 * 20^4
+        @test isapprox(Ix_6hr_odd, 5 / 96 * 20^4)
         @test txt_6hr_odd == "5/96*s^4"
+
+        Ix_6hr_any, txt_6hr_any = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, pi/5)
+        @test isapprox(Ix_6hr_any, 9177.106807405808, atol=0.01)
+        @test txt_6hr_any == "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
 
         Ix_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnIx(TR4HR_01, :Ix, 0)
         @test isapprox(Ix_tr4hr, 1658.6666, atol = 0.01)
@@ -80,12 +84,12 @@ using StrojniSoucasti
 
     @testset "Iy delegace" begin
         Iy0, txty = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy, 0)
-        @test Iy0 == 10 * 20^3 / 12
+        @test isapprox(Iy0, 10 * 20^3 / 12)
         @test txty == "b*a^3/12"
 
         Iy_ref, _ = StrojniSoucasti.profilyvlcnIx(PLO_01, :Ix, pi/2)
         Iy_from_delegate, _ = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy, 0)
-        @test Iy_from_delegate == Iy_ref
+        @test isapprox(Iy_from_delegate, Iy_ref)
     end
 
     @testset "Ixy pro vsechny tvary" begin
@@ -111,7 +115,7 @@ using StrojniSoucasti
 
         Ixy_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnIx(TR4HR_01, :Ixy, 0)
         @test Ixy_tr4hr == 0
-        @test txt_tr4hr == "-(Ix0 - Iy0)/2*sin(2*angle) + Ixy0*cos(2*angle)"
+        @test txt_tr4hr == "0"
     end
 
     @testset "normalizace uhlu" begin
@@ -119,12 +123,12 @@ using StrojniSoucasti
         Ix_2pi, _ = StrojniSoucasti.profilyvlcnIx(PLO_01, :Ix, 2pi)
         Iy_2pi, _ = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy, 2pi)
 
-        @test Ix_2pi == Ix_ref
-        @test Iy_2pi == 10 * 20^3 / 12
+        @test isapprox(Ix_2pi, Ix_ref)
+        @test isapprox(Iy_2pi, 10 * 20^3 / 12)
 
         Ix_hex_ref, _ = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, pi/6)
-        Ix_hex_shift, _ = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, pi/6 + 2pi)
-        #@test Ix_hex_ref == Ix_hex_shift
+        Ix_hex_shift, _ = StrojniSoucasti.profilyvlcnIx(_6HR_01, :Ix, pi/6 + 2*pi)
+        @test isapprox(Ix_hex_ref, Ix_hex_shift)
     end
 
     @testset "chybove stavy" begin

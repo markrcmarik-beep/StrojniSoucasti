@@ -40,38 +40,38 @@ using StrojniSoucasti
 
     @testset "zakladni tvary" begin
         Wo1, txt1 = StrojniSoucasti.profilyvlcnWo(PLO_01, :Wo, 0)
-        @test Wo1 == 20 * 10^2 / 6
+        @test isapprox(Wo1, 333.3333333333333, atol=1e-3)
         @test occursin("a*b", txt1)
 
         Wo2, txt2 = StrojniSoucasti.profilyvlcnWo(PLO_01, :Wo, pi/2)
-        @test Wo2 == 10 * 20^2 / 6
+        @test isapprox(Wo2, 666.6666666666666, atol=1e-3)
         @test occursin("b*a", txt2)
 
         Wo3, txt3 = StrojniSoucasti.profilyvlcnWo(KR_01, :Wo)
-        @test isapprox(Wo3, pi/32 * 20^3)
+        @test isapprox(Wo3, 785.3981633974482, atol=1e-3)
         @test occursin("D", txt3)
 
         Wo4, txt4 = StrojniSoucasti.profilyvlcnWo(TRKR_01, :Wo)
-        @test isapprox(Wo4, pi/32 * (20^4 - 10^4) / 20)
+        @test isapprox(Wo4, 736.3107781851078, atol=1e-3)
         @test occursin("D", txt4) && occursin("d", txt4)
 
         Wo5, txt5 = StrojniSoucasti.profilyvlcnWo(_4HR_01, :Wo, 0)
-        @test Wo5 == 20^3 / 6
+        @test isapprox(Wo5, 1333.3333333333333, atol=1e-3)
         @test occursin("a", txt5)
 
         Wo6, txt6 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, 0)
-        @test isapprox(Wo6, 5 * sqrt(3) / 72 * 20^3)
+        @test isapprox(Wo6, 962.2504486493762, atol=1e-3)
         @test occursin("s", txt6)
 
         Wo7, txt7 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/6)
-        @test isapprox(Wo7, 5 / 48 * 20^3)
+        @test isapprox(Wo7, 833.3333333333334, atol=1e-3)
         @test occursin("5/48", txt7)
         Wo6, txt6 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
-        @test isapprox(Wo6, 5 * sqrt(3) / 72 * 20^3)
-        @test occursin("(Ix*Iy - Ixy^2) / (Iy*sqrt(Ix^2 + Iy^2 - 2*Ixy^2) - Ix*sqrt(Ix^2 + Iy^2 - 2*Ixy^2))", txt6)
+        @test isapprox(Wo6, 837.9235663029301, atol=1e-3)
+        @test occursin("Ix / ymax", txt6)
 
         Wo8, txt8 = StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, 0)
-        @test Wo8 == (20 * 10^2 / 6) - ((20 - 2 * 4) * (10 - 2 * 4)^2 / 6)
+        @test isapprox(Wo8, 325.3333333333333, atol=1e-3)
         @test occursin("a-2t", txt8)
     end
 
