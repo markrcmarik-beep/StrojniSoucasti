@@ -1,4 +1,4 @@
-# ver: 2026-05-21
+# ver: 2026-05-24
 using Test
 using StrojniSoucasti
 
@@ -52,28 +52,28 @@ using StrojniSoucasti
     )
 
     @testset "zakladni tvary" begin
-        S, txt = StrojniSoucasti.profilyvlcnS(PLO_01)
-        @test S == 200
-        @test txt == "a*b"
+        S1, txt1 = StrojniSoucasti.profilyvlcnS(PLO_01)
+        @test isapprox(S1, 200, atol=1e-3)
+        @test txt1 == "a*b"
 
         S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01)
-        @test isapprox(S2, pi*(20/2)^2)
-        @test occursin("D", txt2)
+        @test isapprox(S2, 314.1592653589793, atol=1e-3)
+        @test txt2 == "π*(D/2)²"
 
         S3, txt3 = StrojniSoucasti.profilyvlcnS(TRKR_01)
-        @test isapprox(S3, pi*(20^2 - 10^2)/4)
+        @test isapprox(S3, 235.61944901923448, atol=1e-3)
         @test occursin("D", txt3) && occursin("d", txt3)
 
         S4, txt4 = StrojniSoucasti.profilyvlcnS(_4HR_01)
-        @test S4 == 400
-        @test occursin("a", txt4)
+        @test isapprox(S4, 400, atol=1e-3)
+        @test txt4 == "a²"
 
         S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01)
-        @test S5 == 346.41016151377556
-        @test occursin("3/2*sqrt(3)*a²", txt5)
+        @test isapprox(S5, 346.41016151377556, atol=1e-3)
+        @test txt5 == "3/2*sqrt(3)*a²"
 
         S6, txt6 = StrojniSoucasti.profilyvlcnS(TR4HR_01, :S)
-        @test S6 == 176
+        @test isapprox(S6, 176, atol=1e-3)
         @test txt6 == "a*b - (a-2t)*(b-2t)"
     end
 

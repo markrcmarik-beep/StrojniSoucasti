@@ -10,11 +10,14 @@
 # StrojniSoucasti/src/profily/profilyvlcnJp.jl
 #
 ## Vzor:
-## Jp_hod, Jp_str = profilyvlcnJp(tvar1)
+## Jp_hod, Jp_str = profilyvlcnJp(tvar1, velicina)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
 #   :a, :b, :t, :D, :d, :s - parametry profilu (v závislosti na tvaru)
+# velicina - hledaná veličina (výchzí hodnota :Jt)
+#   :Jp - Polární moment průřezu [mm³]
+#   :Jt - Torzní konstanta [mm³]
 ## Výstupní proměnné:
 # Jp_hod - hodnota polárního momentu průřezu s jednotkami
 # Jp_str - vzorec použitý pro výpočet polárního momentu průřezu (string)
@@ -27,7 +30,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jp)
+function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
@@ -36,8 +39,7 @@ function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jp)
         v isa Number || error("Parametr $name musi byt cislo.")
         v / oneunit(v)
     end
-    getn(k::Symbol) = to_num(getv(k), k)
-
+    getn(k::Symbol) = to_num(getv(k), k) # Získání numerické hodnoty parametru
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník

@@ -1,4 +1,4 @@
-# ver: 2026-05-20
+# ver: 2026-05-24
 using Test
 using StrojniSoucasti
 
@@ -107,6 +107,52 @@ using StrojniSoucasti
         Ip_stred, txt_stred = StrojniSoucasti.profilyvlcnJp(TR4HR_02, :Jp)
         @test isapprox(Ip_stred, 3350.153846153846, atol=1e-3)
         @test txt_stred == "2*(a-t)²*(b-t)²*t/((a-t)+(b-t))+2/3*(a+b)*t³"
+    end
+
+    @testset "kompatibilita :Jt" begin
+        Jt1, txt1 = StrojniSoucasti.profilyvlcnJp(PLO_01, :Jt)
+        @test isapprox(Jt1, 20 * 10^3 * (1 / 3 - 0.21 * 10 / 20 * (1 - 10^4 / 12 / 20^4)), atol=1e-3)
+        @test txt1 == "a*b³ *(1/3 - 0.21*b/a*(1 - b⁴/12/a⁴))"
+
+        Jt2, txt2 = StrojniSoucasti.profilyvlcnJp(PLO_02, :Jt)
+        @test isapprox(Jt2, 120 * 10^3 / 3, atol=1e-3)
+        @test txt2 == "a*b³ /3"
+
+        Jt3, txt3 = StrojniSoucasti.profilyvlcnJp(PLO_03, :Jt)
+        @test isapprox(Jt3, 20 * 10^3 * (1 / 3 - 0.21 * 10 / 20 * (1 - 10^4 / 12 / 20^4)), atol=1e-3)
+        @test txt3 == "b*a³ *(1/3 - 0.21*a/b*(1 - a⁴/12/b⁴))"
+
+        Jt4, txt4 = StrojniSoucasti.profilyvlcnJp(OBD_01, :Jt)
+        @test isapprox(Jt4, 30 * 12^3 * (1 / 3 - 0.21 * 12 / 30 * (1 - 12^4 / 12 / 30^4)), atol=1e-3)
+        @test txt4 == "a*b³ *(1/3 - 0.21*b/a*(1 - b⁴/12/a⁴))"
+
+        Jt5, txt5 = StrojniSoucasti.profilyvlcnJp(KR_01, :Jt)
+        @test isapprox(Jt5, pi / 32 * 20^4, atol=1e-3)
+        @test txt5 == "π/32*D⁴"
+
+        Jt6, txt6 = StrojniSoucasti.profilyvlcnJp(TRKR_01, :Jt)
+        @test isapprox(Jt6, pi / 32 * (20^4 - 10^4), atol=1e-3)
+        @test txt6 == "π/32*(D⁴ - d⁴)"
+
+        Jt7, txt7 = StrojniSoucasti.profilyvlcnJp(_4HR_01, :Jt)
+        @test isapprox(Jt7, 0.1406 * 20^4, atol=1e-3)
+        @test txt7 == "0.1406*a⁴"
+
+        Jt8, txt8 = StrojniSoucasti.profilyvlcnJp(_6HR_01, :Jt)
+        @test isapprox(Jt8, 0.154 * 20^4, atol=1e-3)
+        @test txt8 == "0.154*s⁴"
+
+        Jt9, txt9 = StrojniSoucasti.profilyvlcnJp(TR4HR_01, :Jt)
+        @test isapprox(Jt9, 2 * (20 - 1)^2 * (10 - 1)^2 * 1 / ((20 - 1) + (10 - 1)), atol=1e-3)
+        @test txt9 == "2*(a-t)²*(b-t)²*t/((a-t)+(b-t))"
+
+        Jt10, txt10 = StrojniSoucasti.profilyvlcnJp(TR4HR_02, :Jt)
+        @test isapprox(Jt10, 2 * (20 - 2)^2 * (10 - 2)^2 * 2 / ((20 - 2) + (10 - 2)) + 2 / 3 * (20 + 10) * 2^3, atol=1e-3)
+        @test txt10 == "2*(a-t)²*(b-t)²*t/((a-t)+(b-t))+2/3*(a+b)*t³"
+
+        Jt_default, txt_default = StrojniSoucasti.profilyvlcnJp(KR_01)
+        @test isapprox(Jt_default, pi / 32 * 20^4, atol=1e-3)
+        @test txt_default == "π/32*D⁴"
     end
 
     @testset "delegace pres profilyvlcn" begin

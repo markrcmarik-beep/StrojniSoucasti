@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
-# ver: 2026-05-23
+# ver: 2026-05-24
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnWo.jl
+# StrojniSoucasti/src/profily/profilyvlcnWo.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilyvlcnWo(vstupni_promenne)

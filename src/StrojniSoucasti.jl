@@ -51,9 +51,7 @@ include("profily/profil_text_lines.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnJp.jl")
 include("profily/profilyvlcnWk.jl")
-include("profily/profilyvlcnWt.jl")
 include("profily/profilyvlcnIx.jl")
-include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
