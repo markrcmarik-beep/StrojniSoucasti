@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-05-20
+# ver: 2026-05-24
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -50,7 +50,6 @@ include("profily/profily.jl") # tvary profilů
 include("profily/profil_text_lines.jl") #
 include("profily/profilyvlcnS.jl")
 include("profily/profilyvlcnJp.jl")
-include("profily/profilyvlcnJt.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnWt.jl")
 include("profily/profilyvlcnIx.jl")
