@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-05-20
+# ver: 2026-05-27
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -129,26 +129,26 @@ function profily(inputStr::AbstractString, args...; natoceni = 0)
         A = StrojniSoucasti.profil_I_CSN425550(clean)
         if A !== nothing
             dims = Dict{Symbol,Any}()
-            dims[:info] = "I"
-            dims[:serie] = A.serie
-            dims[:b] = A.b * u"mm"
-            dims[:h] = A.h * u"mm"
-            dims[:t1] = A.t1 * u"mm"
-            dims[:t2] = A.t2 * u"mm"
-            dims[:R] = A.R * u"mm"
-            dims[:R1] = A.R1 * u"mm"
-            dims[:m] = A.m * u"kg"/u"m"
-            dims[:standard] = A.standard
-            dims[:material] = A.material
-            dims[:S] = A.S * u"mm^2"
-            dims[:Ix] = A.Ix * u"mm^4"
-            dims[:Iy] = A.Iy * u"mm^4"
-            dims[:Wx] = A.Wx * u"mm^3"
-            dims[:Wy] = A.Wy * u"mm^3"
-            dims[:ix] = A.ix * u"mm"
-            dims[:iy] = A.iy * u"mm"
-            dims[:Sx] = A.Sx * u"mm^3"
-            dims[:sx] = A.sx * u"mm"
+            dims[:info] = "I" # informace o typu profilu
+            dims[:serie] = A.serie # informace o sérii profilu (např. 80 pro I 80)
+            dims[:b] = A.b * u"mm" # převod na jednotky mm
+            dims[:h] = A.h * u"mm" # převod na jednotky mm
+            dims[:t1] = A.t1 * u"mm" # tloušťka pásnice
+            dims[:t2] = A.t2 * u"mm" # tloušťka pásnice a žebra
+            dims[:R] = A.R * u"mm" # rádius přechodu mezi pásnicí a žebrem
+            dims[:R1] = A.R1 * u"mm" # rádius přechodu mezi pásnicí a žebrem
+            dims[:m] = A.m * u"kg"/u"m" # hmotnost na jednotku délky [kg/m]
+            dims[:standard] = A.standard # informace o normě (např. "ČSN 425550")
+            dims[:material] = A.material # informace o materiálu (např. ["10 000", "10 370.1", "11 373", "11 375", "11 523"])
+            dims[:S] = A.S * u"mm^2" # plocha průřezu [mm^2]
+            dims[:Ix] = A.Ix * u"mm^4" # moment setrvačnosti Ix [mm^4]
+            dims[:Iy] = A.Iy * u"mm^4" # moment setrvačnosti Iy [mm^4]
+            dims[:Wx] = A.Wx * u"mm^3" # průřezový modul pro ohyb pro osu x [mm^3]
+            dims[:Wy] = A.Wy * u"mm^3" # průřezový modul pro ohyb pro osu y [mm^3]
+            dims[:ix] = A.ix * u"mm" # poloměr setrvačnosti pro osu x [mm]
+            dims[:iy] = A.iy * u"mm" # poloměr setrvačnosti pro osu y [mm]
+            dims[:Sx] = A.Sx * u"mm^3" # průřezový modul pro ohyb pro osu x [mm^3]
+            dims[:sx] = A.sx * u"mm" # vzdálenost od neutrální osy k okraji pro osu x [mm]
         end
     elseif profile == "IPE"
         A = StrojniSoucasti.profil_IPE_CSN425553(clean)
