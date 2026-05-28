@@ -1,6 +1,5 @@
-# ver: 2026-03-28
+# ver: 2026-05-10
 # Test script for hridel.jl
-
 using StrojniSoucasti, Unitful, Test
 
 @testset "hridel" begin
@@ -150,6 +149,16 @@ theta = 0.233048 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 11.4536   Součinitel bezpečnosti
 Bezpečnost součásti: Hřídel je bezpečný"""
         @test txt == expected_txt
+    end
+
+    @testset "bearing shaft basic" begin
+        VV = StrojniSoucasti.hridel(Fr=100, D=40, d=20, L1=300, L2=200,
+            mat="S235", druh="nosný", return_text=false)
+        @test isa(VV, Dict)
+        @test VV[:druh] == "nosný"
+        @test haskey(VV, :tau)
+        @test VV[:tau] > 0u"MPa"
+        @test VV[:bezpecnost] > 0
     end
 
     @testset "input validation" begin

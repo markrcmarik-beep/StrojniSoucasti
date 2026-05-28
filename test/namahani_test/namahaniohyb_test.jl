@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-22
+﻿# ver: 2026-05-16
 # Testovací skript pro funkci namahaniohyb.jl
 # Testuje namáhání v ohybu s různými typy zatížení
 
@@ -75,9 +75,9 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 ----------------------------------------------------------------
 materiál: 11 373
 profil: TRKR 76x5
-  D = 76.0 mm
-  d = 66.0 mm
-  t = 5.0 mm
+  D = 76 mm
+  d = 66 mm
+  t = 5 mm
 zatížení: dynamický
 ----------------------------------------------------------------
 zadání:
@@ -416,3 +416,4 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
     end
 
 end
+

@@ -1,13 +1,13 @@
-## Funkce Julia v1.12
+﻿## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezového modulu v ohybu Wo pro různé tvary dle zkratky označení.
-# ver: 2026-04-04
+# ver: 2026-05-24
 ## Funkce: profilyvlcnWo()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnWo.jl
+# StrojniSoucasti/src/profily/profilyvlcnWo.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilyvlcnWo(vstupni_promenne)
@@ -45,18 +45,22 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
         v isa Number || error("Parametr $name musi byt cislo.")
         v / oneunit(v)
     end
-    getn(k::Symbol) = to_num(getv(k), k)
-
+    getn(k::Symbol) = to_num(getv(k), k) # Získání numerické hodnoty parametru
+    angle = mod(natoceni, 2*pi) # Normalizace úhlu do rozsahu [0, 2π)
+    isrot(x, y) = isapprox(x, y; atol=1e-12, rtol=0.0) # Porovnani s toleranci pro rotace
     # -----------------------------------------------------------
     # Plochá tyč nebo obdélník
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         a, b = getn(:a), getn(:b)
-        if natoceni in (0, pi, 2*pi)
+        if isrot(angle, 0) || isrot(angle, pi) || isrot(angle, 2*pi)
             return a*b^2/6, "a*b²/6"
-        elseif natoceni in (pi/2, 3*pi/2)
+        elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
             return b*a^2/6, "b*a²/6"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
+            ymax = 0.5*(abs(a*sin(angle)) + abs(b*cos(angle)))
+            ymax > 0 || error("Nelze urcit ymax pro PLO/OBD.") # Kontrola (teoreticky vždy splneno)
+            return Ix_hod / ymax, "Ix / ymax, kde ymax = (|a*sin(angle)| + |b*cos(angle)|)/2"
         end
     # -----------------------------------------------------------
     # Kruhová tyč
@@ -72,30 +76,54 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
         a = getn(:a)
-        if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
+        if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2) || isrot(angle, 2*pi)
             return a^3/6, "a³/6"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
+            ymax = 0.5*a*(abs(sin(angle)) + abs(cos(angle)))
+            ymax > 0 || error("Nelze urcit ymax pro 4HR.") # Kontrola (teoreticky vždy splneno)
+            return Ix_hod / ymax, "Ix / ymax, kde ymax = a*(|sin(angle)| + |cos(angle)|)/2"
         end
     # -----------------------------------------------------------
-    # Šestihranná tyč
+    # Šestihranná tyč (0rad lezi na plose)
+    # s = vzdalenost mezi protilehlymi stranami sestihranu.
     elseif info == "6HR" # Šestihranná tyč
         s = getn(:s)
-        if natoceni in (0, 2*pi/6, 4*pi/6, 6*pi/6, 8*pi/6, 10*pi/6, 12*pi/6)
+        if isrot(angle, 0) || isrot(angle, 2*pi/6) || isrot(angle, 4*pi/6) || isrot(angle, 6*pi/6) || isrot(angle, 8*pi/6) || isrot(angle, 10*pi/6) || isrot(angle, 12*pi/6)
             return 5*sqrt(3)/72*s^3, "5√3/72*s³"
-        elseif natoceni in (pi/6, 3*pi/6, 5*pi/6, 7*pi/6, 9*pi/6, 11*pi/6)
+        elseif isrot(angle, pi/6) || isrot(angle, 3*pi/6) || isrot(angle, 5*pi/6) || isrot(angle, 7*pi/6) || isrot(angle, 9*pi/6) || isrot(angle, 11*pi/6)
             return 5/48*s^3, "5/48*s³"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            # Pro regularni sestihran je Ix konstantni, Wo urci krajni vlakno ymax.
+            Ix_hod = 5*sqrt(3)/144*s^4
+            a = s/sqrt(3)
+            vrcholy = (
+                ( a,    0.0),
+                ( a/2,  s/2),
+                (-a/2,  s/2),
+                (-a,    0.0),
+                (-a/2, -s/2),
+                ( a/2, -s/2),
+            )
+            ymax = 0.0
+            for (x, y) in vrcholy
+                yrot = x*sin(angle) + y*cos(angle)
+                ymax = max(ymax, abs(yrot))
+            end
+            ymax > 0 || error("Nelze urcit ymax pro 6HR.") # Kontrola (teoreticky vždy splneno)
+            return Ix_hod / ymax, "Ix / ymax, kde Ix = 5*sqrt(3)/144*s^4 a ymax = max_i|x_i*sin(angle) + y_i*cos(angle)|"
         end
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR" # Trubka čtyřhranná
         a, b, t = getn(:a), getn(:b), getn(:t)
-        if natoceni in (0, pi/2, pi, 3*pi/2, 2*pi)
+        if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2) || isrot(angle, 2*pi)
             return (a*b^2/6) - ((a-2t)*(b-2t)^2/6), "(a*b²/6)-((a-2t)*(b-2t)²/6)"
         else
-            error("Neplatné natočení profilu: $natoceni rad pro $velicina")
+            Ix_hod, _ = StrojniSoucasti.profilyvlcnIx(tvar1, :Ix, angle)
+            ymax = 0.5*(abs(a*sin(angle)) + abs(b*cos(angle)))
+            ymax > 0 || error("Nelze urcit ymax pro TR4HR.") # Kontrola (teoreticky vždy splneno)
+            return Ix_hod / ymax, "Ix / ymax, kde ymax = (|a*sin(angle)| + |b*cos(angle)|)/2"
         end
     # -----------------------------------------------------------
     # neznámý tvar
