@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-22
+﻿# ver: 2026-05-16
 # Testovací skript pro funkci namahanistrih.jl
 # Testuje namáhání ve střihu s různými typy zatížení
 
@@ -71,9 +71,9 @@ Bezpečnost spoje: Spoj je bezpečný"""
 --------------------------------------------------------------
 materiál: 11 373
 profil: TRKR 52x5
-  D = 52.0 mm
-  d = 42.0 mm
-  t = 5.0 mm
+  D = 52 mm
+  d = 42 mm
+  t = 5 mm
 zatížení: dynamický
 --------------------------------------------------------------
 zadání:
@@ -356,3 +356,4 @@ Bezpečnost spoje: Spoj je bezpečný"""
     end
 
 end
+

@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-04-09
+# ver: 2026-05-24
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -25,24 +25,41 @@ include("materialy/materialy.jl")
 #include("materialy/select.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/mezUnavy.jl") # mez únavy
+## --- body ---
+include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
+include("body/burub2body.jl") # body mezi dvěma přímkami spojenými kruhovým obloukem
+include("body/bux2b.jl") # souřadnice bodu B z bodu A, vzdálenosti ve směru osy x a úhlu (2D)
+include("body/buub2b.jl") # souřadnice bodu C z bodu A, úhlů a bodu B (2D)
+include("body/ubru2bb.jl") # souřadnice bodů B a C z bodu A, úhlů a vzdálenosti (2D)
+include("body/uu2u.jl") # úhel mezi dvěma úhly (2D)
+include("body/brsb2body.jl") # po sobě jdoucí body na kruhovém oblouku
+include("body/rotuj_body.jl") # rotace bodů o zadaný úhel
+include("body/posun_body.jl") # posun bodů o zadanou vzdálenost
 ## --- profily ---
-include("profily/profilTR4HR.jl") # profily TR4HR
-include("profily/profilI.jl") # profily I
+include("profily/body_drazka4pero.jl")
+include("profily/profil_TR4HR_CSN425720.jl") # profily TR4HR dle CSN 42 5720
+include("profily/body_TR4HR_CSN425720.jl")
+include("profily/profil_I_common.jl") # sdilene helpery pro I/IPE profily
+include("profily/profil_I_CSN425550.jl") # profily I dle CSN 42 5550
+include("profily/body_I_CSN425550.jl")
+include("profily/profil_IPE_CSN425553.jl") # profily IPE dle CSN 42 5553
+include("profily/body_IPE_CSN425553.jl")
 include("profily/profilyCSN.jl") # tvary profilů
 include("profily/profilyvlcn.jl") # tvary profilů
 include("profily/profily.jl") # tvary profilů
 include("profily/profil_text_lines.jl") #
 include("profily/profilyvlcnS.jl")
-include("profily/profilyvlcnIp.jl")
+include("profily/profilyvlcnJp.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnIx.jl")
-include("profily/profilyvlcnIminImax.jl")
 include("profily/profilyvlcnWo.jl")
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
-include("profily/plochaBodu.jl") # plocha obecneho tvaru z obrysovych bodu
-include("profily/polarniMomentBodu.jl") # polarni moment z obrysovych bodu
-include("profily/prurezovyModulKrutBodu.jl") # modul v krutu z obrysovych bodu
+include("profily/polygon2plocha.jl") # plocha obecneho tvaru z obrysovych bodu
+include("profily/polygon2kvadratickymoment.jl") # kvadraticke momenty z obrysovych bodu
+include("profily/polygon2polarnimoment.jl") # polarni moment z obrysovych bodu
+include("profily/polygon_metrics.jl") # plocha, teziste, momenty setrvacnosti z obrysovych bodu
+include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bodu
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
 include("namahani/namahanitahtext.jl")
@@ -66,8 +83,11 @@ include("tolerance/tolerance.jl") # tolerance
 
 # Export funkcí
 export materialy, dovoleneNapeti, mezUnavy, 
+# body
+bddb2b, bdu2b, brsb2body, burub2body, buub2b, bux2b, 
+posun_body, rotuj_body, ubru2bb, uu2u,
 # profily
-profily, plochaBodu, polarniMomentBodu, prurezovyModulKrutBodu,
+profily,
 # namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 

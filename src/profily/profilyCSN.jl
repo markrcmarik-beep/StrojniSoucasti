@@ -3,15 +3,15 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-04-09
+# ver: 2026-05-21
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyCSN.jl
+# StrojniSoucasti/src/profily/profilyCSN.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyCSN(vstupni_promenne)
+## vystupni_promenne = profilyCSN(inputStr)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru dle ČSN.
 #  Podporované tvary:
@@ -32,28 +32,24 @@
 #       "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
 #   "6HR" - šestihranný profil
 #       "6HR {s}" - "6HR 20" - šestihranný profil
-#   "I" - I profil dle tabulky
-#       "IPE {n}" - "IPE 100"
-#       "IPN {n}" - "IPN 100"
-#       "HEA {n}" - "HEA 100"
-#       "HEB {n}" - "HEB 100"
-#       "HEM {n}" - "HEM 100"
+#   "I" - I profil bez zaoblení
+#       "I {n}" - "I 100"
 #   "TR4HR" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
 #       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
 #   args... - (nepoužito)
 ## Výstupní proměnné:
-#
+# dims - Struktura (Dict) s rozměry a informacemi o tvaru, např.:
+#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# profilTR4HR, profilI
+# profilTR4HR, profil_I_CSN425550, profil_IPE_CSN425553
 ## Příklad:
 #
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-
 using Unitful
 
 function profilyCSN(inputStr::AbstractString)
@@ -75,7 +71,7 @@ function profilyCSN(inputStr::AbstractString)
     # -----------------------------------------------------------
     parsers = [
         # -------------------------------------------------------
-        # PLO / OBD : a x b (+ R)
+        # PLO / OBD : PLO{a}x{b} , PLO{a}x{b}R{r} , OBD{a}x{b} , OBD{a}x{b}R{r}
         # -------------------------------------------------------
         (
             r"^(PLO|OBD)(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(?:R(\d+(?:\.\d+)?))?$",
@@ -98,7 +94,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # KR : D
+        # KR : KR{D}
         # -------------------------------------------------------
         (
             r"^KR(\d+(?:\.\d+)?)$",
@@ -106,12 +102,26 @@ function profilyCSN(inputStr::AbstractString)
                 D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
-                #dims[:D] = mmval(m.captures[1]) * u"mm"
+                return true
+            end
+        ),
+        # KR : KR{D}/{d}
+        (
+            r"^KR(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$",
+            function (m)
+                D = parse(Float64, m.captures[1])
+                d = parse(Float64, m.captures[2])
+                if D <= d
+                    return false
+                end
+                dims[:info] = "KR"
+                dims[:D] = D * u"mm"
+                dims[:d] = d * u"mm"
                 return true
             end
         ),
         # -------------------------------------------------------
-        # TRKR : D x t
+        # TRKR : TRKR{D}x{t}
         # -------------------------------------------------------
         (
             r"^TRKR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)$",
@@ -129,7 +139,7 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # 4HR : a (+ R)
+        # 4HR : 4HR{a} , 4HR{a}R{r} , 4HR{a}x{a} , 4HR{a}x{a}R{r} , 4HR{a}x{b} , 4HR{a}x{b}R{r}
         # -------------------------------------------------------
         (
             r"^4HR(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
@@ -151,43 +161,44 @@ function profilyCSN(inputStr::AbstractString)
             end
         ),
         # -------------------------------------------------------
-        # 6HR : s
+        # 6HR : 6HR{s}
         # -------------------------------------------------------
         (
             r"^6HR(\d+(?:\.\d+)?)$",
             function (m)
-                s1 = parse(Float64, m.captures[1])
+                s = parse(Float64, m.captures[1])
                 dims[:info] = "6HR"
-                dims[:s] = s1 * u"mm"
-                dims[:a] = s1 * u"mm"
+                dims[:s] = s * u"mm" # Vzdálenost mezi protilehlými stranami šestihranu
+                dims[:a] = s / sqrt(3) * u"mm" # Délka strany šestihranu
+                dims[:e] = s / sqrt(3)*2 * u"mm" # Vzdálenost mezi protilehlými vrcholy šestihranu
                 dims[:R] = 0u"mm"
                 return true
             end
         ),
         # -------------------------------------------------------
-        # I : IPE/IPN/HEA/HEB/HEM
+        # I/IPE : I{n} , IPE{n}
         # -------------------------------------------------------
         (
-            r"^(IPE|IPN|HEA|HEB|HEM)(\d+(?:\.\d+)?)$",
+            r"^(I|IPE)(\d+(?:\.\d+)?)$",
             function (m)
-                A = profilI(s)
+                serie = String(m.captures[1])
+                A = serie == "IPE" ? profil_IPE_CSN425553(s) : profil_I_CSN425550(s)
                 A === nothing && return false
-
                 dims[:info] = "I"
                 dims[:serie] = A.serie
-                dims[:h] = A.h * u"mm"
                 dims[:b] = A.b * u"mm"
-                dims[:tw] = A.tw * u"mm"
-                dims[:tf] = A.tf * u"mm"
-                dims[:r] = A.r * u"mm"
-                dims[:R] = A.r * u"mm"
+                dims[:h] = A.h * u"mm"
+                dims[:t1] = A.t1 * u"mm"
+                dims[:t2] = A.t2 * u"mm"
+                dims[:R] = A.R * u"mm"
+                dims[:R1] = A.R1 * u"mm"
                 dims[:standard] = A.standard
                 dims[:material] = A.material
                 return true
             end
         ),
         # -------------------------------------------------------
-        # TR4HR : a x b x t (+ R)
+        # TR4HR : TR4HR{a}x{t} , TR4HR{a}x{b}x{t} , TR4HR{a}x{b}x{t}R{r}
         # -------------------------------------------------------
         (
             r"^TR4HR(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)X(\d+(?:\.\d+)?)(R(\d+(?:\.\d+)?))?$",
@@ -202,7 +213,7 @@ function profilyCSN(inputStr::AbstractString)
                     end
                 end
                 # Zkusit databázi standardních profilů
-                A = profilTR4HR(s)
+                A = profil_TR4HR_CSN425720(s)
                 if A !== nothing
                     dims[:info] = "TR4HR"
                     dims[:a] = A.a * u"mm"
@@ -213,7 +224,6 @@ function profilyCSN(inputStr::AbstractString)
                     if a <= 2t || b <= 2t
                         return false
                     end
-                    
                     dims[:info] = "TR4HR"
                     dims[:a] = a * u"mm"
                     dims[:b] = b * u"mm"
@@ -240,7 +250,7 @@ function profilyCSN(inputStr::AbstractString)
                     end
                 end
                 # Zkusit databázi standardních profilů
-                A = profilTR4HR(s)
+                A = profil_TR4HR_CSN425720(s)
                 if A !== nothing
                     dims[:info] = "TR4HR"
                     dims[:a] = A.a * u"mm"

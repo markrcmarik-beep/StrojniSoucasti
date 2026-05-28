@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce hridel() slouží k výpočtu namáhání kroucením hřídele 
 # a k vytvoření textového výstupu s popisem výpočtu.
-# ver: 2026-03-28
+# ver: 2026-05-10
 ## Funkce: hridel()
 ## Autor: Martin
 #
@@ -29,7 +29,7 @@ using Unitful
 
 function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing, 
     Fr=nothing, L1=nothing, L2=nothing, E=nothing,
-    mat=nothing, tauDk=nothing, G=nothing, Re=nothing, k=nothing,
+    mat=nothing, tauDk=nothing, sigmaDo=nothing, G=nothing, Re=nothing, k=nothing,
     zatizeni::AbstractString="statický", druh="hybný", return_text=true)
     # ---------------------------------------------------------
     # pomocné
@@ -50,16 +50,16 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
             error("Fr musí být číslo nebo Unitful.Quantity")
         end
         if L1 !== nothing
-            L1 = attach_unit(L1, u"N")
-            if L1 <= 0u"N"
+            L1 = attach_unit(L1, u"mm")
+            if L1 <= 0u"mm"
                 error("L1 musí být kladná hodnota.")
             end
         else
             error("L1 musí být číslo nebo Unitful.Quantity")
         end
         if L2 !== nothing
-            L2 = attach_unit(L2, u"N")
-            if L2 <= 0u"N"
+            L2 = attach_unit(L2, u"mm")
+            if L2 <= 0u"mm"
                 error("L2 musí být kladná hodnota.")
             end
         else
@@ -278,22 +278,29 @@ function hridelhybnyvypocet(; Mk=nothing, profil1=nothing, L=nothing, mat=nothin
 end
 
 function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothing,
-    mat=nothing, tauDk=nothing, sigmaDo=nothing, E=nothing, Re=nothing, zatizeni=nothing, k_uziv=nothing)
+    mat=nothing, tauDk=nothing, sigmaDo=nothing, E=nothing, Re=nothing,
+    zatizeni::AbstractString="statický", k_uziv=nothing)
     F1 = nothing
     F1_str = nothing
     F2 = nothing
     F2_str = nothing
+    Mo1 = nothing
+    Mo1_str = nothing
+    Mo2 = nothing
+    Mo2_str = nothing
     if Fr !== nothing && L1 !== nothing && L2 !== nothing
-        F1_str = "Fr*L2*(L1+L2)"
-        F1 = Fr*L2*(L1+L2)
-        F2_str = "Fr*L1*(L1+L2)"
-        F2 = Fr*L1*(L1+L2)
+        F1_str = "Fr*L2/(L1+L2)"
+        F1 = Fr*L2/(L1+L2)
+        F2_str = "Fr*L1/(L1+L2)"
+        F2 = Fr*L1/(L1+L2)
         Mo1_str = "F1*L1"
         Mo1 = F1*L1
         Mo2_str = "F2*L2"
         Mo2 = F2*L2
+    else
+        error("Pro nosný výpočet je nutné zadat Fr, L1 a L2.")
     end
-    VV1 = namahaniohyb(Mo = Mo1, profil = profil1, L0 = L1, mat = mat, 
+    VV1 = namahaniohyb(Mo = Mo1, profil = profil1, Lo = L1, mat = mat, 
     sigmaDo=sigmaDo, E=E, Re=Re, zatizeni=zatizeni, k=k_uziv, return_text=false)
     if sigmaDo === nothing
         sigmaDo = VV1[:sigmaDo] # dovolené smykové napětí v krutu
@@ -304,6 +311,8 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
     if Re === nothing
         Re = VV1[:Re] # mez kluzu
     end
+    tauDk = sigmaDo
+    G = E
     k = VV1[:bezpecnost]
     k_str = VV1[:bezpecnost_str]
     if k_uziv === nothing
@@ -330,24 +339,24 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
     vypocet[:k] = k
     vypocet[:k_str] = k_str
     vypocet[:verdict] = verdict # textové hodnocení bezpečnosti spoje
-    vypovet[:F1] = F1
+    vypocet[:F1] = F1
     vypocet[:F1_str] = F1_str
-    vypovet[:F2] = F2
+    vypocet[:F2] = F2
     vypocet[:F2_str] = F2_str
     vypocet[:Mo1] = Mo1
     vypocet[:Mo1_str] = Mo1_str
     vypocet[:Mo2] = Mo2
     vypocet[:Mo2_str] = Mo2_str
-    vypocet[:Wk] = VV1[:Wk] # průřezový modul v krutu
-    vypocet[:Wk_str] = VV1[:Wk_str] # textový popis Wk (např. z profilu)
-    vypocet[:Ip] = VV1[:Ip] # polární moment setrvačnosti
-    vypocet[:Ip_str] = VV1[:Ip_str] # textový popis Ip (např. z profilu)
-    vypocet[:tau] = VV1[:tau] # smykové napětí v krutu
-    vypocet[:tau_str] = VV1[:tau_str] # vzorec pro výpočet tau
-    vypocet[:phi] = VV1[:phi] # úhel zkroucení
-    vypocet[:phi_str] = VV1[:phi_str] # vzorec pro výpočet phi
-    vypocet[:theta] = VV1[:theta] # poměrné zkroucení
-    vypocet[:theta_str] = VV1[:theta_str] # vzorec pro výpočet poměrného zkroucení
+    vypocet[:Wk] = VV1[:Wo] # průřezový modul v ohybu
+    vypocet[:Wk_str] = VV1[:Wo_str] # textový popis Wo (např. z profilu)
+    vypocet[:Ip] = VV1[:Ix] # moment setrvačnosti
+    vypocet[:Ip_str] = VV1[:Ix_str] # textový popis Ix (např. z profilu)
+    vypocet[:tau] = VV1[:sigma] # napětí v ohybu (mapováno na společný výstup)
+    vypocet[:tau_str] = VV1[:sigma_str] # vzorec pro výpočet sigma
+    vypocet[:phi] = VV1[:y] # průhyb (mapováno na společný výstup)
+    vypocet[:phi_str] = VV1[:y_str] # vzorec pro výpočet y
+    vypocet[:theta] = VV1[:delta] # relativní průhyb (mapováno na společný výstup)
+    vypocet[:theta_str] = VV1[:delta_str] # vzorec pro výpočet delta
     return vypocet
 
 end

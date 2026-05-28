@@ -1,4 +1,4 @@
-﻿# ver: 2026-03-11
+﻿# ver: 2026-05-16
 # Testovací skript pro funkci namahaniotl.jl
 # Testuje namáhání na otlačení (plošný tlak) s různými typy zatížení
 
@@ -69,8 +69,8 @@ Výsledek posouzení: Spoj je bezpečný"""
 --------------------------------------------------------------
 materiál: 11 373
 profil: PLO 20x20
-  a = 20.0 mm
-  b = 20.0 mm
+  a = 20 mm
+  b = 20 mm
   R = 0 mm
 zatížení: statický
 --------------------------------------------------------------
@@ -265,3 +265,4 @@ Výsledek posouzení: Spoj je bezpečný"""
     end
 
 end
+

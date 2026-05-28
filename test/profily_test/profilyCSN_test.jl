@@ -1,4 +1,4 @@
-# ver: 2026-02-09
+# ver: 2026-05-21
 using StrojniSoucasti, Unitful, Test
 
 @testset "profilyCSN" begin
@@ -17,6 +17,10 @@ using StrojniSoucasti, Unitful, Test
     dims3 = StrojniSoucasti.profilyCSN("KR 40.5")
     @test dims3[:info] == "KR"
     @test dims3[:D] == 40.5u"mm"
+    dims3b = StrojniSoucasti.profilyCSN("KR40.5/10")
+    @test dims3b[:info] == "KR"
+    @test dims3b[:D] == 40.5u"mm"
+    @test dims3b[:d] == 10u"mm"
 
     dims4 = StrojniSoucasti.profilyCSN("TRKR 60.5x4")
     @test dims4[:info] == "TRKR"
@@ -29,7 +33,7 @@ using StrojniSoucasti, Unitful, Test
     @test dims5[:a] == 20u"mm"
     @test dims5[:b] == 20u"mm"
     @test dims5[:t] == 2u"mm"
-    #@test isapprox(dims5[:R], (8 / 3)u"mm"; atol = 1e-6u"mm")
+    # @test isapprox(dims5[:R], (8 / 3)u"mm"; atol = 1e-6u"mm")
 
     dims6 = StrojniSoucasti.profilyCSN("TR4HR 20.5 x 20 x 2 R 4.5") # mimo DB
     @test dims6[:info] == "TR4HR"
@@ -66,28 +70,40 @@ using StrojniSoucasti, Unitful, Test
     dims10 = StrojniSoucasti.profilyCSN("6HR30")
     @test dims10[:info] == "6HR"
     @test dims10[:s] == 30u"mm"
-    @test dims10[:a] == 30u"mm"
+    @test dims10[:a] == 17.320508075688775u"mm"
     @test dims10[:R] == 0u"mm"
 
-    dims11 = StrojniSoucasti.profilyCSN("IPE100")
+    dims11 = StrojniSoucasti.profilyCSN("I80")
     @test dims11[:info] == "I"
-    @test dims11[:serie] == "IPE"
-    @test dims11[:h] == 100u"mm"
-    @test dims11[:b] == 55u"mm"
-    @test dims11[:tw] == 4.1u"mm"
-    @test dims11[:tf] == 5.7u"mm"
-    @test dims11[:R] == 7u"mm"
-    @test dims11[:standard] == "EN 10365"
-    @test dims11[:material] == ["S235JR", "S355JR"]
+    @test dims11[:h] == 80u"mm"
+    @test dims11[:b] == 42u"mm"
+    @test dims11[:t1] == 3.9u"mm"
+    @test dims11[:t2] == 5.9u"mm"
+    @test dims11[:R] == 3.9u"mm"
+    @test dims11[:standard] == "\u010CSN 42 5550"
+    @test dims11[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
 
-    dims12 = StrojniSoucasti.profilyCSN("hea 100")
+    dims12 = StrojniSoucasti.profilyCSN("I 100")
     @test dims12[:info] == "I"
-    @test dims12[:serie] == "HEA"
-    @test dims12[:h] == 96u"mm"
-    @test dims12[:b] == 100u"mm"
-    @test dims12[:tw] == 5u"mm"
-    @test dims12[:tf] == 8u"mm"
-    @test dims12[:R] == 12u"mm"
+    @test dims12[:h] == 100u"mm"
+    @test dims12[:b] == 50u"mm"
+    @test dims12[:t1] == 4.5u"mm"
+    @test dims12[:t2] == 6.8u"mm"
+    @test dims12[:R] == 4.5u"mm"
+    @test dims12[:standard] == "\u010CSN 42 5550"
+    @test dims12[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
+
+    dims13 = StrojniSoucasti.profilyCSN("IPE100")
+    @test dims13[:info] == "I"
+    @test dims13[:serie] == "IPE"
+    @test dims13[:h] == 100u"mm"
+    @test dims13[:b] == 55u"mm"
+    @test dims13[:t1] == 4.1u"mm"
+    @test dims13[:t2] == 5.7u"mm"
+    @test dims13[:R] == 7u"mm"
+    @test dims13[:R1] == 0u"mm"
+    @test dims13[:standard] == "\u010CSN 42 5553"
+    @test dims13[:material] == ["11 373", "11 375", "11 503", "11 523", "15 217"]
 
     @test StrojniSoucasti.profilyCSN("NEEXISTUJICI 10x10") === nothing
     @test StrojniSoucasti.profilyCSN("PLO 10x10R10") === nothing
