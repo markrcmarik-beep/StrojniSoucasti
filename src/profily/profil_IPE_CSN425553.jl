@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Vrati IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN 42 5553.
-# ver: 2026-05-07
+# ver: 2026-05-29
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
 ## Cesta uvnitr balicku:
-# balicek/src/profily/profil_IPE_CSN425553.jl
+# StrojniSoucasti/src/profily/profil_IPE_CSN425553.jl
 #
 ## Vzor:
 ## vystupni_promenne = profil_IPE_CSN425553(vstupni_promenne)
@@ -15,6 +15,67 @@
 # - name::AbstractString: Oznaceni profilu (napr. "IPE100", "IPE 100")
 ## Vystupni promenne:
 # - IPE_CSN425553 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+#   Pokud profil existuje, struct obsahuje nasledujici pole: (do nedefinované hodnoty uloženo nothing)
+#   .name - název profilu
+#   .serie - série profilu (např. "IPE")
+#   .standard - norma (např. "ČSN 42 5553")
+#   .standard_info - textový popis normy
+#   .h - výška profilu [mm]
+#   .h_unit - jednotka pro výšku
+#   .h_info - popis výšky
+#   .b - šířka pásnice [mm]
+#   .b_unit - jednotka pro šířku pásnice
+#   .b_info - popis šířky pásnice
+#   .t1 - tloušťka stojiny [mm]
+#   .t1_unit - jednotka pro tloušťku stojiny
+#   .t1_info - popis tloušťky stojiny
+#   .t2 - střední tloušťka pásnice [mm]
+#   .t2_unit - jednotka pro střední tloušťku pásnice
+#   .t2_info - popis střední tloušťky pásnice
+#   .R - poloměr zaoblení výškové spojnice [mm]
+#   .R_unit - jednotka pro poloměr zaoblení výškové spojnice
+#   .R_info - popis poloměru zaoblení výškové spojnice
+#   .R1 - poloměr zaoblení vnitřní šířky pásnice [mm]
+#   .R1_unit - jednotka pro poloměr zaoblení vnitřní šířky pásnice
+#   .R1_info - popis poloměru zaoblení vnitřní šířky pásnice
+#   .sp - sklon příruby [%]
+#   .sp_unit - jednotka pro sklon příruby
+#   .sp_info - popis sklonu příruby
+#   .m - hmotnost [kg/m]
+#   .m_unit - jednotka pro hmotnost
+#   .m_info - popis hmotnosti
+#   .material - pole textových hodnot materiálů, pro které je profil dostupný
+#   .material_info - popis materiálů
+#   .S - plocha průřezu [mm^2]
+#   .S_unit - jednotka pro plochu průřezu
+#   .S_info - popis plochy průřezu
+#   .Ix - moment setrvačnosti podle osy x [mm^4]
+#   .Ix_unit - jednotka pro moment setrvačnosti podle osy x
+#   .Ix_info - popis momentu setrvačnosti podle osy x
+#   .Wx - průřezový modul podle osy x [mm^3]
+#   .Wx_unit - jednotka pro průřezový modul podle osy x
+#   .Wx_info - popis průřezového modulu podle osy x
+#   .ix - poloměr setrvačnosti podle osy x [mm]
+#   .ix_unit - jednotka pro poloměr setrvačnosti podle osy x
+#   .ix_info - popis poloměru setrvačnosti podle osy x
+#   .Iy - moment setrvačnosti podle osy y [mm^4]
+#   .Iy_unit - jednotka pro moment setrvačnosti podle osy y
+#   .Iy_info - popis momentu setrvačnosti podle osy y
+#   .Ixy - kvadratický moment setrvačnosti Ixy [mm^4]
+#   .Ixy_unit - jednotka pro kvadratický moment setrvačnosti Ixy
+#   .Ixy_info - popis kvadratického momentu setrvačnosti Ixy
+#   .Wy - průřezový modul podle osy y [mm^3]
+#   .Wy_unit - jednotka pro průřezový modul podle osy y
+#   .Wy_info - popis průřezového modulu podle osy y
+#   .iy - poloměr setrvačnosti podle osy y [mm]
+#   .iy_unit - jednotka pro poloměr setrvačnosti podle osy y
+#   .iy_info - popis poloměru setrvačnosti podle osy y
+#   .Sx - statický moment podle osy x [mm^3]
+#   .Sx_unit - jednotka pro statický moment podle osy x
+#   .Sx_info - popis statického momentu podle osy x
+#   .sx - staticka hodnota sx [mm]
+#   .sx_unit - jednotka pro sx
+#   .sx_info - popis sx
 ## Pouzite balicky:
 # TOML
 ## Pouzite uzivatelske funkce:
