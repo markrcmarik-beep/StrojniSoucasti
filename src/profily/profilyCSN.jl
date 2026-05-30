@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-05-21
+# ver: 2026-05-30
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -46,7 +46,12 @@
 ## Použité uživatelské funkce:
 # profilTR4HR, profil_I_CSN425550, profil_IPE_CSN425553
 ## Příklad:
-#
+# inputStr = "PLO 20x10R3"
+# dims = profilyCSN(inputStr)
+# dims == Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
+# inputStr = "KR 20"
+# dims = profilyCSN(inputStr)
+# dims == Dict("info" => "KR", "D" => 20u"mm")
 ###############################################################
 ## Použité proměnné vnitřní:
 #

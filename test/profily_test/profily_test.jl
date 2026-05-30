@@ -5,15 +5,20 @@ using StrojniSoucasti, Unitful
 
 @testset "profily" begin
 
-dims = profily("PLO 20.5x10") # pouze rozměry
-@test haskey(dims, :a)
-@test haskey(dims, :b)
-@test haskey(dims, :info)
-@test haskey(dims, :R)
-@test dims[:info] == "PLO"
-@test dims[:a] == 20.5u"mm"
-@test dims[:b] == 10u"mm"
+dims1 = profily("PLO 20.5x10") # pouze rozměry
+@test haskey(dims1, :a)
+@test haskey(dims1, :b)
+@test haskey(dims1, :info)
+@test haskey(dims1, :R)
+@test dims1[:info] == "PLO"
+@test dims1[:a] == 20.5u"mm"
+@test dims1[:b] == 10u"mm"
 #@test dims[:R] == 0u"mm"
+@test !haskey(dims1, :S) # vlastnost S není přítomna
+
+dims1a = profily("PLO20.5x10") # rozměry bez mezery
+@test haskey(dims1a, :a)
+@test haskey(dims1a, :b)
 
 dims2 = profily("PLO 20x10", "S") # rozměry + vlastnosti
 @test haskey(dims2, :a)
@@ -25,6 +30,12 @@ dims2 = profily("PLO 20x10", "S") # rozměry + vlastnosti
 @test dims2[:a] == 20u"mm"
 @test dims2[:b] == 10u"mm"
 #@test dims2[:R] == 0u"mm"
+dims2a = profily("PLO20x10", "S", natoceni=45*pi/180) # rozměry + vlastnosti + natočení
+@test dims2a[:a] == 20u"mm"
+@test dims2a[:b] == 10u"mm"
+@test dims2a[:info] == "PLO"
+@test dims2a[:S] == 200u"mm^2"
+#@test dims2a[:natoceni] == 45*pi/180
 
 dims33 = profily("TR4HR 50x30x5", "Ix") # rozměry + vlastnosti
 dims3a = profily("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
@@ -42,7 +53,7 @@ dims3a = profily("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
 @test dims3a[:b] == 30u"mm"
 @test dims3a[:t] == 5u"mm"
 @test dims3a[:R] == 0u"mm"
-dims3b = profily("TR4HR 50x30x5", "S", "Ix", natoceni=30) # rozměry + vlastnosti
+dims3b = profily("TR4HR 50x30x5", "S", "Ix", natoceni=30*pi/180) # rozměry + vlastnosti
 @test haskey(dims3b, :a)
 @test haskey(dims3b, :b)
 @test haskey(dims3b, :t)
@@ -104,5 +115,11 @@ dims7a = profily("IPE 80", "S")
 @test dims7a[:h] == 80u"mm"
 @test dims7a[:S] == 764u"mm^2"
 @test dims7a[:Ix] == 801000u"mm^4"
+
+dims7b = profily("IPE 80", "Ix")
+
+dims7c = profily("IPE 80", "Ix", natoceni=10*pi/180)
+@test dims7c[:info] == "IPE"
+@test dims7c[:b] == 46u"mm"
 
 end
