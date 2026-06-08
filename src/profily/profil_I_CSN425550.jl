@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-05-08
+# ver: 2026-05-29
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -15,6 +15,7 @@
 # - name::AbstractString: Oznaceni profilu (napr. "I100", "I 100")
 ## Vystupni promenne:
 # - I_CSN425550 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
+#   Pokud profil existuje, struct obsahuje nasledujici pole: (do nedefinované hodnoty uloženo nothing)
 #   .name - název profilu
 #   .serie - série profilu (např. "I")
 #   .standard - norma (např. "ČSN 42 5550")
@@ -84,7 +85,7 @@
 
 using TOML
 
-isdefined(@__MODULE__, :_profil_i_key_candidates)
+isdefined(@__MODULE__, :_profil_i_key_candidates) # funkce pro generování kandidátských klíčů pro hledání v tabulce profilů
 
 struct I_CSN425550
     name::String # např. "I 100"

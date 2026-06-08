@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-05-17
+# ver: 2026-05-29
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profil/profilTR4HR.jl
+# StrojniSoucasti/src/profil/profilTR4HR.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilTR4HR(vstupni_promenne)
@@ -15,7 +15,7 @@
 # - name::AbstractString: Označení profilu (např. "TR4HR 20x20x2", "TR4HR20x2")
 ## Výstupní proměnné:
 # - TR4HR_CSN425720 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
-#   Vlastnosti TR4HR_CSN425720 struct:
+#   Pokud profil existuje, struct obsahuje nasledujici pole: (do nedefinované hodnoty uloženo nothing)
 #   - name::String: Název profilu
 #   - standard::String: Norma (nepovinné)
 #   - a::Float64: Rozměr a
@@ -23,6 +23,9 @@
 #   - t::Float64: Tloušťka
 #   - R::Float64: Poloměr (buď z databáze, nebo vypočítaný jako min(t + t/3, 8.0))
 #   - material::Vector{String}: Seznam materiálů (nepovinné)
+#   - Ixy::Float64: Kvadratický moment setrvačnosti Ixy [mm^4] (není v tabulce, nastaveno na 0)
+#   - Ixy_unit::String: Jednotka pro kvadratický moment setrvačnosti Ixy
+#   - Ixy_info::String: Popis kvadratického momentu setrvačnosti Ixy
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:

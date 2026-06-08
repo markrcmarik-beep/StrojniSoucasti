@@ -53,3 +53,4 @@ using Test
     include("ulozvypis_test.jl")
     # tolerance
     include("tolerance_test.jl")
+    nothing

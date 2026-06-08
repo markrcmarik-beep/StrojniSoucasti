@@ -7,7 +7,7 @@
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/tolerance.jl
+# StrojniSoucasti/src/tolerance/tolerance.jl
 #
 ## Vzor:
 ## vystupni_promenne = tolerance(vstupni_promenne)
