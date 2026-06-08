@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání strojní součásti v ohybu.
-# ver: 2026-03-30
+# ver: 2026-05-30
 ## Funkce: namahaniohyb()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahaniohyb.jl
+# StrojniSoucasti/src/namahani/namahaniohyb.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahaniohyb(vstupni_promenne)
@@ -62,27 +62,6 @@
 
 using Unitful
 
-"""
-    namahaniohyb(; Mo, Lo=nothing, E=nothing, Ix=nothing, Wo=nothing,
-        sigmaDo=nothing, Re=nothing, mat=nothing, zatizeni::AbstractString="statický",
-        k=nothing, profil=nothing, natoceni=nothing, return_text::Bool=true)
-
-Výpočet namáhání v ohybu. Vrací slovník s výsledky a volitelně i textový výpis.
-
-Vstupy:
-- `Mo`: ohybový moment.
-- `Wo`/`Ix`: průřezové charakteristiky (nebo `profil`).
-- `sigmaDo`: dovolené napětí v ohybu (nebo `mat`/`Re`).
-- `return_text`: pokud `true`, vrací i textový výpis.
-
-Výstup:
-- `Dict{Symbol,Any}` s výsledky, případně `(Dict, String)`.
-
-Příklad:
-```julia
-namahaniohyb(Mo=500u"N*m", profil="TR4HR 100x100x6", mat="S235")
-```
-"""
 function namahaniohyb(;
     Mo = nothing, Lo = nothing, E = nothing, Ix = nothing,
     Wo = nothing, sigmaDo = nothing, Re = nothing, mat = nothing,
@@ -208,19 +187,24 @@ function namahaniohyb(;
         end
     end
 
+    natoceni_rad = nothing
     if natoceni === nothing
         natoceni = 0 * u"rad"
-    elseif natoceni isa Real
-        if natoceni isa Real && !(natoceni isa Unitful.Quantity)
-            natoceni = natoceni * u"rad"
-        elseif natoceni isa Unitful.Quantity && unit(natoceni) == 
-            u"°" && unit(natoceni) !== u"rad" natoceni = rad(natoceni)
-        else
+        natoceni_rad = natoceni
+    elseif natoceni isa Unitful.AbstractQuantity
+        try
+            natoceni_rad = uconvert(u"rad", natoceni)
+        catch
             error("Parametr natoceni musí být úhel v radiánech nebo stupních. [rad]")
         end
-    elseif !isa(natoceni, Number)
-        error("Parametr natoceni musí být čísLo. [rad]")
+    elseif natoceni isa Real
+        natoceni = natoceni * u"rad"
+        natoceni_rad = natoceni
+    else
+        error("Parametr natoceni musí být číslo. [rad]")
     end
+    natoceni_rad = mod(natoceni_rad, 2*pi*u"rad") # normalizace úhlu do intervalu <0, 2*pi)
+    natocenibezjednotky = ustrip(u"rad", natoceni_rad) # úhel bez jednotky pro profily() [rad]
     Wo_str = ""
     if Wo === nothing
         if profil === nothing
@@ -228,7 +212,7 @@ function namahaniohyb(;
         elseif !isdefined(@__MODULE__, :profily)
             error("Funkce profily není definována.")
         else
-            tv = profily(profil, "Wo", natoceni)
+            tv = profily(profil, "Wo", natoceni=natocenibezjednotky)
             if !haskey(tv, :Wo)
                 error("Nelze získat Wo z profilu $profil.")
             end
@@ -244,7 +228,7 @@ function namahaniohyb(;
             if !isdefined(@__MODULE__, :profily)
                 error("Funkce profily není definována.")
             else
-                tv = profily(profil, "Ix", natoceni)
+                tv = profily(profil, "Ix", natoceni=natocenibezjednotky)
                 if !haskey(tv, :Ix)
                     error("Nelze získat Ix z profilu $profil.")
                 end

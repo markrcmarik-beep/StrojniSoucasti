@@ -173,7 +173,7 @@ delta = Mo / (E * Ix) = 5 m^-1   Relativní průhyb
 k = sigmaDo / sigma = 0.08   Součinitel bezpečnosti
 Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
-    expected_txt9 = """Výpočet namáhání v ohybu
+    expected_txt19 = """Výpočet namáhání v ohybu
 ----------------------------------------------------------------
 materiál: 
 profil:
@@ -408,11 +408,12 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
     # Test 19: Natočení profilu
     @testset "natočení profilu" begin
-        VV, txt = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", natoceni=45u"deg")
-        @test haskey(VV, :natoceni)
-        @test VV[:natoceni] !== nothing
-        assert_namahaniohyb_text_common(txt, VV)
-        @test txt == expected_txt9
+        VV19, txt19 = namahaniohyb(Mo=600u"N*m", Wo=400u"mm^3", Re=240u"MPa", natoceni=45u"deg")
+        @test haskey(VV19, :natoceni)
+        @test VV19[:natoceni] !== nothing
+        @test VV19[:natoceni] == 45u"deg"
+        assert_namahaniohyb_text_common(txt19, VV19)
+        @test txt19 == expected_txt19
     end
 
 end
