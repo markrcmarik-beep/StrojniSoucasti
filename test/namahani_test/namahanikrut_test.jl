@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-16
+﻿# ver: 2026-06-09
 # Testovací skript pro funkci namahanikrut.jl
 # Testuje namáhání v krutu s různými typy zatížení
 
@@ -56,13 +56,13 @@ zatížení: statický
 zadání:
 Mk = 120 m N   Krouticí moment
 Wk =  = 2200 mm^3   Průřezový modul v krutu
-Ip =  = 25000 mm^4   Polární moment setrvačnosti
+J =  = 25000 mm^4   Polární moment setrvačnosti
 tauDk = 84.9045 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 54.5455 MPa   Napětí v krutu
-theta = Mk / (G * Ip) = 0.0592593 rad m^-1   Poměrné zkroucení
+theta = Mk / (G * J) = 0.0592593 rad m^-1   Poměrné zkroucení
 theta = 3.39531 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 1.55658   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je bezpečný"""
@@ -80,15 +80,15 @@ zadání:
 Mk = 300 m N   Krouticí moment
 k = 5   Uživatelský požadavek bezpečnosti
 Wk = π/16*(D⁴ - d⁴)/D = 8590.29 mm^3   Průřezový modul v krutu
-Ip = π/32*(D⁴ - d⁴) = 171806 mm^4   Polární moment setrvačnosti
+J = π/32*(D⁴ - d⁴) = 171806 mm^4   Polární moment setrvačnosti
 tauDk = 72.1688 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 34.9231 MPa   Napětí v krutu
-phi = (Mk * L0) / (G * Ip) = 0.00194017 rad   Úhel zkroucení
+phi = (Mk * L0) / (G * J) = 0.00194017 rad   Úhel zkroucení
 phi = 0.111164°   Úhel zkroucení
-theta = Mk / (G * Ip) = 0.0215575 rad m^-1   Poměrné zkroucení
+theta = Mk / (G * J) = 0.0215575 rad m^-1   Poměrné zkroucení
 theta = 1.23515 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 2.0665   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
@@ -150,13 +150,13 @@ zatížení: statický
 zadání:
 Mk = 200 m N   Krouticí moment
 Wk =  = 400 mm^3   Průřezový modul v krutu
-Ip =  = 25000 mm^4   Polární moment setrvačnosti
+J =  = 25000 mm^4   Polární moment setrvačnosti
 tauDk = 110 MPa   Dovolené napětí v krutu
 G = 80 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 500 MPa   Napětí v krutu
-theta = Mk / (G * Ip) = 0.1 rad m^-1   Poměrné zkroucení
+theta = Mk / (G * J) = 0.1 rad m^-1   Poměrné zkroucení
 theta = 5.72958 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 0.22   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
@@ -191,7 +191,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
 
     # Test 3: Výpočet s materiálem a polárním momentem
     @testset "výpočet s materiálem" begin
-        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", Ip=25000u"mm^4", mat="11373")
+        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", J=25000u"mm^4", mat="11373")
         @test haskey(VV, :tau)
         @test haskey(VV, :tauDk)
         @test haskey(VV, :Re)
@@ -207,7 +207,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
     @testset "výpočet s materiálem jako proměnná" begin
         A1 = materialy("11373")
         @test A1 !== nothing
-        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", Ip=25000u"mm^4", mat=A1)
+        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", J=25000u"mm^4", mat=A1)
         @test haskey(VV, :tau)
         @test haskey(VV, :tauDk)
         @test haskey(VV, :Re)
@@ -224,7 +224,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
     @testset "výpočet s materiálem jako proměnná" begin
         A1 = materialy("11373")
         @test A1 !== nothing
-        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", Ip=25000u"mm^4", mat=A1)
+        VV, txt = namahanikrut(Mk=120u"N*m", Wk=2200u"mm^3", J=25000u"mm^4", mat=A1)
         @test haskey(VV, :tau)
         @test haskey(VV, :tauDk)
         @test haskey(VV, :Re)
@@ -240,7 +240,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
         VV, txt = namahanikrut(Mk=300u"N*m", profil="TRKR 40x5", mat="16440", L0=90u"mm", zatizeni="rázový", k=5)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
-        @test haskey(VV, :Ip)
+        @test haskey(VV, :J)
         @test haskey(VV, :phi)
         @test VV[:phi] !== nothing
         @test uconvert(u"rad", VV[:phi]) isa Quantity
@@ -297,7 +297,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
 
     # Test 10: Poměrné zkroucení (theta)
     @testset "poměrné zkroucení" begin
-        VV, txt = namahanikrut(Mk=200u"N*m", tauDk=110u"MPa" , Wk=400u"mm^3", Ip=25000u"mm^4", G=80u"GPa")
+        VV, txt = namahanikrut(Mk=200u"N*m", tauDk=110u"MPa" , Wk=400u"mm^3", J=25000u"mm^4", G=80u"GPa")
         @test haskey(VV, :theta)
         @test VV[:theta] !== nothing
         @test uconvert(u"rad/m", VV[:theta]) isa Quantity

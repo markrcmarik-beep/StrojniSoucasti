@@ -1,4 +1,4 @@
-# ver: 2026-05-10
+# ver: 2026-06-09
 # Test script for hridel.jl
 using StrojniSoucasti, Unitful, Test
 
@@ -9,7 +9,7 @@ using StrojniSoucasti, Unitful, Test
         @test isa(VV, Dict)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
-        @test haskey(VV, :Ip)
+        @test haskey(VV, :J)
         @test haskey(VV, :D)
         @test haskey(VV, :d)
         @test VV[:D] == 40u"mm"
@@ -30,7 +30,7 @@ Mk = 200 m N   Krouticí moment
 D = 40 mm   Vnější průměr hřídele
 d = 20 mm   Vnitřní průměr hřídele
 Wk = π/16*(D⁴ - d⁴)/D = 11781 mm^3   Průřezový modul v krutu
-Ip = π/32*(D⁴ - d⁴) = 235619 mm^4   Polární moment setrvačnosti
+J = π/32*(D⁴ - d⁴) = 235619 mm^4   Polární moment setrvačnosti
 tauDk = 120 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
@@ -54,7 +54,7 @@ Bezpečnost součásti: Hřídel je bezpečný"""
         @test isa(VV, Dict)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
-        @test haskey(VV, :Ip)
+        @test haskey(VV, :J)
         @test haskey(VV, :D)
         @test VV[:D] == 40u"mm"
         @test uconvert(u"N*m", VV[:Mk]) == 200u"N*m"
@@ -72,7 +72,7 @@ zadání:
 Mk = 200 m N   Krouticí moment
 D = 40 mm   Vnější průměr hřídele
 Wk = π/16*D³ = 12566.4 mm^3   Průřezový modul v krutu
-Ip = π/32*D⁴ = 251327 mm^4   Polární moment setrvačnosti
+J = π/32*D⁴ = 251327 mm^4   Polární moment setrvačnosti
 tauDk = 120 MPa   Dovolené napětí v krutu
 -----------------------------------------------------------------
 výpočet:
@@ -103,15 +103,15 @@ D = 50 mm   Vnější průměr hřídele
 d = 30 mm   Vnitřní průměr hřídele
 L = 100 mm   Délka hřídele
 Wk = π/16*(D⁴ - d⁴)/D = 21362.8 mm^3   Průřezový modul v krutu
-Ip = π/32*(D⁴ - d⁴) = 534071 mm^4   Polární moment setrvačnosti
+J = π/32*(D⁴ - d⁴) = 534071 mm^4   Polární moment setrvačnosti
 tauDk = 100 MPa   Dovolené napětí v krutu
 G = 80 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 7.02154 MPa   Napětí v krutu
-phi = (Mk * L0) / (G * Ip) = 0.000351077 rad   Úhel zkroucení
+phi = (Mk * L0) / (G * J) = 0.000351077 rad   Úhel zkroucení
 phi = 0.0201152°   Úhel zkroucení
-theta = Mk / (G * Ip) = 0.00351077 rad m^-1   Poměrné zkroucení
+theta = Mk / (G * J) = 0.00351077 rad m^-1   Poměrné zkroucení
 theta = 0.201152 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 14.2419   Součinitel bezpečnosti
 Bezpečnost součásti: Hřídel je bezpečný"""
@@ -138,13 +138,13 @@ Mk = 120 m N   Krouticí moment
 D = 45 mm   Vnější průměr hřídele
 d = 25 mm   Vnitřní průměr hřídele
 Wk = π/16*(D⁴ - d⁴)/D = 16187.9 mm^3   Průřezový modul v krutu
-Ip = π/32*(D⁴ - d⁴) = 364228 mm^4   Polární moment setrvačnosti
+J = π/32*(D⁴ - d⁴) = 364228 mm^4   Polární moment setrvačnosti
 tauDk = 84.9045 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
 tau = Mk / Wk = 7.41293 MPa   Napětí v krutu
-theta = Mk / (G * Ip) = 0.00406745 rad m^-1   Poměrné zkroucení
+theta = Mk / (G * J) = 0.00406745 rad m^-1   Poměrné zkroucení
 theta = 0.233048 ° m^-1   Poměrné zkroucení
 k = tauDk / tau = 11.4536   Součinitel bezpečnosti
 Bezpečnost součásti: Hřídel je bezpečný"""

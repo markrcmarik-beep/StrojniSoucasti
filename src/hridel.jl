@@ -180,9 +180,9 @@ function hridel(; Mk=nothing, D=nothing, d=nothing, L=nothing,
     VV[:Wk] = vypocet[:Wk] # průřezový modul v krutu
     VV[:Wk_str] = vypocet[:Wk_str] # textový popis Wk (např. z profilu)
     VV[:Wk_info] = "Průřezový modul v krutu"
-    VV[:Ip] = vypocet[:Ip] # polární moment setrvačnosti
-    VV[:Ip_str] = vypocet[:Ip_str] # textový popis Ip (např. z profilu)
-    VV[:Ip_info] = "Polární moment setrvačnosti"
+    VV[:J] = vypocet[:J] # polární moment setrvačnosti
+    VV[:J_str] = vypocet[:J_str] # textový popis J (např. z profilu)
+    VV[:J_info] = "Polární moment setrvačnosti"
     VV[:tauDk] = vypocet[:tauDk]
     VV[:tauDk_info] = "Dovolené napětí v krutu"
     VV[:tau] = vypocet[:tau] # smykové napětí v krutu
@@ -265,8 +265,8 @@ function hridelhybnyvypocet(; Mk=nothing, profil1=nothing, L=nothing, mat=nothin
     vypocet[:verdict] = verdict # textové hodnocení bezpečnosti spoje
     vypocet[:Wk] = VV1[:Wk] # průřezový modul v krutu
     vypocet[:Wk_str] = VV1[:Wk_str] # textový popis Wk (např. z profilu)
-    vypocet[:Ip] = VV1[:Ip] # polární moment setrvačnosti
-    vypocet[:Ip_str] = VV1[:Ip_str] # textový popis Ip (např. z profilu)
+    vypocet[:J] = VV1[:J] # polární moment setrvačnosti
+    vypocet[:J_str] = VV1[:J_str] # textový popis J (např. z profilu)
     vypocet[:tau] = VV1[:tau] # smykové napětí v krutu
     vypocet[:tau_str] = VV1[:tau_str] # vzorec pro výpočet tau
     vypocet[:phi] = VV1[:phi] # úhel zkroucení
@@ -349,8 +349,8 @@ function hridelnosnyvypocet(; Fr=nothing, profil1=nothing, L1=nothing, L2=nothin
     vypocet[:Mo2_str] = Mo2_str
     vypocet[:Wk] = VV1[:Wo] # průřezový modul v ohybu
     vypocet[:Wk_str] = VV1[:Wo_str] # textový popis Wo (např. z profilu)
-    vypocet[:Ip] = VV1[:Ix] # moment setrvačnosti
-    vypocet[:Ip_str] = VV1[:Ix_str] # textový popis Ix (např. z profilu)
+    vypocet[:Ix] = VV1[:Ix] # moment setrvačnosti
+    vypocet[:Ix_str] = VV1[:Ix_str] # textový popis Ix (např. z profilu)
     vypocet[:tau] = VV1[:sigma] # napětí v ohybu (mapováno na společný výstup)
     vypocet[:tau_str] = VV1[:sigma_str] # vzorec pro výpočet sigma
     vypocet[:phi] = VV1[:y] # průhyb (mapováno na společný výstup)

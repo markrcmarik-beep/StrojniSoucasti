@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-05-21
+# ver: 2026-06-09
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -79,17 +79,24 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             return S_hod, S_str # Vrátí hodnotu a vzorec pro plochu
         end
     # -----------------------------------------------------------
+    # J - Polární (torzní) moment setrvačnosti pro krut [mm^4]
+    # -----------------------------------------------------------
+    elseif velicina == :J  # Polární (torzní) moment setrvačnosti pro krut [mm^4]
+        J_hod, J_str = StrojniSoucasti.profilyvlcnJ(tvar1, :Jt) # Zatím není implementováno, ale připraveno pro budoucí rozšíření
+        J_hod = dopln_jednotku(J_hod, u"mm^4")
+        return J_hod, J_str # Vrátí hodnotu a vzorec pro polární moment setrvačnosti pro krut
+    # -----------------------------------------------------------
     # Jp - Polární moment [mm⁴]
     # -----------------------------------------------------------
     elseif velicina == :Ip  # Polární moment [mm⁴]
-        Jp_hod, Jp_str = StrojniSoucasti.profilyvlcnJp(tvar1)
+        Jp_hod, Jp_str = StrojniSoucasti.profilyvlcnJ(tvar1, :Jp)
         Jp_hod = dopln_jednotku(Jp_hod, u"mm^4")
         return Jp_hod, Jp_str # Vrátí hodnotu a vzorec pro polární moment
     # -----------------------------------------------------------
     # Jt - Torzní moment [mm³] (pro kruhové průřezy)
     # -----------------------------------------------------------
     elseif velicina == :Jt  # Torzní moment [mm³] (pro kruhové průřezy)
-        Jt_hod, Jt_str = StrojniSoucasti.profilyvlcnJt(tvar1)
+        Jt_hod, Jt_str = StrojniSoucasti.profilyvlcnJt(tvar1, :Jt)
         Jt_hod = dopln_jednotku(Jt_hod, u"mm^3")
         return Jt_hod, Jt_str # Vrátí hodnotu a vzorec pro torzní moment
     # -----------------------------------------------------------

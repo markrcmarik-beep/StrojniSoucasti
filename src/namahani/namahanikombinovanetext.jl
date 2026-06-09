@@ -3,12 +3,12 @@
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti. Generování 
 # textového výpisu výpočtu.
-# ver: 2026-01-02
+# ver: 2026-06-09
 ## Funkce: namahannamahanikombinovanetextitahtext()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanikombinovanetext.jl
+# StrojniSoucasti/src/namahani/namahanikombinovanetext.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikombinovanetext(vstupni_promenne)

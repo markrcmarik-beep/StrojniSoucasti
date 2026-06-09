@@ -6,12 +6,12 @@
 # pomocí HMH nebo Tresca kritéria. Funkce využívá výstupy
 # z již existujících funkcí namáhání (namahanitah, namahanitlak,
 # namahanistrih, namahanikrut, namahaniohyb).
-# ver: 2026-03-31
+# ver: 2026-06-09
 ## Funkce: namahanikombinovane()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanikombinovane.jl
+# StrojniSoucasti/src/namahani/namahanikombinovane.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikombinovane(vstupni_promenne)

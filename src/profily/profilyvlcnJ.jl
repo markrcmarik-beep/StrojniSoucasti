@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet torzní konstanty Ip pro různé tvary profilů.
-# ver: 2026-05-24
+# Výpočet torzní konstanty J, Jp, Jt pro různé tvary profilů.
+# ver: 2026-06-09
 ## Funkce: profilyvlcnIp()
 ## Autor: Martin
 #
@@ -10,7 +10,7 @@
 # StrojniSoucasti/src/profily/profilyvlcnJp.jl
 #
 ## Vzor:
-## Jp_hod, Jp_str = profilyvlcnJp(tvar1, velicina)
+## J_hod, J_str = profilyvlcnJp(tvar1, velicina)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
@@ -19,8 +19,8 @@
 #   :Jp - Polární moment průřezu [mm³]
 #   :Jt - Torzní konstanta [mm³]
 ## Výstupní proměnné:
-# Jp_hod - hodnota polárního momentu průřezu s jednotkami
-# Jp_str - vzorec použitý pro výpočet polárního momentu průřezu (string)
+# J_hod - hodnota polárního momentu průřezu s jednotkami
+# J_str - vzorec použitý pro výpočet polárního momentu průřezu (string)
 ## Použité balíčky:
 # 
 ## Použité uživatelské funkce:
@@ -30,7 +30,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
+function profilyvlcnJ(tvar1::Dict, velicina::Symbol = :Jt)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
