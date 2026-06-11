@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-06-09
+# ver: 2026-06-11
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -100,6 +100,8 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     prefixes = ("OBD", "PLO", "4HR", "6HR",
         "KR", "TRKR", 
         "TR4HR", "IPE", "I")
+    prifixes_norm = ("ČSN", "ISO", "DIN", "EN", "PN", "GOST", "BS", "ASTM", "JIS")
+
     if any(p -> startswith(inputStr, p), prefixes) # vstup začíná jedním z požadovaných prefixů
         profile = first(filter(p -> startswith(inputStr, p), prefixes)) # najde první shodu s prefixem
         dimPart = replace(inputStr, profile => "") |> strip # odstraní prefix a zbaví se mezer

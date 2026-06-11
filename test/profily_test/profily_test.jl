@@ -1,4 +1,4 @@
-# ver: 2026-05-27
+# ver: 2026-06-11
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -101,6 +101,12 @@ dims6 = profily("I 80")
 @test dims6[:h] == 80u"mm"
 #@test haskey(dims6, :info)
 #@test haskey(dims6, :b)
+#dims6a = profily("I80 ČSN425550")
+#@test haskey(dims6a, :info)
+#dims6b = profily("I 80 ČSN425550")
+#@test haskey(dims6b, :info)
+#dims6c = profily("I 80 ČSN 42 5550")
+#@test haskey(dims6c, :info)
 
 dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"
