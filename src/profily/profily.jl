@@ -100,14 +100,34 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     prefixes = ("OBD", "PLO", "4HR", "6HR",
         "KR", "TRKR", 
         "TR4HR", "IPE", "I")
-    prifixes_norm = ("ČSN", "ISO", "DIN", "EN", "PN", "GOST", "BS", "ASTM", "JIS")
-
+    prefixes_norm = ("ČSN", "ISO", "DIN", "EN", "PN", "GOST", "BS", "ASTM", "JIS")
+    norma = nothing
+    zkratka = nothing
+    
     if any(p -> startswith(inputStr, p), prefixes) # vstup začíná jedním z požadovaných prefixů
         profile = first(filter(p -> startswith(inputStr, p), prefixes)) # najde první shodu s prefixem
         dimPart = replace(inputStr, profile => "") |> strip # odstraní prefix a zbaví se mezer
         #println("vstup:", profile)
+        
+        # Extrakce normy z dimPart
+        for norm in prefixes_norm
+            if occursin(norm, dimPart)
+                zkratka = norm # uložení informace o normě pro pozdější použití
+                # Hledáme vzor "ČSN 425550" nebo "ČSN425550" nebo "ČSN 42 5550"
+                match_norm = match(Regex("($(norm))\\s*([\\d\\s]+)"), dimPart)
+                if match_norm !== nothing
+                    norma = replace(match_norm.match |> strip, " " => "")  # odstranění všech mezer: ČSN425550
+                    # Odstraníme normu z dimPart, zbude jen označení profilu (rozměry)
+                    dimPart = replace(dimPart, match_norm.match => "", count=1) |> strip
+                    break
+                end
+            end
+        end
+        
         # vstup začíná jedním z požadovaných prefixů
         dims = Dict{Symbol,Any}()
+        dims[:standard] = norma # uložíme normu do dims
+        dims[:zkratka] = zkratka # uložíme původní informaci o normě (např. "ČSN") do dims
         dims[:info] = profile
     end
     dims = nothing # resetujeme dims, protože výsledkem má být Dict s rozměry
@@ -129,6 +149,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             prof01.R1 !== nothing && (dims[:R1] = prof01.R1 * u"mm") # rádius přechodu mezi pásnicí a žebrem
             prof01.m !== nothing && (dims[:m] = prof01.m * u"kg"/u"m") # hmotnost na jednotku délky [kg/m]
             prof01.standard !== nothing && (dims[:standard] = prof01.standard) # informace o normě (např. "ČSN 425550")
+            prof01.zkratka !== nothing && (dims[:zkratka] = prof01.zkratka) # zkratka pro rychlejší hledání v tabulce (např. "ČSN")
             prof01.material !== nothing && (dims[:material] = prof01.material) # informace o materiálu (např. ["10 000", "10 370.1", "11 373", "11 375", "11 523"])
             prof01.S !== nothing && (dims[:S] = prof01.S * u"mm^2") # plocha průřezu [mm^2]
             prof01.Ix !== nothing && (dims[:Ix] = prof01.Ix * u"mm^4") # moment setrvačnosti Ix [mm^4]
@@ -154,6 +175,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             prof01.R1 !== nothing && (dims[:R1] = prof01.R1 * u"mm")
             prof01.m !== nothing && (dims[:m] = prof01.m * u"kg"/u"m") # hmotnost na jednotku délky [kg/m]
             prof01.standard !== nothing && (dims[:standard] = prof01.standard)
+            prof01.zkratka !== nothing && (dims[:zkratka] = prof01.zkratka) # zkratka pro rychlejší hledání v tabulce
             prof01.material !== nothing && (dims[:material] = prof01.material)
             if hasfield(typeof(prof01), :S) && prof01.S !== nothing
                 dims[:S] = prof01.S * u"mm^2"
@@ -179,6 +201,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             prof01.R !== nothing && (dims[:R] = prof01.R * u"mm")
             prof01.m !== nothing && (dims[:m] = prof01.m * u"kg"/u"m") # hmotnost na jednotku délky [kg/m]
             prof01.standard !== nothing && (dims[:standard] = prof01.standard)
+            prof01.zkratka !== nothing && (dims[:zkratka] = prof01.zkratka) # zkratka pro rychlejší hledání v tabulce
             prof01.material !== nothing && (dims[:material] = prof01.material)
             prof01.S !== nothing && (dims[:S] = prof01.S * u"mm^2")
             prof01.Ix !== nothing && (dims[:Ix] = prof01.Ix * u"mm^4")

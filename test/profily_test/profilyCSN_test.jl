@@ -1,4 +1,4 @@
-# ver: 2026-05-21
+# ver: 2026-06-13
 using StrojniSoucasti, Unitful, Test
 
 @testset "profilyCSN" begin
@@ -80,7 +80,7 @@ using StrojniSoucasti, Unitful, Test
     @test dims11[:t1] == 3.9u"mm"
     @test dims11[:t2] == 5.9u"mm"
     @test dims11[:R] == 3.9u"mm"
-    @test dims11[:standard] == "\u010CSN 42 5550"
+    @test dims11[:standard] == "\u010CSN425550"
     @test dims11[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
 
     dims12 = StrojniSoucasti.profilyCSN("I 100")
@@ -90,7 +90,7 @@ using StrojniSoucasti, Unitful, Test
     @test dims12[:t1] == 4.5u"mm"
     @test dims12[:t2] == 6.8u"mm"
     @test dims12[:R] == 4.5u"mm"
-    @test dims12[:standard] == "\u010CSN 42 5550"
+    @test dims12[:standard] == "\u010CSN425550"
     @test dims12[:material] == ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
 
     dims13 = StrojniSoucasti.profilyCSN("IPE100")
@@ -102,7 +102,7 @@ using StrojniSoucasti, Unitful, Test
     @test dims13[:t2] == 5.7u"mm"
     @test dims13[:R] == 7u"mm"
     @test dims13[:R1] == 0u"mm"
-    @test dims13[:standard] == "\u010CSN 42 5553"
+    @test dims13[:standard] == "\u010CSN425553"
     @test dims13[:material] == ["11 373", "11 375", "11 503", "11 523", "15 217"]
 
     @test StrojniSoucasti.profilyCSN("NEEXISTUJICI 10x10") === nothing

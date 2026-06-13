@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-05-29
+# ver: 2026-06-13
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -92,6 +92,8 @@ struct I_CSN425550
     serie::String # např. "I"
     standard::String # např. "ČSN 42 5550"
     standard_info::String # popis standardu - textová informace
+    zkratka::String # zkratka pro rychlejší hledání v tabulce
+    zkratka_info::String # popis zkratky - textová informace
     h::Float64 # vyska profilu [mm]
     h_unit::String
     h_info::String
@@ -174,8 +176,10 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     return I_CSN425550(
         string("I", " ", size_part), # name
         "I", # serie
-        "\u010CSN 42 5550", # standard
+        "\u010CSN425550", # standard
         "norma - textova hodnota", # info o normě
+        "ČSN", # zkratka pro rychlejší hledání v tabulce
+        "zkratka pro rychlejší hledání v tabulce", # info o zkratce
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
         "vyska profilu [mm]",

@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-05-29
+# ver: 2026-06-13
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/profil/profilTR4HR.jl
+# StrojniSoucasti/src/profily/profil_TR4HR_CSN425720.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilTR4HR(vstupni_promenne)
@@ -47,6 +47,8 @@ struct TR4HR_CSN425720
     series::String
     standard::String
     standard_info::String
+    zkratka::String # zkratka pro rychlejší hledání v tabulce
+    zkratka_info::String # popis zkratky - textová informace
     a::Float64
     a_unit::String
     a_info::String
@@ -180,8 +182,10 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
     return TR4HR_CSN425720(
         string(oznaceni), # name
         "TR4HR", # serie
-        "\u010CSN 42 5720", # standard
+        "\u010CSN425720", # standard
         "norma - textova hodnota", # info o normě
+        "ČSN", # zkratka pro rychlejší hledání v tabulce
+        "zkratka pro rychlejší hledání v tabulce", # info o zkratce
         a, # rozměr a
         "mm", # jednotka a
         "rozměr a", # info a

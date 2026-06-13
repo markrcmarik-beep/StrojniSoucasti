@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN 42 5553.
-# ver: 2026-05-29
+# ver: 2026-06-13
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -95,6 +95,8 @@ struct IPE_CSN425553
     serie::String # např. "IPE"
     standard::String # např. "ČSN 42 5553"
     standard_info::String # popis standardu - textová informace
+    zkratka::String # zkratka pro rychlejší hledání v tabulce
+    zkratka_info::String # popis zkratky - textová informace
     h::Float64 # vyska profilu [mm]
     h_unit::String
     h_info::String
@@ -177,8 +179,10 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
     return IPE_CSN425553(
         string("IPE", " ", size_part), # name
         "IPE", # serie
-        "\u010CSN 42 5553", # standard
+        "\u010CSN425553", # standard
         "norma - textova hodnota", # standard_info
+        "ČSN", # zkratka
+        "zkratka pro rychlejší hledání v tabulce", # zkratka_info
         Float64(get(row, "h", 0.0)), # h - vyska profilu [mm]
         "mm",
         "vyska profilu [mm]",
