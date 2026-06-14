@@ -205,7 +205,7 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         "kg/m",
         "hmotnost [kg/m]",
         get(row, "material", String[])::Vector{String},
-        "materialy - vsechny textove hodnoty",
+        "Dostupné materiály pro tento profil",
         Float64(get(row, "S", 0.0)), # S - plocha prurezu [mm^2]
         "mm^2",
         "plocha prurezu [mm^2]",

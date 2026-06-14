@@ -1,4 +1,4 @@
-# ver: 2026-06-11
+# ver: 2026-06-14
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -16,9 +16,17 @@ dims1 = profily("PLO 20.5x10") # pouze rozměry
 #@test dims[:R] == 0u"mm"
 @test !haskey(dims1, :S) # vlastnost S není přítomna
 
-dims1a = profily("PLO20.5x10") # rozměry bez mezery
+dims1a = profily("PLO20.5x10 ČSN") # rozměry bez mezery
 @test haskey(dims1a, :a)
 @test haskey(dims1a, :b)
+@test haskey(dims1a, :info)
+@test dims1a[:info] == "PLO"
+@test dims1a[:a] == 20.5u"mm"
+@test dims1a[:b] == 10u"mm"
+@test !haskey(dims1a, :standard) # standard není přítomen, protože nebyla zadána norma s čísly
+@test dims1a[:zkratka] == "ČSN"
+@test dims1a[:zkratka_info] == "Zkratka pro normu, např. ČSN"
+@test !haskey(dims1a, :S) # vlastnost S není přítomna
 
 dims2 = profily("PLO 20x10", "S") # rozměry + vlastnosti
 @test haskey(dims2, :a)

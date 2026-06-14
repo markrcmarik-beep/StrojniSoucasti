@@ -27,6 +27,15 @@ function _test_profil_i_csn425550_common(prof, exp_serie, exp_standard, exp_h, e
     @test prof.R1 == exp_R1
     @test prof.R1_unit == "mm"
     @test prof.material == exp_material
+    @test prof.material_info == "Dostupné materiály pro tento profil"
+    @test prof.S !== nothing
+    @test prof.S_unit == "mm^2"
+    @test prof.Ix !== nothing
+    @test prof.Ix_unit == "mm^4"
+    @test prof.Iy !== nothing
+    @test prof.Iy_unit == "mm^4"
+    @test prof.Ixy !== nothing
+    @test prof.Ixy_unit == "mm^4"
 end
 
 @testset "profil_I_CSN425550" begin
