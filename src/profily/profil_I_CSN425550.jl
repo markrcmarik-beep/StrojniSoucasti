@@ -1,83 +1,88 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN 42 5550.
-# ver: 2026-06-13
+# Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN425550.
+# ver: 2026-06-16
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
-## Cesta uvnitr balicku:
+## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/profily/profil_I_CSN425550.jl
 #
 ## Vzor:
 ## vystupni_promenne = profil_I_CSN425550(vstupni_promenne)
-## Vstupni promenne:
+## Vstupní proměnné:
 # - name::AbstractString: Oznaceni profilu (napr. "I100", "I 100")
-## Vystupni promenne:
+## Výstupní proměnné:
 # - I_CSN425550 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
-#   Pokud profil existuje, struct obsahuje nasledujici pole: (do nedefinované hodnoty uloženo nothing)
-#   .name - název profilu
-#   .serie - série profilu (např. "I")
-#   .standard - norma (např. "ČSN 42 5550")
-#   .standard_info - textový popis normy
-#   .h - výška profilu [mm]
-#   .h_unit - jednotka pro výšku
-#   .h_info - popis výšky
-#   .b - šířka pásnice [mm]
-#   .b_unit - jednotka pro šířku pásnice
-#   .b_info - popis šířky pásnice
-#   .t1 - tloušťka stojiny [mm]
-#   .t1_unit - jednotka pro tloušťku stojiny
-#   .t1_info - popis tloušťky stojiny
-#   .t2 - střední tloušťka pásnice [mm]
-#   .t2_unit - jednotka pro střední tloušťku pásnice
-#   .t2_info - popis střední tloušťky pásnice
-#   .R - poloměr zaoblení výškové spojnice [mm]
-#   .R_unit - jednotka pro poloměr zaoblení výškové spoj
-#   .R_info - popis poloměru zaoblení výškové spojnice
-#   .R1 - poloměr zaoblení vnitřní šířky pásnice [mm]
-#   .R1_unit - jednotka pro poloměr zaoblení vnitřní šířky pásnice
-#   .R1_info - popis poloměru zaoblení vnitřní šířky pásnice
-#   .sp - sklon příruby [%]
-#   .sp_unit - jednotka pro sklon příruby
-#   .sp_info - popis sklonu příruby
-#   .m - hmotnost [kg/m]
-#   .m_unit - jednotka pro hmotnost
-#   .m_info - popis hmotnosti
-#   .material - pole textových hodnot materiálů, pro které je profil dostupný
-#   .material_info - popis materiálů
-#   .S - plocha průřezu [mm^2]
-#   .S_unit - jednotka pro plochu průřezu
-#   .S_info - popis plochy průřezu
-#   .Ix - moment setrvačnosti podle osy x [mm^4]
-#   .Ix_unit - jednotka pro moment setrvačnosti podle osy x
-#   .Ix_info - popis momentu setrvačnosti podle osy x
-#   .Wx - průřezový modul podle osy x [mm^3]
-#   .Wx_unit - jednotka pro průřezový modul podle osy x
-#   .Wx_info - popis průřezového modulu podle osy x
-#   .ix - poloměr setrvačnosti podle osy x [mm]
-#   .ix_unit - jednotka pro poloměr setrvačnosti podle osy x
-#   .ix_info - popis poloměru setrvačnosti podle osy
-#   .Iy - moment setrvačnosti podle osy y [mm^4]
-#   .Iy_unit - jednotka pro moment setrvačnosti podle osy y
-#   .Iy_info - popis momentu setrvačnosti podle osy y
-#   .Wy - průřezový modul podle osy y [mm^3]
-#   .Wy_unit - jednotka pro průřezový modul podle osy y
-#   .Wy_info - popis průřezového modulu podle osy y
-#   .iy - poloměr setrvačnosti podle osy y [mm]
-#   .iy_unit - jednotka pro poloměr setrvačnosti podle osy y
-#   .iy_info - popis poloměru setrvačnosti podle osy y
-#   .Sx - statický moment podle osy x [mm^3]
-#   .Sx_unit - jednotka pro statický moment podle osy x
-#   .Sx_info - popis statického momentu podle osy x
-#   .sx - staticka hodnota sx [mm]
-#   .sx_unit - jednotka pro sx
-#   .sx_info - popis sx
-## Pouzite balicky:
+#   Pokud profil existuje, struct obsahuje následující pole: (do nedefinované hodnoty uloženo nothing)
+#   .name::String: název profilu
+#   .serie::String: série profilu (např. "I")
+#   .standard::String: norma (např. "ČSN 42 5550")
+#   .standard_info::String: textový popis normy
+#   .zkratka::String: zkratka pro rychlejší hledání v tabulce
+#   .zkratka_info::String: popis zkratky - textová informace
+#   .h::Float64: výška profilu [mm]
+#   .h_unit::String: jednotka pro výšku
+#   .h_info::String: popis výšky
+#   .b::Float64: šířka pásnice [mm]
+#   .b_unit::String: jednotka pro šířku pásnice
+#   .b_info::String: popis šířky pásnice
+#   .t1::Float64: tloušťka stojiny [mm]
+#   .t1_unit::String: jednotka pro tloušťku stojiny
+#   .t1_info::String: popis tloušťky stojiny
+#   .t2::Float64: střední tloušťka pásnice [mm]
+#   .t2_unit::String: jednotka pro střední tloušťku pásnice
+#   .t2_info::String: popis střední tloušťky pásnice
+#   .R::Float64: poloměr zaoblení výškové spojnice [mm]
+#   .R_unit::String: jednotka pro poloměr zaoblení výškové spoj
+#   .R_info::String: popis poloměru zaoblení výškové spojnice
+#   .R1::Float64: poloměr zaoblení vnitřní šířky pásnice [mm]
+#   .R1_unit::String: jednotka pro poloměr zaoblení vnitřní šířky pásnice
+#   .R1_info::String: popis poloměru zaoblení vnitřní šířky pásnice
+#   .sp::Float64: sklon příruby [%]
+#   .sp_unit::String: jednotka pro sklon příruby
+#   .sp_info::String: popis sklonu příruby
+#   .m::Float64: hmotnost [kg/m]
+#   .m_unit::String: jednotka pro hmotnost
+#   .m_info::String: popis hmotnosti
+#   .material::Vector{String}: pole textových hodnot materiálů, pro které je profil dostupný
+#   .material_info::String: popis materiálů
+#   .S::Float64: plocha průřezu [mm^2]
+#   .S_unit::String: jednotka pro plochu průřezu
+#   .S_info::String: popis plochy průřezu
+#   .Ix::Float64: moment setrvačnosti podle osy x [mm^4]
+#   .Ix_unit::String: jednotka pro moment setrvačnosti podle osy x
+#   .Ix_info::String: popis momentu setrvačnosti podle osy x
+#   .Wx::Float64: průřezový modul podle osy x [mm^3]
+#   .Wx_unit::String: jednotka pro průřezový modul podle osy x
+#   .Wx_info::String: popis průřezového modulu podle osy x
+#   .ix::Float64: poloměr setrvačnosti podle osy x [mm]
+#   .ix_unit::String: jednotka pro poloměr setrvačnosti podle osy x
+#   .ix_info::String: popis poloměru setrvačnosti podle osy x
+#   .Iy::Float64: moment setrvačnosti podle osy y [mm^4]
+#   .Iy_unit::String: jednotka pro moment setrvačnosti podle osy y
+#   .Iy_info::String: popis momentu setrvačnosti podle osy y
+#   .Ixy::Float64: kvadratický moment setrvačnosti Ixy [mm^4]
+#   .Ixy_unit::String: jednotka pro kvadratický moment setrvačnosti Ixy
+#   .Ixy_info::String: popis kvadratického momentu setrvačnosti Ixy
+#   .Wy::Float64: průřezový modul podle osy y [mm^3]
+#   .Wy_unit::String: jednotka pro průřezový modul podle osy y
+#   .Wy_info::String: popis průřezového modulu podle osy y
+#   .iy::Float64: poloměr setrvačnosti podle osy y [mm]
+#   .iy_unit::String: jednotka pro poloměr setrvačnosti podle osy y
+#   .iy_info::String: popis poloměru setrvačnosti podle osy y
+#   .Sx::Float64: statický moment podle osy x [mm^3]
+#   .Sx_unit::String: jednotka pro statický moment podle osy x
+#   .Sx_info::String: popis statického momentu podle osy x
+#   .sx::Float64: staticka hodnota sx [mm]
+#   .sx_unit::String: jednotka pro sx
+#   .sx_info::String: popis sx
+## Použité balíčky:
 # TOML
-## Pouzite uzivatelske funkce:
+## Použité uživatelské funkce:
 #
-## Priklad:
+## Příklad:
 # prof = profil_I_CSN425550("I 100")
 # println(prof.h)  # 100.0
 # println(prof.b)  # 50.0
