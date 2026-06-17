@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-06-09
+# ver: 2026-06-17
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -53,6 +53,8 @@ include("profily/profilyvlcnJ.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnIx.jl")
 include("profily/profilyvlcnWo.jl")
+include("profily/profilyI4natoceni.jl") # kvadratický moment pro dané natočení profilu z jeho kvadratických momentů Ix, Iy a Ixy
+include("profily/profilyIxy4natoceni.jl") # kvadratický moment Ixy pro dané natočení profilu z jeho kvadratických momentů Ix, Iy a Ixy
 include("profily/torsion_J_TR4HR_numeric.jl") #
 include("profily/hrana.jl") # hrany
 include("profily/polygon2plocha.jl") # plocha obecneho tvaru z obrysovych bodu

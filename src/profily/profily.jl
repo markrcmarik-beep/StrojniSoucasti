@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-06-14
+# ver: 2026-06-17
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -38,6 +38,7 @@
 #   "I" - moment setrvačnosti (dle natoceni) [mm^4]
 #   "Ix" - moment setrvačnosti Ix [mm^4]
 #   "Iy" - moment setrvačnosti Iy [mm^4]
+#   "Ixy" - kvadratický moment součinitele [mm^4] (pro výpočet I pro dané natočení) - zatím není implementováno
 #   "Imin" - minimální moment setrvačnosti [mm^4] - zatím není implementováno
 #   "Imax" - maximální moment setrvačnosti [mm^4] - zatím není implementováno
 #   "Wo" - průřezový modul pro ohyb (dle natočení) [mm^3]
@@ -204,6 +205,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             #prof01.S !== nothing && (dims[:S] = prof01.S * u"mm^2")
             prof01.Ix !== nothing && (dims[:Ix] = prof01.Ix * u"mm^4")
             prof01.Iy !== nothing && (dims[:Iy] = prof01.Iy * u"mm^4")
+            prof01.Ixy !== nothing && (dims[:Ixy] = prof01.Ixy * u"mm^4")
             prof01.Wx !== nothing && (dims[:Wx] = prof01.Wx * u"mm^3")
             prof01.Wy !== nothing && (dims[:Wy] = prof01.Wy * u"mm^3")
             prof01.ix !== nothing && (dims[:ix] = prof01.ix * u"mm")

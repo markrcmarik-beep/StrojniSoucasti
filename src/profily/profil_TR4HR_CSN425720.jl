@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-06-16
+# ver: 2026-06-17
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -48,6 +48,12 @@
 #   .Ixy::Float64: kvadratický moment setrvačnosti Ixy [mm^4]
 #   .Ixy_unit::String: jednotka pro kvadratický moment setrvačnosti Ixy
 #   .Ixy_info::String: popis kvadratického momentu setrvačnosti Ixy
+#   .Imin::Float64: minimální moment setrvačnosti [mm^4]
+#   .Imin_unit::String: jednotka pro minimální moment setrvačnosti
+#   .Imin_info::String: popis minimálního momentu setrvačnosti
+#   .Imax::Float64: maximální moment setrvačnosti [mm^4]
+#   .Imax_unit::String: jednotka pro maximální moment setrvačnosti
+#   .Imax_info::String: popis maximálního momentu setrvačnosti
 #   .Wy::Float64: průřezový modul podle osy y [mm^3]
 #   .Wy_unit::String: jednotka pro průřezový modul podle osy y
 #   .Wy_info::String: popis průřezového modulu podle osy y
@@ -99,6 +105,12 @@ struct TR4HR_CSN425720
     Ixy::Float64 # kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
     Ixy_unit::String # jednotka pro kvadratický moment setrvacnosti Ixy
     Ixy_info::String # popis kvadratického momentu setrvacnosti Ixy
+    Imin::Float64 # minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+    Imin_unit::String # jednotka pro minimální moment setrvačnosti
+    Imin_info::String # popis minimálního momentu setrvačnosti
+    Imax::Float64 # maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+    Imax_unit::String # jednotka pro maximální moment setrvačnosti
+    Imax_info::String # popis maximálního momentu setrvačnosti
 end
 
 const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml")) # Načtení databáze TR4HR z TOML souboru
@@ -233,9 +245,15 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
         "mm", # jednotka R
         "poloměr", # info R
         get(row, "material", String[])::Vector{String},
-        0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        0.0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
         "mm^4", # jednotka pro kvadratický moment setrvacnosti Ixy
-        "kvadratický moment setrvacnosti Ixy [mm^4]" # popis kvadratického momentu setrvacnosti Ixy
+        "kvadratický moment setrvacnosti Ixy [mm^4]", # popis kvadratického momentu setrvacnosti Ixy
+        0.0, # Imin - minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4", # jednotka pro minimální moment setrvačnosti
+        "minimální moment setrvačnosti [mm^4]", # popis minimálního momentu setrvačnosti
+        0.0, # Imax - maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4", # jednotka pro maximální moment setrvačnosti
+        "maximální moment setrvačnosti [mm^4]" # popis maximálního momentu setrvačnosti
     )
 end
 

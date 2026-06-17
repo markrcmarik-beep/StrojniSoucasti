@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN425553.
-# ver: 2026-06-16
+# ver: 2026-06-17
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -66,6 +66,12 @@
 #   .Ixy::Float64: kvadratický moment setrvačnosti Ixy [mm^4]
 #   .Ixy_unit::String: jednotka pro kvadratický moment setrvačnosti Ixy
 #   .Ixy_info::String: popis kvadratického momentu setrvačnosti Ixy
+#   .Imin::Float64: minimální moment setrvačnosti [mm^4]
+#   .Imin_unit::String: jednotka pro minimální moment setrvačnosti
+#   .Imin_info::String: popis minimálního momentu setrvačnosti
+#   .Imax::Float64: maximální moment setrvačnosti [mm^4]
+#   .Imax_unit::String: jednotka pro maximální moment setrvačnosti
+#   .Imax_info::String: popis maximálního momentu setrvačnosti
 #   .Wy::Float64: průřezový modul podle osy y [mm^3]
 #   .Wy_unit::String: jednotka pro průřezový modul podle osy y
 #   .Wy_info::String: popis průřezového modulu podle osy y
@@ -143,6 +149,12 @@ struct IPE_CSN425553
     Ixy::Float64 # kvadratický moment setrvacnosti Ixy [mm^4]
     Ixy_unit::String
     Ixy_info::String
+    Imin::Float64 # minimální moment setrvačnosti [mm^4]
+    Imin_unit::String
+    Imin_info::String
+    Imax::Float64 # maximální moment setrvačnosti [mm^4]
+    Imax_unit::String
+    Imax_info::String
     Wy::Float64 # prurezovy modul podle osy y [mm^3]
     Wy_unit::String
     Wy_info::String
@@ -226,9 +238,15 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy y [mm^4]",
-        0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        0.0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
         "mm^4",
         "kvadratický moment setrvacnosti Ixy [mm^4]",
+        0.0, # Imin - minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4",
+        "minimální moment setrvačnosti [mm^4]",
+        0.0, # Imax - maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4",
+        "maximální moment setrvačnosti [mm^4]",
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
         "mm^3",
         "prurezovy modul podle osy y [mm^3]",
