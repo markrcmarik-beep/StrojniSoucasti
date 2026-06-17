@@ -189,7 +189,8 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     sx_mm = sx_val > 0.0 ? sx_val : 0.0
     Sx_from_table = get(row, "Sx", nothing)
     Sx_val = Sx_from_table === nothing ? (sx_mm > 0.0 ? Float64(get(row, "Ix", 0.0)) / sx_mm : 0.0) : Float64(Sx_from_table)
-
+    Ix = haskey(row, "Ix") ? Float64(get(row, "Ix", 0.0)) : nothing
+    Iy = haskey(row, "Iy") ? Float64(get(row, "Iy", 0.0)) : nothing
     return I_CSN425550(
         string("I", " ", size_part), # name
         "I", # serie
@@ -223,10 +224,10 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         "hmotnost [kg/m]",
         get(row, "material", String[])::Vector{String},
         "Dostupné materiály pro tento profil",
-        Float64(get(row, "S", 0.0)), # S - plocha prurezu [mm^2]
+        haskey(row, "S") ? Float64(get(row, "S", 0.0)) : nothing, # S - plocha prurezu [mm^2]
         "mm^2",
         "plocha prurezu [mm^2]",
-        Float64(get(row, "Ix", 0.0)), # Ix - moment setrvacnosti podle osy x [mm^4]
+        Ix, # Ix - moment setrvacnosti podle osy x [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy x [mm^4]",
         Float64(get(row, "Wx", 0.0)), # Wx - prurezovy modul podle osy x [mm^3]
@@ -235,16 +236,16 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         Float64(get(row, "ix", 0.0)), # ix - polomer setrvacnosti podle osy x [mm]
         "mm",
         "polomer setrvacnosti podle osy x [mm]",
-        Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
+        Iy, # Iy - moment setrvacnosti podle osy y [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy y [mm^4]",
         0.0, # Ixy - kvadratický moment [mm^4] - zatím není v tabulce, bude doplněno později
         "mm^4",
         "kvadratický moment [mm^4]",
-        0.0, # Imin - minimální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        (Ix!==nothing && Iy!==nothing) ? Float64((Ix + Iy)/2-sqrt((Ix - Iy)^2/4 + 0^2)) : nothing, # Imin - minimální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
         "mm^4",
         "minimální moment setrvačnosti [mm^4]",
-        0.0, # Imax - maximální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        (Ix!==nothing && Iy!==nothing) ? Float64((Ix + Iy)/2+sqrt((Ix - Iy)^2/4 + 0^2)) : nothing, # Imax - maximální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
         "mm^4",
         "maximální moment setrvačnosti [mm^4]",
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]

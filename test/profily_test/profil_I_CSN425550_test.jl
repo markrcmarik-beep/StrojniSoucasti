@@ -1,4 +1,4 @@
-# ver: 2026-06-13
+# ver: 2026-06-17
 using Test
 using StrojniSoucasti
 
@@ -28,7 +28,7 @@ function _test_profil_i_csn425550_common(prof, exp_serie, exp_standard, exp_h, e
     @test prof.R1_unit == "mm"
     @test prof.material == exp_material
     @test prof.material_info == "Dostupné materiály pro tento profil"
-    @test prof.S !== nothing
+    @test prof.S > 0.0
     @test prof.S_unit == "mm^2"
     @test prof.Ix !== nothing
     @test prof.Ix_unit == "mm^4"
