@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-06-17
+# ver: 2026-06-19
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -94,6 +94,8 @@
 using Unitful
 
 function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::Number=0)
+    dopln_jednotku(hod, cil_jednotka) = hod isa Unitful.AbstractQuantity ?
+    uconvert(cil_jednotka, hod) : hod * cil_jednotka
     # -----------------------------------------------------------
     # 1) Normalizace vstupu a extrakce základních rozměrů
     # -----------------------------------------------------------
@@ -133,7 +135,13 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 end
             end
         end
-        
+        if isa(natoceni, Number) || (isa(natoceni, Unitful.AbstractQuantity) && unit(natoceni) in [u"°", u"rad"])
+            dims = Dict{Symbol,Any}()
+            dims[:natoceni] = dopln_jednotku(natoceni, u"rad") # uložíme natočení do dims (převedeme na radiany, pokud je zadáno ve stupních)
+            natoceni = ustrip(dims[:natoceni]) # převedeme na number bez jednotky, protože budeme používat pro výpočet vlastností
+        else
+            error("Neplatný typ pro parametr natoceni. Očekává se číslo nebo jednotka úhlu (° nebo rad).")
+        end
         # Uložit normu a zkratku do temp proměnných (pokud byly extrahány)
         norma_extracted = norma
         zkratka_extracted = zkratka
@@ -297,8 +305,9 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     for property in args # pro každý zadaný argument (vlastnost nebo natočení)
         property in vlastnosti || error("Neznámá vlastnost: $property. Podporované vlastnosti jsou $vlastnosti.")
         if isa(property, Number) || (isa(property, Unitful.AbstractQuantity) && unit(property) in [u"°", u"rad"])
-            dims[:natoceni] = property
-        elseif property isa AbstractString || property isa Symbol
+            dims[:natoceni] = dopln_jednotku(property, u"rad") # uložíme natočení do dims (převedeme na radiany, pokud je zadáno ve stupních)
+        end
+        if property isa AbstractString || property isa Symbol
             key = Symbol(property) # převod na Symbol
             if haskey(dims, key)
                 # Hodnota je už zadaná (např. z tabulky I/IPE), nepřepočítáváme ji.
