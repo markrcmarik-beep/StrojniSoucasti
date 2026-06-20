@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet kvadratického momentu Ialfa pro dané natočení profilu 
 # z jeho kvadratických momentů Ix, Iy a Ixy.
-# ver: 2026-06-17
+# ver: 2026-06-20
 ## Funkce: profilyI4natoceni()
 ## Autor: Martin
 #
@@ -17,6 +17,7 @@
 # Iy – kvadratický moment pro osu y [mm⁴]
 # Ixy – kvadratický moment součinitele [mm⁴] (volitelný, výchozí hodnota 0)
 # natoceni – úhel natočení profilu [rad] (volitelný, výchozí hodnota 0)
+# text – boolean, zda vrátit i vzorec jako text (volitelný, výchozí hodnota false)
 ## Výstupní proměnné:
 # Ialfa – kvadratický moment pro dané natočení [mm⁴]
 # vzorec – string s použitým vzorcem pro výpočet
@@ -30,14 +31,14 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyI4natoceni(Ix=nothing, Iy=nothing, Ixy=0, natoceni=0, text::Bool=false)
-    if Ix === nothing || Iy === nothing
-        error("Musí být zadány hodnoty Ix a Iy.")
+function profilyI4natoceni(Ix=nothing, Iy=nothing, Ixy=nothing, natoceni=0, text::Bool=false)
+    if Ix === nothing || Iy === nothing || Ixy === nothing
+        error("Musí být zadány hodnoty Ix, Iy, Ixy.")
     end
     angle = mod(natoceni, 2*pi) # Normalizace natočení do rozsahu [0, 2π)
-    Ialfa = (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ) * cos(2*angle) + Ixy * sin(2*angle)
+    Ialfa = (Ix + Iy)/2 - (Ix - Iy)/2 + cos(2*angle) - Ixy * sin(2*angle)
     if text
-        vzorec = "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ) * cos(2*natoceni) + Ixy * sin(2*natoceni)"
+        vzorec = "(Ix + Iy)/2 - (Ix - Iy)/2 + cos(2*angle) - Ixy * sin(2*angle)"
         return Ialfa, vzorec
     else
         return Ialfa

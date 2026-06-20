@@ -1,4 +1,4 @@
-# ver: 2026-06-14
+# ver: 2026-06-20
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -125,7 +125,8 @@ dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"
 @test dims7[:b] == 46u"mm"
 @test dims7[:h] == 80u"mm"
-@test dims7[:S] == 764u"mm^2"
+@test !haskey(dims7, :S)
+#@test dims7[:S] == 764u"mm^2"
 @test dims7[:Ix] == 801000u"mm^4"
 
 dims7a = profily("IPE 80", "S")
