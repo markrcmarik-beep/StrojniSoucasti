@@ -1,4 +1,4 @@
-# ver: 2026-06-17
+# ver: 2026-06-20
 using Test
 using StrojniSoucasti
 
@@ -36,6 +36,10 @@ function _test_profil_i_csn425550_common(prof, exp_serie, exp_standard, exp_h, e
     @test prof.Iy_unit == "mm^4"
     @test prof.Ixy !== nothing
     @test prof.Ixy_unit == "mm^4"
+    @test prof.Jp === nothing
+    @test prof.Jt === nothing
+    @test prof.J === nothing
+    @test prof.Wk === nothing
 end
 
 @testset "profil_I_CSN425550" begin

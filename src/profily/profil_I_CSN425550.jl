@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN425550.
-# ver: 2026-06-17
+# ver: 2026-06-20
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -158,6 +158,18 @@ struct I_CSN425550
     Wy::Float64 # prurezovy modul podle osy y [mm^3]
     Wy_unit::String
     Wy_info::String
+    Jp::Union{Float64, Nothing} # Polární moment setrvačnosti [mm^4]
+    Jp_unit::String
+    Jp_info::String
+    Jt::Union{Float64, Nothing} # Torsní moment setrvačnosti [mm^4]
+    Jt_unit::String
+    Jt_info::String
+    J::Union{Float64, Nothing} # Torsní moment setrvačnosti [mm^4]
+    J_unit::String
+    J_info::String
+    Wk::Union{Float64, Nothing} # Kroutící průřezový modul [mm^3]
+    Wk_unit::String
+    Wk_info::String
     iy::Float64 # polomer setrvacnosti podle osy y [mm]
     iy_unit::String
     iy_info::String
@@ -251,6 +263,18 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
         "mm^3",
         "prurezovy modul podle osy y [mm^3]",
+        haskey(row, "Jp") ? Float64(get(row, "Jp", 0.0)) : nothing, # Jp - polární moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        "mm^4",
+        "polární moment setrvačnosti [mm^4]",
+        haskey(row, "Jt") ? Float64(get(row, "Jt", 0.0)) : nothing, # Jt - Torsní moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        "mm^4",
+        "Torsní moment setrvačnosti [mm^4]",
+        haskey(row, "J") ? Float64(get(row, "J", 0.0)) : nothing, # J - Torsní moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        "mm^4",
+        "Torsní moment setrvačnosti [mm^4]",
+        haskey(row, "Wk") ? Float64(get(row, "Wk", 0.0)) : nothing, # Wk - Kroutící průřezový modul [mm^3] - zatím není v tabulce, bude doplněno později
+        "mm^3",
+        "Kroutící průřezový modul [mm^3]",
         Float64(get(row, "iy", 0.0)), # iy - polomer setrvacnosti podle osy y [mm]
         "mm",
         "polomer setrvacnosti podle osy y [mm]",

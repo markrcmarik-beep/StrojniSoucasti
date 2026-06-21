@@ -179,7 +179,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             prof01.zkratka !== nothing ? (dims[:zkratka] = prof01.zkratka) : nothing # zkratka pro rychlejší hledání v tabulce (např. "ČSN")
             prof01.material !== nothing ? (dims[:material] = prof01.material) : nothing # informace o materiálu (např. ["10 000", "10 370.1", "11 373", "11 375", "11 523"])
             if "S" in args
-                prof01.S !== nothing ? (dims[:S] = prof01.S * u"mm^2") : (dims[:S] = nothing) # plocha průřezu [mm^2]
+                hasproperty(prof01, :S) && prof01.S !== nothing ? (dims[:S] = prof01.S * u"mm^2") : (dims[:S] = nothing) # plocha průřezu [mm^2]
             end
             if "I" in args
                 if natoceni == 0 || natoceni == 180
@@ -237,6 +237,18 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             end
             if "Wy" in args
                 prof01.Wy !== nothing ? (dims[:Wy] = prof01.Wy * u"mm^3") : (dims[:Wy] = nothing) # průřezový modul pro ohyb pro osu y [mm^3]
+            end
+            if "Jp" in args
+                prof01.Jp !== nothing ? (dims[:Jp] = prof01.Jp * u"mm^4") : (dims[:Jp] = nothing) # polární moment setrvačnosti [mm^4]
+            end
+            if "Jt" in args
+                prof01.Jt !== nothing ? (dims[:Jt] = prof01.Jt * u"mm^4") : (dims[:Jt] = nothing) # torsní moment setrvačnosti [mm^4]
+            end
+            if "J" in args
+                prof01.J !== nothing ? (dims[:J] = prof01.J * u"mm^4") : (dims[:J] = nothing) # torsní moment setrvačnosti [mm^4]
+            end
+            if "Wk" in args
+                prof01.Wk !== nothing ? (dims[:Wk] = prof01.Wk * u"mm^3") : (dims[:Wk] = nothing) # kroutící průřezový modul [mm^3]
             end
             prof01.ix !== nothing ? (dims[:ix] = prof01.ix * u"mm") : (dims[:ix] = nothing) # poloměr setrvačnosti pro osu x [mm]
             prof01.iy !== nothing ? (dims[:iy] = prof01.iy * u"mm") : (dims[:iy] = nothing) # poloměr setrvačnosti pro osu y [mm]

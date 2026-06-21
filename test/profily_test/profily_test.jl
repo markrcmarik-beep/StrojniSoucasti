@@ -109,6 +109,7 @@ dims6 = profily("I 80")
 @test dims6[:h] == 80u"mm"
 @test haskey(dims6, :info)
 @test haskey(dims6, :b)
+@test !haskey(dims6, :S) # vlastnost S není přítomna
 dims6a = profily("I80 ČSN425550")
 @test haskey(dims6a, :info)
 @test dims6a[:info] == "I"
