@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vrátí body definující obrys profilu I podle normy ČSN 42 5550.
 #
-# ver: 2026-05-17
+# ver: 2026-06-22
 ## Funkce: body_I_CSN425550()
 ## Autor: Martin
 #
@@ -32,7 +32,8 @@
 ## Použité uživatelské funkce:
 #
 ## Příklad:
-#
+# prof = profil_I_CSN425550("I80")
+# body = body_I_CSN425550(prof, uchyceni="stred", natoceni=30)
 ###############################################################
 ## Použité proměnné vnitřní:
 #

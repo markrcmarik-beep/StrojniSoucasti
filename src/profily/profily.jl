@@ -166,6 +166,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     # -----------------------------------------------------------
     if profile == "I"
         prof01 = StrojniSoucasti.profil_I_CSN425550(clean)
+            body01 = body_I_CSN425550(prof01, "ld", natoceni=0) # získáme body pro obrys profilu I dle ČSN 425550
         if prof01 !== nothing
             dims[:info] = "I" # informace o typu profilu
             dims[:serie] = prof01.serie # informace o sérii profilu (např. 80 pro I 80)
@@ -230,8 +231,13 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 prof01.Imax !== nothing ? (dims[:Imax] = prof01.Imax * u"mm^4") : (dims[:Imax] = profilyIminmax4natoceni(Ix, Iy, Ixy, natoceni)[2]) # maximální moment setrvačnosti [mm^4]
             end
             if "Wo" in args # pokud je požadováno vypočítat průřezový modul pro ohyb
-
-                prof01.Wo !== nothing ? (dims[:Wo] = prof01.Wo * u"mm^3") : (dims[:Wo] = profilyWo4natoceni(Ix, Iy, Ixy, natoceni)) # průřezový modul pro ohyb (dle natoceni) [mm^3]
+                if natoceni == 0 || natoceni == 180
+                    prof01.Wx !== nothing ? (dims[:Wo] = prof01.Wx * u"mm^3") : nothing # průřezový modul pro ohyb (dle natoceni) [mm^3]
+                elseif natoceni == 90 || natoceni == 270
+                    prof01.Wy !== nothing ? (dims[:Wo] = prof01.Wy * u"mm^3") : nothing # průřezový modul pro ohyb (dle natoceni) [mm^3]
+                else
+                    prof01.Wo !== nothing ? (dims[:Wo] = prof01.Wo * u"mm^3") : (dims[:Wo] = profilyWo4natoceni(Ix, Iy, Ixy, natoceni)) # průřezový modul pro ohyb (dle natoceni) [mm^3]
+                end
             end
             if "Wx" in args # pokud je požadováno vypočítat průřezový modul pro ohyb pro osu x
                 prof01.Wx !== nothing ? (dims[:Wx] = prof01.Wx * u"mm^3") : (dims[:Wx] = nothing) # průřezový modul pro ohyb pro osu x [mm^3]
