@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-24
+﻿# ver: 2026-06-22
 using Test
 
     # materialy
@@ -38,6 +38,7 @@ using Test
     include("profily_test/profilyvlcnJ_test.jl")
     include("profily_test/torsion_J_TR4HR_numeric_test.jl")
     include("profily_test/profilyvlcnWk_test.jl")
+    include("profily_test/profilyIminmax_test.jl")
     include("profily_test/profilyvlcnIx_test.jl")
     include("profily_test/profilyvlcnWo_test.jl")
     include("profily_test/hrana_test.jl")

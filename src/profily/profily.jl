@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-06-20
+# ver: 2026-06-22
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -142,6 +142,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
         zkratka_extracted = zkratka
         # vstup začíná jedním z požadovaných prefixů, např. "PLO", "OBD", "KR", "TRKR", "4HR", "6HR", "TR4HR", "IPE", "I"
         dims[:standard] = norma # uložíme normu do dims (např. "ČSN425550")
+        dims[:standard_info] = "Norma pro profil, např. ČSN425550" # uložíme informaci o normě do dims
         dims[:zkratka] = zkratka # uložíme původní informaci o normě (např. "ČSN") do dims
         if zkratka !== nothing
             dims[:zkratka_info] = "Zkratka pro normu, např. $(zkratka)"
@@ -178,10 +179,10 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             prof01.standard !== nothing ? (dims[:standard] = prof01.standard) : nothing # informace o normě (např. "ČSN 425550")
             prof01.zkratka !== nothing ? (dims[:zkratka] = prof01.zkratka) : nothing # zkratka pro rychlejší hledání v tabulce (např. "ČSN")
             prof01.material !== nothing ? (dims[:material] = prof01.material) : nothing # informace o materiálu (např. ["10 000", "10 370.1", "11 373", "11 375", "11 523"])
-            if "S" in args
+            if "S" in args # pokud je požadováno vypočítat plochu průřezu
                 hasproperty(prof01, :S) && prof01.S !== nothing ? (dims[:S] = prof01.S * u"mm^2") : (dims[:S] = nothing) # plocha průřezu [mm^2]
             end
-            if "I" in args
+            if "I" in args # pokud je požadováno vypočítat moment setrvačnosti dle natočení
                 if natoceni == 0 || natoceni == 180
                     prof01.Ix !== nothing ? (dims[:I] = prof01.Ix * u"mm^4") : (dims[:I] = nothing) # moment setrvačnosti (dle natoceni) [mm^4]
                 elseif natoceni == 90 || natoceni == 270
@@ -200,14 +201,14 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 end
                 prof01.I !== nothing ? (dims[:I] = prof01.I * u"mm^4") : (dims[:I] = nothing) # moment setrvačnosti (dle natoceni) [mm^4]
             end
-            if "Ix" in args
+            if "Ix" in args # pokud je požadováno vypočítat moment setrvačnosti Ix
                 prof01.Ix !== nothing ? (dims[:Ix] = prof01.Ix * u"mm^4") : (dims[:Ix] = nothing) # moment setrvačnosti Ix [mm^4]
             end
-            if "Iy" in args
+            if "Iy" in args # pokud je požadováno vypočítat moment setrvačnosti Iy
                 prof01.Iy !== nothing ? (dims[:Iy] = prof01.Iy * u"mm^4") : (dims[:Iy] = nothing) # moment setrvačnosti Iy [mm^4]
             end
-            if "Ixy" in args
-                if natoceni == 0
+            if "Ixy" in args # pokud je požadováno vypočítat vzájemný moment setrvačnosti Ixy
+                if natoceni == 0 || natoceni == 180 || natoceni == 90 || natoceni == 270
                     prof01.Ixy !== nothing ? (dims[:Ixy] = prof01.Ixy * u"mm^4") : (dims[:Ixy] = nothing) # vzájemný moment setrvačnosti Ixy [mm^4]
                 else
                     # Výpočet vzájemného momentu setrvačnosti pro dané natočení (dle vzorce pro rotaci souřadnic)
@@ -222,32 +223,32 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                     end
                 end
             end
-            if "Imin" in args
+            if "Imin" in args # pokud je požadováno vypočítat minimální moment setrvačnosti
                 prof01.Imin !== nothing ? (dims[:Imin] = prof01.Imin * u"mm^4") : (dims[:Imin] = profilyIminmax4natoceni(Ix, Iy, Ixy, natoceni)[1]) # minimální moment setrvačnosti [mm^4]
             end
-            if "Imax" in args
+            if "Imax" in args # pokud je požadováno vypočítat maximální moment setrvačnosti
                 prof01.Imax !== nothing ? (dims[:Imax] = prof01.Imax * u"mm^4") : (dims[:Imax] = profilyIminmax4natoceni(Ix, Iy, Ixy, natoceni)[2]) # maximální moment setrvačnosti [mm^4]
             end
-            if "Wo" in args
+            if "Wo" in args # pokud je požadováno vypočítat průřezový modul pro ohyb
 
                 prof01.Wo !== nothing ? (dims[:Wo] = prof01.Wo * u"mm^3") : (dims[:Wo] = profilyWo4natoceni(Ix, Iy, Ixy, natoceni)) # průřezový modul pro ohyb (dle natoceni) [mm^3]
             end
-            if "Wx" in args
+            if "Wx" in args # pokud je požadováno vypočítat průřezový modul pro ohyb pro osu x
                 prof01.Wx !== nothing ? (dims[:Wx] = prof01.Wx * u"mm^3") : (dims[:Wx] = nothing) # průřezový modul pro ohyb pro osu x [mm^3]
             end
-            if "Wy" in args
+            if "Wy" in args # pokud je požadováno vypočítat průřezový modul pro ohyb pro osu y
                 prof01.Wy !== nothing ? (dims[:Wy] = prof01.Wy * u"mm^3") : (dims[:Wy] = nothing) # průřezový modul pro ohyb pro osu y [mm^3]
             end
-            if "Jp" in args
+            if "Jp" in args # pokud je požadováno vypočítat polární moment setrvačnosti
                 prof01.Jp !== nothing ? (dims[:Jp] = prof01.Jp * u"mm^4") : (dims[:Jp] = nothing) # polární moment setrvačnosti [mm^4]
             end
-            if "Jt" in args
+            if "Jt" in args # pokud je požadováno vypočítat torsní moment setrvačnosti
                 prof01.Jt !== nothing ? (dims[:Jt] = prof01.Jt * u"mm^4") : (dims[:Jt] = nothing) # torsní moment setrvačnosti [mm^4]
             end
-            if "J" in args
+            if "J" in args # pokud je požadováno vypočítat torsní moment setrvačnosti
                 prof01.J !== nothing ? (dims[:J] = prof01.J * u"mm^4") : (dims[:J] = nothing) # torsní moment setrvačnosti [mm^4]
             end
-            if "Wk" in args
+            if "Wk" in args # pokud je požadováno vypočítat kroutící průřezový modul
                 prof01.Wk !== nothing ? (dims[:Wk] = prof01.Wk * u"mm^3") : (dims[:Wk] = nothing) # kroutící průřezový modul [mm^3]
             end
             prof01.ix !== nothing ? (dims[:ix] = prof01.ix * u"mm") : (dims[:ix] = nothing) # poloměr setrvačnosti pro osu x [mm]
