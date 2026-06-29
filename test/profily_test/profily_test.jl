@@ -165,8 +165,11 @@ dims6 = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I"
 @test dims6[:Imax] == 778000u"mm^4"
 @test dims6[:I] == 778000u"mm^4"
 @test dims6[:Wx] == 19500u"mm^3"
-@test dims6[:Wy] = 3000u"mm^3"
-println(dims6[:Wy])
+@test dims6[:Wy] == 3000u"mm^3"
+@test dims6[:Jp] === nothing
+@test dims6[:Jt] === nothing
+@test dims6[:J] === nothing
+@test dims6[:Wk] === nothing
 
 dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"
