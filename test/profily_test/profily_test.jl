@@ -1,4 +1,4 @@
-# ver: 2026-06-20
+# ver: 2026-06-28
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -121,6 +121,52 @@ dims6b = profily("I 80 ČSN425550")
 @test haskey(dims6b, :info)
 dims6c = profily("I 80 ČSN 42 5550")
 @test haskey(dims6c, :info)
+dims6d = profily("I 80 ČSN 42 5550", "S")
+@test dims6d[:S] == 758u"mm^2"
+@test !haskey(dims6d, :Ix) # vlastnost Ix není přítomna
+@test !haskey(dims6d, :Iy) # vlastnost Iy není přítomna
+dims6e = profily("I 80 ČSN 42 5550", "Ix")
+@test !haskey(dims6e, :S) # vlastnost S není přítomna
+@test dims6e[:Ix] == 778000u"mm^4"
+@test !haskey(dims6e, :Iy) # vlastnost Iy není přítomna
+dims6f = profily("I 80 ČSN 42 5550", "S", "Ix")
+@test dims6f[:S] == 758u"mm^2"
+@test dims6f[:Ix] == 778000u"mm^4"
+@test !haskey(dims6f, :Iy) # vlastnost Iy není přítomna
+dims6 = profily("I 80 ČSN 42 5550", "Iy")
+@test !haskey(dims6, :S) # vlastnost S není přítomna
+@test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
+@test dims6[:Iy] == 62900u"mm^4"
+dims6 = profily("I 80 ČSN 42 5550", "Wx")
+@test !haskey(dims6, :S) # vlastnost S není přítomna
+@test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
+@test !haskey(dims6, :Iy) # vlastnost Iy není přítomna
+@test !haskey(dims6, :Ixy) # vlastnost Ixy není přítomna
+@test !haskey(dims6, :Imin)
+@test !haskey(dims6, :Imax)
+@test !haskey(dims6, :I) # vlastnost I není přítomna
+@test dims6[:Wx] == 19500u"mm^3"
+@test !haskey(dims6, :Wy) # vlastnost Wy není přítomna
+@test !haskey(dims6, :Wo) # vlastnost Wo není přítomna
+@test !haskey(dims6, :Jp) # vlastnost Jp není přítomna
+@test !haskey(dims6, :Jt) # vlastnost Jt není přítomna
+@test !haskey(dims6, :J) # vlastnost J není přítomna
+@test !haskey(dims6, :Wk) # vlastnost Wk není přítomna
+dims6g = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy")
+@test dims6g[:S] == 758u"mm^2"
+@test dims6g[:Ix] == 778000u"mm^4"
+@test dims6g[:Iy] == 62900u"mm^4"
+dims6 = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "Wx", "Wy", "Wo", "Jp", "Jt", "J", "Wk")
+@test dims6[:S] == 758u"mm^2"
+@test dims6[:Ix] == 778000u"mm^4"
+@test dims6[:Iy] == 62900u"mm^4"
+@test dims6[:Ixy] == 0u"mm^4"
+@test dims6[:Imin] == 62900u"mm^4"
+@test dims6[:Imax] == 778000u"mm^4"
+@test dims6[:I] == 778000u"mm^4"
+@test dims6[:Wx] == 19500u"mm^3"
+@test dims6[:Wy] = 3000u"mm^3"
+println(dims6[:Wy])
 
 dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"

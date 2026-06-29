@@ -256,12 +256,10 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         Ixy, # Ixy - kvadratický moment [mm^4]
         "mm^4",
         "kvadratický moment [mm^4]",
-        haskey(row, "Imin") ? Float64(get(row, "Imin", 0.0)) : 
-        ((Ix!==nothing && Iy!==nothing && Ixy!==nothing) ? profilyIminmax(Ix, Iy, Ixy)[1] : nothing), # Imin - minimální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        haskey(row, "Imin") ? Float64(get(row, "Imin", 0.0)) : ((Ix!==nothing && Iy!==nothing && Ixy!==nothing) ? profilyIminmax(Ix, Iy, Ixy)[1] : nothing), # Imin - minimální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
         "mm^4",
         "minimální moment setrvačnosti [mm^4]",
-        haskey(row, "Imax") ? Float64(get(row, "Imax", 0.0)) : 
-        ((Ix!==nothing && Iy!==nothing && Ixy!==nothing) ? profilyIminmax(Ix, Iy, Ixy)[2] : nothing), # Imax - maximální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
+        haskey(row, "Imax") ? Float64(get(row, "Imax", 0.0)) : ((Ix!==nothing && Iy!==nothing && Ixy!==nothing) ? profilyIminmax(Ix, Iy, Ixy)[2] : nothing), # Imax - maximální moment setrvačnosti [mm^4] - zatím není v tabulce, bude doplněno později
         "mm^4",
         "maximální moment setrvačnosti [mm^4]",
         haskey(row, "Wy") ? Float64(get(row, "Wy", 0.0)) : nothing, # Wy - prurezovy modul podle osy y [mm^3]
