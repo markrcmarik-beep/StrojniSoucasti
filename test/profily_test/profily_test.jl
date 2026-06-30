@@ -1,4 +1,4 @@
-# ver: 2026-06-28
+# ver: 2026-06-30
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -102,42 +102,74 @@ dims5 = profily("KR 30", "S")
 @test dims5[:info] == "KR"
 @test dims5[:D] == 30u"mm"
 
-dims6 = profily("I 80")
-@test haskey(dims6, :info)
-@test dims6[:info] == "I"
-@test dims6[:b] == 42u"mm"
-@test dims6[:h] == 80u"mm"
-@test haskey(dims6, :info)
-@test haskey(dims6, :b)
-@test !haskey(dims6, :S) # vlastnost S není přítomna
-dims6a = profily("I80 ČSN425550")
-@test haskey(dims6a, :info)
-@test dims6a[:info] == "I"
-@test dims6a[:b] == 42u"mm"
-@test dims6a[:h] == 80u"mm"
-@test dims6a[:standard] == "ČSN425550"
-@test dims6a[:zkratka] == "\u010CSN"
-dims6b = profily("I 80 ČSN425550")
-@test haskey(dims6b, :info)
-dims6c = profily("I 80 ČSN 42 5550")
-@test haskey(dims6c, :info)
+i80_material = ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
+
+function _test_i80_rozmery(dims, material)
+    @test haskey(dims, :info)
+    @test haskey(dims, :b)
+    @test dims[:info] == "I"
+    @test dims[:b] == 42u"mm"
+    @test dims[:h] == 80u"mm"
+    @test dims[:t1] == 3.9u"mm"
+    @test dims[:t2] == 5.9u"mm"
+    @test dims[:R] == 3.9u"mm"
+    @test dims[:R1] == 2.3u"mm"
+    @test dims[:m] == 5.94u"kg" / u"m"
+    @test dims[:standard] == "ČSN425550"
+    @test dims[:zkratka] == "ČSN"
+    @test dims[:material] == material
+    @test !haskey(dims, :Sx)
+    @test !haskey(dims, :sx)
+end
+
+i80_variants = (
+    "I80",
+    "I 80",
+    "I\t80",
+    "I80.0",
+    "I 80.0",
+    "I80 ČSN",
+    "I 80 ČSN",
+    "I80 ČSN425550",
+    "I 80 ČSN425550",
+    "I80 ČSN 42 5550",
+    "I 80 ČSN 42 5550",
+)
+
+for i80_name in i80_variants
+    @testset "I 80 - $(repr(i80_name))" begin
+        dims6 = profily(i80_name)
+        _test_i80_rozmery(dims6, i80_material)
+        @test !haskey(dims6, :S) # vlastnost S není přítomna
+        @test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
+        @test !haskey(dims6, :Iy) # vlastnost Iy není přítomna
+        @test !haskey(dims6, :Wx) # vlastnost Wx není přítomna
+        @test !haskey(dims6, :Wy) # vlastnost Wy není přítomna
+    end
+end
+
 dims6d = profily("I 80 ČSN 42 5550", "S")
+_test_i80_rozmery(dims6d, i80_material)
 @test dims6d[:S] == 758u"mm^2"
 @test !haskey(dims6d, :Ix) # vlastnost Ix není přítomna
 @test !haskey(dims6d, :Iy) # vlastnost Iy není přítomna
 dims6e = profily("I 80 ČSN 42 5550", "Ix")
+_test_i80_rozmery(dims6e, i80_material)
 @test !haskey(dims6e, :S) # vlastnost S není přítomna
 @test dims6e[:Ix] == 778000u"mm^4"
 @test !haskey(dims6e, :Iy) # vlastnost Iy není přítomna
 dims6f = profily("I 80 ČSN 42 5550", "S", "Ix")
+_test_i80_rozmery(dims6f, i80_material)
 @test dims6f[:S] == 758u"mm^2"
 @test dims6f[:Ix] == 778000u"mm^4"
 @test !haskey(dims6f, :Iy) # vlastnost Iy není přítomna
 dims6 = profily("I 80 ČSN 42 5550", "Iy")
+_test_i80_rozmery(dims6, i80_material)
 @test !haskey(dims6, :S) # vlastnost S není přítomna
 @test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
 @test dims6[:Iy] == 62900u"mm^4"
 dims6 = profily("I 80 ČSN 42 5550", "Wx")
+_test_i80_rozmery(dims6, i80_material)
 @test !haskey(dims6, :S) # vlastnost S není přítomna
 @test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
 @test !haskey(dims6, :Iy) # vlastnost Iy není přítomna
@@ -153,10 +185,12 @@ dims6 = profily("I 80 ČSN 42 5550", "Wx")
 @test !haskey(dims6, :J) # vlastnost J není přítomna
 @test !haskey(dims6, :Wk) # vlastnost Wk není přítomna
 dims6g = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy")
+_test_i80_rozmery(dims6g, i80_material)
 @test dims6g[:S] == 758u"mm^2"
 @test dims6g[:Ix] == 778000u"mm^4"
 @test dims6g[:Iy] == 62900u"mm^4"
-dims6 = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "Wx", "Wy", "Wo", "Jp", "Jt", "J", "Wk")
+dims6 = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "Wx", "Wy", "Wo", "Jp", "Jt", "J", "Wk", "ix", "iy")
+_test_i80_rozmery(dims6, i80_material)
 @test dims6[:S] == 758u"mm^2"
 @test dims6[:Ix] == 778000u"mm^4"
 @test dims6[:Iy] == 62900u"mm^4"
@@ -166,10 +200,20 @@ dims6 = profily("I 80 ČSN 42 5550", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I"
 @test dims6[:I] == 778000u"mm^4"
 @test dims6[:Wx] == 19500u"mm^3"
 @test dims6[:Wy] == 3000u"mm^3"
+@test dims6[:Wo] == 19500u"mm^3"
+@test dims6[:ix] == 32u"mm"
+@test dims6[:iy] == 9.1u"mm"
 @test dims6[:Jp] === nothing
 @test dims6[:Jt] === nothing
 @test dims6[:J] === nothing
 @test dims6[:Wk] === nothing
+
+dims6_90 = profily("I 80", "I", "Ixy", "Wo", natoceni=pi/2)
+_test_i80_rozmery(dims6_90, i80_material)
+@test dims6_90[:natoceni] == (pi/2)u"rad"
+@test dims6_90[:I] == 62900u"mm^4"
+@test dims6_90[:Ixy] == 0u"mm^4"
+@test dims6_90[:Wo] == 3000u"mm^3"
 
 dims7 = profily("IPE 80")
 @test dims7[:info] == "IPE"
