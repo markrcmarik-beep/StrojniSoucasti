@@ -62,6 +62,14 @@
 
 using Unitful
 
+"""
+    namahaniohyb(; Mo=nothing, Lo=nothing, E=nothing, Ix=nothing,
+        Wo=nothing, sigmaDo=nothing, Re=nothing, mat=nothing,
+        zatizeni::AbstractString="statický", k=nothing,
+        profil=nothing, natoceni=nothing, return_text::Bool=true)
+
+Výpočet namáhání v ohybu. Vrací slovník s výsledky a volitelně i textový výpis.
+"""
 function namahaniohyb(;
     Mo = nothing, Lo = nothing, E = nothing, Ix = nothing,
     Wo = nothing, sigmaDo = nothing, Re = nothing, mat = nothing,

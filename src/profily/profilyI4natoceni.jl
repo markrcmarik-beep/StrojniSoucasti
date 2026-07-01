@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet kvadratického momentu Ialfa pro dané natočení profilu 
 # z jeho kvadratických momentů Ix, Iy a Ixy.
-# ver: 2026-06-20
+# ver: 2026-07-01
 ## Funkce: profilyI4natoceni()
 ## Autor: Martin
 #
@@ -36,9 +36,9 @@ function profilyI4natoceni(Ix=nothing, Iy=nothing, Ixy=nothing, natoceni=0, text
         error("Musí být zadány hodnoty Ix, Iy, Ixy.")
     end
     angle = mod(natoceni, 2*pi) # Normalizace natočení do rozsahu [0, 2π)
-    Ialfa = (Ix + Iy)/2 - (Ix - Iy)/2 + cos(2*angle) - Ixy * sin(2*angle)
+    Ialfa = (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle) + Ixy * sin(2*angle)
     if text
-        vzorec = "(Ix + Iy)/2 - (Ix - Iy)/2 + cos(2*angle) - Ixy * sin(2*angle)"
+        vzorec = "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle) + Ixy * sin(2*angle)"
         return Ialfa, vzorec
     else
         return Ialfa

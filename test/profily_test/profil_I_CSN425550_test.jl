@@ -222,3 +222,5 @@ end
         end
     end
 end
+
+nothing # zkrácení výstupu v REPL, aby se nezobrazovalo všechno

@@ -1,4 +1,4 @@
-# ver: 2026-06-13
+# ver: 2026-07-01
 using Test
 using StrojniSoucasti
 
@@ -57,3 +57,5 @@ end
     @test StrojniSoucasti.profil_IPE_CSN425553("XYZ100") === nothing
     @test StrojniSoucasti.profil_IPE_CSN425553("IPE") === nothing
 end
+
+nothing

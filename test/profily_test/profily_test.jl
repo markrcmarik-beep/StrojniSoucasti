@@ -1,4 +1,4 @@
-# ver: 2026-06-30
+# ver: 2026-07-01
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -105,21 +105,23 @@ dims5 = profily("KR 30", "S")
 i80_material = ["10 000", "10 370.1", "11 373", "11 375", "11 523"]
 
 function _test_i80_rozmery(dims, material)
-    @test haskey(dims, :info)
-    @test haskey(dims, :b)
     @test dims[:info] == "I"
+    @test !haskey(dims, :a)
     @test dims[:b] == 42u"mm"
+    @test !haskey(dims, :c)
+    @test !haskey(dims, :s)
     @test dims[:h] == 80u"mm"
+    @test !haskey(dims, :t)
     @test dims[:t1] == 3.9u"mm"
     @test dims[:t2] == 5.9u"mm"
     @test dims[:R] == 3.9u"mm"
     @test dims[:R1] == 2.3u"mm"
+    @test !haskey(dims, :R2)
+    @test dims[:sp] == 14
     @test dims[:m] == 5.94u"kg" / u"m"
     @test dims[:standard] == "ČSN425550"
     @test dims[:zkratka] == "ČSN"
     @test dims[:material] == material
-    @test !haskey(dims, :Sx)
-    @test !haskey(dims, :sx)
 end
 
 i80_variants = (
@@ -143,8 +145,22 @@ for i80_name in i80_variants
         @test !haskey(dims6, :S) # vlastnost S není přítomna
         @test !haskey(dims6, :Ix) # vlastnost Ix není přítomna
         @test !haskey(dims6, :Iy) # vlastnost Iy není přítomna
+        @test !haskey(dims6, :Ixy) # vlastnost Ixy není přítomna
+        @test !haskey(dims6, :Imin) # vlastnost Imin není přítomna
+        @test !haskey(dims6, :Imax) # vlastnost Imax není přítomna
+        @test !haskey(dims6, :I) # vlastnost I není přítomna
         @test !haskey(dims6, :Wx) # vlastnost Wx není přítomna
         @test !haskey(dims6, :Wy) # vlastnost Wy není přítomna
+        @test !haskey(dims6, :Wo) # vlastnost Wo není přítomna
+        @test !haskey(dims6, :Jp) # vlastnost Jp není přítomna
+        @test !haskey(dims6, :Jt) # vlastnost Jt není přítomna
+        @test !haskey(dims6, :J) # vlastnost J není přítomna
+        @test !haskey(dims6, :Wk) # vlastnost Wk není přítomna
+        @test !haskey(dims6, :Sx) # vlastnost Sx není přítomna
+        @test !haskey(dims6, :Sy) # vlastnost Sy není přítomna
+        @test !haskey(dims6, :ix) # vlastnost ix není přítomna
+        @test !haskey(dims6, :iy) # vlastnost iy není přítomna
+        @test !haskey(dims6, :sx) # vlastnost sx není přítomna
     end
 end
 
@@ -237,3 +253,5 @@ dims7c = profily("IPE 80", "Ix", natoceni=10*pi/180)
 @test dims7c[:b] == 46u"mm"
 
 end
+
+nothing # zkrácení výstupu v REPL, aby se nezobrazovalo všechno
