@@ -1,4 +1,4 @@
-# ver: 2026-07-01
+# ver: 2026-07-02
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -45,44 +45,45 @@ dims2a = profily("PLO20x10", "S", natoceni=45*pi/180) # rozměry + vlastnosti + 
 @test dims2a[:S] == 200u"mm^2"
 #@test dims2a[:natoceni] == 45*pi/180
 
-dims33 = profily("TR4HR 50x30x5", "Ix") # rozměry + vlastnosti
-dims3a = profily("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti
+dims33 = profily("TR4HR 50x35x5", "Ix") # rozměry + vlastnosti
+dims3a = profily("TR4HR 50x35x5", "S", "Ix") # rozměry + vlastnosti
 @test haskey(dims3a, :a)
 @test haskey(dims3a, :b)
 @test haskey(dims3a, :t)
 @test haskey(dims3a, :info)
 @test haskey(dims3a, :R)
 @test haskey(dims3a, :S) # vlastnost S je přítomna
-@test typeof(dims3a[:S]) <: Unitful.AbstractQuantity # S je s jednotkou
+@test dims3a[:S] === nothing
 @test haskey(dims3a, :Ix)
-@test typeof(dims3a[:Ix]) <: Unitful.AbstractQuantity # Ix je s jednotkou
+@test dims3a[:Ix] === nothing
 @test dims3a[:info] == "TR4HR"
 @test dims3a[:a] == 50u"mm"
-@test dims3a[:b] == 30u"mm"
+@test dims3a[:b] == 35u"mm"
 @test dims3a[:t] == 5u"mm"
-@test dims3a[:R] == 0u"mm"
-dims3b = profily("TR4HR 50x30x5", "S", "Ix", natoceni=30*pi/180) # rozměry + vlastnosti
+@test dims3a[:R] == 7.953737880970119u"mm"
+dims3b = profily("TR4HR 50x35x5", "S", "Ix", natoceni=30*pi/180) # rozměry + vlastnosti
 @test haskey(dims3b, :a)
 @test haskey(dims3b, :b)
 @test haskey(dims3b, :t)
 @test haskey(dims3b, :info)
 @test haskey(dims3b, :R)
 @test haskey(dims3b, :S) # vlastnost S je přítomna
-@test typeof(dims3b[:S]) <: Unitful.AbstractQuantity # S je s jednotkou
+@test dims3b[:S] === nothing
 @test haskey(dims3b, :Ix)
-@test typeof(dims3b[:Ix]) <: Unitful.AbstractQuantity # Ix je s jednotkou
+@test dims3b[:Ix] === nothing
+@test haskey(dims3b, :natoceni)
 @test dims3b[:info] == "TR4HR"
 @test dims3b[:a] == 50u"mm"
-@test dims3b[:b] == 30u"mm"
+@test dims3b[:b] == 35u"mm"
 @test dims3b[:t] == 5u"mm"
-@test dims3b[:R] == 0u"mm"
+@test dims3b[:R] == 7.953737880970119u"mm"
 
-dims3c = profily("TR4HR 50x30x5") # pouze rozměry
+dims3c = profily("TR4HR 50x35x5") # pouze rozměry
 @test dims3c[:info] == "TR4HR"
 @test dims3c[:a] == 50u"mm"
-@test dims3c[:b] == 30u"mm"
+@test dims3c[:b] == 35u"mm"
 @test dims3c[:t] == 5u"mm"
-@test dims3c[:R] == 0u"mm"
+@test dims3c[:R] == 7.953737880970119u"mm"
 
 dims4 = profily("4HR 50")
 @test haskey(dims4, :a)
@@ -236,21 +237,22 @@ dims7 = profily("IPE 80")
 @test dims7[:b] == 46u"mm"
 @test dims7[:h] == 80u"mm"
 @test !haskey(dims7, :S)
-#@test dims7[:S] == 764u"mm^2"
-@test dims7[:Ix] == 801000u"mm^4"
+@test !haskey(dims7, :Ix)
 
 dims7a = profily("IPE 80", "S")
 @test dims7a[:info] == "IPE"
 @test dims7a[:b] == 46u"mm"
 @test dims7a[:h] == 80u"mm"
 @test dims7a[:S] == 764u"mm^2"
-@test dims7a[:Ix] == 801000u"mm^4"
+@test !haskey(dims7a, :Ix)
 
 dims7b = profily("IPE 80", "Ix")
 
 dims7c = profily("IPE 80", "Ix", natoceni=10*pi/180)
 @test dims7c[:info] == "IPE"
 @test dims7c[:b] == 46u"mm"
+@test dims7c[:h] == 80u"mm"
+@test dims7c[:Ix] == 801000u"mm^4"
 
 end
 

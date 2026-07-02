@@ -199,84 +199,32 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     elseif profile == "IPE"
         prof01 = StrojniSoucasti.profil_IPE_CSN425553(clean)
         if prof01 !== nothing
+            body01 = StrojniSoucasti.body_IPE_CSN425553(prof01, "ld", natoceni=0) # získáme body pro obrys profilu IPE dle ČSN 425553
             dims[:info] = "IPE"
-            dims[:serie] = prof01.serie
-            prof01.b !== nothing ? (dims[:b] = prof01.b * u"mm") : nothing
-            prof01.h !== nothing ? (dims[:h] = prof01.h * u"mm") : nothing
-            prof01.t1 !== nothing ? (dims[:t1] = prof01.t1 * u"mm") : nothing
-            prof01.t2 !== nothing ? (dims[:t2] = prof01.t2 * u"mm") : nothing
-            prof01.R !== nothing ? (dims[:R] = prof01.R * u"mm") : nothing
-            prof01.R1 !== nothing ? (dims[:R1] = prof01.R1 * u"mm") : nothing
-            prof01.m !== nothing ? (dims[:m] = prof01.m * u"kg"/u"m") : nothing # hmotnost na jednotku délky [kg/m]
-            prof01.standard !== nothing ? (dims[:standard] = prof01.standard) : nothing
-            prof01.zkratka !== nothing ? (dims[:zkratka] = prof01.zkratka) : nothing # zkratka pro rychlejší hledání v tabulce
-            prof01.material !== nothing ? (dims[:material] = prof01.material) : nothing
-            if "S" in args
-                prof01.S !== nothing ? (dims[:S] = prof01.S * u"mm^2") : nothing # plocha průřezu [mm^2]
-            end
-            #prof01.S !== nothing && (dims[:S] = prof01.S * u"mm^2")
-            prof01.Ix !== nothing ? (dims[:Ix] = prof01.Ix * u"mm^4") : nothing
-            prof01.Iy !== nothing ? (dims[:Iy] = prof01.Iy * u"mm^4") : nothing
-            prof01.Ixy !== nothing ? (dims[:Ixy] = prof01.Ixy * u"mm^4") : nothing
-            prof01.Wx !== nothing ? (dims[:Wx] = prof01.Wx * u"mm^3") : nothing
-            prof01.Wy !== nothing ? (dims[:Wy] = prof01.Wy * u"mm^3") : nothing
-            prof01.ix !== nothing ? (dims[:ix] = prof01.ix * u"mm") : nothing
-            prof01.iy !== nothing ? (dims[:iy] = prof01.iy * u"mm") : nothing
-            prof01.Sx !== nothing ? (dims[:Sx] = prof01.Sx * u"mm^3") : nothing
-            prof01.sx !== nothing ? (dims[:sx] = prof01.sx * u"mm") : nothing
-            # Přidáme extrahovanou zkratku normy, pokud byla v inputu (IPE)
-            if zkratka_extracted !== nothing
+            # Přidáme extrahovanou normu, pokud byla v inputu
+            if norma_extracted !== nothing
+                dims[:standard] = norma_extracted
                 dims[:zkratka] = zkratka_extracted
-                dims[:zkratka_info] = "Zkratka pro normu, např. $(zkratka_extracted)"
-                # Pokud máme i normu s čísly, přidáme ji
-                if norma_extracted !== nothing
-                    dims[:standard] = norma_extracted
-                end
+                dims[:zkratka_info] = "Zkratka pro normu, např. ČSN, ISO, DIN"
             end
+            dims = profil_standart(dims, prof01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
+        else
+            return nothing # profil nebyl nalezen
         end
     elseif profile == "TR4HR"
         prof01 = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
         if prof01 !== nothing
+            body01 = StrojniSoucasti.body_TR4HR_CSN425720(prof01, "ld", natoceni=0) # získáme body pro obrys profilu TR4HR dle ČSN 425720
             dims[:info] = "TR4HR"
-            prof01.a !== nothing ? (dims[:a] = prof01.a * u"mm") : nothing
-            prof01.b !== nothing ? (dims[:b] = prof01.b * u"mm") : nothing
-            prof01.t !== nothing ? (dims[:t] = prof01.t * u"mm") : nothing
-            prof01.R !== nothing ? (dims[:R] = prof01.R * u"mm") : nothing
-            prof01.m !== nothing ? (dims[:m] = prof01.m * u"kg"/u"m") : nothing # hmotnost na jednotku délky [kg/m]
-            prof01.standard !== nothing ? (dims[:standard] = prof01.standard) : nothing
-            prof01.zkratka !== nothing ? (dims[:zkratka] = prof01.zkratka) : nothing # zkratka pro rychlejší hledání v tabulce
-            prof01.material !== nothing ? (dims[:material] = prof01.material) : nothing
-            if "S" in args
-                prof01.S !== nothing ? (dims[:S] = prof01.S * u"mm^2") : nothing
-            end
-            prof01.Ix !== nothing ? (dims[:Ix] = prof01.Ix * u"mm^4") : nothing
-            prof01.Iy !== nothing ? (dims[:Iy] = prof01.Iy * u"mm^4") : nothing
-            prof01.Wx !== nothing ? (dims[:Wx] = prof01.Wx * u"mm^3") : nothing
-            prof01.Wy !== nothing ? (dims[:Wy] = prof01.Wy * u"mm^3") : nothing
-            prof01.ix !== nothing ? (dims[:ix] = prof01.ix * u"mm") : nothing
-            prof01.iy !== nothing ? (dims[:iy] = prof01.iy * u"mm") : nothing
-            prof01.Sx !== nothing ? (dims[:Sx] = prof01.Sx * u"mm^3") : nothing
-            prof01.sx !== nothing ? (dims[:sx] = prof01.sx * u"mm") : nothing
-            # Přidáme extrahovanou zkratku normy, pokud byla v inputu (TR4HR)
-            if zkratka_extracted !== nothing
+            # Přidáme extrahovanou normu, pokud byla v inputu
+            if norma_extracted !== nothing
+                dims[:standard] = norma_extracted
                 dims[:zkratka] = zkratka_extracted
-                dims[:zkratka_info] = "Zkratka pro normu, např. $(zkratka_extracted)"
-                # Pokud máme i normu s čísly, přidáme ji
-                if norma_extracted !== nothing
-                    dims[:standard] = norma_extracted
-                end
+                dims[:zkratka_info] = "Zkratka pro normu, např. ČSN, ISO, DIN"
             end
+            dims = profil_standart(dims, prof01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
         else
-            dims = StrojniSoucasti.profilyCSN(clean)
-            # Přidáme extrahovanou zkratku normy, pokud byla v inputu
-            if dims !== nothing && zkratka_extracted !== nothing
-                dims[:zkratka] = zkratka_extracted
-                dims[:zkratka_info] = "Zkratka pro normu, např. $(zkratka_extracted)"
-                # Pokud máme i normu s čísly, přidáme ji
-                if norma_extracted !== nothing
-                    dims[:standard] = norma_extracted
-                end
-            end
+            return nothing # profil nebyl nalezen
         end
     elseif profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
         dims = StrojniSoucasti.profilyCSN(clean)
@@ -339,7 +287,9 @@ end
 # Pomocná funkce pro standardní profily (I, IPE, TR4HR, PLO, OBD, KR, TRKR, 4HR, 6HR)
 function profil_standart(dims, prof01, inputStr, args, natoceni)
     if prof01 !== nothing
-        dims[:serie] = prof01.serie # informace o sérii profilu (např. 80 pro I 80)
+        if hasproperty(prof01, :serie)
+            prof01.serie !== nothing ? dims[:serie] = prof01.serie : nothing # informace o sérii profilu (např. 80 pro I 80)
+        end
         # -----------------------------------------------------------
         # Rozměry profilu (a, b, c, d, d1, d2, e, s, h, t, t1, t2, R, R1, R2, sp, m, standard, zkratka, material)
         if hasproperty(prof01, :a)
