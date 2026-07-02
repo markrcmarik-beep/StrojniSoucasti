@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-06-22
+# ver: 2026-07-02
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -53,6 +53,7 @@ include("profily/profilyvlcnJ.jl")
 include("profily/profilyvlcnWk.jl")
 include("profily/profilyvlcnIx.jl")
 include("profily/profilyvlcnWo.jl")
+include("profily/profilyWo4natoceni.jl") # prurezovy modul pro ohyb dle natoceni
 include("profily/profilyI4natoceni.jl") # kvadratický moment pro dané natočení profilu z jeho kvadratických momentů Ix, Iy a Ixy
 include("profily/profilyIxy4natoceni.jl") # kvadratický moment Ixy pro dané natočení profilu z jeho kvadratických momentů Ix, Iy a Ixy
 include("profily/profilyIminmax.jl") # minimální a maximální kvadratický moment pro dané natočení profilu z jeho kvadratických momentů Ix, Iy a Ixy
@@ -62,6 +63,7 @@ include("profily/polygon2plocha.jl") # plocha obecneho tvaru z obrysovych bodu
 include("profily/polygon2kvadratickymoment.jl") # kvadraticke momenty z obrysovych bodu
 include("profily/polygon2polarnimoment.jl") # polarni moment z obrysovych bodu
 include("profily/polygon_metrics.jl") # plocha, teziste, momenty setrvacnosti z obrysovych bodu
+include("profily/polygon2eonatoceni.jl") # vzdalenost nejvzdalenejsiho vlakna od neutralni osy dle natoceni
 include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bodu
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet průřezového modulu pro ohyb Wo pro dané natočení profilu
-# z jeho kvadratických momentů Ix, Iy a Ixy.
+# z kvadratického momentu I, vzdálenosti nejvzdálenějšího vlákna od neutrální osy eo.
 # ver: 2026-06-20
 ## Funkce: profilyWo4natoceni()
 ## Autor: Martin
@@ -11,12 +11,10 @@
 # StrojniSoucasti/src/profily/profilyWo4natoceni.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyWo4natoceni(vstupni_promenne)
+## vystupni_promenne = profilyWo4natoceni(I, eo, text=false)
 ## Vstupní proměnné:
-# Ix – kvadratický moment pro osu x [mm⁴]
-# Iy – kvadratický moment pro osu y [mm⁴]
-# Ixy – kvadratický moment součinitele [mm⁴] (volitelný, výchozí hodnota 0)
-# natoceni – úhel natočení profilu [rad] (volitelný, výchozí hodnota 0)
+# I - kvadratický moment profilu pro dané natočení [mm^4]
+# eo - vzdálenost nejvzdálenějšího vlákna od neutrální osy pro dané natočení [mm]
 # text – boolean, zda vrátit i vzorec jako text (volitelný, výchozí hodnota false)
 ## Výstupní proměnné:
 # Wo – průřezový modul pro ohyb pro dané natočení [mm³]
@@ -30,16 +28,14 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyWo4natoceni(Ix=nothing, Iy=nothing, Ixy=nothing, Wx=nothing, Wy=nothing, natoceni=0, text::Bool=false)
-    if Ix === nothing || Iy === nothing || Ixy === nothing
-        error("Musí být zadány hodnoty Ix, Iy a Ixy.")
+function profilyWo4natoceni(I=nothing, eo=nothing, text::Bool=false)
+    if I === nothing || eo === nothing
+        error("Musí být zadány hodnoty I a eo.")
     end
-    angle = mod(natoceni, 2*pi) # Normalizace natočení do rozsahu [0, 2π)
-    Wo = - (Ix - Iy)/2 * sin(2*angle) + Ixy * cos(2*angle) # chybný vzorec, správně by mělo být Wo = Ialfa / c, kde c je vzdálenost od neutrální osy k okraji profilu
-    #Wo =
+    Wo = I / eo # průřezový modul pro ohyb dle natoceni
     if text
-        vzorec = "- (Ix - Iy)/2 * sin(2*angle) + Ixy * cos(2*angle)"
-        return nothing, vzorec
+        vzorec = "I / eo"
+        return Wo, vzorec
     else
         return Wo
     end

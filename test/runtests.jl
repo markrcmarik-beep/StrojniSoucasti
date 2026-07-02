@@ -1,4 +1,4 @@
-﻿# ver: 2026-06-22
+# ver: 2026-07-02
 using Test
 
     # materialy
@@ -46,6 +46,7 @@ using Test
     include("profily_test/polygon2kvadratickymoment_test.jl")
     include("profily_test/polygon2polarnimoment_test.jl")
     include("profily_test/polygon_metrics_test.jl")
+    include("profily_test/polygon2eonatoceni_test.jl")
     include("profily_test/polygon2prurezovymodulkrut_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
