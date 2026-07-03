@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet plochy pro různé tvary dle zkratky označeni.
-# ver: 2026-05-21
+# ver: 2026-07-03
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -62,7 +62,12 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
         D = getn(:D)
-        return pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        d = getn(:d)
+        if d == 0
+            return pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        else
+            return pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        end
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová

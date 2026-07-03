@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vypocet prurezoveho modulu v krutu obecneho tvaru
 # (jednoducheho polygonu) pomoci bodu na obrysu.
-# ver: 2026-05-19
+# ver: 2026-07-03
 ## Funkce: polygon2prurezovymodulkrut()
 ## Autor: Martin
 #
@@ -27,6 +27,10 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+
+function polygon2prurezovymodulkrut(body::Nothing)
+    return nothing
+end
 
 function polygon2prurezovymodulkrut(body::Union{AbstractVector,AbstractMatrix})
     m = polygon_metrics(body)

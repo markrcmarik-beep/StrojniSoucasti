@@ -1,4 +1,4 @@
-# ver: 2026-04-24
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -50,8 +50,12 @@ using StrojniSoucasti, Unitful
     @test isapprox(M7.Ix, 392.0; atol=1e-9)
     @test isapprox(M7.Iy, 592.0; atol=1e-9)
 
+    @test StrojniSoucasti.polygon2kvadratickymoment(nothing) === nothing
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2kvadratickymoment([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2kvadratickymoment([0 0 0; 1 1 1; 2 2 2])
     @test_throws ArgumentError StrojniSoucasti.polygon2kvadratickymoment([(0, 0), (1, 0), (2, 0)])
 end
+
+nothing

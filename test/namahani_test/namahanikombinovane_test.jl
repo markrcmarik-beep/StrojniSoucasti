@@ -762,3 +762,4 @@ Závěr posouzení: Součást je bezpečná"""
 
 end
 
+nothing

@@ -1,4 +1,4 @@
-# ver: 2026-05-19
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -41,8 +41,12 @@ using StrojniSoucasti, Unitful
     Jp7 = StrojniSoucasti.polygon2polarnimoment(body7)
     @test isapprox(Jp7, 1624.0; atol=1e-9)
 
+    @test StrojniSoucasti.polygon2polarnimoment(nothing) === nothing
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2polarnimoment([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2polarnimoment([0 0 0; 1 1 1; 2 2 2])
     @test_throws ArgumentError StrojniSoucasti.polygon2polarnimoment([(0, 0), (1, 0), (2, 0)])
 end
+
+nothing

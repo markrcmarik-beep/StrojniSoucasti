@@ -25,7 +25,7 @@ dims1a = profily("PLO20.5x10 ČSN") # rozměry bez mezery
 @test dims1a[:b] == 10u"mm"
 @test !haskey(dims1a, :standard) # standard není přítomen, protože nebyla zadána norma s čísly
 @test dims1a[:zkratka] == "ČSN"
-@test dims1a[:zkratka_info] == "Zkratka pro normu, např. ČSN"
+@test dims1a[:zkratka_info] == "Zkratka pro normu, např. ČSN, ISO, DIN"
 @test !haskey(dims1a, :S) # vlastnost S není přítomna
 
 dims2 = profily("PLO 20x10", "S") # rozměry + vlastnosti
@@ -53,7 +53,7 @@ dims3a = profily("TR4HR 50x35x5", "S", "Ix") # rozměry + vlastnosti
 @test haskey(dims3a, :info)
 @test haskey(dims3a, :R)
 @test haskey(dims3a, :S) # vlastnost S je přítomna
-@test dims3a[:S] === nothing
+@test dims3a[:S] === 703.1847134222105 * u"mm^2"
 @test haskey(dims3a, :Ix)
 @test dims3a[:Ix] === nothing
 @test dims3a[:info] == "TR4HR"
@@ -68,7 +68,7 @@ dims3b = profily("TR4HR 50x35x5", "S", "Ix", natoceni=30*pi/180) # rozměry + vl
 @test haskey(dims3b, :info)
 @test haskey(dims3b, :R)
 @test haskey(dims3b, :S) # vlastnost S je přítomna
-@test dims3b[:S] === nothing
+@test dims3b[:S] === 703.1847134222105 * u"mm^2"
 @test haskey(dims3b, :Ix)
 @test dims3b[:Ix] === nothing
 @test haskey(dims3b, :natoceni)

@@ -1,4 +1,4 @@
-# ver: 2026-05-23
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti
 
@@ -18,7 +18,8 @@ using StrojniSoucasti
 
     KR_01 = Dict(
         :info => "KR",
-        :D => 20
+        :D => 20,
+        :d => 0
     )
 
     TRKR_01 = Dict(
@@ -215,3 +216,5 @@ using StrojniSoucasti
         @test_throws ErrorException StrojniSoucasti.profilyvlcnIx(PLO_01, :Wo, 0)
     end
 end
+
+nothing

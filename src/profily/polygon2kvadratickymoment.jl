@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Vypocet kvadratickych momentu plochy obecneho tvaru
 # (polygonu) pomoci bodu na obrysu.
-# ver: 2026-05-19
+# ver: 2026-07-03
 ## Funkce: polygon2kvadratickymoment()
 ## Autor: Martin
 #
@@ -28,6 +28,10 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+
+function polygon2kvadratickymoment(body::Nothing)
+    return nothing
+end
 
 function polygon2kvadratickymoment(body::Union{AbstractVector,AbstractMatrix})
     sums = _kvadraticky_moment_ring_sums(body, +1)

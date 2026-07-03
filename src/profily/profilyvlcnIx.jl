@@ -2,15 +2,15 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-05-23
-## Funkce: profilyvlcnIx()
+# ver: 2026-07-03
+## Funkce: profilyvlcnI()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnIx.jl
+# balicek/src/profily/profilyvlcnI.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyvlcnIx(vstupni_promenne)
+## vystupni_promenne = profilyvlcnI(vstupni_promenne)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru, např.:
 #    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm")
@@ -76,6 +76,18 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             end
         elseif velicina == :Iy
             return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+        elseif velicina == :I
+            if isrot(angle, 0) || isrot(angle, pi)
+                I, I_str = profilyvlcnIx(tvar1, :Ix, 0)
+                return I, I_str
+            elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
+                I, I_str = profilyvlcnIx(tvar1, :Iy, 0)
+                return I, I_str
+            else
+                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
+            end
         elseif velicina == :Imin
             Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
             Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
@@ -94,12 +106,22 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
     elseif info == "KR"
         if velicina == :Ixy
             return 0, "0"
-        elseif velicina == :Ix || velicina == :Iy
+        elseif velicina == :Ix || velicina == :Iy || velicina == :I
             D = getn(:D)
-            return pi/64*D^4, "pi/64*D^4"
+            d = getn(:d)
+            if d == 0
+                return pi/64*D^4, "pi/64*D^4"
+            else
+                return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
+            end
         elseif velicina == :Imin || velicina == :Imax
             D = getn(:D)
-            return pi/64*D^4, "pi/64*D^4"
+            d = getn(:d)
+            if d == 0
+                return pi/64*D^4, "pi/64*D^4"
+            else
+                return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
+            end
         else
             error("Nepodporovana velicina: $velicina pro tvar $info")
         end
@@ -108,7 +130,7 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
     elseif info == "TRKR"
         if velicina == :Ixy
             return 0, "0"
-        elseif velicina == :Ix || velicina == :Iy
+        elseif velicina == :Ix || velicina == :Iy || velicina == :I
             D, d = getn(:D), getn(:d)
             return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
         elseif velicina == :Imin || velicina == :Imax

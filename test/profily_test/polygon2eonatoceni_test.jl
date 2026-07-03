@@ -1,4 +1,4 @@
-# ver: 2026-07-02
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -25,9 +25,17 @@ using StrojniSoucasti, Unitful
     body_i = StrojniSoucasti.body_I_CSN425550(prof, "stred")
     @test isapprox(StrojniSoucasti.polygon2eonatoceni(body_i, 0), prof.h / 2; atol=1e-6)
     @test isapprox(StrojniSoucasti.polygon2eonatoceni(body_i, pi/2), prof.b / 2; atol=1e-6)
+    body_i2 = StrojniSoucasti.body_I_CSN425550(prof, "ld")
+    @test isapprox(StrojniSoucasti.polygon2eonatoceni(body_i2, 0), prof.h / 2; atol=1e-6)
+    @test isapprox(StrojniSoucasti.polygon2eonatoceni(body_i2, pi/2), prof.b / 2; atol=1e-6)
+    @test isapprox(StrojniSoucasti.polygon2eonatoceni(body_i2, pi/4), 43.133513652379634; atol=1e-6)
 
     @test StrojniSoucasti.polygon2eonatoceni(nothing) === nothing
+    @test StrojniSoucasti.polygon2eonatoceni(nothing, 0) === nothing
+    
     @test_throws ArgumentError StrojniSoucasti.polygon2eonatoceni([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2eonatoceni([0 0 0; 1 1 1; 2 2 2])
     @test_throws ArgumentError StrojniSoucasti.polygon2eonatoceni([(0, 0), (1, 0), (2, 0)])
 end
+
+nothing

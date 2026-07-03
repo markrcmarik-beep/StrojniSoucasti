@@ -1,4 +1,4 @@
-# ver: 2026-05-20
+# ver: 2026-07-03
 ## Funkce: profilyvlcn()
 using Test
 using StrojniSoucasti
@@ -27,7 +27,8 @@ using Unitful
     )
     KR_01 = Dict(
         :info => "KR",
-        :D => 20u"mm"
+        :D => 20u"mm",
+        :d => 0u"mm"
     )
     TRKR_01 = Dict(
         :info => "TRKR",
@@ -57,31 +58,35 @@ using Unitful
     # S – plocha průřezu
     # ------------------------------------------------------------
     @testset "S – plocha" begin
-        S, txt = StrojniSoucasti.profilyvlcn(PLO_01, :S)
+        S, txt, info = StrojniSoucasti.profilyvlcn(PLO_01, :S)
         @test ustrip(u"mm^2", S) == 200 # Test plochy pro obdélníkovou tyč 20 mm x 10 mm
         @test txt == "a*b"
-        S_bez_jednotky, txt_bez_jednotky = StrojniSoucasti.profilyvlcn(PLO_01_BEZ_JEDNOTKY, :S)
+        @test info == "plocha průřezu [mm²]"
+        S_bez_jednotky, txt_bez_jednotky, info_bez_jednotky = StrojniSoucasti.profilyvlcn(PLO_01_BEZ_JEDNOTKY, :S)
         @test S_bez_jednotky == 200u"mm^2"
         @test txt_bez_jednotky == "a*b"
+        @test info_bez_jednotky == "plocha průřezu [mm²]"
 
-        S, txt = StrojniSoucasti.profilyvlcn(PLO_02, :S)
+        S, txt, info = StrojniSoucasti.profilyvlcn(PLO_02, :S)
         @test ustrip(u"mm^2", S) >= 196.5 && ustrip(u"mm^2", S) <= 196.6
         @test txt == "a*b - 4*S(R)"
+        @test info == "plocha průřezu [mm²]"
 
-        S2, txt2 = StrojniSoucasti.profilyvlcn(TRKR_01, :S)
+        S2, txt2, info2 = StrojniSoucasti.profilyvlcn(TRKR_01, :S)
         @test S2 ≈ pi*( (20u"mm")^2 - (10u"mm")^2 )/4
         @test txt2 == "π*(D² - d²)/4"
+        @test info2 == "plocha průřezu [mm²]"
     end
     # ------------------------------------------------------------
-    # Ip – polární moment
+    # Jp – polární moment
     # ------------------------------------------------------------
-    @testset "Ip – polární moment" begin
-        Ip1, txt1 = StrojniSoucasti.profilyvlcn(PLO_02, :Ip)
-        @test Ip1 > 0u"mm^4"
+    @testset "Jp – polární moment" begin
+        Jp1, txt1 = StrojniSoucasti.profilyvlcn(PLO_02, :Jp)
+        @test Jp1 > 0u"mm^4"
         @test occursin("a*b³", txt1)
 
-        Ip2, txt2 = StrojniSoucasti.profilyvlcn(TR4HR_01, :Ip)
-        @test Ip2 > 0u"mm^4"
+        Jp2, txt2 = StrojniSoucasti.profilyvlcn(TR4HR_01, :Jp)
+        @test Jp2 > 0u"mm^4"
         @test isa(txt2, String)
     end
     # ------------------------------------------------------------
@@ -100,10 +105,8 @@ using Unitful
         Ix90, txt90 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=pi/2)
         Ix450, txt450 = StrojniSoucasti.profilyvlcn(PLO_01, :Ix, natoceni=5*pi/2)
         @test Ix0 == 20u"mm" * (10u"mm")^3 / 12
-        @test Ix90 == 10u"mm" * (20u"mm")^3 / 12
         @test Ix450 == Ix90 # Ověření periodicity natočení (450° == 90°)
         @test txt0 == "a*b^3/12"
-        @test txt90 == "b*a^3/12"
         @test txt450 == txt90 # Ověření, že vzorec pro Ix se správně mění s natočením
     end
     # ------------------------------------------------------------
@@ -117,6 +120,17 @@ using Unitful
         Iy_direct, txt_direct = StrojniSoucasti.profilyvlcnIx(PLO_01, :Iy)
         @test Iy_direct == 10 * 20^3 / 12
         @test txt_direct == "b*a^3/12"
+    end
+    # ------------------------------------------------------------
+    # I - kvadratický moment
+    # ------------------------------------------------------------
+    @testset "I – kvadratický moment" begin
+        I0, txt0 = StrojniSoucasti.profilyvlcn(PLO_01, :I, natoceni=0)
+        I90, txt90 = StrojniSoucasti.profilyvlcn(PLO_01, :I, natoceni=pi/2)
+        @test I0 == 20u"mm" * (10u"mm")^3 / 12
+        @test I90 == 10u"mm" * (20u"mm")^3 / 12
+        @test txt0 == "a*b^3/12"
+        @test txt90 == "b*a^3/12"
     end
     # ------------------------------------------------------------
     # Symetrické tvary – ověření Ix == Iy a Ixy == 0
@@ -182,3 +196,5 @@ using Unitful
     #println(S1)
 
 end
+
+nothing

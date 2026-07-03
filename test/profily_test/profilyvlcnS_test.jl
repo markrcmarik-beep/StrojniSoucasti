@@ -19,7 +19,8 @@ using StrojniSoucasti
 
     KR_01 = Dict(
         :info => "KR",
-        :D => 20
+        :D => 20,
+        :d => 0
     )
 
     TRKR_01 = Dict(
@@ -91,3 +92,5 @@ using StrojniSoucasti
         @test_throws ErrorException StrojniSoucasti.profilyvlcnS(Dict(:info => "XYZ"), :S)
     end
 end
+
+nothing

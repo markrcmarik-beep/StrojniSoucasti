@@ -107,6 +107,7 @@ function profilyCSN(inputStr::AbstractString)
                 D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
+                dims[:d] = 0 * u"mm" # d je nulové pro plný kruh
                 return true
             end
         ),

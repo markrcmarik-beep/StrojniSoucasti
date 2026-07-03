@@ -1,4 +1,4 @@
-# ver: 2026-05-21
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti
 
@@ -83,3 +83,5 @@ using StrojniSoucasti
         @test_throws ErrorException StrojniSoucasti.profilyvlcnWo(Dict(:info => "XYZ"), :Wo)
     end
 end
+
+nothing

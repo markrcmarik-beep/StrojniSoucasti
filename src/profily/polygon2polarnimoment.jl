@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Výpočet polárního momentu plochy obecného tvaru
 # (jednoduchého polygonu) pomoci bodu na obrysu.
-# ver: 2026-05-19
+# ver: 2026-07-03
 ## Funkce: polygon2polarnimoment()
 ## Autor: Martin
 #
@@ -26,6 +26,10 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+
+function polygon2polarnimoment(body::Nothing)
+    return nothing
+end
 
 function polygon2polarnimoment(body::Union{AbstractVector,AbstractMatrix})
     m = polygon2kvadratickymoment(body)
