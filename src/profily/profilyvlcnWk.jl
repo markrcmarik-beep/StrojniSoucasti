@@ -52,8 +52,14 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     # Kruhová tyč
     if info == "KR" # Kruhová tyč
         if velicina == :Wk || velicina == :Wt
-            D = getn(:D) # Průměr
-            return pi/16*D^3, "π/16*D³"
+            getv(:d) === missing ? d = 0 : d = getn(:d)
+            D = getn(:D)
+            if d == 0
+                Wk, Wk_str = pi/16*D^3, "π/16*D³"
+            else
+                Wk, Wk_str = pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            end
+            return Wk, Wk_str
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -62,7 +68,8 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info == "TRKR" # Trubka kruhová
         if velicina == :Wk || velicina == :Wt
             D, d = getn(:D), getn(:d) # Vnější a vnitřní průměr
-            return pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            Wk, Wk_str = pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            return Wk, Wk_str
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end

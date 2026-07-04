@@ -51,28 +51,35 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         a, b = getn(:a), getn(:b)
         if getv(:R) === missing
-            return a*b, "a*b" # Vrátí plochu a vzorec pro plochou tyč bez zaoblení
+            S, S_str = a*b, "a*b" # Vrátí plochu a vzorec pro plochou tyč bez zaoblení
         else
             R = getn(:R)
             Sr = StrojniSoucasti.hrana("R$(R)")
             Sr = Sr[:S]
-            return a*b-4*Sr, "a*b - 4*S(R)" # Vrátí plochu a vzorec pro plochu s odečtením zaoblení (4 zaoblení pro 4 rohy)
+            S, S_str = a*b-4*Sr, "a*b - 4*S(R)" # Vrátí plochu a vzorec pro plochu s odečtením zaoblení (4 zaoblení pro 4 rohy)
         end
+        return S, S_str
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
+        getv(:d) === missing ? d = 0 : d = getn(:d) # Pokud není zadáno, předpokládáme, že jde o plnou kruhovou tyč
         D = getn(:D)
-        d = getn(:d)
         if d == 0
-            return pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+            S, S_str = pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
         else
-            return pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+            S, S_str = pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
         end
+        return S, S_str
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
         D, d = getn(:D), getn(:d)
-        return pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        if d == 0
+            S, S_str = pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        else
+            S, S_str = pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        end
+        return S, S_str
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč

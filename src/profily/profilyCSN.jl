@@ -3,7 +3,7 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-05-30
+# ver: 2026-07-04
 ## Funkce: profilyCSN()
 ## Autor: Martin
 #
@@ -107,11 +107,13 @@ function profilyCSN(inputStr::AbstractString)
                 D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
-                dims[:d] = 0 * u"mm" # d je nulové pro plný kruh
+                #dims[:d] = 0 * u"mm" # d je nulové pro plný kruh
                 return true
             end
         ),
+        # -------------------------------------------------------
         # KR : KR{D}/{d}
+        # -------------------------------------------------------
         (
             r"^KR(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$",
             function (m)

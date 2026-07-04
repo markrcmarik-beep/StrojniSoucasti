@@ -65,13 +65,24 @@ function profilyvlcnWo(tvar1::Dict, velicina::Symbol = :Wo, natoceni=0)
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
+        getv(:d) === missing ? d = 0 : d = getn(:d) # Pokud není zadáno, předpokládáme, že jde o plnou kruhovou tyč
         D = getn(:D)
-        return pi/32*D^3, "π/32*D³"
+        if d == 0
+            Wo, Wo_str = pi/32*D^3, "π/32*D³"
+        else
+            Wo, Wo_str = pi/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
+        end
+        return Wo, Wo_str
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
         D, d = getn(:D), getn(:d)
-        return pi/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
+        if d == 0
+            Wo, Wo_str = pi/32*D^3, "π/32*D³"
+        else
+            Wo, Wo_str = pi/32*(D^4 - d^4)/D, "π/32*(D⁴ - d⁴)/D"
+        end
+        return Wo, Wo_str
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč

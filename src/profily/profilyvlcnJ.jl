@@ -90,9 +90,15 @@ function profilyvlcnJ(tvar1::Dict, velicina::Symbol = :Jt)
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
-        if velicina == :Jp || velicina == :Jt
+        if velicina == :Jp || velicina == :Jt || velicina == :J
+            getv(:d) === missing ? d = 0 : d = getn(:d)
             D = getn(:D)
-            return pi/32*D^4, "π/32*D⁴"
+            if d == 0
+                J, J_str = pi/32*D^4, "π/32*D⁴"
+            else
+                J, J_str = pi/32*(D^4 - d^4), "π/32*(D⁴ - d⁴)"
+            end
+            return J, J_str
         else
             error("Neznámá veličina: $velicina pro tvar: $info.")
         end

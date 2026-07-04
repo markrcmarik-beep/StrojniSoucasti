@@ -17,10 +17,19 @@ using StrojniSoucasti
         :R => 2
     )
 
-    KR_01 = Dict(
+    KR_01a = Dict(
         :info => "KR",
         :D => 20,
         :d => 0
+    )
+    KR_01b = Dict(
+        :info => "KR",
+        :D => 20
+    )
+    KR_02 = Dict(
+        :info => "KR",
+        :D => 20,
+        :d => 10
     )
 
     TRKR_01 = Dict(
@@ -57,9 +66,16 @@ using StrojniSoucasti
         @test isapprox(S1, 200, atol=1e-3)
         @test txt1 == "a*b"
 
-        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01)
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01a)
         @test isapprox(S2, 314.1592653589793, atol=1e-3)
         @test txt2 == "π*(D/2)²"
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01b)
+        @test isapprox(S2, 314.1592653589793, atol=1e-3)
+        @test txt2 == "π*(D/2)²"
+
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_02)
+        @test isapprox(S2, 235.61944901923448, atol=1e-3)
+        @test txt2 == "π*(D² - d²)/4"
 
         S3, txt3 = StrojniSoucasti.profilyvlcnS(TRKR_01)
         @test isapprox(S3, 235.61944901923448, atol=1e-3)

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-07-03
+# ver: 2026-07-04
 ## Funkce: profilyvlcnI()
 ## Autor: Martin
 #
@@ -35,7 +35,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
+function profilyvlcnI(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
     info = tvar1[:info] # Ziskani informace o tvaru
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
     to_num(v, name::Symbol) = begin
@@ -59,8 +59,8 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
                 return 0, "0"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
             end
         elseif velicina == :Ix
@@ -70,33 +70,33 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
                 return b*a^3/12, "b*a^3/12"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Iy
-            return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+            return profilyvlcnI(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
         elseif velicina == :I
             if isrot(angle, 0) || isrot(angle, pi)
-                I, I_str = profilyvlcnIx(tvar1, :Ix, 0)
+                I, I_str = profilyvlcnI(tvar1, :Ix, 0)
                 return I, I_str
             elseif isrot(angle, pi/2) || isrot(angle, 3*pi/2)
-                I, I_str = profilyvlcnIx(tvar1, :Iy, 0)
+                I, I_str = profilyvlcnI(tvar1, :Iy, 0)
                 return I, I_str
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Imin
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         elseif velicina == :Imax
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         else
             error("Nepodporovana velicina: $velicina pro tvar $info")
@@ -107,16 +107,16 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
         if velicina == :Ixy
             return 0, "0"
         elseif velicina == :Ix || velicina == :Iy || velicina == :I
+            getv(:d) === missing ? d = 0 : d = getn(:d)
             D = getn(:D)
-            d = getn(:d)
             if d == 0
                 return pi/64*D^4, "pi/64*D^4"
             else
                 return pi/64*(D^4 - d^4), "pi/64*(D^4 - d^4)"
             end
         elseif velicina == :Imin || velicina == :Imax
+            getv(:d) === missing ? d = 0 : d = getn(:d)
             D = getn(:D)
-            d = getn(:d)
             if d == 0
                 return pi/64*D^4, "pi/64*D^4"
             else
@@ -146,8 +146,8 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
                 return 0, "0"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
             end
         elseif velicina == :Ix
@@ -155,21 +155,21 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
                 a = getn(:a)
                 return a^4/12, "a^4/12"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Iy
-            return profilyvlcnIx(tvar1, :Ix, angle + pi/2)
+            return profilyvlcnI(tvar1, :Ix, angle + pi/2)
         elseif velicina == :Imin
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         elseif velicina == :Imax
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         else
             error("Nepodporovana velicina: $velicina pro tvar $info")
@@ -186,8 +186,8 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             if isrot(angle, 0) || isrot(angle, 2*pi/6) || isrot(angle, 4*pi/6) || isrot(angle, 6*pi/6) || isrot(angle, 8*pi/6) || isrot(angle, 10*pi/6) || isrot(angle, 12*pi/6)
                 return 0, "0"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
             end
         elseif velicina == :Ix
@@ -198,21 +198,21 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             elseif isrot(angle, pi/6) || isrot(angle, 3*pi/6) || isrot(angle, 5*pi/6) || isrot(angle, 7*pi/6) || isrot(angle, 9*pi/6) || isrot(angle, 11*pi/6)
                 return 5/96*s^4, "5/96*s^4"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Iy
-            return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+            return profilyvlcnI(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
         elseif velicina == :Imin
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         elseif velicina == :Imax
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         else
             error("Nepodporovana velicina: $velicina pro tvar $info")
@@ -229,33 +229,33 @@ function profilyvlcnIx(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
                 return 0, "0"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (-Ix+Iy)/2 * sin(2*angle), "(-Ix+Iy)/2 * sin(2*angle)"
             end
         elseif velicina == :Ix
             if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
                 return (a*b^3 - (a-2t)*(b-2t)^3) / 12, "(a*b^3/12)-((a-2t)*(b-2t)^3/12)"
             else
-                Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-                Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
+                Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+                Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
                 return (Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle), "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
             end
         elseif velicina == :Iy
             if isrot(angle, 0) || isrot(angle, pi/2) || isrot(angle, pi) || isrot(angle, 3*pi/2)
                 return (b*a^3 - (b-2t)*(a-2t)^3) / 12, "(b*a^3/12)-((b-2t)*(a-2t)^3/12)"
             else
-                return profilyvlcnIx(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
+                return profilyvlcnI(tvar1, :Ix, angle + pi/2) # Rotace Ix o 90 deg pro Iy
             end
         elseif velicina == :Imin
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         elseif velicina == :Imax
-            Ix, _ = profilyvlcnIx(tvar1, :Ix, 0)
-            Iy, _ = profilyvlcnIx(tvar1, :Iy, 0)
-            Ixy, _ = profilyvlcnIx(tvar1, :Ixy, 0)
+            Ix, _ = profilyvlcnI(tvar1, :Ix, 0)
+            Iy, _ = profilyvlcnI(tvar1, :Iy, 0)
+            Ixy, _ = profilyvlcnI(tvar1, :Ixy, 0)
             return (Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 ), "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         else
             error("Nepodporovana velicina: $velicina pro tvar $info")
