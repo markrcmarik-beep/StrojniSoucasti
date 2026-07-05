@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-06-09
+# ver: 2026-07-05
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -114,23 +114,31 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Wk - Modul v krutu [mm³]
     # -----------------------------------------------------------
     elseif velicina == :Wk  # Modul v krutu [mm³]
-        Wk_hod, Wk_str = StrojniSoucasti.profilyvlcnWk(tvar1, velicina)
+        Wk_hod, Wk_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wk)
         Wk_hod = dopln_jednotku(Wk_hod, u"mm^3")
         Wk_info = "modul v krutu [mm³]"
         return Wk_hod, Wk_str, Wk_info # Vrátí hodnotu, vzorec a informaci pro modul v krutu
     # ------------------------------------------------------------
-    # Wt - Torzní průřezový modul [mm³] (pro kruhové průřezy)
+    # Wt - Torzní průřezový modul [mm³]
     # ------------------------------------------------------------
-    elseif velicina == :Wt  # Torzní průřezový modul [mm³] (pro kruhové průřezy)
-        Wt_hod, Wt_str = StrojniSoucasti.profilyvlcnWt(tvar1)
+    elseif velicina == :Wt  # Torzní průřezový modul [mm³]
+        Wt_hod, Wt_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wk)
         Wt_hod = dopln_jednotku(Wt_hod, u"mm^3")
         Wt_info = "torzní průřezový modul [mm³]"
         return Wt_hod, Wt_str, Wt_info # Vrátí hodnotu, vzorec a informaci pro torzní průřezový modul
     # ------------------------------------------------------------
+    # Wp - Torzní průřezový modul [mm³]
+    # ------------------------------------------------------------
+    elseif velicina == :Wp  # Torzní průřezový modul [mm³]
+        Wp_hod, Wp_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wp)
+        Wp_hod = dopln_jednotku(Wp_hod, u"mm^3")
+        Wp_info = "torzní průřezový modul [mm³]"
+        return Wp_hod, Wp_str, Wp_info # Vrátí hodnotu, vzorec a informaci pro torzní průřezový modul
+    # ------------------------------------------------------------
     # Ix - Kvadratický moment průřezu pro osu x [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Ix  # Kvadratický moment [mm⁴]
-        Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnI(tvar1, velicina)
+        Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ix)
         Ix_hod = dopln_jednotku(Ix_hod, u"mm^4")
         Ix_info = "kvadratický moment průřezu pro osu x [mm⁴]"
         return Ix_hod, Ix_str, Ix_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Ix
@@ -154,21 +162,15 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Ixy - Kvadratický moment průřezu součinitele [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Ixy  # Kvadratický moment [mm⁴]
-        if hasproperty(tvar1, :Ixy)
-            Ixy_hod = getv(:Ixy)
-            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
-            Ixy_str = hasproperty(tvar1, :Ixy_str) ? tvar1[:Ixy_str] : ""
-        else
-            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ixy, natoceni)
-            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
-        end
+        Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ixy, natoceni)
+        Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
         Ixy_info = "kvadratický moment průřezu součinitele [mm⁴]"
         return Ixy_hod, Ixy_str, Ixy_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Ixy
     # ------------------------------------------------------------
     # Imin - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
-        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imin, natoceni)
+        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imin)
         Imin_hod = dopln_jednotku(Imin_hod, u"mm^4")
         Imin_info = "kvadratický moment průřezu minimální [mm⁴]"
         return Imin_hod, Imin_str, Imin_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Imin
@@ -176,7 +178,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Imax - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imax  # Kvadratický moment mimimální [mm⁴]
-        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imax, natoceni)
+        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imax)
         Imax_hod = dopln_jednotku(Imax_hod, u"mm^4")
         Imax_info = "kvadratický moment průřezu maximální [mm⁴]"
         return Imax_hod, Imax_str, Imax_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Imax
@@ -184,7 +186,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # ex - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) x [mm] (pro výpočet Wx)
     # ------------------------------------------------------------
     elseif velicina == :ex  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy x [mm] (pro výpočet Wx)
-        ex_hod, ex_str = StrojniSoucasti.profilyvlcnI(tvar1, :ex, natoceni)
+        ex_hod, ex_str = StrojniSoucasti.profilyvlcneo(tvar1, :ex)
         ex_hod = dopln_jednotku(ex_hod, u"mm")
         ex_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) x [mm]"
         return ex_hod, ex_str, ex_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy x
@@ -192,7 +194,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # ey - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) y [mm] (pro výpočet Wy)
     # ------------------------------------------------------------
     elseif velicina == :ey  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy y [mm] (pro výpočet Wy)
-        ey_hod, ey_str = StrojniSoucasti.profilyvlcnI(tvar1, :ey, natoceni)
+        ey_hod, ey_str = StrojniSoucasti.profilyvlcneo(tvar1, :ey)
         ey_hod = dopln_jednotku(ey_hod, u"mm")
         ey_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) y [mm]"
         return ey_hod, ey_str, ey_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy y
@@ -200,7 +202,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # eo - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm] dle natočení (pro výpočet Wo)
     # ------------------------------------------------------------
     elseif velicina == :eo  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm] dle natočení (pro výpočet Wo)
-        eo_hod, eo_str = StrojniSoucasti.profilyvlcnI(tvar1, :eo, natoceni)
+        eo_hod, eo_str = StrojniSoucasti.profilyvlcneo(tvar1, :eo, natoceni)
         eo_hod = dopln_jednotku(eo_hod, u"mm")
         eo_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm]"
         return eo_hod, eo_str, eo_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště)
