@@ -1,4 +1,4 @@
-# ver: 2026-07-04
+# ver: 2026-07-07
 using Test
 using StrojniSoucasti
 
@@ -54,57 +54,57 @@ using StrojniSoucasti
         @test isapprox(Ix_obd, 4320, atol=1e-3)
         @test txt_obd == "a*b^3/12"
 
-        Ix_kr, txt_kr = StrojniSoucasti.profilyvlcnI(KR_01, :Ix, 0)
+        Ix_kr, txt_kr = StrojniSoucasti.profilyvlcnI(KR_01, :Ix)
         @test isapprox(Ix_kr, 7853.981633974482, atol=1e-3)
         @test txt_kr == "pi/64*D^4"
 
-        Ix_trkr, txt_trkr = StrojniSoucasti.profilyvlcnI(TRKR_01, :Ix, 0)
+        Ix_trkr, txt_trkr = StrojniSoucasti.profilyvlcnI(TRKR_01, :Ix)
         @test isapprox(Ix_trkr, 7363.107781851078, atol=1e-3)
         @test txt_trkr == "pi/64*(D^4 - d^4)"
 
-        Ix_4hr, txt_4hr = StrojniSoucasti.profilyvlcnI(_4HR_01, :Ix, pi/2)
+        Ix_4hr, txt_4hr = StrojniSoucasti.profilyvlcnI(_4HR_01, :Ix)
         @test isapprox(Ix_4hr, 13333.333333333334, atol=1e-3)
         @test txt_4hr == "a^4/12"
 
-        Ix_6hr_even, txt_6hr_even = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix, 0)
-        @test isapprox(Ix_6hr_even, 9622.504486493762, atol=1e-3)
-        @test txt_6hr_even == "5*sqrt(3)/144*s^4"
+        Ix_6hr_even, txt_6hr_even = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
+        @test isapprox(Ix_6hr_even, 86602.54037844385, atol=1e-3)
+        @test txt_6hr_even == "5*sqrt(3)/16*s^4"
 
-        Ix_6hr_odd, txt_6hr_odd = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix, pi/6)
-        @test isapprox(Ix_6hr_odd, 8333.333333333334, atol=1e-3)
-        @test txt_6hr_odd == "5/96*s^4"
+        Ix_6hr_odd, txt_6hr_odd = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
+        @test isapprox(Ix_6hr_odd, 86602.54037844385, atol=1e-3)
+        @test txt_6hr_odd == "5*sqrt(3)/16*s^4"
 
-        Ix_6hr_any, txt_6hr_any = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix, pi/5)
-        @test isapprox(Ix_6hr_any, 9177.106807405808, atol=1e-3)
-        @test txt_6hr_any == "(Ix + Iy)/2 + (Ix - Iy)/2 * cos(2*angle)"
+        Ix_6hr_any, txt_6hr_any = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
+        @test isapprox(Ix_6hr_any, 86602.54037844385, atol=1e-3)
+        @test txt_6hr_any == "5*sqrt(3)/16*s^4"
 
-        Ix_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnI(TR4HR_01, :Ix, 0)
+        Ix_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnI(TR4HR_01, :Ix)
         @test isapprox(Ix_tr4hr, 1658.6666666666667, atol=1e-3)
         @test txt_tr4hr == "(a*b^3/12)-((a-2t)*(b-2t)^3/12)"
     end
 
     @testset "Iy pro vsechny tvary" begin
-        Iy0, txty = StrojniSoucasti.profilyvlcnI(PLO_01, :Iy, 0)
+        Iy0, txty = StrojniSoucasti.profilyvlcnI(PLO_01, :Iy)
         @test isapprox(Iy0, 6666.666666666667, atol=1e-3)
         @test txty == "b*a^3/12"
 
-        Iy_obd, txt_obd = StrojniSoucasti.profilyvlcnI(OBD_01, :Iy, 0)
+        Iy_obd, txt_obd = StrojniSoucasti.profilyvlcnI(OBD_01, :Iy)
         @test isapprox(Iy_obd, 27000.0, atol=1e-3)
         @test txt_obd == "b*a^3/12"
 
-        Iy_kr, txt_kr = StrojniSoucasti.profilyvlcnI(KR_01, :Iy, 0)
+        Iy_kr, txt_kr = StrojniSoucasti.profilyvlcnI(KR_01, :Iy)
         @test isapprox(Iy_kr, 7853.981633974483, atol=1e-3)
         @test txt_kr == "pi/64*D^4"
 
-        Iy_trkr, txt_trkr = StrojniSoucasti.profilyvlcnI(TRKR_01, :Iy, 0)
+        Iy_trkr, txt_trkr = StrojniSoucasti.profilyvlcnI(TRKR_01, :Iy)
         @test isapprox(Iy_trkr, 7363.107781851078, atol=1e-3)
         @test txt_trkr == "pi/64*(D^4 - d^4)"
 
-        Iy_4hr, txt_4hr = StrojniSoucasti.profilyvlcnI(_4HR_01, :Iy, 0)
+        Iy_4hr, txt_4hr = StrojniSoucasti.profilyvlcnI(_4HR_01, :Iy)
         @test isapprox(Iy_4hr, 13333.333333333334, atol=1e-3)
         @test txt_4hr == "a^4/12"
 
-        Iy_6hr, txt_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Iy, 0)
+        Iy_6hr, txt_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Iy)
         @test isapprox(Iy_6hr, 8333.333333333334, atol=1e-3)
         @test txt_6hr == "5/96*s^4"
 
@@ -182,7 +182,7 @@ using StrojniSoucasti
         Imin_6hr, txt_min_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Imin, 0)
         Imax_6hr, txt_max_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Imax, 0)
         @test isapprox(Imin_6hr, 8333.333333333334, atol=1e-3)
-        @test isapprox(Imax_6hr, 9622.50448649376, atol=1e-3)
+        @test isapprox(Imax_6hr, 86602.54037844385, atol=1e-3)
         @test txt_min_6hr == "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         @test txt_max_6hr == "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
 

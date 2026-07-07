@@ -1,4 +1,4 @@
-# ver: 2026-07-03
+# ver: 2026-07-07
 ## Funkce: profilyvlcn()
 using Test
 using StrojniSoucasti
@@ -83,7 +83,7 @@ using Unitful
     @testset "Jp – polární moment" begin
         Jp1, txt1 = StrojniSoucasti.profilyvlcn(PLO_02, :Jp)
         @test Jp1 > 0u"mm^4"
-        @test occursin("a*b³", txt1)
+        @test occursin("a*b*(a^2 + b^2)/12", txt1)
 
         Jp2, txt2 = StrojniSoucasti.profilyvlcn(TR4HR_01, :Jp)
         @test Jp2 > 0u"mm^4"

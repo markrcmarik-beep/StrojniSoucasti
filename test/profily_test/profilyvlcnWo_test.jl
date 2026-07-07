@@ -1,4 +1,4 @@
-# ver: 2026-07-03
+# ver: 2026-07-07
 using Test
 using StrojniSoucasti
 
@@ -67,8 +67,8 @@ using StrojniSoucasti
         @test isapprox(Wo7, 833.3333333333334, atol=1e-3)
         @test txt7 == "5/48*s³"
         Wo6, txt6 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
-        @test isapprox(Wo6, 837.9235663029301, atol=1e-3)
-        @test txt6 == "Ix / ymax, kde Ix = 5*sqrt(3)/144*s^4 a ymax = max_i|x_i*sin(angle) + y_i*cos(angle)|"
+        @test isapprox(Wo6, 5646.298934489869, atol=1e-3)
+        @test txt6 == "I / eo"
 
         Wo8, txt8 = StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, 0)
         @test isapprox(Wo8, 325.3333333333333, atol=1e-3)

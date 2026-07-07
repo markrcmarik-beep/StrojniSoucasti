@@ -1,13 +1,13 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-07-06
+# Výpočet poloměru setrvačnosti pro ruzné tvary dle zkratky označení.
+# ver: 2026-07-07
 ## Funkce: profilyvlcnI()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/profily/profilyvlcnI.jl
+# balicek/src/profily/profilyvlcnixy.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilyvlcnI(vstupni_promenne)
@@ -20,12 +20,12 @@
 #    Dict("info" => "6HR", "s" => 20u"mm")
 #    Dict("info" => "TR4HR", "a" => 20u"mm", "b" => 10u"mm", "t" => 4u"mm")
 # velicina - hledaná veličina: 
-#    :Ix - Kvadratický moment průřezu [mm⁴]
-#    :Iy - Kvadratický moment průřezu [mm⁴]
-#    :Ixy - Kvadratický moment průřezu [mm⁴]
+#    :ix - poloměr setrvačnosti pro osu x [mm]
+#    :iy - poloměr setrvačnosti pro osu y [mm]
+#    :i - poloměr setrvačnosti pro osu dle natočení [mm]
 ## Výstupní proměnné:
 # vystupni_promenne - Struktura (Dict) s rozměry profilu a
-#   případně i s vypočtenými vlastnostmi. V tomto případě Ix, Iy, Ixy.
+#   případně i s vypočtenými vlastnostmi. V tomto případě ix, iy, i.
 ## Použité balíčky:
 #
 ## Použité uživatelské funkce:

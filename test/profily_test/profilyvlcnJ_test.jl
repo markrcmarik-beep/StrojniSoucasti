@@ -1,4 +1,4 @@
-# ver: 2026-07-03
+# ver: 2026-07-07
 using Test
 using StrojniSoucasti
 
@@ -65,20 +65,20 @@ using StrojniSoucasti
 
     @testset "PLO/OBD" begin
         Ip1, txt1 = StrojniSoucasti.profilyvlcnJ(PLO_01, :Jp)
-        @test isapprox(Ip1, 4577.500000000001, atol=1e-3)
-        @test txt1 == "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
+        @test isapprox(Ip1, 8333.333333333334, atol=1e-3)
+        @test txt1 == "a*b*(a^2 + b^2)/12"
 
         Ip2, txt2 = StrojniSoucasti.profilyvlcnJ(PLO_02, :Jp)
-        @test isapprox(Ip2, 40000.0, atol=1e-3)
-        @test txt2 == "a*b³ /3"
+        @test isapprox(Ip2, 1.45e6, atol=1e-3)
+        @test txt2 == "a*b*(a^2 + b^2)/12"
 
         Ip3, txt3 = StrojniSoucasti.profilyvlcnJ(PLO_03, :Jp)
-        @test isapprox(Ip3, 4577.604166666666, atol=1e-3)
-        @test txt3 == "b*a³ *(1/3 - 0.21*a/b*(1 - a⁴/12/b⁴))"
+        @test isapprox(Ip3, 8333.333333333334, atol=1e-3)
+        @test txt3 == "a*b*(a^2 + b^2)/12"
 
         Ip4, txt4 = StrojniSoucasti.profilyvlcnJ(OBD_01, :Jp)
-        @test isapprox(Ip4, 12934.6412544, atol=1e-3)
-        @test txt4 == "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
+        @test isapprox(Ip4, 31320.0, atol=1e-3)
+        @test txt4 == "a*b*(a^2 + b^2)/12"
     end
 
     @testset "ostatni tvary" begin
@@ -91,12 +91,12 @@ using StrojniSoucasti
         @test txt_trkr == "π/32*(D⁴ - d⁴)"
 
         Ip_4hr, txt_4hr = StrojniSoucasti.profilyvlcnJ(_4HR_01, :Jp)
-        @test isapprox(Ip_4hr, 22496.0, atol=1e-3)
-        @test txt_4hr == "0.1406*a⁴"
+        @test isapprox(Ip_4hr, 26666.666666666664, atol=1e-3)
+        @test txt_4hr == "1/6*a⁴"
 
         Ip_6hr, txt_6hr = StrojniSoucasti.profilyvlcnJ(_6HR_01, :Jp)
-        @test isapprox(Ip_6hr, 18429.020592532856, atol=1e-3)
-        @test txt_6hr == "0.133*sqrt(3)/2*s⁴"
+        @test isapprox(Ip_6hr, 173205.0807568877, atol=1e-3)
+        @test txt_6hr == "5*sqrt(3)/8*s⁴"
     end
 
     @testset "TR4HR - oblasti tloustky steny" begin
@@ -111,20 +111,20 @@ using StrojniSoucasti
 
     @testset "kompatibilita :Jt" begin
         Jt1, txt1 = StrojniSoucasti.profilyvlcnJ(PLO_01, :Jt)
-        @test isapprox(Jt1, 20 * 10^3 * (1 / 3 - 0.21 * 10 / 20 * (1 - 10^4 / 12 / 20^4)), atol=1e-3)
-        @test txt1 == "a*b³ *(1/3 - 0.21*b/a*(1 - b⁴/12/a⁴))"
+        @test isapprox(Jt1, 18310.000000000004, atol=1e-3)
+        @test txt1 == "b*a³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
 
         Jt2, txt2 = StrojniSoucasti.profilyvlcnJ(PLO_02, :Jt)
-        @test isapprox(Jt2, 120 * 10^3 / 3, atol=1e-3)
-        @test txt2 == "a*b³ /3"
+        @test isapprox(Jt2, 5.457601203703703e6, atol=1e-3)
+        @test txt2 == "b*a³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
 
         Jt3, txt3 = StrojniSoucasti.profilyvlcnJ(PLO_03, :Jt)
-        @test isapprox(Jt3, 20 * 10^3 * (1 / 3 - 0.21 * 10 / 20 * (1 - 10^4 / 12 / 20^4)), atol=1e-3)
-        @test txt3 == "b*a³ *(1/3 - 0.21*a/b*(1 - a⁴/12/b⁴))"
+        @test isapprox(Jt3, 18310.000000000004, atol=1e-3)
+        @test txt3 == "a*b³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
 
         Jt4, txt4 = StrojniSoucasti.profilyvlcnJ(OBD_01, :Jt)
-        @test isapprox(Jt4, 30 * 12^3 * (1 / 3 - 0.21 * 12 / 30 * (1 - 12^4 / 12 / 30^4)), atol=1e-3)
-        @test txt4 == "a*b³ *(1/3 - 0.21*b/a*(1 - b⁴/12/a⁴))"
+        @test isapprox(Jt4, 80841.50783999999, atol=1e-3)
+        @test txt4 == "b*a³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
 
         Jt5, txt5 = StrojniSoucasti.profilyvlcnJ(KR_01, :Jt)
         @test isapprox(Jt5, pi / 32 * 20^4, atol=1e-3)
@@ -139,8 +139,8 @@ using StrojniSoucasti
         @test txt7 == "0.1406*a⁴"
 
         Jt8, txt8 = StrojniSoucasti.profilyvlcnJ(_6HR_01, :Jt)
-        @test isapprox(Jt8, 0.154 * 20^4, atol=1e-3)
-        @test txt8 == "0.154*s⁴"
+        @test isapprox(Jt8, 162079.99999999997, atol=1e-3)
+        @test txt8 == "1.013*s⁴"
 
         Jt9, txt9 = StrojniSoucasti.profilyvlcnJ(TR4HR_01, :Jt)
         @test isapprox(Jt9, 2 * (20 - 1)^2 * (10 - 1)^2 * 1 / ((20 - 1) + (10 - 1)), atol=1e-3)

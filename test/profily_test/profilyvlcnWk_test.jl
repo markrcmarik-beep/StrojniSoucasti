@@ -1,4 +1,4 @@
-# ver: 2026-07-03
+# ver: 2026-07-07
 using Test
 using StrojniSoucasti
 
@@ -52,15 +52,15 @@ using StrojniSoucasti
 
         Wk4, txt4 = StrojniSoucasti.profilyvlcnWk(PLO_01, :Wk)
         @test isapprox(Wk4, 500, atol=1e-3)
-        @test txt4 == "0.25*a*b²"
+        @test txt4 == "a*b*sqrt(a^2 + b^2)/6"
 
         Wk5, txt5 = StrojniSoucasti.profilyvlcnWk(OBD_01, :Wk)
         @test isapprox(Wk5, 1080, atol=1e-3)
-        @test txt5 == "0.25*a*b²"
+        @test txt5 == "a*b*sqrt(a^2 + b^2)/6"
 
         Wk6, txt6 = StrojniSoucasti.profilyvlcnWk(_6HR_01, :Wk)
-        @test isapprox(Wk6, 0.17 * 20^3, atol=1e-3)
-        @test txt6 == "0.17*s³"
+        @test isapprox(Wk6, 8660.254037844386, atol=1e-3)
+        @test txt6 == "5*sqrt(3)/8*s³"
     end
 
     @testset "kompatibilita :Wt" begin
@@ -73,8 +73,8 @@ using StrojniSoucasti
         @test txt2 == "π/16*(D⁴ - d⁴)/D"
 
         Wt3, txt3 = StrojniSoucasti.profilyvlcnWk(_4HR_01, :Wt)
-        @test isapprox(Wt3, 0.25 * 20^3, atol=1e-3)
-        @test txt3 == "0.25*a³"
+        @test isapprox(Wt3, 1664.0, atol=1e-3)
+        @test txt3 == "0.208*a³"
 
         Wt4, txt4 = StrojniSoucasti.profilyvlcnWk(PLO_01, :Wt)
         @test isapprox(Wt4, 20 * 10^2 / 4 * (1 - 0.63 * 10 / 20 + 0.052 * (10 / 20)^5), atol=1e-3)
@@ -85,8 +85,8 @@ using StrojniSoucasti
         @test txt5 == "a*b²/4*(1 - 0.63*b/a + 0.052*(b/a)^5)"
 
         Wt6, txt6 = StrojniSoucasti.profilyvlcnWk(_6HR_01, :Wt)
-        @test isapprox(Wt6, 0.17 * 20^3, atol=1e-3)
-        @test txt6 == "0.17*s³"
+        @test isapprox(Wt6, 7840.0, atol=1e-3)
+        @test txt6 == "0.98*s³"
 
         Wt_default, txt_default = StrojniSoucasti.profilyvlcnWk(KR_01)
         @test isapprox(Wt_default, pi/16 * 20^3, atol=1e-3)

@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezový modul v krutu pro různé tvary dle zkratky označeni.
-# ver: 2026-05-24
+# ver: 2026-07-06
 ## Funkce: profilyvlcnWk()
 ## Autor: Martin
 #
@@ -76,12 +76,16 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
-        if velicina == :Wk
-            a = getn(:a) # Strana
-            return 0.208*a^3, "0.208*a³"
-        elseif velicina == :Wt
-            a = getn(:a) # Strana
-            return 0.25*a^3, "0.25*a³"
+        if velicina == :Wp
+            if getv(:b) === missing
+                a = getn(:a) # Strana
+                return sqrt(2)/6*a^3, "sqrt(2)/6*a³"
+            end
+        elseif velicina == :Wt || velicina == :Wk
+            if getv(:b) === missing
+                a = getn(:a) # Strana
+                return 0.208*a^3, "0.208*a³"
+            end
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -90,11 +94,11 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         if velicina == :Wk
             a, b = getn(:a), getn(:b) # Šířka a výška
-            return 0.25*a*b^2, "0.25*a*b²"
+            return 0.25*a*b^2, "a*b*sqrt(a^2 + b^2)/6"
         elseif velicina == :Wt
             a, b = getn(:a), getn(:b) # Šířka a výška
             return a*b^2/4*(1 - 0.63*b/a + 0.052*(b/a)^5), 
-                "a*b²/4*(1 - 0.63*b/a + 0.052*(b/a)^5)"
+                "a*b²/4*(1 - 0.63*b/a + 0.052*(b/a)^5)" # ??????????????
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -103,10 +107,10 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info == "6HR" # Šestihranná tyč
         if velicina == :Wk
             s = getn(:s) # Strana
-            return 0.17*s^3, "0.17*s³" # ??????????????????
+            return 5*sqrt(3)/8*s^3, "5*sqrt(3)/8*s³"
         elseif velicina == :Wt
             s = getn(:s) # Strana
-            return 0.17*s^3, "0.17*s³" # ??????????????????
+            return 0.98*s^3, "0.98*s³"
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
