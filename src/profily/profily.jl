@@ -45,10 +45,16 @@
 #   "Wy" - průřezový modul pro ohyb pro osu y [mm^3]
 #   "Wo" - průřezový modul pro ohyb (dle natočení) [mm^3]
 #   "Ip", "Jp" - polární moment setrvačnosti [mm^4]
-#   "It", "Jt" - torzní moment [mm^3] (pro kruhové průřezy)
+#   "It", "Jt" - torzní moment [mm^3]
 #   "J" - polární (torzní) moment setrvačnosti pro krut [mm^4]
 #   "Wk" - průřezový modul pro krut [mm^3]
-#   "Wt" - torzní průřezový modul [mm^3] (pro kruhové průřezy)
+#   "Wt" - torzní průřezový modul [mm^3]
+#   "Wp" - Průřezový modul pro krut polární [mm^3]
+#   "ix" -
+#   "iy" -
+#   "i" -
+#   "Sx" -
+#   "sx" -
 # Natoceni - úhel natočení profilu (volitelný parametr pro výpočet Ix a Wo) (výchozí hodnota 0) [rad]
 ## Výstupní proměnné:
 # dims - Struktura (Dict) s rozměry profilu a
@@ -124,7 +130,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     vlastnosti = [
         "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "ex", "ey", "eo", 
         "Wx", "Wy", "Wo", "Jp", "Jt", "J", "rmax", "Wp", "Wt", "Wk", 
-        "ix", "iy", "Sx", "sx"] # seznam podporovaných vlastností
+        "ix", "iy", "i", "Sx", "sx"] # seznam podporovaných vlastností
     prefixes_norm = ("ČSN", "ISO", "DIN", "EN", "PN", "GOST", "BS", "ASTM", "JIS") # seznam podporovaných norem pro rozlišení typu profilu (např. "ČSN", "ISO", "DIN")
     norma = nothing # proměnná pro uložení extrahované normy (např. "ČSN425550")
     zkratka = nothing # proměnná pro uložení zkratky normy (např. "ČSN")
@@ -197,8 +203,9 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
         else
-            return nothing # profil nebyl nalezen
+            dims = nothing # profil nebyl nalezen
         end
+        return dims
     elseif profile == "IPE"
         prof01 = StrojniSoucasti.profil_IPE_CSN425553(clean)
         if prof01 !== nothing
@@ -212,8 +219,9 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
         else
-            return nothing # profil nebyl nalezen
+            dims = nothing # profil nebyl nalezen
         end
+        return dims
     elseif profile == "TR4HR"
         prof01 = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
         if prof01 !== nothing
@@ -227,8 +235,9 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
         else
-            return nothing # profil nebyl nalezen
+            dims = nothing # profil nebyl nalezen
         end
+        return dims
     elseif profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
         dims = StrojniSoucasti.profilyCSN(clean)
         # Přidáme extrahovanou zkratku normy, pokud byla v inputu
@@ -243,9 +252,9 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     else
         error("Neznámý profil: $profile. Podporované profily jsou PLO, OBD, KR, TRKR, 4HR, 6HR, TR4HR, I, IPE.")
     end
-    if dims === nothing
-        error("Profil: $clean nebyl nalezen.")
-    end
+    #if dims === nothing
+    #    error("Profil: $clean nebyl nalezen.")
+    #end
     # -----------------------------------------------------------
     # 3) Bez dalších parametrů → vracíme pouze rozměry
     # -----------------------------------------------------------
@@ -633,7 +642,9 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             if hasproperty(prof01, :ix) && prof01.ix !== nothing
                 ix = prof01.ix * u"mm"
             else
-                ix = nothing
+                Ix = profily(inputStr, "Ix")[:Ix]
+                S = profily(inputStr, "S")[:S]
+                (Ix!==nothing || S!==nothing) ? ix=sqrt(Ix/S) : ix=nothing
             end
             dims[:ix] = ix
         end
@@ -641,9 +652,21 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             if hasproperty(prof01, :iy) && prof01.iy !== nothing
                 iy = prof01.iy * u"mm"
             else
-                iy = nothing
+                Iy = profily(inputStr, "Iy")[:Iy]
+                S = profily(inputStr, "S")[:S]
+                (Iy!==nothing || S!==nothing) ? iy=sqrt(Iy/S) : iy=nothing
             end
             dims[:iy] = iy
+        end
+        if "i" in args
+            if hasproperty(prof01, :i) && prof01.i !== nothing
+                i = prof01.i * u"mm"
+            else
+                I = profily(inputStr, "I")[:I]
+                S = profily(inputStr, "S")[:S]
+                (I!==nothing || S!==nothing) ? i=sqrt(I/S) : i=nothing
+            end
+            dims[:i] = i
         end
         if "Sx" in args
             if hasproperty(prof01, :Sx) && prof01.Sx !== nothing

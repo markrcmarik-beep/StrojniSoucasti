@@ -234,30 +234,24 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # ix - Poloměr setrvačnosti pro osu x [mm]
     # ------------------------------------------------------------
     elseif velicina == :ix  # Poloměr setrvačnosti pro osu x [mm]
-        Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ix, natoceni)
-        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
-        ix_hod = sqrt(Ix_hod / S_hod)
-        ix_str = "√(Ix/S)"
+        ix_hod, ix_str = StrojniSoucasti.profilyvlcnixy(tvar1, :ix)
+        ix_hod = dopln_jednotku(ix_hod, u"mm")
         ix_info = "poloměr setrvačnosti pro osu x [mm]"
         return ix_hod, ix_str, ix_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti pro osu x
     # ------------------------------------------------------------
     # iy - Poloměr setrvačnosti pro osu y [mm]
     # ------------------------------------------------------------
     elseif velicina == :iy  # Poloměr setrvačnosti pro osu y [mm]
-        Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnI(tvar1, :Iy, natoceni)
-        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
-        iy_hod = sqrt(Iy_hod / S_hod)
-        iy_str = "√(Iy/S)"
+        iy_hod, iy_str = StrojniSoucasti.profilyvlcnixy(tvar1, :iy)
+        iy_hod = dopln_jednotku(iy_hod, u"mm")
         iy_info = "poloměr setrvačnosti pro osu y [mm]"
         return iy_hod, iy_str, iy_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti pro osu y
     # ------------------------------------------------------------
     # i - Poloměr setrvačnosti [mm]
     # ------------------------------------------------------------
     elseif velicina == :i  # Poloměr setrvačnosti [mm]
-        I_hod, I_str = StrojniSoucasti.profilyvlcnI(tvar1, :I, natoceni)
-        S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
-        i_hod = sqrt(I_hod / S_hod)
-        i_str = "√(I/S)"
+        i_hod, i_str = StrojniSoucasti.profilyvlcnixy(tvar1, :i)
+        i_hod = dopln_jednotku(i_hod, u"mm")
         i_info = "poloměr setrvačnosti [mm]"
         return i_hod, i_str, i_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti
     # ------------------------------------------------------------
