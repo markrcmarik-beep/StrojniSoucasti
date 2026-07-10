@@ -179,6 +179,9 @@ struct I_CSN425550
     sx::Union{Float64, Nothing} # staticka hodnota sx [mm]
     sx_unit::String
     sx_info::String
+    T::Union{Vector{Float64}, Nothing} # souřadnice těžiště (x, y) [mm]
+    T_unit::String
+    T_info::String
 end
 
 const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
@@ -205,6 +208,8 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     #sx = (v = get(row, "sx", nothing); v === nothing ? nothing : max(v, 0.0))
     Sx_from_table = get(row, "Sx", nothing) # Sx z tabulky, pokud je k dispozici
     Sx = Sx_from_table === nothing ? (Ix!==nothing && sx!==nothing ? (sx > 0.0 ? Ix / sx : 0.0) : nothing) : Float64(Sx_from_table)
+    T_raw = get(row, "T", nothing)
+    T = T_raw === nothing ? nothing : (T_raw isa AbstractVector ? map(Float64, T_raw) : Float64(T_raw))
     return I_CSN425550(
         string("I", " ", size_part), # name
         "I", # serie
@@ -285,6 +290,9 @@ function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
         "staticky moment prurezu podle osy x [mm^3]",
         sx, # sx - staticka hodnota sx [mm]
         "mm",
-        "staticka hodnota sx [mm]"
+        "staticka hodnota sx [mm]",
+        T,
+        "mm",
+        "souřadnice těžiště (x, y) [mm]"
     )
 end

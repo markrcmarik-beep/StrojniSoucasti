@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-07-05
+# ver: 2026-07-10
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -254,6 +254,28 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
         i_hod = dopln_jednotku(i_hod, u"mm")
         i_info = "poloměr setrvačnosti [mm]"
         return i_hod, i_str, i_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti
+    # ------------------------------------------------------------
+    # Sx - Statický moment plochy podle osy x [mm^3]
+    # ------------------------------------------------------------
+    elseif velicina == :Sx  # Statický moment plochy podle osy x [mm^3]
+        Sx_hod, Sx_str = nothing, "int(y dS, S)"
+        Sx_info = "Statický moment plochy podle osy x [mm^3]"
+        return Sx_hod, Sx_str, Sx_info # Vrátí hodnotu, vzorec a informaci
+    # ------------------------------------------------------------
+    # Sy - Statický moment plochy podle osy y [mm^3]
+    # ------------------------------------------------------------
+    elseif velicina == :Sy  # Statický moment plochy podle osy y [mm^3]
+        Sy_hod, Sy_str = nothing, "int(x dS, S)"
+        Sy_info = "Statický moment plochy podle osy y [mm^3]"
+        return Sy_hod, Sy_str, Sy_info # Vrátí hodnotu, vzorec a informaci
+    # ------------------------------------------------------------
+    # sx - staticka hodnota sx [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :sx
+    # ------------------------------------------------------------
+    # T - souřadnice těžiště [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :T
     # ------------------------------------------------------------
     # Neznámá veličina
     # ------------------------------------------------------------

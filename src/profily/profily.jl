@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-07-03
+# ver: 2026-07-10
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -130,7 +130,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
     vlastnosti = [
         "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "ex", "ey", "eo", 
         "Wx", "Wy", "Wo", "Jp", "Jt", "J", "rmax", "Wp", "Wt", "Wk", 
-        "ix", "iy", "i", "Sx", "sx"] # seznam podporovaných vlastností
+        "ix", "iy", "i", "Sx", "sx", "T"] # seznam podporovaných vlastností
     prefixes_norm = ("ČSN", "ISO", "DIN", "EN", "PN", "GOST", "BS", "ASTM", "JIS") # seznam podporovaných norem pro rozlišení typu profilu (např. "ČSN", "ISO", "DIN")
     norma = nothing # proměnná pro uložení extrahované normy (např. "ČSN425550")
     zkratka = nothing # proměnná pro uložení zkratky normy (např. "ČSN")
@@ -570,7 +570,7 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
                 I = profily(inputStr, "I")[:I] # moment setrvačnosti (dle natoceni)
                 eo = profily(inputStr, "eo")[:eo] # vzdálenost těžiště od osy (dle natoceni)
                 if I !== nothing && eo !== nothing
-                    Wo = profilyWo4natoceni(I, eo) # průřezový modul pro ohyb (dle natoceni) [mm^3]
+                    Wo = I / eo # průřezový modul pro ohyb (dle natoceni) [mm^3]
                 else
                     Wo = nothing
                 end
@@ -578,10 +578,24 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             dims[:Wo] = Wo
         end
         if "Jp" in args # pokud je požadováno vypočítat polární moment setrvačnosti
-            hasproperty(prof01, :Jp) && prof01.Jp !== nothing ? (dims[:Jp] = prof01.Jp * u"mm^4") : (dims[:Jp] = nothing) # polární moment setrvačnosti [mm^4]
+            if hasproperty(prof01, :Jp) && prof01.Jp !== nothing
+                dims[:Jp] = prof01.Jp * u"mm^4" # polární moment setrvačnosti [mm^4]
+            else
+                Ix = profily(inputStr, "Ix")[:Ix]
+                Iy = profily(inputStr, "Iy")[:Iy]
+                if Ix !== nothing && Iy !== nothing
+                    dims[:Jp] = Ix + Iy
+                else
+                    dims[:Jp] = nothing
+                end
+            end
         end
         if "Jt" in args # pokud je požadováno vypočítat torsní moment setrvačnosti
-            hasproperty(prof01, :Jt) && prof01.Jt !== nothing ? (dims[:Jt] = prof01.Jt * u"mm^4") : (dims[:Jt] = nothing) # torsní moment setrvačnosti [mm^4]
+            if hasproperty(prof01, :Jt) && prof01.Jt !== nothing
+                dims[:Jt] = prof01.Jt * u"mm^4" # torsní moment setrvačnosti [mm^4]
+            else
+                dims[:Jt] = nothing
+            end
         end
         if "J" in args # pokud je požadováno vypočítat torsní moment setrvačnosti
             if hasproperty(prof01, :J) && prof01.J !== nothing
@@ -676,6 +690,14 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             end
             dims[:Sx] = Sx
         end
+        if "Sy" in args
+            if hasproperty(prof01, :Sy) && prof01.Sy !== nothing
+                Sy = prof01.Sy * u"mm^3"
+            else
+                Sy = nothing
+            end
+            dims[:Sy] = Sy
+        end
         if "sx" in args
             if hasproperty(prof01, :sx) && prof01.sx !== nothing
                 sx = prof01.sx * u"mm"
@@ -683,6 +705,14 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
                 sx = nothing
             end
             dims[:sx] = sx
+        end
+        if "T" in args
+            if hasproperty(prof01, :T) && prof01.T !== nothing
+                T = prof01.T * u"mm"
+            else
+                T = nothing
+            end
+            dims[:T] = T
         end
         return dims
     else

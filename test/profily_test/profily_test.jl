@@ -1,4 +1,4 @@
-# ver: 2026-07-02
+# ver: 2026-07-10
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -220,7 +220,7 @@ _test_i80_rozmery(dims6, i80_material)
 @test dims6[:Wo] == 19500u"mm^3"
 @test dims6[:ix] == 32u"mm"
 @test dims6[:iy] == 9.1u"mm"
-@test dims6[:Jp] === nothing
+@test dims6[:Jp] == 840900.0u"mm^4"
 @test dims6[:Jt] === nothing
 @test dims6[:J] === nothing
 @test dims6[:Wk] === nothing
