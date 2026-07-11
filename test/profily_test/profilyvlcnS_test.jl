@@ -1,4 +1,4 @@
-# ver: 2026-05-24
+# ver: 2026-07-11
 using Test
 using StrojniSoucasti
 
@@ -51,7 +51,7 @@ using StrojniSoucasti
 
     _6HR_01 = Dict(
         :info => "6HR",
-        :a => 20/sqrt(3) # s = 20
+        :s => 20/sqrt(3) # s = 20
     )
 
     TR4HR_01 = Dict(
@@ -86,8 +86,8 @@ using StrojniSoucasti
         @test txt4 == "a²"
 
         S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01)
-        @test isapprox(S5, 346.41016151377556, atol=1e-3)
-        @test txt5 == "3/2*sqrt(3)*a²"
+        @test isapprox(S5, 115.47005383792518, atol=1e-3)
+        @test txt5 == "sqrt(3)/2*s^2"
 
         S6, txt6 = StrojniSoucasti.profilyvlcnS(TR4HR_01, :S)
         @test isapprox(S6, 176, atol=1e-3)

@@ -1,4 +1,4 @@
-# ver: 2026-07-07
+# ver: 2026-07-11
 using Test
 using StrojniSoucasti
 
@@ -67,16 +67,16 @@ using StrojniSoucasti
         @test txt_4hr == "a^4/12"
 
         Ix_6hr_even, txt_6hr_even = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
-        @test isapprox(Ix_6hr_even, 86602.54037844385, atol=1e-3)
-        @test txt_6hr_even == "5*sqrt(3)/16*s^4"
+        @test isapprox(Ix_6hr_even, 9622.50448649376, atol=1e-3)
+        @test txt_6hr_even == "5*sqrt(3)/144*s^4"
 
         Ix_6hr_odd, txt_6hr_odd = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
-        @test isapprox(Ix_6hr_odd, 86602.54037844385, atol=1e-3)
-        @test txt_6hr_odd == "5*sqrt(3)/16*s^4"
+        @test isapprox(Ix_6hr_odd, 9622.50448649376, atol=1e-3)
+        @test txt_6hr_odd == "5*sqrt(3)/144*s^4"
 
         Ix_6hr_any, txt_6hr_any = StrojniSoucasti.profilyvlcnI(_6HR_01, :Ix)
-        @test isapprox(Ix_6hr_any, 86602.54037844385, atol=1e-3)
-        @test txt_6hr_any == "5*sqrt(3)/16*s^4"
+        @test isapprox(Ix_6hr_any, 9622.50448649376, atol=1e-3)
+        @test txt_6hr_any == "5*sqrt(3)/144*s^4"
 
         Ix_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnI(TR4HR_01, :Ix)
         @test isapprox(Ix_tr4hr, 1658.6666666666667, atol=1e-3)
@@ -105,8 +105,8 @@ using StrojniSoucasti
         @test txt_4hr == "a^4/12"
 
         Iy_6hr, txt_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Iy)
-        @test isapprox(Iy_6hr, 8333.333333333334, atol=1e-3)
-        @test txt_6hr == "5/96*s^4"
+        @test isapprox(Iy_6hr, 9622.50448649376, atol=1e-3)
+        @test txt_6hr == "5*sqrt(3)/144*s^4"
 
         Iy_tr4hr, txt_tr4hr = StrojniSoucasti.profilyvlcnI(TR4HR_01, :Iy)
         @test isapprox(Iy_tr4hr, 6378.666666666667, atol=1e-3)
@@ -181,8 +181,8 @@ using StrojniSoucasti
 
         Imin_6hr, txt_min_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Imin, 0)
         Imax_6hr, txt_max_6hr = StrojniSoucasti.profilyvlcnI(_6HR_01, :Imax, 0)
-        @test isapprox(Imin_6hr, 8333.333333333334, atol=1e-3)
-        @test isapprox(Imax_6hr, 86602.54037844385, atol=1e-3)
+        @test isapprox(Imin_6hr, 9622.50448649376, atol=1e-3)
+        @test isapprox(Imax_6hr, 9622.50448649376, atol=1e-3)
         @test txt_min_6hr == "(Ix + Iy)/2 - sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
         @test txt_max_6hr == "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
 

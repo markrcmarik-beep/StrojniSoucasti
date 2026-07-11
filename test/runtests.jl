@@ -1,4 +1,4 @@
-﻿# ver: 2026-07-04
+﻿# ver: 2026-07-11
 using Test
 
     # materialy
@@ -41,6 +41,9 @@ using Test
     include("profily_test/profilyIminmax_test.jl")
     include("profily_test/profilyvlcnI_test.jl")
     include("profily_test/profilyvlcnWo_test.jl")
+    include("profily_test/profilyvlcneo_test.jl")
+    include("profily_test/profilyvlcnrmax_test.jl")
+    include("profily_test/profilyvlcnixy_test.jl")
     include("profily_test/hrana_test.jl")
     include("profily_test/polygon2plocha_test.jl")
     include("profily_test/polygon2kvadratickymoment_test.jl")

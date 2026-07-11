@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypocet kvadratickeho momentu Ix, Iy pro ruzne tvary dle zkratky oznaceni.
-# ver: 2026-07-06
+# ver: 2026-07-11
 ## Funkce: profilyvlcnI()
 ## Autor: Martin
 #
@@ -73,6 +73,7 @@ function profilyvlcnI(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             else
                 Ix = profilyvlcnI(tvar1, :Ix)[1]
                 Iy = profilyvlcnI(tvar1, :Iy)[1]
+                Ixy = profilyvlcnI(tvar1, :Ixy)[1]
                 I, I_str = profilyI4natoceni(Ix, Iy, Ixy, angle, true)
             end
             return I, I_str
@@ -194,7 +195,7 @@ function profilyvlcnI(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
         # Ix = Iy a Ixy = 0 pro libovolne natoceni.
         # I_hex = 5*sqrt(3)/144*s^4
         if velicina == :Ixy
-            if isrot(angle, 0) || isrot(anle, 30*pi/180) || isrot(angle, 60*pi/180) || 
+            if isrot(angle, 0) || isrot(angle, 30*pi/180) || isrot(angle, 60*pi/180) || 
                 isrot(angle, 90*pi/180) || isrot(angle, 120*pi/180) || isrot(angle, 150*pi/180) ||
                 isrot(angle, 180*pi/180) || isrot(angle, 210*pi/180) || isrot(angle, 240*pi/180) || 
                 isrot(angle, 270*pi/180) || isrot(angle, 300*pi/180) || isrot(angle, 330*pi/180)
@@ -208,10 +209,10 @@ function profilyvlcnI(tvar1::Dict, velicina::Symbol = :Ix, natoceni=0)
             end
         elseif velicina == :Ix
             s = getn(:s) # Strana šestihranu
-            return 5*sqrt(3)/16*s^4, "5*sqrt(3)/16*s^4"
+            return 5*sqrt(3)/144*s^4, "5*sqrt(3)/144*s^4"
         elseif velicina == :Iy
             s = getn(:s) # Strana šestihranu
-            return 5/96*s^4, "5/96*s^4"
+            return 5*sqrt(3)/144*s^4, "5*sqrt(3)/144*s^4"
         elseif velicina == :I
             if isrot(angle, 0) || isrot(angle, 60*pi/180) || isrot(angle, 120*pi/180) || 
                 isrot(angle, 180*pi/180) || isrot(angle, 240*pi/180) || isrot(angle, 300*pi/180)

@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-07-10
+# ver: 2026-07-11
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -468,7 +468,7 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
         end
         # -----------------------------------------------------------
         # I - moment setrvačnosti (dle natoceni)
-        if "I" in args || "Wo" in args # pokud je požadováno vypočítat moment setrvačnosti dle natočení
+        if "I" in args # pokud je požadováno vypočítat moment setrvačnosti dle natočení
             if natoceni == 0 || natoceni == 180*pi/180
                 Ix = profily(inputStr, "Ix")[:Ix] # moment setrvačnosti Ix
                 I = Ix
@@ -489,9 +489,7 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
                     I = nothing # pokud nemáme dostatek informací pro výpočet, necháme I jako nothing
                 end
             end
-            if "I" in args
-                dims[:I] = I
-            end
+            dims[:I] = I
         end
         # -----------------------------------------------------------
         # ex - vzdálenost nejvzdálenějšího vlákna od neutrální osy x
@@ -673,12 +671,12 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             dims[:iy] = iy
         end
         if "i" in args
-            if hasproperty(prof01, :i) && prof01.i !== nothing
-                i = prof01.i * u"mm"
+            if natoceni == 0 || natoceni == 180*pi/180
+                i = profily(inputStr, "ix")[:ix]
+            elseif natoceni == 90*pi/180 || natoceni == 270*pi/180
+                i = profily(inputStr, "iy")[:iy]
             else
-                I = profily(inputStr, "I")[:I]
-                S = profily(inputStr, "S")[:S]
-                (I!==nothing || S!==nothing) ? i=sqrt(I/S) : i=nothing
+                i = nothing
             end
             dims[:i] = i
         end
@@ -706,9 +704,13 @@ function profil_standart(dims, prof01, body01, inputStr, args, natoceni)
             end
             dims[:sx] = sx
         end
-        if "T" in args
-            if hasproperty(prof01, :T) && prof01.T !== nothing
-                T = prof01.T * u"mm"
+        if "T" in args # těžiště
+            if natoceni == 0 || natoceni == 180*pi/180
+                if hasproperty(prof01, :T) && prof01.T !== nothing
+                    T = prof01.T * u"mm"
+                else
+                    T = nothing
+                end
             else
                 T = nothing
             end

@@ -1,4 +1,4 @@
-# ver: 2026-07-07
+# ver: 2026-07-11
 using Test
 using StrojniSoucasti
 
@@ -67,7 +67,7 @@ using StrojniSoucasti
         @test isapprox(Wo7, 833.3333333333334, atol=1e-3)
         @test txt7 == "5/48*s³"
         Wo6, txt6 = StrojniSoucasti.profilyvlcnWo(_6HR_01, :Wo, pi/5)
-        @test isapprox(Wo6, 5646.298934489869, atol=1e-3)
+        @test isapprox(Wo6, 912.1968987550387, atol=1e-3)
         @test txt6 == "I / eo"
 
         Wo8, txt8 = StrojniSoucasti.profilyvlcnWo(TR4HR_01, :Wo, 0)

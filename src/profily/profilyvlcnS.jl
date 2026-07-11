@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet plochy pro různé tvary dle zkratky označeni.
-# ver: 2026-07-03
+# ver: 2026-07-11
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -95,8 +95,8 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
-        a = getn(:a)
-        return (3/2)*sqrt(3)*a^2, "3/2*sqrt(3)*a²" # Vrátí plochu a vzorec pro plochu šestihranné tyče
+        s = getn(:s)
+        return sqrt(3)/2*s^2, "sqrt(3)/2*s^2" # Vrátí plochu a vzorec pro plochu šestihranné tyče
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR" # Trubka čtyřhranná

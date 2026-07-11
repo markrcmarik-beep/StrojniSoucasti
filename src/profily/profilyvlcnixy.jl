@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet poloměru setrvačnosti pro ruzné tvary dle zkratky označení.
-# ver: 2026-07-09
+# ver: 2026-07-11
 ## Funkce: profilyvlcnixy()
 ## Autor: Martin
 #
@@ -60,23 +60,23 @@ function profilyvlcnixy(tvar1::Dict, velicina::Symbol = :i, natoceni=0)
     # TR4HR - Trubka ctyrhranna
     if info in Set(["PLO", "OBD", "KR", "TRKR", "4HR", "6HR", "TR4HR"])
         if velicina == :ix
-            Ix = profilyvlcnI(tvar1, :Ix)
-            S = profilyvlcnS(tvar1, :S)
+            Ix, _ = profilyvlcnI(tvar1, :Ix)
+            S, _ = profilyvlcnS(tvar1, :S)
             ix, ix_str = sqrt(Ix/S), "sqrt(Ix/S)"
             return ix, ix_str
         elseif velicina == :iy
-            Iy = profilyvlcnI(tvar1, :Iy)
-            S = profilyvlcnS(tvar1, :S)
+            Iy, _ = profilyvlcnI(tvar1, :Iy)
+            S, _ = profilyvlcnS(tvar1, :S)
             iy, iy_str = sqrt(Iy/S), "sqrt(Iy/S)"
             return iy, iy_str
         elseif velicina == :i
             if isrot(angle, 0) || isrot(angle, pi)
-                i, i_str = profilyixy(tvar1, ix)
+                i, i_str = profilyvlcnixy(tvar1, :ix)
             elseif isrot(angle, pi/2) || isrot(angle, 3/2*pi)
-                i, i_str = profilyixy(tvar1, iy)
+                i, i_str = profilyvlcnixy(tvar1, :iy)
             else
-                I = profilyvlcnI(tvar1, :I, angle)
-                S = profilyvlcnS(tvar1, :S)
+                I, _ = profilyvlcnI(tvar1, :I, angle)
+                S, _ = profilyvlcnS(tvar1, :S)
                 i, i_str = sqrt(I/S), "sqrt(I/S)"
             end
             return i, i_str
