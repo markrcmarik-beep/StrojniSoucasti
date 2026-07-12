@@ -84,6 +84,9 @@
 #   .sx::Float64: staticka hodnota sx [mm]
 #   .sx_unit::String: jednotka pro sx
 #   .sx_info::String: popis sx
+#   .T::Vector{Float64}: souřadnice těžiště (x, y) [mm]
+#   .T_unit::String: jednotka pro souřadnice těžiště (x, y)
+#   .T_info::String: popis souřadnic těžiště (x, y)
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:

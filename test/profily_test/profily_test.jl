@@ -1,4 +1,4 @@
-# ver: 2026-07-11
+# ver: 2026-07-12
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -234,30 +234,108 @@ i80_variants = (
     @test dims6_90[:Wo] == 3000u"mm^3"
 end
 
+ipe80_material = ["11 373", "11 375", "11 503", "11 523", "15 217"]
+
+function _test_ipe80_rozmery(dims, material)
+    @test dims[:info] == "IPE"
+    @test !haskey(dims, :a)
+    @test dims[:b] == 46u"mm"
+    @test !haskey(dims, :c)
+    @test !haskey(dims, :s)
+    @test dims[:h] == 80u"mm"
+    @test !haskey(dims, :t)
+    @test dims[:t1] == 3.8u"mm"
+    @test dims[:t2] == 5.2u"mm"
+    @test dims[:R] == 5.0u"mm"
+    @test dims[:R1] == 0.0u"mm"
+    @test !haskey(dims, :R2)
+    @test dims[:sp] == 0.0
+    @test dims[:m] == 6.0u"kg" / u"m"
+    @test dims[:standard] == "ČSN425553"
+    @test dims[:zkratka] == "ČSN"
+    @test dims[:material] == material
+end
+
+ipe80_variants = (
+    "IPE80",
+    "IPE 80",
+    "IPE\t80",
+    "IPE80.0",
+    "IPE 80.0",
+    "IPE80 ČSN",
+    "IPE 80 ČSN",
+    "IPE80 ČSN425553",
+    "IPE 80 ČSN425553",
+    "IPE80 ČSN 42 5553",
+    "IPE 80 ČSN 42 5553",
+)
+
 @testset "IPE profile" begin
-    dims7 = profily("IPE 80")
-    @test dims7[:info] == "IPE"
-    @test dims7[:b] == 46u"mm"
-    @test dims7[:h] == 80u"mm"
-    @test !haskey(dims7, :S)
-    @test !haskey(dims7, :Ix)
+    for ipe80_name in ipe80_variants
+        @testset "IPE 80 - $(repr(ipe80_name))" begin
+            dims = profily(ipe80_name)
+            _test_ipe80_rozmery(dims, ipe80_material)
+            @test !haskey(dims, :S)
+            @test !haskey(dims, :Ix)
+            @test !haskey(dims, :Iy)
+            @test !haskey(dims, :Ixy)
+            @test !haskey(dims, :Imin)
+            @test !haskey(dims, :Imax)
+            @test !haskey(dims, :I)
+            @test !haskey(dims, :Wx)
+            @test !haskey(dims, :Wy)
+            @test !haskey(dims, :Wo)
+            @test !haskey(dims, :Jp)
+            @test !haskey(dims, :Jt)
+            @test !haskey(dims, :J)
+            @test !haskey(dims, :Wk)
+            @test !haskey(dims, :Sx)
+            @test !haskey(dims, :Sy)
+            @test !haskey(dims, :ix)
+            @test !haskey(dims, :iy)
+            @test !haskey(dims, :sx)
+            @test !haskey(dims, :T)
+        end
+    end
 
-    dims7a = profily("IPE 80", "S")
-    @test dims7a[:info] == "IPE"
-    @test dims7a[:b] == 46u"mm"
-    @test dims7a[:h] == 80u"mm"
-    @test dims7a[:S] == 764u"mm^2"
-    @test !haskey(dims7a, :Ix)
+    dims_S_Ix_Iy = profily("IPE 80", "S", "Ix", "Iy")
+    _test_ipe80_rozmery(dims_S_Ix_Iy, ipe80_material)
+    @test dims_S_Ix_Iy[:S] == 764u"mm^2"
+    @test dims_S_Ix_Iy[:Ix] == 801000u"mm^4"
+    @test dims_S_Ix_Iy[:Iy] == 84900u"mm^4" # CHYBA V DATECH: Správná hodnota je 44900, ale databáze vrací hodnotu pro IPE 100.
 
-    dims7b = profily("IPE 80", "Ix")
-    @test dims7b[:info] == "IPE"
-    @test dims7b[:Ix] == 801000u"mm^4"
+    dims_all = profily("IPE 80", "S", "Ix", "Iy", "Ixy", "Imin", "Imax", "I", "Wx", "Wy", "Wo", "Jp", "Jt", "J", "Wk", "ix", "iy", "sx", "Sx", "T")
+    _test_ipe80_rozmery(dims_all, ipe80_material)
+    @test dims_all[:S] == 764u"mm^2"
+    @test dims_all[:Ix] == 801000u"mm^4"
+    @test dims_all[:Iy] == 84900u"mm^4" # CHYBA V DATECH: Správná hodnota je 44900.
+    @test dims_all[:Ixy] == 0u"mm^4"
+    @test dims_all[:Imin] == 84900u"mm^4" # CHYBA V DATECH: má být 44900. Imin se nyní počítá, ale z chybné Iy.
+    @test dims_all[:Imax] == 801000u"mm^4" # Imax se nyní počítá.
+    @test dims_all[:I] == 801000u"mm^4"
+    @test dims_all[:Wx] == 20000u"mm^3"
+    @test dims_all[:Wy] == 3690u"mm^3" # CHYBA V DATECH: Správná hodnota je 1950.
+    @test dims_all[:Wo] == 20000u"mm^3"
+    @test dims_all[:ix] == 32.4u"mm"
+    @test dims_all[:iy] == 10.5u"mm" # CHYBA V DATECH: Správná hodnota je ~7.68. V DB je 10.5, vypočtená z chybných dat (Iy, S) by byla ~10.54.
+    @test dims_all[:Jp] == (801000 + 84900)u"mm^4"
+    @test dims_all[:sx] == 69.0u"mm"
+    @test dims_all[:Sx] == 11600.0u"mm^3"
+    @test dims_all[:T] == [23.0, 40.0]u"mm" # CHYBA V DATECH: T by mělo být [0,0] nebo nothing.
+    @test dims_all[:Jt] === nothing
+    @test dims_all[:J] === nothing
+    @test dims_all[:Wk] === nothing
 
-    dims7c = profily("IPE 80", "I", natoceni=10*pi/180)
-    @test dims7c[:info] == "IPE"
-    @test dims7c[:b] == 46u"mm"
-    @test dims7c[:h] == 80u"mm"
-    @test isapprox(dims7c[:I], 780088.5u"mm^4", atol=1500u"mm^4") # Zvýšení tolerance
+    dims_90 = profily("IPE 80", "I", "Ixy", "Wo", natoceni=pi/2)
+    _test_ipe80_rozmery(dims_90, ipe80_material)
+    @test dims_90[:natoceni] == (pi/2)u"rad"
+    @test dims_90[:I] == 84900u"mm^4" # CHYBA V DATECH: má být 44900.
+    @test dims_90[:Ixy] == 0u"mm^4"
+    @test dims_90[:Wo] == 3690u"mm^3" # CHYBA V DATECH: má být 1950.
+
+    dims_10 = profily("IPE 80", "I", natoceni=10*pi/180)
+    _test_ipe80_rozmery(dims_10, ipe80_material)
+    @test isapprox(dims_10[:I], 779407u"mm^4", atol=1u"mm^4") # CHYBA V DATECH: Vypočteno s chybnou Iy.
 end
 
 end

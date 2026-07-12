@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN425553.
-# ver: 2026-06-17
+# ver: 2026-07-12
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -84,6 +84,9 @@
 #   .sx::Float64: staticka hodnota sx [mm]
 #   .sx_unit::String: jednotka pro sx
 #   .sx_info::String: popis sx
+#   .T::Vector{Float64}: souřadnice těžiště (x, y) [mm]
+#   .T_unit::String: jednotka pro souřadnice těžiště (x, y)
+#   .T_info::String: popis souřadnic těžiště (x, y)
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
@@ -167,6 +170,9 @@ struct IPE_CSN425553
     sx::Float64 # staticka hodnota sx [mm]
     sx_unit::String
     sx_info::String
+    T::Union{Vector{Float64}, Nothing} # souřadnice těžiště (x, y) [mm]
+    T_unit::String
+    T_info::String
 end
 
 const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profil_IPE_CSN425553.toml"))
@@ -185,10 +191,17 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
     row === nothing && return nothing
 
     size_part = key[4:end]
+    Ix_val = Float64(get(row, "Ix", 0.0))
+    Iy_val = Float64(get(row, "Iy", 0.0))
+    Ixy_val = 0.0 # IPE profily jsou symetrické
+
     sx_val = Float64(get(row, "sx", 0.0))
     sx_mm = sx_val > 0.0 ? sx_val : 0.0
     Sx_from_table = get(row, "Sx", nothing)
     Sx_val = Sx_from_table === nothing ? (sx_mm > 0.0 ? Float64(get(row, "Ix", 0.0)) / sx_mm : 0.0) : Float64(Sx_from_table)
+
+    T_raw = get(row, "T", nothing)
+    T = T_raw isa AbstractVector ? map(Float64, T_raw) : nothing
 
     return IPE_CSN425553(
         string("IPE", " ", size_part), # name
@@ -226,7 +239,7 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         Float64(get(row, "S", 0.0)), # S - plocha prurezu [mm^2]
         "mm^2",
         "plocha prurezu [mm^2]",
-        Float64(get(row, "Ix", 0.0)), # Ix - moment setrvacnosti podle osy x [mm^4]
+        Ix_val, # Ix - moment setrvacnosti podle osy x [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy x [mm^4]",
         Float64(get(row, "Wx", 0.0)), # Wx - prurezovy modul podle osy x [mm^3]
@@ -235,16 +248,16 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         Float64(get(row, "ix", 0.0)), # ix - polomer setrvacnosti podle osy x [mm]
         "mm",
         "polomer setrvacnosti podle osy x [mm]",
-        Float64(get(row, "Iy", 0.0)), # Iy - moment setrvacnosti podle osy y [mm^4]
+        Iy_val, # Iy - moment setrvacnosti podle osy y [mm^4]
         "mm^4",
         "moment setrvacnosti podle osy y [mm^4]",
-        0.0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        Ixy_val, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (pro symetrický profil je 0)
         "mm^4",
         "kvadratický moment setrvacnosti Ixy [mm^4]",
-        0.0, # Imin - minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        min(Ix_val, Iy_val), # Imin - minimální moment setrvačnosti [mm^4]
         "mm^4",
         "minimální moment setrvačnosti [mm^4]",
-        0.0, # Imax - maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        max(Ix_val, Iy_val), # Imax - maximální moment setrvačnosti [mm^4]
         "mm^4",
         "maximální moment setrvačnosti [mm^4]",
         Float64(get(row, "Wy", 0.0)), # Wy - prurezovy modul podle osy y [mm^3]
@@ -258,6 +271,9 @@ function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothin
         "staticky moment prurezu podle osy x [mm^3]",
         sx_mm, # sx - staticka hodnota sx [mm]
         "mm",
-        "staticka hodnota sx [mm]"
+        "staticka hodnota sx [mm]",
+        T,
+        "mm",
+        "souřadnice těžiště (x, y) [mm]"
     )
 end
