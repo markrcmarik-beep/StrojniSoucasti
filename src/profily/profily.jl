@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-07-11
+# ver: 2026-07-13
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -187,10 +187,11 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
         property in vlastnosti || error("Neznámá vlastnost: $property. Podporované vlastnosti jsou $vlastnosti.") # kontrola, zda je zadaná vlastnost v seznamu podporovaných vlastností
     end
     clean = string(profile, " ", dimPart) # znovu sestaví čistý vstup pro hledání
+    prof01 = nothing
     # -----------------------------------------------------------
     # 2) Rozlišení podle profilu (standard dle ČSN)
     # -----------------------------------------------------------
-    if profile == "I"
+    if profile == "I" && prof01 === nothing
         prof01 = StrojniSoucasti.profil_I_CSN425550(clean)
         if prof01 !== nothing
             body01 = StrojniSoucasti.body_I_CSN425550(prof01, "ld", natoceni=0) # získáme body pro obrys profilu I dle ČSN 425550
@@ -202,11 +203,10 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 dims[:zkratka_info] = "Zkratka pro normu, např. ČSN, ISO, DIN"
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
-        else
-            dims = nothing # profil nebyl nalezen
+            return dims
         end
-        return dims
-    elseif profile == "IPE"
+    end
+    if profile == "IPE" && prof01 === nothing
         prof01 = StrojniSoucasti.profil_IPE_CSN425553(clean)
         if prof01 !== nothing
             body01 = StrojniSoucasti.body_IPE_CSN425553(prof01, "ld", natoceni=0) # získáme body pro obrys profilu IPE dle ČSN 425553
@@ -218,11 +218,10 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 dims[:zkratka_info] = "Zkratka pro normu, např. ČSN, ISO, DIN"
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
-        else
-            dims = nothing # profil nebyl nalezen
+            return dims
         end
-        return dims
-    elseif profile == "TR4HR"
+    end
+    if profile == "TR4HR" && prof01 === nothing
         prof01 = StrojniSoucasti.profil_TR4HR_CSN425720(clean)
         if prof01 !== nothing
             body01 = StrojniSoucasti.body_TR4HR_CSN425720(prof01, "ld", natoceni=0) # získáme body pro obrys profilu TR4HR dle ČSN 425720
@@ -234,11 +233,10 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 dims[:zkratka_info] = "Zkratka pro normu, např. ČSN, ISO, DIN"
             end
             dims = profil_standart(dims, prof01, body01, inputStr, args, natoceni) # uložíme rozměry a vlastnosti do dims
-        else
-            dims = nothing # profil nebyl nalezen
+            return dims
         end
-        return dims
-    elseif profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"]
+    end
+    if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"] && prof01 === nothing
         dims = StrojniSoucasti.profilyCSN(clean)
         # Přidáme extrahovanou zkratku normy, pokud byla v inputu
         if dims !== nothing && zkratka_extracted !== nothing
@@ -249,20 +247,14 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 dims[:standard] = norma_extracted
             end
         end
-    else
-        error("Neznámý profil: $profile. Podporované profily jsou PLO, OBD, KR, TRKR, 4HR, 6HR, TR4HR, I, IPE.")
-    end
+
     #if dims === nothing
     #    error("Profil: $clean nebyl nalezen.")
     #end
     # -----------------------------------------------------------
     # 3) Bez dalších parametrů → vracíme pouze rozměry
     # -----------------------------------------------------------
-    if length(args) == 0
-        return dims # pouze rozměry
-    #elseif length(args) >= 2
-    #    natoceni = args(2) # druhý argument je natočení
-    end
+    if length(args) !== 0
     # -----------------------------------------------------------
     # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, J, Jp, Jt…) nebo 
     # hodnoty pro natočení, řeší profilyvlcn nebo přidá natočení
@@ -292,7 +284,10 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
             error("Název vlastnosti musí být String, Symbol, Number nebo hodnota s jednotkami úhlu.")
         end
     end
-
+    end
+    else
+        return nothing
+    end
     return dims # vracíme rozměry + vlastnosti
 end
 # -------------------------------------------------------------

@@ -1,4 +1,4 @@
-# ver: 2026-07-12
+# ver: 2026-07-13
 using Test
 using StrojniSoucasti, Unitful
 #include(joinpath(abspath(joinpath(@__DIR__, "..")), "src", "profily", "profily.jl"))
@@ -336,6 +336,11 @@ ipe80_variants = (
     dims_10 = profily("IPE 80", "I", natoceni=10*pi/180)
     _test_ipe80_rozmery(dims_10, ipe80_material)
     @test isapprox(dims_10[:I], 779407u"mm^4", atol=1u"mm^4") # CHYBA V DATECH: Vypočteno s chybnou Iy.
+end
+
+@testset "chybové" begin
+    A_er = profily("IaPaE 80")
+    @test A_er === nothing
 end
 
 end
