@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-07-10
+# ver: 2026-07-14
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -210,7 +210,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Wx - Průřezový modul v ohybu pro osu x [mm³]
     # ------------------------------------------------------------
     elseif velicina == :Wx  # Průřezový modul v ohybu pro osu x [mm³]
-        Wx_hod, Wx_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wo, natoceni)
+        Wx_hod, Wx_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wx)
         Wx_hod = dopln_jednotku(Wx_hod, u"mm^3")
         Wx_info = "průřezový modul v ohybu pro osu x [mm³]"
         return Wx_hod, Wx_str, Wx_info # Vrátí hodnotu, vzorec a informaci pro průřezový modul v ohybu pro osu x
@@ -218,7 +218,7 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
     # Wy - Průřezový modul v ohybu pro osu y [mm³]
     # ------------------------------------------------------------
     elseif velicina == :Wy  # Průřezový modul v ohybu pro osu y [mm³]
-        Wy_hod, Wy_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wo, natoceni)
+        Wy_hod, Wy_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wy)
         Wy_hod = dopln_jednotku(Wy_hod, u"mm^3")
         Wy_info = "průřezový modul v ohybu pro osu y [mm³]"
         return Wy_hod, Wy_str, Wy_info # Vrátí hodnotu, vzorec a informaci pro průřezový modul v ohybu pro osu y

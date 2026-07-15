@@ -1,4 +1,4 @@
-# ver: 2026-07-07
+# ver: 2026-07-14
 ## Funkce: profilyvlcn()
 using Test
 using StrojniSoucasti
@@ -59,13 +59,13 @@ using Unitful
     # ------------------------------------------------------------
     @testset "S – plocha" begin
         S, txt, info = StrojniSoucasti.profilyvlcn(PLO_01, :S)
-        @test ustrip(u"mm^2", S) == 200 # Test plochy pro obdélníkovou tyč 20 mm x 10 mm
+        @test S == 200u"mm^2"
         @test txt == "a*b"
         @test info == "plocha průřezu [mm²]"
         S_bez_jednotky, txt_bez_jednotky, info_bez_jednotky = StrojniSoucasti.profilyvlcn(PLO_01_BEZ_JEDNOTKY, :S)
-        @test S_bez_jednotky == 200u"mm^2"
-        @test txt_bez_jednotky == "a*b"
-        @test info_bez_jednotky == "plocha průřezu [mm²]"
+        @test S == 200u"mm^2"
+        @test txt == "a*b"
+        @test info == "plocha průřezu [mm²]"
 
         S, txt, info = StrojniSoucasti.profilyvlcn(PLO_02, :S)
         @test ustrip(u"mm^2", S) >= 196.5 && ustrip(u"mm^2", S) <= 196.6
@@ -176,6 +176,38 @@ using Unitful
         Imax2, txt2 = StrojniSoucasti.profilyvlcn(PLO_01, :Imax)
         @test Imax2 > 0u"mm^4"
         @test txt2 == "(Ix + Iy)/2 + sqrt( ((Ix - Iy)/2)^2 + Ixy^2 )"
+    end
+    # ------------------------------------------------------------
+    # Wx – průřezový modul v ohybu
+    # ------------------------------------------------------------
+    @testset "Wx – modul v ohybu" begin
+        Wx_plo, txt_plo, _ = StrojniSoucasti.profilyvlcn(PLO_01, :Wx)
+        @test Wx_plo == 20u"mm" * (10u"mm")^2 / 6
+        @test txt_plo == "a*b²/6"
+
+        Wx_trkr, txt_trkr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Wx)
+        @test Wx_trkr ≈ pi/32 * ((20u"mm")^4 - (10u"mm")^4) / (20u"mm")
+        @test txt_trkr == "π/32*(D⁴ - d⁴)/D"
+
+        Wx_4hr, txt_4hr, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Wx)
+        @test Wx_4hr == (20u"mm")^3 / 6
+        @test txt_4hr == "a³/6"
+    end
+    # ------------------------------------------------------------
+    # Wy – průřezový modul v ohybu
+    # ------------------------------------------------------------
+    @testset "Wy – modul v ohybu" begin
+        Wy_plo, txt_plo, _ = StrojniSoucasti.profilyvlcn(PLO_01, :Wy)
+        @test Wy_plo == 10u"mm" * (20u"mm")^2 / 6
+        @test txt_plo == "b*a²/6"
+
+        Wy_trkr, txt_trkr, _ = StrojniSoucasti.profilyvlcn(TRKR_01, :Wy)
+        @test Wy_trkr ≈ pi/32 * ((20u"mm")^4 - (10u"mm")^4) / (20u"mm")
+        @test txt_trkr == "π/32*(D⁴ - d⁴)/D"
+
+        Wy_4hr, txt_4hr, _ = StrojniSoucasti.profilyvlcn(_4HR_01, :Wy)
+        @test Wy_4hr == (20u"mm")^3 / 6
+        @test txt_4hr == "a³/6"
     end
     # ------------------------------------------------------------
     # Wo – průřezový modul v ohybu

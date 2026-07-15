@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-07-13
+# ver: 2026-07-14
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -247,49 +247,46 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
                 dims[:standard] = norma_extracted
             end
         end
-
-    #if dims === nothing
-    #    error("Profil: $clean nebyl nalezen.")
-    #end
-    # -----------------------------------------------------------
-    # 3) Bez dalších parametrů → vracíme pouze rozměry
-    # -----------------------------------------------------------
-    if length(args) !== 0
-    # -----------------------------------------------------------
-    # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, J, Jp, Jt…) nebo 
-    # hodnoty pro natočení, řeší profilyvlcn nebo přidá natočení
-    # -----------------------------------------------------------
-    for property in args # pro každý zadaný argument (vlastnost nebo natočení)
-        property in vlastnosti || error("Neznámá vlastnost: $property. Podporované vlastnosti jsou $vlastnosti.") # kontrola, zda je zadaná vlastnost v seznamu podporovaných vlastností
-        if isa(property, Number) || (isa(property, Unitful.AbstractQuantity) && unit(property) in [u"°", u"rad"])
-            dims[:natoceni] = dopln_jednotku(property, u"rad") # uložíme natočení do dims (převedeme na radiany, pokud je zadáno ve stupních)
-        end
-        if property isa AbstractString || property isa Symbol
-            key = Symbol(property) # převod na Symbol
-            if haskey(dims, key)
-                # Hodnota je už zadaná (např. z tabulky I/IPE), nepřepočítáváme ji.
-                #if key == :S && (!(dims[key] isa Unitful.AbstractQuantity) || unit(dims[key]) == Unitful.NoUnits)
-                #    dims[key] = dims[key] * u"mm^2"
-                #end
-                if !haskey(dims, Symbol(key, :_str))
-                    dims[Symbol(key, :_str)] = ""
+        # -----------------------------------------------------------
+        # 3) Bez dalších parametrů → vracíme pouze rozměry
+        # -----------------------------------------------------------
+        if length(args) !== 0
+            # -----------------------------------------------------------
+            # 4) Pokud jsou zadány vlastnosti (S, Ix, Iy, J, Jp, Jt…) nebo 
+            # hodnoty pro natočení, řeší profilyvlcn nebo přidá natočení
+            # -----------------------------------------------------------
+            for property in args # pro každý zadaný argument (vlastnost nebo natočení)
+                property in vlastnosti || error("Neznámá vlastnost: $property. Podporované vlastnosti jsou $vlastnosti.") # kontrola, zda je zadaná vlastnost v seznamu podporovaných vlastností
+                if isa(property, Number) || (isa(property, Unitful.AbstractQuantity) && unit(property) in [u"°", u"rad"])
+                    dims[:natoceni] = dopln_jednotku(property, u"rad") # uložíme natočení do dims (převedeme na radiany, pokud je zadáno ve stupních)
                 end
-            else
-                hodnota, vzorec, info = StrojniSoucasti.profilyvlcn(dims, key, natoceni=natoceni) # volání výpočtu vlastnosti
-                dims[key] = hodnota # uložíme hodnotu vlastnosti
-                dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
-                dims[Symbol(key, :_info)] = info # uložíme informaci o vlastnosti
+                if property isa AbstractString || property isa Symbol
+                    key = Symbol(property) # převod na Symbol
+                    if haskey(dims, key)
+                        # Hodnota je už zadaná (např. z tabulky I/IPE), nepřepočítáváme ji.
+                        #if key == :S && (!(dims[key] isa Unitful.AbstractQuantity) || unit(dims[key]) == Unitful.NoUnits)
+                        #    dims[key] = dims[key] * u"mm^2"
+                        #end
+                        if !haskey(dims, Symbol(key, :_str))
+                            dims[Symbol(key, :_str)] = ""
+                        end
+                    else
+                        hodnota, vzorec, info = StrojniSoucasti.profilyvlcn(dims, key, natoceni=natoceni) # volání výpočtu vlastnosti
+                        dims[key] = hodnota # uložíme hodnotu vlastnosti
+                        dims[Symbol(key, :_str)] = vzorec # uložíme vzorec jako string
+                        dims[Symbol(key, :_info)] = info # uložíme informaci o vlastnosti
+                    end
+                else
+                    error("Název vlastnosti musí být String, Symbol, Number nebo hodnota s jednotkami úhlu.")
+                end
             end
-        else
-            error("Název vlastnosti musí být String, Symbol, Number nebo hodnota s jednotkami úhlu.")
         end
-    end
-    end
     else
         return nothing
     end
     return dims # vracíme rozměry + vlastnosti
 end
+
 # -------------------------------------------------------------
 # F U N K C E
 # -------------------------------------------------------------
