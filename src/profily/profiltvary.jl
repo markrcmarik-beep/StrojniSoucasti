@@ -3,15 +3,15 @@
 ## Popis funkce:
 # Funkce řeší textové označení tvaru dle ČSN a vrací
 # strukturu s rozměry.
-# ver: 2026-07-14
-## Funkce: profilyCSN()
+# ver: 2026-07-16
+## Funkce: profiltvary()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/profily/profilyCSN.jl
+# StrojniSoucasti/src/profily/profiltvary.jl
 #
 ## Vzor:
-## vystupni_promenne = profilyCSN(inputStr)
+## vystupni_promenne = profiltvary(inputStr)
 ## Vstupní proměnné:
 # inputStr - Textové označení tvaru dle ČSN.
 #  Podporované tvary:
@@ -46,7 +46,7 @@
 ## Použité uživatelské funkce:
 # profilTR4HR, profil_I_CSN425550, profil_IPE_CSN425553
 ## Příklad:
-# dims = profilyCSN("PLO 20x10R3")
+# dims = profiltvary("PLO 20x10R3")
 # dims == Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
 #
 # dims = profilyCSN("KR 20")
@@ -56,7 +56,7 @@
 #
 using Unitful
 
-function profilyCSN(inputStr::AbstractString)
+function profiltvary(inputStr::AbstractString)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------

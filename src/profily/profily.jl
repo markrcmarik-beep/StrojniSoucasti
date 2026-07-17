@@ -4,7 +4,7 @@
 # Funkce řeší textové označení tvaru profilu dle ČSN a vrací
 # strukturu s rozměry. Volitelně lze zadat výpočet vlastností
 # profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-# ver: 2026-07-14
+# ver: 2026-07-16
 ## Funkce: profily()
 ## Autor: Martin
 #
@@ -237,7 +237,7 @@ function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::N
         end
     end
     if profile in ["PLO", "OBD", "KR", "TRKR", "4HR", "6HR"] && prof01 === nothing
-        dims = StrojniSoucasti.profilyCSN(clean)
+        dims = StrojniSoucasti.profiltvary(clean)
         # Přidáme extrahovanou zkratku normy, pokud byla v inputu
         if dims !== nothing && zkratka_extracted !== nothing
             dims[:zkratka] = zkratka_extracted
