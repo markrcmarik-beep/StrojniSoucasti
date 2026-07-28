@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-07-16
+# ver: 2026-07-27
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -17,14 +17,6 @@
 module StrojniSoucasti
 
 # Import implementací
-## --- materialy ---
-include("materialy/materialy.jl")
-#include("materialy/request.jl")
-#include("materialy/reduction_table.jl")
-#include("materialy/reduction.jl")
-#include("materialy/select.jl")
-include("materialy/dovoleneNapeti.jl") # dovolená napětí
-include("materialy/mezUnavy.jl") # mez únavy
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
 include("body/burub2body.jl") # body mezi dvěma přímkami spojenými kruhovým obloukem
@@ -35,6 +27,29 @@ include("body/uu2u.jl") # úhel mezi dvěma úhly (2D)
 include("body/brsb2body.jl") # po sobě jdoucí body na kruhovém oblouku
 include("body/rotuj_body.jl") # rotace bodů o zadaný úhel
 include("body/posun_body.jl") # posun bodů o zadanou vzdálenost
+## --- materialy ---
+include("materialy/materialy.jl")
+#include("materialy/request.jl")
+#include("materialy/reduction_table.jl")
+#include("materialy/reduction.jl")
+#include("materialy/select.jl")
+include("materialy/dovoleneNapeti.jl") # dovolená napětí
+include("materialy/mezUnavy.jl") # mez únavy
+## --- namáhání ---
+include("namahani/namahanitah.jl") # namáhání tahem
+include("namahani/namahanitahtext.jl")
+include("namahani/namahanitlak.jl") # namáhání tlakem
+include("namahani/namahanitlaktext.jl")
+include("namahani/namahanikrut.jl") # namáhání krutem
+include("namahani/namahanikruttext.jl")
+include("namahani/namahanistrih.jl") # namáhání střihem
+include("namahani/namahanistrihtext.jl")
+include("namahani/namahaniohyb.jl") # namáhání ohybem
+include("namahani/namahaniohybtext.jl") #
+include("namahani/namahanikombinovane.jl") # namáhání kombinovaně
+include("namahani/namahanikombinovanetext.jl") #
+include("namahani/namahaniotl.jl") # namáhání otlačením
+include("namahani/namahaniotltext.jl") # textový výpis namáhání otlačením
 ## --- profily ---
 include("profily/body_drazka4pero.jl")
 include("profily/profil_TR4HR_CSN425720.jl") # profily TR4HR dle CSN 42 5720
@@ -68,44 +83,29 @@ include("profily/polygon2polarnimoment.jl") # polarni moment z obrysovych bodu
 include("profily/polygon_metrics.jl") # plocha, teziste, momenty setrvacnosti z obrysovych bodu
 include("profily/polygon2eonatoceni.jl") # vzdalenost nejvzdalenejsiho vlakna od neutralni osy dle natoceni
 include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bodu
-## --- namáhání ---
-include("namahani/namahanitah.jl") # namáhání tahem
-include("namahani/namahanitahtext.jl")
-include("namahani/namahanitlak.jl") # namáhání tlakem
-include("namahani/namahanitlaktext.jl")
-include("namahani/namahanikrut.jl") # namáhání krutem
-include("namahani/namahanikruttext.jl")
-include("namahani/namahanistrih.jl") # namáhání střihem
-include("namahani/namahanistrihtext.jl")
-include("namahani/namahaniohyb.jl") # namáhání ohybem
-include("namahani/namahaniohybtext.jl") #
-include("namahani/namahanikombinovane.jl") # namáhání kombinovaně
-include("namahani/namahanikombinovanetext.jl") #
-include("namahani/namahaniotl.jl") # namáhání otlačením
-include("namahani/namahaniotltext.jl") # textový výpis namáhání otlačením
+## --tolerance--
+include("tolerance/tolerance.jl") # tolerance
+
 include("hridel.jl")
 include("hrideltext.jl")
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
-include("tolerance/tolerance.jl") # tolerance
+
 
 # Export funkcí
-export materialy, dovoleneNapeti, mezUnavy, 
+export hridel, ulozvypis, zavity,
 # body
 bddb2b, bdu2b, brsb2body, burub2body, buub2b, bux2b, 
 posun_body, rotuj_body, ubru2bb, uu2u,
-# profily
-profily,
+# materialy
+dovoleneNapeti, materialy, mezUnavy, 
 # namahani
 namahanitah, namahanitlak, namahanikrut, namahanistrih, 
 namahaniohyb, namahaniotl, namahanikombinovane, 
-# strojni soucasti
-hridel, ulozvypis, zavity,
+# profily
+profily,
 # tolerance
 tolerance
-
-# Zpřístupníme submodul Zavity pod jménem StrojniSoucasti.Zavity 
-#using .Zavity
 
 end # module StrojniSoucasti
 

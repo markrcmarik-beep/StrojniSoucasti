@@ -1,4 +1,4 @@
-# ver: 2026-07-17
+# ver: 2026-07-27
 using Test
 using StrojniSoucasti
 
@@ -12,7 +12,28 @@ using StrojniSoucasti
     @test Jp == 25.0
 
     @testset "Rectangle (Vector of Tuples, CCW)" begin
-        body = [(0,0), (4,0), (4,3), (0,3)]
+        body = [(0, 0), (4, 0), (4, 3), (0, 3)]
+        metrics = StrojniSoucasti.polygon_metrics(body)
+        @test metrics.S ≈ 12.0
+        @test metrics.cx ≈ 2.0
+        @test metrics.cy ≈ 1.5
+        # Jp = Ix + Iy about centroid. For rectangle b=4, h=3:
+        # Ix = b*h^3/12 = 4*3^3/12 = 9. Iy = h*b^3/12 = 3*4^3/12 = 16.
+        # Jp = 9 + 16 = 25
+        @test metrics.Jp ≈ 25.0
+    end
+
+    @testset "Rectangle with floating point coordinates" begin
+        body = [(0.0, 0.0), (4.0, 0.0), (4.0, 3.0), (0.0, 3.0)]
+        metrics = StrojniSoucasti.polygon_metrics(body)
+        @test metrics.S ≈ 12.0
+        @test metrics.cx ≈ 2.0
+        @test metrics.cy ≈ 1.5
+        @test metrics.Jp ≈ 25.0
+    end
+
+    @testset "Rectangle with collinear points" begin
+        body = [(0, 0), (2, 0), (4, 0), (4, 3), (0, 3)] # Extra point (2,0) on bottom edge
         metrics = StrojniSoucasti.polygon_metrics(body)
         @test metrics.S ≈ 12.0
         @test metrics.cx ≈ 2.0
@@ -30,7 +51,7 @@ using StrojniSoucasti
         @test metrics_matrix.Jp ≈ 25.0
 
         # Vector of Vectors input
-        body_vec_vec = [[0,0], [4,0], [4,3], [0,3]]
+        body_vec_vec = [[0, 0], [4, 0], [4, 3], [0, 3]]
         metrics_vec_vec = StrojniSoucasti.polygon_metrics(body_vec_vec)
         @test metrics_vec_vec.S ≈ 12.0
         @test metrics_vec_vec.cx ≈ 2.0
@@ -38,35 +59,50 @@ using StrojniSoucasti
         @test metrics_vec_vec.Jp ≈ 25.0
 
         # Clockwise winding order
-        body_cw = [(0,0), (0,3), (4,3), (4,0)]
+        body_cw = [(0, 0), (0, 3), (4, 3), (4, 0)]
         metrics_cw = StrojniSoucasti.polygon_metrics(body_cw)
-        @test metrics_cw.S ≈ 12.0
+        @test metrics_cw.S ≈ 12.0 # Area should be positive regardless of winding
         @test metrics_cw.cx ≈ 2.0
         @test metrics_cw.cy ≈ 1.5
         @test metrics_cw.Jp ≈ 25.0
     end
 
     @testset "Triangle" begin
-        body = [(0,0), (6,0), (3,4)]
+        body = [(0, 0), (6, 0), (3, 4)]
         metrics = StrojniSoucasti.polygon_metrics(body)
         @test metrics.S ≈ 12.0
         @test metrics.cx ≈ 3.0
-        @test metrics.cy ≈ 4/3
-        @test metrics.Jp ≈ 86/3
+        @test metrics.cy ≈ 4 / 3
+        # Ix = 32/3, Iy = 18. Jp = 32/3 + 54/3 = 86/3
+        @test metrics.Jp ≈ 86 / 3
+    end
+
+    @testset "Concave Polygon (L-shape)" begin
+        body = [(0, 0), (3, 0), (3, 1), (1, 1), (1, 3), (0, 3)]
+        metrics = StrojniSoucasti.polygon_metrics(body)
+        @test metrics.S ≈ 5.0
+        @test metrics.cx ≈ 1.1
+        @test metrics.cy ≈ 1.1
+        @test metrics.Jp ≈ 217 / 30
     end
 
     @testset "Error Handling" begin
-        @test_throws ArgumentError("Degenerovany polygon: plocha vychazi nulova.") StrojniSoucasti.polygon_metrics([(0,0), (1,1), (2,2)])
-        @test_throws ArgumentError("Pro vypocet zadejte alespon 3 body.") StrojniSoucasti.polygon_metrics([(0,0), (1,1)])
+        # Degenerate polygon (collinear points resulting in zero area)
+        @test_throws ArgumentError("Degenerovany polygon: plocha vychazi nulova.") StrojniSoucasti.polygon_metrics([(0, 0), (1, 1), (2, 2)])
+        # Not enough points
+        @test_throws ArgumentError("Pro vypocet zadejte alespon 3 body.") StrojniSoucasti.polygon_metrics([(0, 0), (1, 1)])
         @test_throws ArgumentError("Pro vypocet zadejte alespon 3 body.") StrojniSoucasti.polygon_metrics([0 0; 1 1])
+        # Invalid matrix shape
         @test_throws ArgumentError("Matice bodu musi mit presne 2 sloupce (x, y).") StrojniSoucasti.polygon_metrics([0 0 0; 4 0 0; 4 3 0])
-        @test_throws ArgumentError("Kazdy bod musi mit presne 2 souradnice (x, y).") StrojniSoucasti.polygon_metrics([(0,0), (1,1,1), (2,2)])
+        # Invalid point dimension
+        @test_throws ArgumentError("Kazdy bod musi mit presne 2 souradnice (x, y).") StrojniSoucasti.polygon_metrics([(0, 0), (1, 1, 1), (2, 2)])
     end
 
     @testset "_max_radius_from_centroid" begin
-        body = [(0,0), (4,0), (4,3), (0,3)]
+        body = [(0, 0), (4, 0), (4, 3), (0, 3)]
         metrics = StrojniSoucasti.polygon_metrics(body)
         r_max = StrojniSoucasti._max_radius_from_centroid(body, metrics.cx, metrics.cy)
+        # Distance from centroid (2, 1.5) to any corner (e.g., (0,0)) is sqrt(2^2 + 1.5^2) = sqrt(4+2.25) = sqrt(6.25) = 2.5
         @test r_max ≈ 2.5
     end
 
