@@ -1,7 +1,7 @@
-# Dokumentace k funkci profilyCSN
+# Dokumentace k funkci profiltvary
 
 ## Popis
-Funkce `profilyCSN` slouží k zpracování různých typů profilů v rámci aplikace.
+Funkce `profiltvary` slouží k zpracování různých typů profilů v rámci aplikace.
 
 ## Parametry
 Funkce podporuje následující typy profilů:
@@ -21,11 +21,11 @@ Funkce vrací...
 ## Příklady použití
 ```python
 # Příklad 1
-výsledek = profilyCSN('PLO')
+výsledek = profiltvary('PLO')
 print(výsledek)
 
 # Příklad 2
-výsledek = profilyCSN('OBD')
+výsledek = profiltvary('OBD')
 print(výsledek)
 ```
 
