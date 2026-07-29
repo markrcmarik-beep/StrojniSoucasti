@@ -12,14 +12,13 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
+# načtení nápovědy z externího souboru
+const _PROFILY_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "profily", "profily.md"),
+    String,
+) 
 """
-# Funkce Julia v1.12
-###############################################################
-# Popis funkce:
-Funkce řeší textové označení tvaru profilu dle ČSN a vrací
-strukturu s rozměry. Volitelně lze zadat výpočet vlastností
-profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-Viz také `profily`.
+$_PROFILY_NAPOVEDA
 """
 function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::Number=0)
     dopln_jednotku(hod, cil_jednotka) = hod isa Unitful.AbstractQuantity ?

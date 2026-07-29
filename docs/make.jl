@@ -9,12 +9,12 @@ makedocs(
         "Uvod" => "index.md",
         # body
         # materialy
-        "Dovolene napeti" => "dovoleneNapeti.md",
-        "Materialy" => "materialy.md",
+        "Dovolene napeti" => "materialy/dovoleneNapeti.md",
+        "Materialy" => "materialy/materialy.md",
         # namahani
         # profily
-        "Profily" => "profily.md",
-        "Profiltvary" => "profiltvary.md",
+        "Profily" => "profily/profily.md",
+        "Profiltvary" => "profily/profiltvary.md",
         # tolerance
         # zavity
         "Pouziti balicku" => "pouziti.md",

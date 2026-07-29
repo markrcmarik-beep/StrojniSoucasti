@@ -2,9 +2,6 @@
 
 Tato stránka dokumentuje funkci `profily`, která slouží k parsování označení profilů a výpočtu jejich geometrických a průřezových charakteristik.
 
-```@docs
-profily
-```
 ## Dokumentace k funkci `profily.jl`
 ## Funkce Julia v1.12
 ###############################################################
@@ -16,46 +13,45 @@ vystupni_promenne = profily(inputStr, args...; natoceni=0)
 ## Vstupní proměnné:
 - `inputStr` - Textové označení tvaru profilu dle ČSN.
 **Podporované tvary:**
-
 *"PLO {a}x{b}" - "PLO 20x10"* - obdélníkový profil
 *"PLO {a}x{b}R{r}" - "PLO 20x10R3"* - obdélníkový profil s rádiusem
 *"OBD {a}x{b}" - "OBD 20x10"* - obdélníkový profil
 *"OBD {a}x{b}R{r}" - "OBD 20x10R3"* - obdélníkový profil s rádiusem
-*"KR {D}" - "KR 20"* - kruhový profil
-*"KR {D}/{d}" - "KR 20/10"* - kruhový profil s vnitřním průměrem (trubka)
-*"TRKR {D}x{t}" - "TRKR 20x2"* - trubkový kruhový profil
-*"4HR {a}" - "4HR 20"* - čtyřhranný profil
-*"4HR {a}R{r}" - "4HR 20R3"* - čtyřhranný profil s rádiusem
-*"4HR {a}x{b}" - "4HR 20x10"* - čtyřhranný profil obdélníkový
-*"4HR {a}x{b}R{r}" - "4HR 20x10R3"* - čtyřhranný profil obdélníkový s rádiusem
-*"6HR {s}" - "6HR 20"* - šestihranný profil
-*"TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2"* - trubkový čtyřhranný profil dle ČSN 425720
-*"TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2"* - trubkový čtyřhranný profil
-*"TR4HR {a}x{b}x{t}R{r}", "TR4HR {a}x{t}R{r}" - "TR4HR 20x20x2R3", "TR4HR 20x2R3"* - trubkový čtyřhranný profil s rádiusem
-*"I {n}"* - I profil dle ČSN 425550
-*"IPE {n}"* - IPE profil dle ČSN 425553
+- *"KR {D}" - "KR 20"* - kruhový profil
+- *"KR {D}/{d}" - "KR 20/10"* - kruhový profil s vnitřním průměrem (trubka)
+- *"TRKR {D}x{t}" - "TRKR 20x2"* - trubkový kruhový profil
+- *"4HR {a}" - "4HR 20"* - čtyřhranný profil
+- *"4HR {a}R{r}" - "4HR 20R3"* - čtyřhranný profil s rádiusem
+- *"4HR {a}x{b}" - "4HR 20x10"* - čtyřhranný profil obdélníkový
+- *"4HR {a}x{b}R{r}" - "4HR 20x10R3"* - čtyřhranný profil obdélníkový s rádiusem
+- *"6HR {s}" - "6HR 20"* - šestihranný profil
+- *"TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2"* - trubkový čtyřhranný profil dle ČSN 425720
+- *"TR4HR {a}x{b}x{t}", "TR4HR {a}x{t}" - "TR4HR 20x20x2", "TR4HR 20x2"* - trubkový čtyřhranný profil
+- *"TR4HR {a}x{b}x{t}R{r}", "TR4HR {a}x{t}R{r}" - "TR4HR 20x20x2R3", "TR4HR 20x2R3"* - trubkový čtyřhranný profil s rádiusem
+- *"I {n}"* - I profil dle ČSN 425550
+- *"IPE {n}"* - IPE profil dle ČSN 425553
 - `args...` - Volitelné názvy vlastností k výpočtu.
-*"S", "A"* - plocha průřezu [mm^2]
-*"I"* - moment setrvačnosti (dle natoceni) [mm^4]
-*"Ix"* - moment setrvačnosti Ix [mm^4]
-*"Iy"* - moment setrvačnosti Iy [mm^4]
-*"Ixy"* - kvadratický moment součinitele [mm^4] (pro výpočet I pro dané natočení)
-*"Imin"* - minimální moment setrvačnosti [mm^4]
-*"Imax"* - maximální moment setrvačnosti [mm^4]
-*"Wx"* - průřezový modul pro ohyb pro osu x [mm^3]
-*"Wy"* - průřezový modul pro ohyb pro osu y [mm^3]
-*"Wo"* - průřezový modul pro ohyb (dle natočení) [mm^3]
-*"Ip", "Jp"* - polární moment setrvačnosti [mm^4]
-*"It", "Jt"* - torzní moment [mm^3]
-*"J"* - polární (torzní) moment setrvačnosti pro krut [mm^4]
-*"Wk"* - průřezový modul pro krut [mm^3]
-*"Wt"* - torzní průřezový modul [mm^3]
-*"Wp"* - Průřezový modul pro krut polární [mm^3]
-*"ix"* -
-*"iy"* -
-*"i"* -
-*"Sx"* -
-*"sx"* -
+- *"S", "A"* - plocha průřezu [mm^2]
+- *"I"* - moment setrvačnosti (dle natoceni) [mm^4]
+- *"Ix"* - moment setrvačnosti Ix [mm^4]
+- *"Iy"* - moment setrvačnosti Iy [mm^4]
+- *"Ixy"* - kvadratický moment součinitele [mm^4] (pro výpočet I pro dané natočení)
+- *"Imin"* - minimální moment setrvačnosti [mm^4]
+- *"Imax"* - maximální moment setrvačnosti [mm^4]
+- *"Wx"* - průřezový modul pro ohyb pro osu x [mm^3]
+- *"Wy"* - průřezový modul pro ohyb pro osu y [mm^3]
+- *"Wo"* - průřezový modul pro ohyb (dle natočení) [mm^3]
+- *"Ip", "Jp"* - polární moment setrvačnosti [mm^4]
+- *"It", "Jt"* - torzní moment [mm^3]
+- *"J"* - polární (torzní) moment setrvačnosti pro krut [mm^4]
+- *"Wk"* - průřezový modul pro krut [mm^3]
+- *"Wt"* - torzní průřezový modul [mm^3]
+- *"Wp"* - Průřezový modul pro krut polární [mm^3]
+- *"ix"* -
+- *"iy"* -
+- *"i"* -
+- *"Sx"* -
+- *"sx"* -
 - `Natoceni` - úhel natočení profilu (volitelný parametr pro výpočet Ix a Wo) (výchozí hodnota 0) [rad]
 ## Výstupní proměnné:
 - `dims` - Struktura (Dict) s rozměry profilu a případně i s vypočtenými vlastnostmi.
