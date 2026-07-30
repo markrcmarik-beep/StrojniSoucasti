@@ -13,12 +13,12 @@
 #
 using Unitful
 # načtení nápovědy z externího souboru
-const _PROFILY_NAPOVEDA = read(
+const _profily_NAPOVEDA = read(
     joinpath(@__DIR__, "..", "..", "docs", "src", "profily", "profily.md"),
     String,
 ) 
 """
-$_PROFILY_NAPOVEDA
+$_profily_NAPOVEDA
 """
 function profily(inputStr::AbstractString, args::AbstractString... ; natoceni::Number=0)
     dopln_jednotku(hod, cil_jednotka) = hod isa Unitful.AbstractQuantity ?

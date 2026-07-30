@@ -1,22 +1,19 @@
-# Profily
-
-Tato stránka dokumentuje funkci `profily`, která slouží k parsování označení profilů a výpočtu jejich geometrických a průřezových charakteristik.
-
-## Dokumentace k funkci `profily.jl`
+## funkce `profily.jl`
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-Funkce řeší textové označení tvaru profilu dle ČSN a vrací strukturu s rozměry. Volitelně lze zadat výpočet vlastností profilu (plocha, momenty setrvačnosti, průřezové moduly…).
-
+Funkce řeší textové označení tvaru profilu dle ČSN a vrací strukturu 
+s rozměry. Volitelně lze zadat výpočet vlastností profilu (plocha, 
+momenty setrvačnosti, průřezové moduly…).
 ## Vzor:
 vystupni_promenne = profily(inputStr, args...; natoceni=0)
 ## Vstupní proměnné:
 - `inputStr` - Textové označení tvaru profilu dle ČSN.
 **Podporované tvary:**
-*"PLO {a}x{b}" - "PLO 20x10"* - obdélníkový profil
-*"PLO {a}x{b}R{r}" - "PLO 20x10R3"* - obdélníkový profil s rádiusem
-*"OBD {a}x{b}" - "OBD 20x10"* - obdélníkový profil
-*"OBD {a}x{b}R{r}" - "OBD 20x10R3"* - obdélníkový profil s rádiusem
+- *"PLO {a}x{b}" - "PLO 20x10"* - obdélníkový profil
+- *"PLO {a}x{b}R{r}" - "PLO 20x10R3"* - obdélníkový profil s rádiusem
+- *"OBD {a}x{b}" - "OBD 20x10"* - obdélníkový profil
+- *"OBD {a}x{b}R{r}" - "OBD 20x10R3"* - obdélníkový profil s rádiusem
 - *"KR {D}" - "KR 20"* - kruhový profil
 - *"KR {D}/{d}" - "KR 20/10"* - kruhový profil s vnitřním průměrem (trubka)
 - *"TRKR {D}x{t}" - "TRKR 20x2"* - trubkový kruhový profil
@@ -88,7 +85,6 @@ dims = profily("TR4HR 60x40x4") # pouze rozměry
 dims = profily("PLO 20x10", "S", "Ix", "Iy") # rozměry + vlastnosti
 dims = profily("TR4HR 50x30x5", "S", "Ix") # rozměry + vlastnosti U profilu
 ```
-
 ## Popis
 Funkce `profily.jl` slouží k analýze profilů a jejich vyhodnocení.
 
