@@ -1,3 +1,7 @@
+# Dílčí součinitel spolehlivosti materiálu γ_M.
+# Tento součinitel se používá při výpočtu dovoleného napětí.
+# Hodnoty jsou rozděleny podle druhu zatížení (statický, pulzní, dynamický, rázový)
+# a dále podle typu namáhání (tah, tlak, ohyb atd.).
 
 ["statický"]
 "tah" = 1.3
