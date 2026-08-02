@@ -1,4 +1,4 @@
-# ver: 2026-02-08
+# ver: 2026-07-29
 using Documenter
 using StrojniSoucasti
 
@@ -7,9 +7,17 @@ makedocs(
     modules = [StrojniSoucasti],
     pages = [
         "Uvod" => "index.md",
-        "Materialy" => "materialy.md",
-        "Dovolene napeti" => "dovoleneNapeti.md",
+        # body
+        # materialy
+        "Dovolene napeti" => "materialy/dovoleneNapeti.md",
+        "Materialy" => "materialy/materialy.md",
+        # namahani
+        # profily
+        "Profily" => "profily/profily.md",
+        "Profiltvary" => "profily/profiltvary.md",
+        # tolerance
+        # zavity
         "Pouziti balicku" => "pouziti.md",
-        "API" => "api.md",
+        "API" => "api.md"
     ],
 )

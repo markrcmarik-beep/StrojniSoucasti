@@ -1,4 +1,4 @@
-# ver: 2026-04-28
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -86,8 +86,12 @@ using StrojniSoucasti, Unitful
     S10 = StrojniSoucasti.polygon2plocha(body10)
     @test S10 == 80.0
 
+    @test StrojniSoucasti.polygon2plocha(nothing) === nothing
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2plocha([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2plocha([0 0 0; 1 1 1; 2 2 2])
     @test_throws ArgumentError StrojniSoucasti.polygon2plocha([(0, 0, 0), (1, 0, 0), (1, 1, 0)])
 end
+
+nothing

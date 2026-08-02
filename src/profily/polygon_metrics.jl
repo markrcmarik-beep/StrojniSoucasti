@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 #
-# ver: 2026-04-17
+# ver: 2026-07-03
 ## Funkce: polygon_metrics()
 ## Autor: Martin
 #
@@ -24,6 +24,10 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+
+function polygon_metrics(body::Nothing)
+    return nothing
+end
 
 function polygon_metrics(body::Union{AbstractVector,AbstractMatrix})
     n = _polygon_point_count(body) # zkontroluje pocet bodu a vrati n

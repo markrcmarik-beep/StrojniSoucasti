@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vyřeší mechanické veličiny pro různé tvary dle zkratky označení.
-# ver: 2026-05-21
+# ver: 2026-07-14
 ## Funkce: profilyvlcn()
 ## Autor: Martin
 #
@@ -72,89 +72,210 @@ function profilyvlcn(tvar1::Dict, velicina::Symbol; natoceni=0)
             S_hod = getv(:S)
             S_hod = dopln_jednotku(S_hod, u"mm^2")
             S_str = hasproperty(tvar1, :S_str) ? tvar1[:S_str] : ""
-            return S_hod, S_str # Vrátí hodnotu a vzorec pro plochu
         else
             S_hod, S_str = StrojniSoucasti.profilyvlcnS(tvar1)
             S_hod = dopln_jednotku(S_hod, u"mm^2")
-            return S_hod, S_str # Vrátí hodnotu a vzorec pro plochu
         end
+        S_info = "plocha průřezu [mm²]"
+        return S_hod, S_str, S_info # Vrátí hodnotu, vzorec a informaci pro plochu
+    # -----------------------------------------------------------
+    # J - Polární (torzní) moment setrvačnosti pro krut [mm^4]
+    # -----------------------------------------------------------
+    elseif velicina == :J  # Polární (torzní) moment setrvačnosti pro krut [mm^4]
+        J_hod, J_str = StrojniSoucasti.profilyvlcnJ(tvar1, :Jt) # Zatím není implementováno, ale připraveno pro budoucí rozšíření
+        J_hod = dopln_jednotku(J_hod, u"mm^4")
+        J_info = "polární moment setrvačnosti pro krut [mm⁴]"
+        return J_hod, J_str, J_info # Vrátí hodnotu, vzorec a informaci pro polární moment setrvačnosti pro krut
     # -----------------------------------------------------------
     # Jp - Polární moment [mm⁴]
     # -----------------------------------------------------------
-    elseif velicina == :Ip  # Polární moment [mm⁴]
-        Jp_hod, Jp_str = StrojniSoucasti.profilyvlcnJp(tvar1)
+    elseif velicina == :Jp  # Polární moment [mm⁴]
+        Jp_hod, Jp_str = StrojniSoucasti.profilyvlcnJ(tvar1, :Jp)
         Jp_hod = dopln_jednotku(Jp_hod, u"mm^4")
-        return Jp_hod, Jp_str # Vrátí hodnotu a vzorec pro polární moment
+        Jp_info = "polární moment [mm⁴]"
+        return Jp_hod, Jp_str, Jp_info # Vrátí hodnotu, vzorec a informaci pro polární moment
     # -----------------------------------------------------------
     # Jt - Torzní moment [mm³] (pro kruhové průřezy)
     # -----------------------------------------------------------
     elseif velicina == :Jt  # Torzní moment [mm³] (pro kruhové průřezy)
-        Jt_hod, Jt_str = StrojniSoucasti.profilyvlcnJt(tvar1)
+        Jt_hod, Jt_str = StrojniSoucasti.profilyvlcnJt(tvar1, :Jt)
         Jt_hod = dopln_jednotku(Jt_hod, u"mm^3")
-        return Jt_hod, Jt_str # Vrátí hodnotu a vzorec pro torzní moment
+        Jt_info = "torzní moment [mm³]"
+        return Jt_hod, Jt_str, Jt_info # Vrátí hodnotu, vzorec a informaci pro torzní moment
+    # -----------------------------------------------------------
+    # rmax - Maximální poloměr setrvačnosti [mm]
+    # -----------------------------------------------------------
+    elseif velicina == :rmax  # Maximální poloměr setrvačnosti [mm]
+        rmax_hod, rmax_str = StrojniSoucasti.profilyvlcnrmax(tvar1)
+        rmax_hod = dopln_jednotku(rmax_hod, u"mm")
+        rmax_info = "maximální poloměr setrvačnosti [mm]"
+        return rmax_hod, rmax_str, rmax_info # Vrátí hodnotu, vzorec a informaci pro maximální poloměr setrvačnosti
     # -----------------------------------------------------------
     # Wk - Modul v krutu [mm³]
     # -----------------------------------------------------------
     elseif velicina == :Wk  # Modul v krutu [mm³]
-        Wk_hod, Wk_str = StrojniSoucasti.profilyvlcnWk(tvar1, velicina)
+        Wk_hod, Wk_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wk)
         Wk_hod = dopln_jednotku(Wk_hod, u"mm^3")
-        return Wk_hod, Wk_str # Vrátí hodnotu a vzorec pro modul v krutu
+        Wk_info = "modul v krutu [mm³]"
+        return Wk_hod, Wk_str, Wk_info # Vrátí hodnotu, vzorec a informaci pro modul v krutu
     # ------------------------------------------------------------
-    # Wt - Torzní průřezový modul [mm³] (pro kruhové průřezy)
+    # Wt - Torzní průřezový modul [mm³]
     # ------------------------------------------------------------
-    elseif velicina == :Wt  # Torzní průřezový modul [mm³] (pro kruhové průřezy)
-        Wt_hod, Wt_str = StrojniSoucasti.profilyvlcnWt(tvar1)
+    elseif velicina == :Wt  # Torzní průřezový modul [mm³]
+        Wt_hod, Wt_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wk)
         Wt_hod = dopln_jednotku(Wt_hod, u"mm^3")
-        return Wt_hod, Wt_str # Vrátí hodnotu a vzorec pro torzní průřezový modul
+        Wt_info = "torzní průřezový modul [mm³]"
+        return Wt_hod, Wt_str, Wt_info # Vrátí hodnotu, vzorec a informaci pro torzní průřezový modul
     # ------------------------------------------------------------
-    # Ix - Kvadratický moment [mm⁴]
+    # Wp - Torzní průřezový modul [mm³]
+    # ------------------------------------------------------------
+    elseif velicina == :Wp  # Torzní průřezový modul [mm³]
+        Wp_hod, Wp_str = StrojniSoucasti.profilyvlcnWk(tvar1, :Wp)
+        Wp_hod = dopln_jednotku(Wp_hod, u"mm^3")
+        Wp_info = "torzní průřezový modul [mm³]"
+        return Wp_hod, Wp_str, Wp_info # Vrátí hodnotu, vzorec a informaci pro torzní průřezový modul
+    # ------------------------------------------------------------
+    # Ix - Kvadratický moment průřezu pro osu x [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Ix  # Kvadratický moment [mm⁴]
-        Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnIx(tvar1, velicina, natoceni)
+        Ix_hod, Ix_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ix)
         Ix_hod = dopln_jednotku(Ix_hod, u"mm^4")
-        return Ix_hod, Ix_str # Vrátí hodnotu a vzorec pro kvadratický moment Ix (natočený o natoceni)
+        Ix_info = "kvadratický moment průřezu pro osu x [mm⁴]"
+        return Ix_hod, Ix_str, Ix_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Ix
     # ------------------------------------------------------------
-    # Iy - Kvadratický moment [mm⁴]
+    # Iy - Kvadratický moment průřezu pro osu y [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Iy  # Kvadratický moment [mm⁴]
-        Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Iy, natoceni)
+        Iy_hod, Iy_str = StrojniSoucasti.profilyvlcnI(tvar1, :Iy)
         Iy_hod = dopln_jednotku(Iy_hod, u"mm^4")
-        return Iy_hod, Iy_str # Vrátí hodnotu a vzorec pro kvadratický moment Iy (natočený o 90°)
+        Iy_info = "kvadratický moment průřezu pro osu y [mm⁴]"
+        return Iy_hod, Iy_str, Iy_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Iy
     # ------------------------------------------------------------
-    # Ixy - Kvadratický moment [mm⁴]
+    # I - Kvadratický moment průřezu [mm⁴]
+    # ------------------------------------------------------------
+    elseif velicina == :I  # Kvadratický moment [mm⁴]
+        I_hod, I_str = StrojniSoucasti.profilyvlcnI(tvar1, :I, natoceni)
+        I_hod = dopln_jednotku(I_hod, u"mm^4")
+        I_info = "kvadratický moment průřezu [mm⁴]"
+        return I_hod, I_str, I_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment I
+    # ------------------------------------------------------------
+    # Ixy - Kvadratický moment průřezu součinitele [mm⁴]
     # ------------------------------------------------------------
     elseif velicina == :Ixy  # Kvadratický moment [mm⁴]
-        if hasproperty(tvar1, :Ixy)
-            Ixy_hod = getv(:Ixy)
-            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
-            Ixy_str = hasproperty(tvar1, :Ixy_str) ? tvar1[:Ixy_str] : ""
-            return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy
-        else
-            Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Ixy, natoceni)
-            Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
-            return Ixy_hod, Ixy_str # Vrátí hodnotu a vzorec pro kvadratický moment Ixy (natočený o natoceni)
-        end
+        Ixy_hod, Ixy_str = StrojniSoucasti.profilyvlcnI(tvar1, :Ixy, natoceni)
+        Ixy_hod = dopln_jednotku(Ixy_hod, u"mm^4")
+        Ixy_info = "kvadratický moment průřezu součinitele [mm⁴]"
+        return Ixy_hod, Ixy_str, Ixy_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Ixy
     # ------------------------------------------------------------
     # Imin - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 - √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imin  # Kvadratický moment mimimální [mm⁴]
-        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Imin, natoceni)
+        Imin_hod, Imin_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imin)
         Imin_hod = dopln_jednotku(Imin_hod, u"mm^4")
-        return Imin_hod, Imin_str # Vrátí hodnotu a vzorec pro kvadratický moment Imin
-        # --------------------------------------------------------
+        Imin_info = "kvadratický moment průřezu minimální [mm⁴]"
+        return Imin_hod, Imin_str, Imin_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Imin
+    # --------------------------------------------------------
     # Imax - Kvadratický moment minimální [mm⁴] ("Imin = (Ix + Iy)/2 + √( ((Ix - Iy)/2)² + Ixy² )")
     # ------------------------------------------------------------
     elseif velicina == :Imax  # Kvadratický moment mimimální [mm⁴]
-        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnIx(tvar1, :Imax, natoceni)
+        Imax_hod, Imax_str = StrojniSoucasti.profilyvlcnI(tvar1, :Imax)
         Imax_hod = dopln_jednotku(Imax_hod, u"mm^4")
-        return Imax_hod, Imax_str # Vrátí hodnotu a vzorec pro kvadratický moment Imax
+        Imax_info = "kvadratický moment průřezu maximální [mm⁴]"
+        return Imax_hod, Imax_str, Imax_info # Vrátí hodnotu, vzorec a informaci pro kvadratický moment Imax
+    # ------------------------------------------------------------
+    # ex - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) x [mm] (pro výpočet Wx)
+    # ------------------------------------------------------------
+    elseif velicina == :ex  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy x [mm] (pro výpočet Wx)
+        ex_hod, ex_str = StrojniSoucasti.profilyvlcneo(tvar1, :ex)
+        ex_hod = dopln_jednotku(ex_hod, u"mm")
+        ex_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) x [mm]"
+        return ex_hod, ex_str, ex_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy x
+    # ------------------------------------------------------------
+    # ey - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) y [mm] (pro výpočet Wy)
+    # ------------------------------------------------------------
+    elseif velicina == :ey  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy y [mm] (pro výpočet Wy)
+        ey_hod, ey_str = StrojniSoucasti.profilyvlcneo(tvar1, :ey)
+        ey_hod = dopln_jednotku(ey_hod, u"mm")
+        ey_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) y [mm]"
+        return ey_hod, ey_str, ey_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy y
+    # ------------------------------------------------------------
+    # eo - Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm] dle natočení (pro výpočet Wo)
+    # ------------------------------------------------------------
+    elseif velicina == :eo  # Vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm] dle natočení (pro výpočet Wo)
+        eo_hod, eo_str = StrojniSoucasti.profilyvlcneo(tvar1, :eo, natoceni)
+        eo_hod = dopln_jednotku(eo_hod, u"mm")
+        eo_info = "vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště) [mm]"
+        return eo_hod, eo_str, eo_info # Vrátí hodnotu, vzorec a informaci pro vzdálenost nejvzdálenějšího vlákna od neutrální osy (těžiště)
+    # ------------------------------------------------------------
+    # Wx - Průřezový modul v ohybu pro osu x [mm³]
+    # ------------------------------------------------------------
+    elseif velicina == :Wx  # Průřezový modul v ohybu pro osu x [mm³]
+        Wx_hod, Wx_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wx)
+        Wx_hod = dopln_jednotku(Wx_hod, u"mm^3")
+        Wx_info = "průřezový modul v ohybu pro osu x [mm³]"
+        return Wx_hod, Wx_str, Wx_info # Vrátí hodnotu, vzorec a informaci pro průřezový modul v ohybu pro osu x
+    # ------------------------------------------------------------
+    # Wy - Průřezový modul v ohybu pro osu y [mm³]
+    # ------------------------------------------------------------
+    elseif velicina == :Wy  # Průřezový modul v ohybu pro osu y [mm³]
+        Wy_hod, Wy_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wy)
+        Wy_hod = dopln_jednotku(Wy_hod, u"mm^3")
+        Wy_info = "průřezový modul v ohybu pro osu y [mm³]"
+        return Wy_hod, Wy_str, Wy_info # Vrátí hodnotu, vzorec a informaci pro průřezový modul v ohybu pro osu y
     # ------------------------------------------------------------
     # Wo - Průřezový modul v ohybu [mm³]
     # ------------------------------------------------------------
     elseif velicina == :Wo  # Modul v ohybu [mm³]
-        Wo_hod, Wo_str = StrojniSoucasti.profilyvlcnWo(tvar1, velicina, natoceni)
+        Wo_hod, Wo_str = StrojniSoucasti.profilyvlcnWo(tvar1, :Wo, natoceni)
         Wo_hod = dopln_jednotku(Wo_hod, u"mm^3")
-        return Wo_hod, Wo_str # Vrátí hodnotu a vzorec pro modul v ohybu Wo (natočený o natoceni)
+        Wo_info = "průřezový modul v ohybu [mm³]"
+        return Wo_hod, Wo_str, Wo_info # Vrátí hodnotu, vzorec a informaci pro modul v ohybu Wo (natočený o natoceni)
+    # ------------------------------------------------------------
+    # ix - Poloměr setrvačnosti pro osu x [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :ix  # Poloměr setrvačnosti pro osu x [mm]
+        ix_hod, ix_str = StrojniSoucasti.profilyvlcnixy(tvar1, :ix)
+        ix_hod = dopln_jednotku(ix_hod, u"mm")
+        ix_info = "poloměr setrvačnosti pro osu x [mm]"
+        return ix_hod, ix_str, ix_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti pro osu x
+    # ------------------------------------------------------------
+    # iy - Poloměr setrvačnosti pro osu y [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :iy  # Poloměr setrvačnosti pro osu y [mm]
+        iy_hod, iy_str = StrojniSoucasti.profilyvlcnixy(tvar1, :iy)
+        iy_hod = dopln_jednotku(iy_hod, u"mm")
+        iy_info = "poloměr setrvačnosti pro osu y [mm]"
+        return iy_hod, iy_str, iy_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti pro osu y
+    # ------------------------------------------------------------
+    # i - Poloměr setrvačnosti [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :i  # Poloměr setrvačnosti [mm]
+        i_hod, i_str = StrojniSoucasti.profilyvlcnixy(tvar1, :i)
+        i_hod = dopln_jednotku(i_hod, u"mm")
+        i_info = "poloměr setrvačnosti [mm]"
+        return i_hod, i_str, i_info # Vrátí hodnotu, vzorec a informaci pro poloměr setrvačnosti
+    # ------------------------------------------------------------
+    # Sx - Statický moment plochy podle osy x [mm^3]
+    # ------------------------------------------------------------
+    elseif velicina == :Sx  # Statický moment plochy podle osy x [mm^3]
+        Sx_hod, Sx_str = nothing, "int(y dS, S)"
+        Sx_info = "Statický moment plochy podle osy x [mm^3]"
+        return Sx_hod, Sx_str, Sx_info # Vrátí hodnotu, vzorec a informaci
+    # ------------------------------------------------------------
+    # Sy - Statický moment plochy podle osy y [mm^3]
+    # ------------------------------------------------------------
+    elseif velicina == :Sy  # Statický moment plochy podle osy y [mm^3]
+        Sy_hod, Sy_str = nothing, "int(x dS, S)"
+        Sy_info = "Statický moment plochy podle osy y [mm^3]"
+        return Sy_hod, Sy_str, Sy_info # Vrátí hodnotu, vzorec a informaci
+    # ------------------------------------------------------------
+    # sx - staticka hodnota sx [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :sx
+    # ------------------------------------------------------------
+    # T - souřadnice těžiště [mm]
+    # ------------------------------------------------------------
+    elseif velicina == :T
     # ------------------------------------------------------------
     # Neznámá veličina
     # ------------------------------------------------------------

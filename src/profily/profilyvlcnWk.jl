@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet průřezový modul v krutu pro různé tvary dle zkratky označeni.
-# ver: 2026-05-24
+# ver: 2026-07-06
 ## Funkce: profilyvlcnWk()
 ## Autor: Martin
 #
@@ -52,8 +52,14 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     # Kruhová tyč
     if info == "KR" # Kruhová tyč
         if velicina == :Wk || velicina == :Wt
-            D = getn(:D) # Průměr
-            return pi/16*D^3, "π/16*D³"
+            getv(:d) === missing ? d = 0 : d = getn(:d)
+            D = getn(:D)
+            if d == 0
+                Wk, Wk_str = pi/16*D^3, "π/16*D³"
+            else
+                Wk, Wk_str = pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            end
+            return Wk, Wk_str
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -62,19 +68,24 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info == "TRKR" # Trubka kruhová
         if velicina == :Wk || velicina == :Wt
             D, d = getn(:D), getn(:d) # Vnější a vnitřní průměr
-            return pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            Wk, Wk_str = pi/16*(D^4 - d^4)/D, "π/16*(D⁴ - d⁴)/D"
+            return Wk, Wk_str
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
-        if velicina == :Wk
-            a = getn(:a) # Strana
-            return 0.208*a^3, "0.208*a³"
-        elseif velicina == :Wt
-            a = getn(:a) # Strana
-            return 0.25*a^3, "0.25*a³"
+        if velicina == :Wp
+            if getv(:b) === missing
+                a = getn(:a) # Strana
+                return sqrt(2)/6*a^3, "sqrt(2)/6*a³"
+            end
+        elseif velicina == :Wt || velicina == :Wk
+            if getv(:b) === missing
+                a = getn(:a) # Strana
+                return 0.208*a^3, "0.208*a³"
+            end
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -83,11 +94,11 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         if velicina == :Wk
             a, b = getn(:a), getn(:b) # Šířka a výška
-            return 0.25*a*b^2, "0.25*a*b²"
+            return 0.25*a*b^2, "a*b*sqrt(a^2 + b^2)/6"
         elseif velicina == :Wt
             a, b = getn(:a), getn(:b) # Šířka a výška
             return a*b^2/4*(1 - 0.63*b/a + 0.052*(b/a)^5), 
-                "a*b²/4*(1 - 0.63*b/a + 0.052*(b/a)^5)"
+                "a*b²/4*(1 - 0.63*b/a + 0.052*(b/a)^5)" # ??????????????
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end
@@ -96,10 +107,10 @@ function profilyvlcnWk(tvar1::Dict, velicina::Symbol = :Wt)
     elseif info == "6HR" # Šestihranná tyč
         if velicina == :Wk
             s = getn(:s) # Strana
-            return 0.17*s^3, "0.17*s³" # ??????????????????
+            return 5*sqrt(3)/8*s^3, "5*sqrt(3)/8*s³"
         elseif velicina == :Wt
             s = getn(:s) # Strana
-            return 0.17*s^3, "0.17*s³" # ??????????????????
+            return 0.98*s^3, "0.98*s³"
         else
             error("Neznámá veličina: $velicina pro tvar $info")
         end

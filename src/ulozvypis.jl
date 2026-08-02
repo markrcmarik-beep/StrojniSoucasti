@@ -1,42 +1,31 @@
 ## Funkce Julia
 ###############################################################
 ## Popis funkce:
-#
-# ver: 2025-12-29
+# Uloží textový výstup do souboru a vrátí plnou cestu k uloženému souboru.
+# ver: 2025-07-26
 ## Funkce: ulozvypis()
+## Autor: Martin
 #
+## Cesta uvnitř balíčku:
+# StrojniSoucasti/src/ulozvypis.jl
 ## Vzor:
-## vystupni_promenne = ulozvypis(vstupni_promenne)
+## fullpath = ulozvypis(text, cesta=cesta, soubor=soubor, koncovka=koncovka)
 ## Vstupní proměnné:
-#
+# text - textový výstup. [String]
+# cesta - cílová složka. [String] (výchozí výchozí pracovní cesta)
+# soubor - název souboru (s nebo bez přípony). [String] (výchozí vypocet.txt)
+# koncovka - přípona souboru. [String] (výchozí *.txt)
 ## Výstupní proměnné:
-#
+# fullpath - plná cesta k uloženému souboru.
 ## Použité balíčky
 #
 ## Použité uživatelské funkce:
 #
 ## Příklad:
-#
+# ulozvypis("vysledek", cesta=pwd(), soubor="vypocet")
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-
-###############################################################
-## Funkce Julia
-###############################################################
-## Popis funkce:
-# Uloží textový výstup výpočtu namáhání do souboru .txt
-#
-## Funkce: ulozVypisTxt()
-#
-## Vstup:
-# text     - textový výstup (String), typicky Dispstr
-# soubor   - název souboru bez nebo s příponou .txt
-# cesta    - cesta k uložení (výchozí aktuální adresář)
-#
-## Výstup:
-# fullpath - plná cesta k uloženému souboru
-###############################################################
 
 """
     ulozvypis(text::AbstractString; cesta::AbstractString=pwd(),

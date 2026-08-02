@@ -4,34 +4,30 @@ Tato stránka shrnuje aktuálně exportované funkce balíčku `StrojniSoucasti`
 
 ## Materiály
 
-```@docs
-materialy
-dovoleneNapeti
-mezUnavy
-```
+- `materialy`
+- `dovoleneNapeti`
+- `mezUnavy`
 
 ## Profily
 
-```@docs
-tvarprofilu
-profily
-```
+- `profily`
 
 ## Výpočty namáhání
 
-```@docs
-namahanitah
-namahanitlak
-namahanikrut
-namahanistrih
-namahaniohyb
-namahaniotl
-namahanikombinovane
-```
+- `namahanitah`
+- `namahanitlak`
+- `namahanikrut`
+- `namahanistrih`
+- `namahaniohyb`
+- `namahaniotl`
+- `namahanikombinovane`
 
 ## Další nástroje
 
+- `ulozvypis`
+- `zavity`
+- `tolerance`
+
 ```@docs
-ulozvypis
-zavity
+tolerance
 ```

@@ -1,63 +1,27 @@
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Funkce řeší textové označení tvaru dle ČSN a vrací
-# strukturu s rozměry.
-# ver: 2026-05-30
-## Funkce: profilyCSN()
+# ver: 2026-07-16
+## Funkce: profiltvary()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/profily/profilyCSN.jl
+# StrojniSoucasti/src/profily/profiltvary.jl
 #
-## Vzor:
-## vystupni_promenne = profilyCSN(inputStr)
-## Vstupní proměnné:
-# inputStr - Textové označení tvaru dle ČSN.
-#  Podporované tvary:
-#   "PLO" - obdélníkový profil
-#       "PLO {a}x{b}" - "PLO 20x10" - obdélníkový profil
-#       "PLO {a}x{b}R{r}" - "PLO 20x10R3" - obdélníkový profil s rádiusem
-#   "OBD" - obdélníkový profil
-#       "OBD {a}x{b}" - "OBD 20x10" - obdélníkový profil
-#       "OBD {a}x{b}R{r}" - "OBD 20x10R3" - obdélníkový profil s rádiusem
-#   "KR" - kruhový profil
-#       "KR {D}" - "KR 20" - kruhový profil
-#   "TRKR" - trubkový kruhový profil
-#       "TRKR {D}x{t}" - "TRKR 20x2" - trubkový kruhový profil
-#   "4HR" - čtyřhranný profil
-#       "4HR {a}" - "4HR 20" - čtyřhranný profil
-#       "4HR {a}R{r}" - "4HR 20R3" - čtyřhranný profil s rádiusem
-#       "4HR {a}x{b}" - "4HR 20x10" - čtyřhranný profil obdélníkový
-#       "4HR {a}x{b}R{r}" - "4HR 20x10R3" - čtyřhranný profil obdélníkový s rá
-#   "6HR" - šestihranný profil
-#       "6HR {s}" - "6HR 20" - šestihranný profil
-#   "I" - I profil bez zaoblení
-#       "I {n}" - "I 100"
-#   "TR4HR" - trubkový čtyřhranný profil
-#       "TR4HR {a}x{b}x{t}" - "TR4HR 20x20x2" - trubkový čtyřhranný profil
-#       "TR4HR {a}x{b}x{t}R{r}" - "TR4HR 20x20x2R3" - trubkový čtyřhranný profil s rádiusem
-#   args... - (nepoužito)
-## Výstupní proměnné:
-# dims - Struktura (Dict) s rozměry a informacemi o tvaru, např.:
-#    Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
 # profilTR4HR, profil_I_CSN425550, profil_IPE_CSN425553
-## Příklad:
-# inputStr = "PLO 20x10R3"
-# dims = profilyCSN(inputStr)
-# dims == Dict("info" => "PLO", "a" => 20u"mm", "b" => 10u"mm", "R" => 3u"mm")
-# inputStr = "KR 20"
-# dims = profilyCSN(inputStr)
-# dims == Dict("info" => "KR", "D" => 20u"mm")
 ###############################################################
 ## Použité proměnné vnitřní:
 #
 using Unitful
-
-function profilyCSN(inputStr::AbstractString)
+# načtení nápovědy z externího souboru
+const _profiltvary_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "profily", "profiltvary.md"),
+    String,
+) 
+"""
+$_profiltvary_NAPOVEDA
+"""
+function profiltvary(inputStr::AbstractString)
     # -----------------------------------------------------------
     # 1) Normalizace vstupu
     # -----------------------------------------------------------
@@ -107,10 +71,13 @@ function profilyCSN(inputStr::AbstractString)
                 D = parse(Float64, m.captures[1])
                 dims[:info] = "KR"
                 dims[:D] = D * u"mm"
+                #dims[:d] = 0 * u"mm" # d je nulové pro plný kruh
                 return true
             end
         ),
+        # -------------------------------------------------------
         # KR : KR{D}/{d}
+        # -------------------------------------------------------
         (
             r"^KR(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$",
             function (m)

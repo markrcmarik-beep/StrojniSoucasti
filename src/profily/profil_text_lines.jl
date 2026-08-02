@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Pomocná funkce pro výpis profil informací do textového výstupu.
-# ver: 2026-05-16
+# ver: 2026-07-03
 ## Funkce: profil_text_lines()
 ## Autor: Martin
 #
@@ -45,10 +45,18 @@ function profil_text_lines(VV::Dict{Symbol,Any})
         selected_keys = [:a, :b, :D, :d, :t, :t1, :t2, :h, :h1, :h2, :R, :R1, :R2, :n] # běžné rozměry profilu
         for k in selected_keys # výpis rozměrů profilu
             if haskey(VV[:profil_info], k)
-                v = VV[:profil_info][k] 
+                v = VV[:profil_info][k] # hodnota rozměru
+                if v === missing || v === nothing
+                    continue # přeskočit chybějící hodnoty
+                end
                 if isa(v, Unitful.AbstractQuantity)
+                    v_bez = ustrip(v) # hodnota bez jednotek
+                    if v_bez == 0
+                        continue # přeskočit nulové hodnoty
+                    end
                     push!(lines, "  $(k) = $(_profil_quantity_mm_text(v))") # výpis rozměru s jednotkami převedenými na mm bez zbytečných nul
                 else
+                    v == 0 && continue # přeskočit nulové hodnoty
                     vtxt = v isa Number ? _profil_number_text(v) : string(v)
                     push!(lines, "  $(k) = $(vtxt)") # výpis rozměru bez zbytečných nul
                 end

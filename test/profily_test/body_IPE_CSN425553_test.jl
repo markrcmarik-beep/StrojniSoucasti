@@ -1,4 +1,4 @@
-# ver: 2026-05-16
+# ver: 2026-07-01
 using Test
 using StrojniSoucasti
 
@@ -57,3 +57,5 @@ end
     prof = StrojniSoucasti.profil_IPE_CSN425553("IPE 100")
     @test_throws ArgumentError StrojniSoucasti.body_IPE_CSN425553(prof, "xyz")
 end
+
+nothing

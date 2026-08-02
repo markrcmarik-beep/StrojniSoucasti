@@ -1,8 +1,8 @@
 ## Funkce Julia v1.12
 ###############################################################
 ## Popis funkce:
-# Výpočet torzní konstanty Ip pro různé tvary profilů.
-# ver: 2026-05-24
+# Výpočet torzní konstanty J, Jp, Jt pro různé tvary profilů.
+# ver: 2026-07-06
 ## Funkce: profilyvlcnIp()
 ## Autor: Martin
 #
@@ -10,7 +10,7 @@
 # StrojniSoucasti/src/profily/profilyvlcnJp.jl
 #
 ## Vzor:
-## Jp_hod, Jp_str = profilyvlcnJp(tvar1, velicina)
+## J_hod, J_str = profilyvlcnJp(tvar1, velicina)
 ## Vstupní proměnné:
 # tvar1 - slovník (Dict) s informacemi o tvaru profilu a jeho parametrech
 #   :info - tvar profilu (řetězec, např. "PLO", "OBD", "KR", "TRKR", "4HR", "TR4HR", "6HR")
@@ -19,8 +19,8 @@
 #   :Jp - Polární moment průřezu [mm³]
 #   :Jt - Torzní konstanta [mm³]
 ## Výstupní proměnné:
-# Jp_hod - hodnota polárního momentu průřezu s jednotkami
-# Jp_str - vzorec použitý pro výpočet polárního momentu průřezu (string)
+# J_hod - hodnota polárního momentu průřezu s jednotkami
+# J_str - vzorec použitý pro výpočet polárního momentu průřezu (string)
 ## Použité balíčky:
 # 
 ## Použité uživatelské funkce:
@@ -30,7 +30,7 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
+function profilyvlcnJ(tvar1::Dict, velicina::Symbol = :Jt)
     info = tvar1[:info] # Získání informace o tvaru
     # Pomocné funkce na čtení parametrů
     getv(k) = haskey(tvar1, k) ? tvar1[k] : missing # Vrati hodnotu nebo missing
@@ -45,61 +45,41 @@ function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         a, b = getn(:a), getn(:b)
         if velicina == :Jp
-        if a >= b
-            if 1 <= (a/b) && (a/b) <= 10
-                return a*b^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
-                    "a*b³/3*(1 - 0.63*b/a + 0.052*(b/a)^5)"
-            elseif (a/b) > 10
-                return a*b^3 /3, "a*b³ /3" # Torzní konstanta
+            a, b = getn(:a), getn(:b)
+            Jp, Jp_str = a*b*(a^2 + b^2)/12, "a*b*(a^2 + b^2)/12"
+            return Jp, Jp_str
+        elseif velicina == :Jt || velicina == :J
+            a, b = getn(:a), getn(:b)
+            if a <= b
+                Jt, Jt_str = a*b^3/3*(1 - 0.63*a/b + 0.052*(a/b)^5), 
+                    "a*b³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
             else
-                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: $velicina.")
+                Jt, Jt_str = b*a^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
+                    "b*a³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
             end
-        else
-            if 1 <= (b/a) && (b/a) <= 10
-                return b*a^3 *(1/3 - 0.21*a/b*(1 - a^4/12/b^4)), 
-                    "b*a³ *(1/3 - 0.21*a/b*(1 - a⁴/12/b⁴))" # Torzní konstanta
-            elseif (b/a) > 10
-                return b*a^3 /3, "b*a³ /3" # Torzní konstanta
-            else
-                error("Neznámý výpočet. Tvar: $info pro veličinu: $velicina.")
-            end
-        end
-        elseif velicina == :Jt
-        if a >= b
-            if 1 <= (a/b) && (a/b) <= 10
-                return a*b^3 *(1/3 - 0.21*b/a*(1 - b^4/12/a^4)), 
-                    "a*b³ *(1/3 - 0.21*b/a*(1 - b⁴/12/a⁴))" # Torzní konstanta
-            elseif (a/b) > 10
-                return a*b^3 /3, "a*b³ /3" # Torzní konstanta
-            else
-                error("Nedefinovaný výpočet. Tvar: $info pro veličinu: $velicina.")
-            end
-        else
-            if 1 <= (b/a) && (b/a) <= 10
-                return b*a^3 *(1/3 - 0.21*a/b*(1 - a^4/12/b^4)), 
-                    "b*a³ *(1/3 - 0.21*a/b*(1 - a⁴/12/b⁴))" # Torzní konstanta
-            elseif (b/a) > 10
-                return b*a^3 /3, "b*a³ /3" # Torzní konstanta
-            else
-                error("Neznámý výpočet. Tvar: $info pro veličinu: $velicina.")
-            end
-        end
+            return Jt, Jt_str
         else
             error("Neznámá veličina: $velicina pro tvar: $info.")
         end
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
-        if velicina == :Jp || velicina == :Jt
+        if velicina == :Jp || velicina == :Jt || velicina == :J
+            getv(:d) === missing ? d = 0 : d = getn(:d)
             D = getn(:D)
-            return pi/32*D^4, "π/32*D⁴"
+            if d == 0
+                J, J_str = pi/32*D^4, "π/32*D⁴"
+            else
+                J, J_str = pi/32*(D^4 - d^4), "π/32*(D⁴ - d⁴)"
+            end
+            return J, J_str
         else
             error("Neznámá veličina: $velicina pro tvar: $info.")
         end
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
-        if velicina == :Jp || velicina == :Jt
+        if velicina == :Jp || velicina == :Jt || velicina == :J
             D, d = getn(:D), getn(:d)
             return pi/32*(D^4 - d^4), "π/32*(D⁴ - d⁴)"
         else
@@ -109,18 +89,36 @@ function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
         if velicina == :Jp
-            a = getn(:a)
-            return 0.1406*a^4, "0.1406*a⁴" # Torzní konstanta
-        elseif velicina == :Jt
-             a = getn(:a)
-            return 0.1406*a^4, "0.1406*a⁴" # Torzní konstanta
+            if getv(:b) === missing
+                a = getn(:a)
+                return 1/6*a^4, "1/6*a⁴" # Torzní konstanta
+            else
+                a, b = getn(:a), getn(:b)
+                Jp, Jp_str = a*b*(a^2 + b^2)/12, "a*b*(a^2 + b^2)/12"
+                return Jp, Jp_str
+            end
+        elseif velicina == :Jt || velicina == :J
+            if getv(:b) === missing
+                a = getn(:a)
+                return 0.1406*a^4, "0.1406*a⁴" # Torzní konstanta
+            else
+                a, b = getn(:a), getn(:b)
+                if a <= b
+                    Jp, Jp_str = a*b^3/3*(1 - 0.63*a/b + 0.052*(a/b)^5), 
+                        "a*b³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
+                else
+                    Jp, Jp_str = b*a^3/3*(1 - 0.63*b/a + 0.052*(b/a)^5), 
+                        "b*a³/3*(1 - 0.63*a/b + 0.052*(a/b)^5)"
+                end
+                return Jt, Jt_str
+            end
         else
             error("Neznámá veličina: $velicina pro tvar: $info.")
         end
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR"
-        if velicina == :Jp || velicina == :Jt
+        if velicina == :Jp || velicina == :Jt || velicina == :J
             a, b, t = getn(:a), getn(:b), getn(:t)
             if min(a,b)*0.1 >= t
                 return 2*(a-t)^2*(b-t)^2*t/((a-t)+(b-t)), 
@@ -147,9 +145,9 @@ function profilyvlcnJp(tvar1::Dict, velicina::Symbol = :Jt)
     elseif info == "6HR" # Šestihranná tyč
         s = getn(:s)
         if velicina == :Jp
-            return 0.133*sqrt(3)/2*s^4, "0.133*sqrt(3)/2*s⁴"
-        elseif velicina == :Jt
-            return 0.154*s^4, "0.154*s⁴" # Torzní konstanta
+            return 5*sqrt(3)/8*s^4, "5*sqrt(3)/8*s⁴"
+        elseif velicina == :Jt || velicina == :J
+            return 1.013*s^4, "1.013*s⁴" # Torzní konstanta
         else
             error("Neznámá veličina: $velicina pro tvar: $info.")
         end

@@ -2,12 +2,12 @@
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-05-29
+# ver: 2026-06-17
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/profil/profilTR4HR.jl
+# StrojniSoucasti/src/profily/profil_TR4HR_CSN425720.jl
 #
 ## Vzor:
 ## vystupni_promenne = profilTR4HR(vstupni_promenne)
@@ -16,16 +16,56 @@
 ## Výstupní proměnné:
 # - TR4HR_CSN425720 struct s vlastnostmi profilu nebo nothing, pokud profil neexistuje.
 #   Pokud profil existuje, struct obsahuje nasledujici pole: (do nedefinované hodnoty uloženo nothing)
-#   - name::String: Název profilu
-#   - standard::String: Norma (nepovinné)
-#   - a::Float64: Rozměr a
-#   - b::Float64: Rozměr b
-#   - t::Float64: Tloušťka
-#   - R::Float64: Poloměr (buď z databáze, nebo vypočítaný jako min(t + t/3, 8.0))
-#   - material::Vector{String}: Seznam materiálů (nepovinné)
-#   - Ixy::Float64: Kvadratický moment setrvačnosti Ixy [mm^4] (není v tabulce, nastaveno na 0)
-#   - Ixy_unit::String: Jednotka pro kvadratický moment setrvačnosti Ixy
-#   - Ixy_info::String: Popis kvadratického momentu setrvačnosti Ixy
+#   .name::String: Název profilu
+#   .standard::String: Norma (nepovinné)
+#   .standard_info::String: Textový popis normy (nepovinné)
+#   .zkratka::String: zkratka pro rychlejší hledání v tabulce
+#   .zkratka_info::String: popis zkratky - textová informace
+#   .a::Float64: Rozměr a
+#   .b::Float64: Rozměr b
+#   .t::Float64: Tloušťka
+#   .R::Float64: Poloměr (buď z databáze, nebo vypočítaný jako min(t + t/3, 8.0))
+#   .m::Float64: hmotnost [kg/m]
+#   .m_unit::String: jednotka pro hmotnost
+#   .m_info::String: popis hmotnosti
+#   .material::Vector{String}: pole textových hodnot materiálů, pro které je profil dostupný
+#   .material_info::String: popis materiálů
+#   .S::Float64: plocha průřezu [mm^2]
+#   .S_unit::String: jednotka pro plochu průřezu
+#   .S_info::String: popis plochy průřezu
+#   .Ix::Float64: moment setrvačnosti podle osy x [mm^4]
+#   .Ix_unit::String: jednotka pro moment setrvačnosti podle osy x
+#   .Ix_info::String: popis momentu setrvačnosti podle osy x
+#   .Wx::Float64: průřezový modul podle osy x [mm^3]
+#   .Wx_unit::String: jednotka pro průřezový modul podle osy x
+#   .Wx_info::String: popis průřezového modulu podle osy x
+#   .ix::Float64: poloměr setrvačnosti podle osy x [mm]
+#   .ix_unit::String: jednotka pro poloměr setrvačnosti podle osy x
+#   .ix_info::String: popis poloměru setrvačnosti podle osy x
+#   .Iy::Float64: moment setrvačnosti podle osy y [mm^4]
+#   .Iy_unit::String: jednotka pro moment setrvačnosti podle osy y
+#   .Iy_info::String: popis momentu setrvačnosti podle osy y
+#   .Ixy::Float64: kvadratický moment setrvačnosti Ixy [mm^4]
+#   .Ixy_unit::String: jednotka pro kvadratický moment setrvačnosti Ixy
+#   .Ixy_info::String: popis kvadratického momentu setrvačnosti Ixy
+#   .Imin::Float64: minimální moment setrvačnosti [mm^4]
+#   .Imin_unit::String: jednotka pro minimální moment setrvačnosti
+#   .Imin_info::String: popis minimálního momentu setrvačnosti
+#   .Imax::Float64: maximální moment setrvačnosti [mm^4]
+#   .Imax_unit::String: jednotka pro maximální moment setrvačnosti
+#   .Imax_info::String: popis maximálního momentu setrvačnosti
+#   .Wy::Float64: průřezový modul podle osy y [mm^3]
+#   .Wy_unit::String: jednotka pro průřezový modul podle osy y
+#   .Wy_info::String: popis průřezového modulu podle osy y
+#   .iy::Float64: poloměr setrvačnosti podle osy y [mm]
+#   .iy_unit::String: jednotka pro poloměr setrvačnosti podle osy y
+#   .iy_info::String: popis poloměru setrvačnosti podle osy y
+#   .Sx::Float64: statický moment podle osy x [mm^3]
+#   .Sx_unit::String: jednotka pro statický moment podle osy x
+#   .Sx_info::String: popis statického momentu podle osy x
+#   .sx::Float64: staticka hodnota sx [mm]
+#   .sx_unit::String: jednotka pro sx
+#   .sx_info::String: popis sx
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
@@ -47,6 +87,8 @@ struct TR4HR_CSN425720
     series::String
     standard::String
     standard_info::String
+    zkratka::String # zkratka pro rychlejší hledání v tabulce
+    zkratka_info::String # popis zkratky - textová informace
     a::Float64
     a_unit::String
     a_info::String
@@ -63,14 +105,20 @@ struct TR4HR_CSN425720
     Ixy::Float64 # kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
     Ixy_unit::String # jednotka pro kvadratický moment setrvacnosti Ixy
     Ixy_info::String # popis kvadratického momentu setrvacnosti Ixy
+    Imin::Float64 # minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+    Imin_unit::String # jednotka pro minimální moment setrvačnosti
+    Imin_info::String # popis minimálního momentu setrvačnosti
+    Imax::Float64 # maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+    Imax_unit::String # jednotka pro maximální moment setrvačnosti
+    Imax_info::String # popis maximálního momentu setrvačnosti
 end
 
-const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml"))
-const _RHO_OCEL_KG_NA_M_NA_MM2 = 0.00785
-const _KOEF_ROHU_TR4HR = 4 - pi
+const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml")) # Načtení databáze TR4HR z TOML souboru
+const _RHO_OCEL_KG_NA_M_NA_MM2 = 0.00785 # hustota oceli v kg/mm^3 (7.85 g/cm^3 = 0.00785 kg/mm^3)
+const _KOEF_ROHU_TR4HR = 4 - pi # koeficient pro výpočet plochy zaoblení rohů TR4HR (A_roh = _KOEF_ROHU_TR4HR * R^2)
 
 function _hmotnost_z_radku(row::Dict, idx::Int, t::Real)::Union{Nothing, Float64}
-    t_val = Float64(t)
+    t_val = Float64(t) # převedení tloušťky na Float64
 
     if haskey(row, "m")
         m_raw = row["m"]
@@ -164,9 +212,9 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
     end
     idx = findfirst(==(t), t_vec) # najít index tloušťky
     t = t_vec[idx] # vybraná tloušťka
-    R_vec = get(row, "R", nothing)
-    m_tab = _hmotnost_z_radku(row, idx, t)
-    R_val = if R_vec isa AbstractVector && idx <= length(R_vec)
+    R_vec = get(row, "R", nothing) # dostupné poloměry
+    m_tab = _hmotnost_z_radku(row, idx, t) # odhad hmotnosti z tabulky pro výpočet poloměru, pokud není uveden v tabulce
+    R_val = if R_vec isa AbstractVector && idx <= length(R_vec) # poloměr z tabulky
         Float64(R_vec[idx]) # poloměr z databáze (pokud je uveden)
     else
         min(t + t/3, 8.0) # výchozí poloměr
@@ -180,8 +228,10 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
     return TR4HR_CSN425720(
         string(oznaceni), # name
         "TR4HR", # serie
-        "\u010CSN 42 5720", # standard
+        "\u010CSN425720", # standard
         "norma - textova hodnota", # info o normě
+        "ČSN", # zkratka pro rychlejší hledání v tabulce
+        "zkratka pro rychlejší hledání v tabulce", # info o zkratce
         a, # rozměr a
         "mm", # jednotka a
         "rozměr a", # info a
@@ -195,9 +245,15 @@ function profil_TR4HR_CSN425720(name::AbstractString)::Union{TR4HR_CSN425720, No
         "mm", # jednotka R
         "poloměr", # info R
         get(row, "material", String[])::Vector{String},
-        0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
+        0.0, # Ixy - kvadratický moment setrvacnosti Ixy [mm^4] (neni v tabulce, nastaveno na 0)
         "mm^4", # jednotka pro kvadratický moment setrvacnosti Ixy
-        "kvadratický moment setrvacnosti Ixy [mm^4]" # popis kvadratického momentu setrvacnosti Ixy
+        "kvadratický moment setrvacnosti Ixy [mm^4]", # popis kvadratického momentu setrvacnosti Ixy
+        0.0, # Imin - minimální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4", # jednotka pro minimální moment setrvačnosti
+        "minimální moment setrvačnosti [mm^4]", # popis minimálního momentu setrvačnosti
+        0.0, # Imax - maximální moment setrvačnosti [mm^4] (neni v tabulce, nastaveno na 0)
+        "mm^4", # jednotka pro maximální moment setrvačnosti
+        "maximální moment setrvačnosti [mm^4]" # popis maximálního momentu setrvačnosti
     )
 end
 

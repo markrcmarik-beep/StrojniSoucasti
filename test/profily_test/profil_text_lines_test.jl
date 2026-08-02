@@ -1,4 +1,4 @@
-# ver: 2026-05-16
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -16,6 +16,7 @@ using StrojniSoucasti, Unitful
             :profil => "TRKR 76x5",
             :profil_info => Dict{Symbol,Any}(
                 :R => 2.5u"cm",
+                :b => 0u"mm",
                 :D => 76u"mm",
                 :d => 66u"mm",
                 :t => 5u"mm",
@@ -39,3 +40,5 @@ using StrojniSoucasti, Unitful
         @test !any(occursin("S =", line) for line in lines)
     end
 end
+
+nothing

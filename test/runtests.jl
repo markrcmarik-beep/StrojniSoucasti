@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-24
+﻿# ver: 2026-07-16
 using Test
 
     # materialy
@@ -26,7 +26,7 @@ using Test
     # profily
     include("profily_test/profily_test.jl")
     include("profily_test/profil_text_lines_test.jl")
-    include("profily_test/profilyCSN_test.jl")
+    include("profily_test/profiltvary_test.jl")
     include("profily_test/profil_TR4HR_CSN425720_test.jl")
     include("profily_test/profil_I_CSN425550_test.jl")
     include("profily_test/profil_IPE_CSN425553_test.jl")
@@ -35,16 +35,21 @@ using Test
     include("profily_test/body_TR4HR_CSN425720_test.jl")
     include("profily_test/profilyvlcn_test.jl")
     include("profily_test/profilyvlcnS_test.jl")
-    include("profily_test/profilyvlcnJp_test.jl")
+    include("profily_test/profilyvlcnJ_test.jl")
     include("profily_test/torsion_J_TR4HR_numeric_test.jl")
     include("profily_test/profilyvlcnWk_test.jl")
-    include("profily_test/profilyvlcnIx_test.jl")
+    include("profily_test/profilyIminmax_test.jl")
+    include("profily_test/profilyvlcnI_test.jl")
     include("profily_test/profilyvlcnWo_test.jl")
+    include("profily_test/profilyvlcneo_test.jl")
+    include("profily_test/profilyvlcnrmax_test.jl")
+    include("profily_test/profilyvlcnixy_test.jl")
     include("profily_test/hrana_test.jl")
     include("profily_test/polygon2plocha_test.jl")
     include("profily_test/polygon2kvadratickymoment_test.jl")
     include("profily_test/polygon2polarnimoment_test.jl")
     include("profily_test/polygon_metrics_test.jl")
+    include("profily_test/polygon2eonatoceni_test.jl")
     include("profily_test/polygon2prurezovymodulkrut_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
