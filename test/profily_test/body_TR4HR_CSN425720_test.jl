@@ -1,4 +1,4 @@
-# ver: 2026-05-16
+# ver: 2026-07-01
 using Test
 using StrojniSoucasti
 
@@ -68,3 +68,5 @@ end
     prof = StrojniSoucasti.profil_TR4HR_CSN425720("TR4HR20x20x2")
     @test_throws ArgumentError StrojniSoucasti.body_TR4HR_CSN425720(prof, "xyz")
 end
+
+nothing

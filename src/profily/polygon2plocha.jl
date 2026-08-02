@@ -5,7 +5,7 @@
 # Umoznuje i vstup ve tvaru vnejsi obrys + jeden nebo vice 
 # vnitrnich otvoru. Sdilene helpery v tomto souboru pouzivaji 
 # i dalsi funkce v samostatnych souborech.
-# ver: 2026-05-19
+# ver: 2026-07-03
 ## Funkce: polygon2plocha()
 ## Autor: Martin
 #
@@ -31,6 +31,9 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+function polygon2plocha(body::Nothing)
+    return nothing
+end
 
 function polygon2plocha(body::Union{AbstractVector,AbstractMatrix})
     return polygon_metrics(body).S

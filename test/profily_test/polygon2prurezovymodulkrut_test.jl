@@ -1,4 +1,4 @@
-# ver: 2026-04-24
+# ver: 2026-07-03
 using Test
 using StrojniSoucasti, Unitful
 
@@ -43,9 +43,12 @@ using StrojniSoucasti, Unitful
     Wk7 = StrojniSoucasti.polygon2prurezovymodulkrut(body7)
     @test isapprox(Wk7, 1624 / sqrt(50); atol=1e-9)
 
+    @test StrojniSoucasti.polygon2prurezovymodulkrut(nothing) === nothing
+
     # Neplatne vstupy
     @test_throws ArgumentError StrojniSoucasti.polygon2prurezovymodulkrut([(0, 0), (1, 0)])
     @test_throws ArgumentError StrojniSoucasti.polygon2prurezovymodulkrut([0 0 0; 1 1 1; 2 2 2])
     @test_throws ArgumentError StrojniSoucasti.polygon2prurezovymodulkrut([(0, 0), (1, 0), (2, 0)])
 end
 
+nothing

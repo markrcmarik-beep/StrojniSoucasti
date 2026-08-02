@@ -80,6 +80,16 @@ const MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
 const MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabasePryz.toml"))
 
+"""
+    materialy(name::AbstractString)
+
+Vrátí strukturu s vlastnostmi materiálu podle zadaného označení.
+
+Příklad:
+```julia
+materialy("S235")
+```
+"""
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,
     MaterialLitina,

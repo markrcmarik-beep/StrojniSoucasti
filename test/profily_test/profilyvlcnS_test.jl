@@ -1,4 +1,4 @@
-# ver: 2026-05-24
+# ver: 2026-07-11
 using Test
 using StrojniSoucasti
 
@@ -17,9 +17,19 @@ using StrojniSoucasti
         :R => 2
     )
 
-    KR_01 = Dict(
+    KR_01a = Dict(
+        :info => "KR",
+        :D => 20,
+        :d => 0
+    )
+    KR_01b = Dict(
         :info => "KR",
         :D => 20
+    )
+    KR_02 = Dict(
+        :info => "KR",
+        :D => 20,
+        :d => 10
     )
 
     TRKR_01 = Dict(
@@ -41,7 +51,7 @@ using StrojniSoucasti
 
     _6HR_01 = Dict(
         :info => "6HR",
-        :a => 20/sqrt(3) # s = 20
+        :s => 20/sqrt(3) # s = 20
     )
 
     TR4HR_01 = Dict(
@@ -56,9 +66,16 @@ using StrojniSoucasti
         @test isapprox(S1, 200, atol=1e-3)
         @test txt1 == "a*b"
 
-        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01)
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01a)
         @test isapprox(S2, 314.1592653589793, atol=1e-3)
         @test txt2 == "π*(D/2)²"
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_01b)
+        @test isapprox(S2, 314.1592653589793, atol=1e-3)
+        @test txt2 == "π*(D/2)²"
+
+        S2, txt2 = StrojniSoucasti.profilyvlcnS(KR_02)
+        @test isapprox(S2, 235.61944901923448, atol=1e-3)
+        @test txt2 == "π*(D² - d²)/4"
 
         S3, txt3 = StrojniSoucasti.profilyvlcnS(TRKR_01)
         @test isapprox(S3, 235.61944901923448, atol=1e-3)
@@ -69,8 +86,8 @@ using StrojniSoucasti
         @test txt4 == "a²"
 
         S5, txt5 = StrojniSoucasti.profilyvlcnS(_6HR_01)
-        @test isapprox(S5, 346.41016151377556, atol=1e-3)
-        @test txt5 == "3/2*sqrt(3)*a²"
+        @test isapprox(S5, 115.47005383792518, atol=1e-3)
+        @test txt5 == "sqrt(3)/2*s^2"
 
         S6, txt6 = StrojniSoucasti.profilyvlcnS(TR4HR_01, :S)
         @test isapprox(S6, 176, atol=1e-3)
@@ -91,3 +108,5 @@ using StrojniSoucasti
         @test_throws ErrorException StrojniSoucasti.profilyvlcnS(Dict(:info => "XYZ"), :S)
     end
 end
+
+nothing

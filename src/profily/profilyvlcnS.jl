@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Vypočet plochy pro různé tvary dle zkratky označeni.
-# ver: 2026-05-21
+# ver: 2026-07-11
 ## Funkce: profilyvlcnS()
 ## Autor: Martin
 #
@@ -51,23 +51,35 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     if info in Set(["PLO", "OBD"]) # Plochá tyč nebo obdélník
         a, b = getn(:a), getn(:b)
         if getv(:R) === missing
-            return a*b, "a*b" # Vrátí plochu a vzorec pro plochou tyč bez zaoblení
+            S, S_str = a*b, "a*b" # Vrátí plochu a vzorec pro plochou tyč bez zaoblení
         else
             R = getn(:R)
             Sr = StrojniSoucasti.hrana("R$(R)")
             Sr = Sr[:S]
-            return a*b-4*Sr, "a*b - 4*S(R)" # Vrátí plochu a vzorec pro plochu s odečtením zaoblení (4 zaoblení pro 4 rohy)
+            S, S_str = a*b-4*Sr, "a*b - 4*S(R)" # Vrátí plochu a vzorec pro plochu s odečtením zaoblení (4 zaoblení pro 4 rohy)
         end
+        return S, S_str
     # -----------------------------------------------------------
     # Kruhová tyč
     elseif info == "KR" # Kruhová tyč
+        getv(:d) === missing ? d = 0 : d = getn(:d) # Pokud není zadáno, předpokládáme, že jde o plnou kruhovou tyč
         D = getn(:D)
-        return pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        if d == 0
+            S, S_str = pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        else
+            S, S_str = pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        end
+        return S, S_str
     # -----------------------------------------------------------
     # Trubka kruhová
     elseif info == "TRKR" # Trubka kruhová
         D, d = getn(:D), getn(:d)
-        return pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        if d == 0
+            S, S_str = pi*(D/2)^2, "π*(D/2)²" # Vrátí plochu a vzorec pro plochu kruhové tyče
+        else
+            S, S_str = pi*(D^2 - d^2)/4, "π*(D² - d²)/4" # Vrátí plochu a vzorec pro plochu kruhové trubky
+        end
+        return S, S_str
     # -----------------------------------------------------------
     # Čtyřhranná tyč
     elseif info == "4HR" # Čtyřhranná tyč
@@ -83,8 +95,8 @@ function profilyvlcnS(tvar1::Dict, velicina::Symbol = :S)
     # -----------------------------------------------------------
     # Šestihranná tyč
     elseif info == "6HR" # Šestihranná tyč
-        a = getn(:a)
-        return (3/2)*sqrt(3)*a^2, "3/2*sqrt(3)*a²" # Vrátí plochu a vzorec pro plochu šestihranné tyče
+        s = getn(:s)
+        return sqrt(3)/2*s^2, "sqrt(3)/2*s^2" # Vrátí plochu a vzorec pro plochu šestihranné tyče
     # -----------------------------------------------------------
     # Trubka čtyřhranná
     elseif info == "TR4HR" # Trubka čtyřhranná

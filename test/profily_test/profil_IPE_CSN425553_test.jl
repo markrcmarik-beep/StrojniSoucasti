@@ -1,12 +1,12 @@
-# ver: 2026-04-16
+# ver: 2026-07-01
 using Test
 using StrojniSoucasti
 
 profil_IPE_CSN425553_tests = [
-    ("IPE80", "IPE", "\u010CSN 42 5553", 80.0, 46.0, 3.8, 5.2, 5.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
-    ("IPE 100", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
-    ("ipe100.0", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
-    ("ipe 100.0", "IPE", "\u010CSN 42 5553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
+    ("IPE80", "IPE", "\u010CSN425553", 80.0, 46.0, 3.8, 5.2, 5.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
+    ("IPE 100", "IPE", "\u010CSN425553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
+    ("ipe100.0", "IPE", "\u010CSN425553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
+    ("ipe 100.0", "IPE", "\u010CSN425553", 100.0, 55.0, 4.1, 5.7, 7.0, 0.0, ["11 373", "11 375", "11 503", "11 523", "15 217"]),
 ]
 
 function _test_profil_ipe_csn425553_common(prof, exp_serie, exp_standard, exp_h, exp_b, exp_t1, exp_t2, exp_R, exp_R1, exp_material)
@@ -28,6 +28,15 @@ function _test_profil_ipe_csn425553_common(prof, exp_serie, exp_standard, exp_h,
     @test prof.R1 == exp_R1
     @test prof.R1_unit == "mm"
     @test prof.material == exp_material
+    @test prof.material_info == "Dostupné materiály pro tento profil"
+    @test prof.S !== nothing
+    @test prof.S_unit == "mm^2"
+    @test prof.Ix !== nothing
+    @test prof.Ix_unit == "mm^4"
+    @test prof.Iy !== nothing
+    @test prof.Iy_unit == "mm^4"
+    @test prof.Ixy !== nothing
+    @test prof.Ixy_unit == "mm^4"
 end
 
 @testset "profil_IPE_CSN425553" begin
@@ -48,3 +57,5 @@ end
     @test StrojniSoucasti.profil_IPE_CSN425553("XYZ100") === nothing
     @test StrojniSoucasti.profil_IPE_CSN425553("IPE") === nothing
 end
+
+nothing

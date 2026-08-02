@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-16
+﻿# ver: 2026-07-03
 # Testovací skript pro funkci namahanitlak.jl
 # Testuje namáhání v tlaku s různými typy zatížení
 
@@ -73,7 +73,6 @@ materiál: S235
 profil: PLO 20x20
   a = 20 mm
   b = 20 mm
-  R = 0 mm
 zatížení: statický
 ----------------------------------------------------------------
 zadání:
@@ -412,7 +411,4 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
 end
 
-
-
-
-
+nothing

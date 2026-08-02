@@ -2,19 +2,19 @@
 ###############################################################
 ## Popis funkce:
 # Výpočet namáhání v krutu pro strojní součásti.
-# ver: 2026-03-31
+# ver: 2026-06-09
 ## Funkce: namahanikrut()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/namahanikrut.jl
+# StrojniSoucasti/src/namahani/namahanikrut.jl
 #
 ## Vzor:
 ## vystupni_promenne = namahanikrut(vstupni_promenne)
 ## Vstupní proměnné:
 # Mk - krouticí moment s jednotkou (N*m)
 # Wk - průřezový modul v krutu s jednotkou (mm³)
-# Ip - polární moment setrvačnosti s jednotkou (mm⁴), volitelný (pro výpočet úhlu zkroucení)
+# J - polární moment setrvačnosti s jednotkou (mm⁴), volitelný (pro výpočet úhlu zkroucení)
 # tauDk - dovolené smykové napětí v krutu s jednotkou (MPa)
 # G - smykový modul materiálu s jednotkou (GPa), volitelný (pro výpočet úhlu zkroucení)
 # E - Youngův modul materiálu s jednotkou (GPa), volitelný (pokud není G zadáno)
@@ -22,7 +22,7 @@
 # L0 - délka součásti pro výpočet úhlu zkroucení s jednotkou (mm), volitelný
 # mat - materiál jako řetězec (název materiálu) nebo Dict s vlastnostmi materiálu, volitelný
 # zatizeni - způsob zatížení jako řetězec: "statický", "pulzní", "dynamický", "rázový" (výchozí: "statický")
-# profil - název profilu jako řetězec (pro získání Wk, Ip, S), volitelný
+# profil - název profilu jako řetězec (pro získání Wk, J, S), volitelný
 # return_text - Logická hodnota (Bool). Určuje, zda se má vrátit i
 #     textový výpis výpočtu. Výchozí hodnota je true. Pokud je false,
 #     vrací se pouze dict s výsledky.
@@ -35,15 +35,15 @@
 #   :Wk - Průřezový modul v krutu
 #   :Wk_info - Popis veličiny Wk
 #   :Wk_str - Textový popis Wk (z profilu)
-#   :Ip - Polární moment setrvačnosti
-#   :Ip_info - Popis veličiny Ip
-#   :Ip_str - Textový popis Ip (z profilu)
+#   :J - Polární moment setrvačnosti
+#   :J_info - Popis veličiny J
+#   :J_str - Textový popis J (z profilu)
 #   :tauDk - Dovolené smykové napětí v krutu
 #   :tauDk_info - Popis veličiny tauDk
 #   :tau - Smykové napětí v krutu
 #   :tau_str - Vzorec pro výpočet tau
 #   :tau_info - Popis veličiny tau
-#   :phi - Úhel zkroucení (pokud je L0 a Ip zadáno)
+#   :phi - Úhel zkroucení (pokud je L0 a J zadáno)
 #   :phi_str - Vzorec pro výpočet phi
 #   :phi_info - Popis veličiny phi
 #   :bezpecnost - Součinitel bezpečnosti
@@ -75,7 +75,7 @@
 using Unitful
 
 """
-    namahanikrut(; Mk, Wk=nothing, Ip=nothing, S=nothing, tauDk=nothing, G=nothing,
+    namahanikrut(; Mk, Wk=nothing, J=nothing, S=nothing, tauDk=nothing, G=nothing,
         Re=nothing, L0=nothing, mat=nothing, zatizeni::AbstractString="statický",
         profil=nothing, k=nothing, return_text::Bool=true)
 
@@ -83,7 +83,7 @@ Výpočet namáhání v krutu. Vrací slovník s výsledky a volitelně i textov
 
 Vstupy:
 - `Mk`: krouticí moment.
-- `Wk`/`Ip`: průřezové charakteristiky (nebo `profil`).
+- `Wk`/`J`: průřezové charakteristiky (nebo `profil`).
 - `tauDk`: dovolené smykové napětí (nebo `mat`/`Re`).
 - `return_text`: pokud `true`, vrací i textový výpis.
 
@@ -95,7 +95,7 @@ Příklad:
 namahanikrut(Mk=500u"N*m", profil="TR4HR 100x100x6", mat="S235")
 ```
 """
-function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing, 
+function namahanikrut(; Mk=nothing, Wk=nothing, J=nothing, 
     tauDk=nothing, G=nothing, Re=nothing, L0=nothing, 
     mat=nothing, zatizeni::AbstractString="statický",
     profil=nothing, k=nothing, return_text::Bool=true)
@@ -124,10 +124,10 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             error("Wk musí být kladná hodnota.")
         end
     end
-    if Ip !== nothing
-        Ip = attach_unit(Ip, u"mm^4") # převod na mm^4
-        if Ip <= 0u"mm^4"
-            error("Ip musí být kladná hodnota.")
+    if J !== nothing
+        J = attach_unit(J, u"mm^4") # převod na mm^4
+        if J <= 0u"mm^4"
+            error("J musí být kladná hodnota.")
         end
     end
     if tauDk !== nothing
@@ -234,20 +234,20 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
             end
         end
     end
-    Ip_str = ""
-    if Ip === nothing
+    J_str = ""
+    if J === nothing
         if profil !== nothing
-            #error("Chybí Ip a profil - nelze stanovit polární moment setrvačnosti.")
+            #error("Chybí J a profil - nelze stanovit polární moment setrvačnosti.")
             if !isdefined(@__MODULE__, :profily)
                 error("Funkce profily není definována.")
             else
-                tv = profily(profil, "Ip")  # získání Ip z profilu
-                if !haskey(tv, :Ip)
-                    error("Profil $profil neobsahuje informaci o Ip.")
+                tv = profily(profil, "J")  # získání J z profilu
+                if !haskey(tv, :J)
+                    error("Profil $profil neobsahuje informaci o J.")
                 end
-                Ip = tv[:Ip] # převzetí Ip z profilu
-                if haskey(tv, :Ip_str) # textový popis výpočtu Ip z profilu
-                    Ip_str = tv[:Ip_str] # převzetí textového popisu Ip z profilu
+                J = tv[:J] # převzetí J z profilu
+                if haskey(tv, :J_str) # textový popis výpočtu J z profilu
+                    J_str = tv[:J_str] # převzetí textového popisu J z profilu
                 end
             end
         end
@@ -260,7 +260,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     # výpočet
     # ---------------------------------------------------------
     vypocet = namahanikrutvypocet(Mk=Mk, Wk=Wk, tauDk=tauDk, G=G, 
-        L0=L0, Ip=Ip, k_uziv=k_uziv)
+        L0=L0, J=J, k_uziv=k_uziv)
     # ---------------------------------------------------------
     # výstup
     # ---------------------------------------------------------
@@ -275,9 +275,9 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
     VV[:Wk] = Wk # průřezový modul v krutu
     VV[:Wk_info] = "Průřezový modul v krutu"
     VV[:Wk_str] = Wk_str # textový popis Wk (např. z profilu)
-    VV[:Ip] = Ip # polární moment setrvačnosti
-    VV[:Ip_info] = "Polární moment setrvačnosti"
-    VV[:Ip_str] = Ip_str # textový popis Ip (např. z profilu)
+    VV[:J] = J # polární moment setrvačnosti
+    VV[:J_info] = "Polární moment setrvačnosti"
+    VV[:J_str] = J_str # textový popis J (např. z profilu)
     VV[:tauDk] = tauDk # dovolené smykové napětí v krutu
     VV[:tauDk_info] = "Dovolené napětí v krutu"
     VV[:tau] = vypocet[:tau] # smykové napětí v krutu
@@ -314,7 +314,7 @@ function namahanikrut(; Mk=nothing, Wk=nothing, Ip=nothing,
 end
 
 function namahanikrutvypocet(; Mk=nothing, Wk=nothing, tauDk=nothing, 
-    G=nothing, L0=nothing, Ip=nothing, k_uziv=nothing)
+    G=nothing, L0=nothing, J=nothing, k_uziv=nothing)
 
     tau_str = "Mk / Wk"
     tau = Mk / Wk
@@ -322,15 +322,15 @@ function namahanikrutvypocet(; Mk=nothing, Wk=nothing, tauDk=nothing,
     k_str = "tauDk / tau"
     k = tauDk / tau
     phi = nothing    # skutečný úhel zkroucení [rad]
-    if L0 !== nothing && Ip !== nothing && G !== nothing
-        phi_str = "(Mk * L0) / (G * Ip)"
-        phi = (Mk * L0) / (G * Ip)
+    if L0 !== nothing && J !== nothing && G !== nothing
+        phi_str = "(Mk * L0) / (G * J)"
+        phi = (Mk * L0) / (G * J)
         phi = uconvert(u"rad", phi) # převod na radiany
     end
     theta = nothing  # poměrné zkroucení [rad/m]
-    if Ip !==nothing && G !== nothing
-        theta_str = "Mk / (G * Ip)"
-        theta = Mk / (G * Ip)
+    if J !==nothing && G !== nothing
+        theta_str = "Mk / (G * J)"
+        theta = Mk / (G * J)
         theta = uconvert(u"rad/m", theta) # převod na rad/m
     end
     if k_uziv === nothing
