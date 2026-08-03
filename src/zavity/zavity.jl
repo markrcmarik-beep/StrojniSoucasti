@@ -2,7 +2,7 @@
 ###############################################################
 ## Popis funkce:
 # Funkce pro vyhledání parametrů závitů podle jejich označení.
-# ver: 2026-01-20
+# ver: 2026-08-03
 ## Funkce: zavity()
 #
 ## Cesta uvnitř balíčku:
@@ -30,7 +30,8 @@ using TOML
 include("zavitytypes.jl")
 
 #export zavity, DbRecord
-const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
+const ZAVITY_DB_M = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
+const ZAVITY_DB_TR = TOML.parsefile(joinpath(@__DIR__, "zavityTR.toml"))
 
 """
     zavity(oznaceni::AbstractString) -> DbRecord
@@ -54,22 +55,25 @@ function zavity(oznaceni::AbstractString)
     RX_METRIC = r"^(?:[mM])(\d+(?:\.\d+)?)(?:[xX](\d+(?:\.\d+)?))?$"
     RX_TRAPEZ = r"^(?:TR|Tr|tR|tr)(\d+(?:\.\d+)?)(?:[xX](\d+(?:\.\d+)?))?$"
     # detect type: metric, trapezoidal, pipe (trubkový) or unknown
-    typ = :unknown
+    db = nothing
     # use the compiled regex values directly
     if match(RX_METRIC, oznaceni) !== nothing
-        typ = :metric
+        db = ZAVITY_DB_M
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
-        typ = :trapez
+        db = ZAVITY_DB_TR
     else
         # pipe/thread patterns: G, R, Rp, NPT, fractional inch (1/2), or inch quotes
         if match(r"(?i)^(?:G|R|Rp|NPT)\b", oznaceni) !== nothing ||
            match(r"^\d+\/(?:\d+)", oznaceni) !== nothing ||
            occursin('"', oznaceni) || occursin("inch", lowercase(oznaceni)) || occursin("bsp", lowercase(oznaceni))
-            typ = :pipe
+            # typ = :pipe # Databáze pro trubkové závity zatím není implementována
+            error("Trubkové závity nejsou zatím podporovány.")
         end
     end
+
+    db === nothing && error("Neznámý typ závitu pro: $oznaceni")
     # lookup entry in DB; attach detected type into the extra Dict before returning
-    rec = lookup_toml(ZAVITY_DB, oznaceni)
+    rec = lookup_toml(db, oznaceni)
     return DbRecord(rec.name, rec.d, rec.p)
 end
 
