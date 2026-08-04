@@ -1,54 +1,27 @@
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Funkce pro vyhledání parametrů závitů podle jejich označení.
-# ver: 2026-08-03
+# ver: 2026-08-04
 ## Funkce: zavity()
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/zavity.jl
-#
-## Vzor:
-## vystupni_promenne = zavity(vstupni_promenne)
-## Vstupní proměnné:
-# vstupni_promenne: Oznaceni závitu jako řetězec (např. "M8x1.25", "TR20x4", "G1/2").
-## Výstupní proměnné:
-# vystupni_promenne: Struktura DbRecord obsahující název závitu, 
-#   průměr (d), stoupání (p) a další informace.
+# StrojniSoucasti/src/zavity/zavity.jl
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
 #
-## Příklad:
-# A = zavity("M8x1.25")
-# println("Průměr: ", A.d, " mm, stoupání: ", A.p, " mm")
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-
 using TOML
 include("zavitytypes.jl")
-
 #export zavity, DbRecord
 const ZAVITY_DB_M = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
 const ZAVITY_DB_TR = TOML.parsefile(joinpath(@__DIR__, "zavityTR.toml"))
-
+# načtení nápovědy z externího souboru
+const _zavity_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"),
+    String,
+) 
 """
-    zavity(oznaceni::AbstractString) -> DbRecord
-
-Vyhledá parametry závitu podle jeho označení.
-
-Vstupy:
-- `oznaceni`: označení závitu (např. `"M8x1.25"`, `"TR20x4"`, `"G1/2"`).
-
-Výstup:
-- `DbRecord` s informacemi o závitu (např. `d`, `p`).
-
-Příklad:
-```julia
-z = zavity("M8x1.25")
-z.d
-```
+$_zavity_NAPOVEDA
 """
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
@@ -59,30 +32,60 @@ function zavity(oznaceni::AbstractString)
     # use the compiled regex values directly
     if match(RX_METRIC, oznaceni) !== nothing
         db = ZAVITY_DB_M
+        m_metric = match(RX_METRIC, oznaceni)
+        D = m_metric.captures[1] # first capture group is the diameter
+        p = m_metric.captures[2] # second capture group is the pitch (stoupání)
+        klic = ("M$D")
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
         db = ZAVITY_DB_TR
+        m_trapez = match(RX_TRAPEZ, oznaceni)
+        D = m_trapez.captures[1] # first capture group is the diameter
+        p = m_trapez.captures[2] # second capture group is the pitch (stoupání)
+        #klic = ("TR$D")
+        klic = ("TR$D")
     else
-        # pipe/thread patterns: G, R, Rp, NPT, fractional inch (1/2), or inch quotes
-        if match(r"(?i)^(?:G|R|Rp|NPT)\b", oznaceni) !== nothing ||
-           match(r"^\d+\/(?:\d+)", oznaceni) !== nothing ||
-           occursin('"', oznaceni) || occursin("inch", lowercase(oznaceni)) || occursin("bsp", lowercase(oznaceni))
-            # typ = :pipe # Databáze pro trubkové závity zatím není implementována
-            error("Trubkové závity nejsou zatím podporovány.")
-        end
+        return nothing
+    end
+    db === nothing && error("Neznámý typ závitu pro: $oznaceni")
+    
+    key = klic
+    haskey(db, key) || error("Položka '$key' nebyla nalezena.")
+    row = db[key]
+    d = Float64(row["d"])
+    p_hodn_raw = get(row, "p", nothing)
+    p_hodn = p_hodn_raw isa AbstractArray ? p_hodn_raw : [p_hodn_raw]
+    p_norm = get(row, "p_norm", nothing)
+
+    p_val = p === nothing ? nothing : parse(Float64, p)
+
+    if p === nothing 
+        p_val = p_norm
+        name = klic
+    elseif p_val in p_hodn
+        name = replace("$klic x $p_val", " " => "")
+    else
+        # Pokud je stoupání zadáno, ale není ani normální, ani jemné, vrátíme nothing.
+        # To odpovídá chování, kdy závit s daným stoupáním neexistuje v databázi.
+        return nothing 
     end
 
-    db === nothing && error("Neznámý typ závitu pro: $oznaceni")
+    VV = Dict{Symbol, Any}(
+        :name => p===nothing ? key : replace("$key x $p", " " => ""),
+        :d => d,
+        :p => p_val
+    )
+    return VV
     # lookup entry in DB; attach detected type into the extra Dict before returning
-    rec = lookup_toml(db, oznaceni)
-    return DbRecord(rec.name, rec.d, rec.p)
+    #rec = lookup_toml(db, oznaceni)
+    #return rec
 end
 
 function lookup_toml(db::Dict{String,Any}, key::AbstractString)
     haskey(db, key) || error("Položka '$key' nebyla nalezena.")
     row = db[key]
-    return DbRecord(
-        key,
-        row["d"],
-        get(row, "p", nothing)
-    )
+    return Dict{Symbol, Any}(
+        :name => key,
+        :d => row["d"],
+        :p => get(row, "p", nothing)
+    ) 
 end
