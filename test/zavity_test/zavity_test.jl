@@ -1,4 +1,4 @@
-# ver: 2026-08-04
+# ver: 2026-08-05
 using StrojniSoucasti, Test
 
 #include("zavit.jl")
@@ -16,20 +16,28 @@ using StrojniSoucasti, Test
 
         @test A == zavity("m8")
         @test Ab == zavity("m8x1.25")
+
+        Ac = zavity("M8x1")
+        @test Ac[:name] == "M8x1"
+        @test Ac[:d] == 8.0
+        @test Ac[:p] == 1
     end
 
-    @testset "M8x1" begin
-        A1 = zavity("M8x1")
-        @test A1[:name] == "M8x1"
-        @test A1[:d] == 8.0
-        @test A1[:p] == 1
-    end
-
-    @testset "M10x1.25" begin
-        A2 = zavity("M10x1.25")
-        @test A2[:name] == "M10x1.25"
+    @testset "M10" begin
+        A2 = zavity("M10")
+        @test A2[:name] == "M10"
         @test A2[:d] == 10.0
-        @test A2[:p] == 1.25
+        @test A2[:p] == 1.5
+        
+        A2a = zavity("M10x1.25")
+        @test A2a[:name] == "M10x1.25"
+        @test A2a[:d] == 10.0
+        @test A2a[:p] == 1.25
+
+        A2b = zavity("M10x1.5")
+        @test A2b[:name] == "M10x1.5"
+        @test A2b[:d] == 10.0
+        @test A2b[:p] == 1.5
     end
 
     @testset "M6x0,5" begin
@@ -40,14 +48,13 @@ using StrojniSoucasti, Test
     end
 
     @testset "TR20x4" begin
-        #A4 = zavity("TR20x4")
-        #@test A4[:name] == "TR20x4"
-        #@test A4[:d] == 20.0
-        #@test A4[:p] == 4.0
+        A4 = zavity("TR20x4")
+        @test A4[:name] == "TR20x4"
+        @test A4[:d] == 20.0
+        @test A4[:p] == 4.0
     end
 
-    @test_throws ErrorException zavity("M66")
-    #@test zavity("M66") === nothing
+    @test zavity("M66.2") === nothing
     @test zavity("aa66x4") === nothing
     @test zavity("M8x0.25") === nothing
 

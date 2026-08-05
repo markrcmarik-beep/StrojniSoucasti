@@ -28,7 +28,7 @@ Podporuje metrické (M) a trapézové (Tr) závity. Data načítá z interních 
 - `vystupni_promenne` - Slovník `Dict{Symbol, Any}` obsahující parametry závitu:
   - `:name`: Označení závitu (String).
   - `:d`: Jmenovitý průměr závitu (Float64) [mm].
-  - `:p`: Stoupání závitu (Float64) [mm].
+  - `:p`: Stoupání závitu (Int nebo Float64) [mm].
 
 ## Příklad:
 ```julia
