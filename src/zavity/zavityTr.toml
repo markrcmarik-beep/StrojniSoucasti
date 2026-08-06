@@ -1,42 +1,42 @@
 schema_version = "1.0.0"
 # ISO trapezoidal threads
 
-["TR10x2"]
+["Tr10x2"]
 d = 10
 p = 2
 
-["TR12x3"]
+["Tr12x3"]
 d = 12
 p = 3
 
-["TR14x3"]
+["Tr14x3"]
 d = 14
 p = 3
 
-["TR16x4"]
+["Tr16x4"]
 d = 16
 p = 4
 
-["TR18x4"]
+["Tr18x4"]
 d = 18
 p = 4
 
-["TR20x4"]
+["Tr20x4"]
 d = 20
 p = 4
 
-["TR22x5"]
+["Tr22x5"]
 d = 22
 p = 5
 
-["TR24x5"]
+["Tr24x5"]
 d = 24
 p = 5
 
-["TR26x5"]
+["Tr26x5"]
 d = 26
 p = 5
 
-["TR28x5"]
+["Tr28x5"]
 d = 28
 p = 5

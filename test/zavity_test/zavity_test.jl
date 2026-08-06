@@ -9,6 +9,7 @@ using StrojniSoucasti, Test
         @test A[:name] == "M8"
         @test A[:d] == 8.0
         @test A[:p] == 1.25
+
         Ab = zavity("M8x1.25")
         @test Ab[:name] == "M8x1.25"
         @test Ab[:d] == 8.0
@@ -47,11 +48,16 @@ using StrojniSoucasti, Test
         @test A3[:p] == 0.5
     end
 
-    @testset "TR20x4" begin
-        A4 = zavity("TR20x4")
-        @test A4[:name] == "TR20x4"
+    @testset "Tr20x4" begin
+        A4 = zavity("Tr20x4")
+        @test A4[:name] == "Tr20x4"
         @test A4[:d] == 20.0
         @test A4[:p] == 4.0
+
+        A4b = zavity("tr20x4")
+        @test A4b == A4
+        A4c = zavity("TR20x4")
+        @test A4c == A4
     end
 
     @test zavity("M66.2") === nothing

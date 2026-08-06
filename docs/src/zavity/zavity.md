@@ -18,8 +18,8 @@ Podporuje metrické (M) a trapézové (Tr) závity. Data načítá z interních 
   - Rozpoznává `x` i `X` a desetinnou čárku i tečku.
 
 - **Trapézový závit (Tr):**
-  - `TR{průměr}x{stoupání}` (např. `"TR20x4"`).
-  - Zápis `Tr`, `tR`, `tr` je také akceptován.
+  - `Tr{průměr}x{stoupání}` (např. `"TR20x4"`).
+  - Zápis `TR`, `tR`, `tr` je také akceptován.
 
 **Nepodporované závity:**
 - Funkce v současné verzi nepodporuje trubkové závity (G, R, Rp, NPT, BSP atd.). Při pokusu o jejich použití vyhodí chybu.

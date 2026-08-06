@@ -1,4 +1,4 @@
-﻿# ver: 2026-07-16
+﻿# ver: 2026-08-06
 using Test
 
     # materialy
@@ -51,11 +51,12 @@ using Test
     include("profily_test/polygon_metrics_test.jl")
     include("profily_test/polygon2eonatoceni_test.jl")
     include("profily_test/polygon2prurezovymodulkrut_test.jl")
+    # tolerance
+    include("tolerance_test/tolerance_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti
     include("hridel_test.jl")
     include("ulozvypis_test.jl")
-    # tolerance
-    include("tolerance_test.jl")
+
     nothing

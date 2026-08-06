@@ -1,37 +1,12 @@
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Funkce pro výpočet tolerancí podle tabulek (ČSN/ISO).
-# ver: 2026-03-15
-## Funkce: nazev_funkce()
+# ver: 2026-08-06
+## Funkce: tolerance()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/tolerance/tolerance.jl
-#
-## Vzor:
-## vystupni_promenne = tolerance(vstupni_promenne)
-## Vstupní proměnné:
-# - `spec::AbstractString`: Zápis tolerance ve formátu "40H8" nebo "10f7".
-# - `nominal::Real`: Jmenovitý rozměr v mm.
-# - `zone::AbstractString`: Zóna tolerance (např. "H" pro díru, "f" pro hřídel).
-# - `grade::Integer`: Stupeň tolerance (např. 7, 8, 9).
-## Výstupní proměnné:
-# - `nominal`: Jmenovitý rozměr v mm.
-# - `zone`: Zóna tolerance.
-# - `grade`: Stupeň tolerance.
-# - `type`: Typ tolerance (:hole pro díru, :shaft pro hřídel).
-# - `es`: Horní mez tolerance (v mm).
-# - `ei`: Dolní mez tolerance (v mm).
-# - `min`: Minimální rozměr (v mm).
-# - `max`: Maximální rozměr (v mm).
-# - `tol`: Tolerance (v mm).
-# - `unit`: Jednotka (vždy "mm").
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
-#
-## Příklad:
 #
 ###############################################################
 ## Použité proměnné vnitřní:
@@ -39,11 +14,12 @@
 using TOML
 
 const TOL_DB = TOML.parsefile(joinpath(@__DIR__, "tolerance_data.toml"))
-
+const _tolerance_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "tolerance", "tolerance.md"),
+    String,
+)
 """
-    tolerance(spec::AbstractString)
-
-Vrátí toleranci podle zápisu např. "40H8" nebo "10f7".
+$_tolerance_NAPOVEDA
 """
 function tolerance(spec::AbstractString)
     s = replace(strip(spec), "," => ".") # nahrazení čárky tečkou pro desetinné číslo

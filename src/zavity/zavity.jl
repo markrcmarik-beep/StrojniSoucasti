@@ -1,5 +1,6 @@
-# ver: 2026-08-05
+# ver: 2026-08-06
 ## Funkce: zavity()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/zavity/zavity.jl
@@ -12,17 +13,29 @@
 #
 using TOML
 include("zavitytypes.jl")
-#export zavity, DbRecord
-const ZAVITY_DB_M = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
-const ZAVITY_DB_TR = TOML.parsefile(joinpath(@__DIR__, "zavityTR.toml"))
 # načtení nápovědy z externího souboru
 const _zavity_NAPOVEDA = read(
     joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"),
     String,
-) 
-"""
-$_zavity_NAPOVEDA
-"""
+)
+# Používáme Ref pro lazy loading databází.
+# Databáze se načtou až při prvním požadavku na daný typ závitu.
+const ZAVITY_DB_M_REF = Ref{Any}(nothing)
+const ZAVITY_DB_TR_REF = Ref{Any}(nothing)
+# Pomocné funkce pro načítání databází
+function get_zavity_db(oznaceniZ::AbstractString)
+    if oznaceniZ == "M"
+        if ZAVITY_DB_M_REF[] === nothing
+            ZAVITY_DB_M_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
+        end
+        return ZAVITY_DB_M_REF[]
+    elseif oznaceniZ == "Tr"
+        if ZAVITY_DB_TR_REF[] === nothing
+            ZAVITY_DB_TR_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityTr.toml"))
+        end
+        return ZAVITY_DB_TR_REF[]
+    end
+end
 function _parse_numeric_smart(s::AbstractString)
     f_val = parse(Float64, s)
     if isinteger(f_val)
@@ -43,20 +56,20 @@ function zavity(oznaceni::AbstractString)
     db = nothing
     # use the compiled regex values directly
     if match(RX_METRIC, oznaceni) !== nothing
-        db = ZAVITY_DB_M
+        db = get_zavity_db("M") # Načte databázi M až zde, pokud ještě nebyla načtena
         m_metric = match(RX_METRIC, oznaceni)
         D = m_metric.captures[1] # first capture group is the diameter
         p = m_metric.captures[2] # second capture group is the pitch (stoupání)
         klic = ("M$D")
         key = ("M$D")
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
-        db = ZAVITY_DB_TR
+        db = get_zavity_db("Tr") # Načte databázi TR až zde, pokud ještě nebyla načtena
         m_trapez = match(RX_TRAPEZ, oznaceni)
         D = m_trapez.captures[1] # first capture group is the diameter
         p = m_trapez.captures[2] # second capture group is the pitch (stoupání)
         if p !== nothing
-            klic = replace("TR$D x $p", " " => "")
-            key = ("TR$D")
+            klic = replace("Tr$D x $p", " " => "")
+            key = ("Tr$D")
         else
             return nothing # označení musí obsahovat stoupání pro trapezový závit, jinak vracíme nothing
         end
