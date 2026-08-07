@@ -1,4 +1,4 @@
-# ver: 2026-08-06
+# ver: 2026-08-07
 ## Funkce: tolerance()
 ## Autor: Martin
 #
@@ -59,17 +59,27 @@ function tolerance(nominal::Real, zone::AbstractString, grade::Integer)
     minv = nominal + ei
     maxv = nominal + es
 
-    return (
-        nominal = nominal,
-        zone = zone,
-        grade = grade,
-        type = is_hole ? :hole : :shaft,
-        es = es,
-        ei = ei,
-        min = minv,
-        max = maxv,
-        tol = es - ei,
-        unit = "mm"
+    return Dict{Symbol, Any}(
+        :nominal => nominal,
+        :nominal_info => "jmenovitý rozměr",
+        :zone => zone,
+        :zone_info => is_hole ? "zóna díry" : "zóna hřídele",
+        :grade => grade,
+        :grade_info => "stupeň přesnosti",
+        :type => is_hole ? :hole : :shaft,
+        :type_info => is_hole ? "díra" : "hřídel",
+        :es => es,
+        :es_info => "horní odchylka",
+        :ei => ei,
+        :ei_info => "dolní odchylka",
+        :min => minv,
+        :min_info => "minimální rozměr",
+        :max => maxv,
+        :max_info => "maximální rozměr",
+        :tol => es - ei,
+        :tol_info => "tolerance",
+        :unit => "mm",
+        :unit_info => "jednotka"
     )
 end
 

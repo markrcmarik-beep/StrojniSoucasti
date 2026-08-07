@@ -1,3 +1,4 @@
+schema_version = "1.0.0"
 # Tabulková data tolerancí podle norem ČSN/ISO.
 # Jednotky: mm
 # Poznámka: Doplňte kompletní tabulky podle příslušných norem.

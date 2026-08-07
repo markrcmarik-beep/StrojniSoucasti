@@ -105,7 +105,7 @@ function zavity(oznaceni::AbstractString)
         :d => d,
         :d_info => "průměr závitu",
         :p => p_val, # může být Int nebo Float64
-        :p_info => "stoupání závitu",
+        :p_info => "stoupání závitu"
     )
     return VV
     # lookup entry in DB; attach detected type into the extra Dict before returning

@@ -1,4 +1,4 @@
-# ver: 2026-08-05
+# ver: 2026-08-07
 using StrojniSoucasti, Test
 
 #include("zavit.jl")
@@ -7,8 +7,11 @@ using StrojniSoucasti, Test
     @testset "M8" begin
         A = zavity("M8")
         @test A[:name] == "M8"
+        @test isa(A[:name_info], String)
         @test A[:d] == 8.0
+        @test isa(A[:d_info], String)
         @test A[:p] == 1.25
+        @test isa(A[:p_info], String)
 
         Ab = zavity("M8x1.25")
         @test Ab[:name] == "M8x1.25"
