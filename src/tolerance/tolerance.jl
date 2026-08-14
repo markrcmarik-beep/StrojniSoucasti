@@ -35,11 +35,6 @@ function tolerance(spec::AbstractString)
     return tolerance(nominal, zone, grade)
 end
 
-"""
-    tolerance(nominal::Real, zone::AbstractString, grade::Integer)
-
-Vrátí toleranci pro zadaný jmenovitý rozměr, zónu a stupeň.
-"""
 function tolerance(nominal::Real, zone::AbstractString, grade::Integer)
     nominal = Float64(nominal) # převod jmenovitého rozměru na Float64
     zone = strip(zone) # odstranění mezer ze zóny

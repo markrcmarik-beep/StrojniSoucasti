@@ -28,12 +28,12 @@ include("body/brsb2body.jl") # po sobě jdoucí body na kruhovém oblouku
 include("body/rotuj_body.jl") # rotace bodů o zadaný úhel
 include("body/posun_body.jl") # posun bodů o zadanou vzdálenost
 ## --- materialy ---
-include("materialy/materialy.jl")
 #include("materialy/request.jl")
 #include("materialy/reduction_table.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
+include("materialy/materialy.jl")
 include("materialy/mezUnavy.jl") # mez únavy
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
@@ -85,15 +85,15 @@ include("profily/polygon2eonatoceni.jl") # vzdalenost nejvzdalenejsiho vlakna od
 include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bodu
 ## --tolerance--
 include("tolerance/tolerance.jl") # tolerance
+include("tolerance/toleranceHODN.jl") # toleranceHODN
 
 include("hridel.jl")
 include("hrideltext.jl")
 include("ulozvypis.jl") #
 include("zavity/zavity.jl") # závity
 
-
 # Export funkcí
-export hridel, ulozvypis, zavity,
+export hridel, ulozvypis,
 # body
 bddb2b, bdu2b, brsb2body, burub2body, buub2b, bux2b, 
 posun_body, rotuj_body, ubru2bb, uu2u,
@@ -105,7 +105,9 @@ namahaniohyb, namahaniotl, namahanikombinovane,
 # profily
 profily,
 # tolerance
-tolerance
+tolerance,
+# zavity
+zavity
 
 end # module StrojniSoucasti
 
