@@ -66,35 +66,31 @@
 ## Použité proměnné vnitřní:
 #
 using TOML
-
 include("materialytypes.jl")
 
-const MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
-    "materialydatabaseOcelEN10025_2.toml"))
-const MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(@__DIR__, 
-    "materialydatabaseOcelCSN.toml"))
-const MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__, 
-    "materialydatabaseKovyCSN.toml"))
-const MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
-    "materialydatabaseLitinaCSN.toml"))
-const MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
-    "materialydatabasePryz.toml"))
-
+const _materialy_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"),
+    String,
+)
 """
-    materialy(name::AbstractString)
-
-Vrátí strukturu s vlastnostmi materiálu podle zadaného označení.
-
-Příklad:
-```julia
-materialy("S235")
-```
+$_materialy_NAPOVEDA
 """
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,
     MaterialLitina,
     MaterialPryz,
     Nothing}
+
+    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseOcelEN10025_2.toml"))
+    MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseOcelCSN.toml"))
+    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    "materialydatabaseKovyCSN.toml"))
+    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
+    "materialydatabaseLitinaCSN.toml"))
+    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
+    "materialydatabasePryz.toml"))
 
     name = uppercase(strip(name)) # velká písmena
     name = replace(name, r"\s+" => "")   # odstranění všech mezer
@@ -236,4 +232,3 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
     end
     return nothing
 end
-
