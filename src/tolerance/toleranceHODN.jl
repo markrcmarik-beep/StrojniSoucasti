@@ -1,4 +1,4 @@
-# ver: 2026-08-17
+# ver: 2026-08-19
 ## Funkce: tolerance()
 ## Autor: Martin
 #
@@ -18,15 +18,16 @@ using TOML
 
 function toleranceHODN(nominal::Real, zone::AbstractString, grade::AbstractString)
 
-#----------------------------------------------------------------------
+#---------------------------------------------------------------------
 # pomocné funkce
 
-#--------------------------------------------------------------------
+#---------------------------------------------------------------------
 # pomocné funkce konec
     nominal = Float64(nominal) # převod jmenovitého rozměru na Float64
     zone = strip(zone) # odstranění mezer ze zóny
     grade_str = strip(grade) # odstraneni mezer z grade stringu
-    grade_int = parse(Int, grade_str) # převod stupně na Int
+    gradeIT = replace(grade_str, "01" => "-1") # stupeň přesnosti -1 - 18
+    gradeIT = parse(Int, gradeIT) # převod stupně na Int
     TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceIT.toml"))
 dira = false
 hridel = false
@@ -39,7 +40,7 @@ hridel = false
     else
         error("Zóna musí být velká (díra) nebo malá (hřídel).")
     end
-#-------------------------------------------------------------------
+#---------------------------------------------------------------------
 # IT
     # Vyhledání klíče rozsahu (size_key) pro jmenovitý rozměr
     size_keyIT = ""
@@ -57,9 +58,9 @@ hridel = false
     !found_size_keyIT && error("Rozměr $(nominal) mm je mimo rozsah tabulky IT.")
     # Získání hodnoty IT na základě sizeIT_key a grade
     table = TOL_IT[size_keyIT]
-    it_key_str = string(grade_int)
-    haskey(table, it_key_str) || error("IT$(grade_int) není v tabulce pro rozsah $(size_key).")
-    it_value = table[it_key_str] # Získání hodnoty IT z tabulky
+    grade_str = string(grade_str)
+    haskey(table, grade_str) || error("IT$(grade_str) není v tabulce pro rozsah $(size_key).")
+    it_value = table[grade_str] # Získání hodnoty IT z tabulky
 #-------------------------------------------------------------------
 # ES, EI
     TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "tolerancePOLE1.toml"))
@@ -94,9 +95,98 @@ hridel = false
         elseif dira
             ESZone = zone_value["ES"] # horní mez tolerance
             EIZone = zone_value["EI"] # horní mez tolerance
-        elseif velkost == 3
-        else
         end
+    elseif velkost == 3
+            itZone = zone_value["IT"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es"] # horní mez tolerance
+                    eiZone = zone_value["ei"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES"] # horní mez tolerance
+                    EIZone = zone_value["EI"] # horní mez tolerance
+                end
+            else
+                error("Hodnota IT $(gradeIT) není v rozsahu $(itZone) pro zónu $(zone).")
+            end
+    elseif velkost == 6
+            itZone = zone_value["IT1"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es1"] # horní mez tolerance
+                    eiZone = zone_value["ei1"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES1"] # horní mez tolerance
+                    EIZone = zone_value["EI1"] # horní mez tolerance
+                end
+            end
+            itZone = zone_value["IT2"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es2"] # horní mez tolerance
+                    eiZone = zone_value["ei2"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES2"] # horní mez tolerance
+                    EIZone = zone_value["EI2"] # horní mez tolerance
+                end
+            end
+        elseif velkost == 9
+            itZone = zone_value["IT1"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es1"] # horní mez tolerance
+                    eiZone = zone_value["ei1"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES1"] # horní mez tolerance
+                    EIZone = zone_value["EI1"] # horní mez tolerance
+                end
+            end
+            itZone = zone_value["IT2"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es2"] # horní mez tolerance
+                    eiZone = zone_value["ei2"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES2"] # horní mez tolerance
+                    EIZone = zone_value["EI2"] # horní mez tolerance
+                end
+            end
+            itZone = zone_value["IT3"] # hodnota dovolené IT
+            itZone = replace(itZone, "01" => "-1")
+            casti = split(itZone, "-")
+            a1 = parse(Int, casti[1])
+            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+                if hridel
+                    esZone = zone_value["es3"] # horní mez tolerance
+                    eiZone = zone_value["ei3"] # horní mez tolerance
+                elseif dira
+                    ESZone = zone_value["ES3"] # horní mez tolerance
+                    EIZone = zone_value["EI3"] # horní mez tolerance
+                end
+            end
+    else
+        error("Neznámá struktura zóny v tabulce POLE.")
     end
     IT = it_value
     dataP[:IT] = IT
@@ -145,7 +235,7 @@ hridel = false
         :rozsahIT_info => "rozsah jmenovitého rozměru dle IT",
         :rozsahPOLE => size_keyPOLE,
         :rozsahPOLE_info => "rozsah jmenovitého rozměru dle POLE",
-        :stupen => grade_int,
+        :stupen => grade_str,
         :stupen_info => "stupeň tolerance",
         :IT => it_value,
         :IT_info => "hodnota IT pro daný rozsah a stupeň",

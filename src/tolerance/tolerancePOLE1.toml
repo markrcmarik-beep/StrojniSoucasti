@@ -19,7 +19,7 @@ sizesPOLE = ["0-3", "3-6", "6-10", "10-14", "14-18", "18-24", "24-30",
   "g" = { es = -0.009, ei = "es-IT" }
   "h" = { es = 0, ei = "es-IT" }
   "js" = { es = "IT/2", ei = "-IT/2" }
-  #"j" = { es = "ei+IT", ei = -5, it = "5-6", es = "ei+IT", ei = -10, it = "7" }
-  #"k" = { es = "ei+IT", ei = 0, it = "01-3", es = "ei+IT", ei = 2, it = "4-7", es = "ei+IT", ei = 0, it = "7-18" }
+  "j" = { es1 = "ei+IT", ei1 = -0.005, IT1 = "5-6", es2 = "ei+IT", ei2 = -0.01, IT2 = "7" }
+  "k" = { es1 = "ei+IT", ei1 = 0, IT1 = "01-3", es2 = "ei+IT", ei2 = 0.002, IT2 = "4-7", es3 = "ei+IT", ei3 = 0, IT3 = "8-18" }
   "G" = { ES = "EI+IT", EI = 9 }
   "H" = { ES = "EI+IT", EI = 0 }

@@ -1,4 +1,4 @@
-# ver: 2026-08-17
+# ver: 2026-08-19
 using Test
 using StrojniSoucasti
 
@@ -10,7 +10,7 @@ using StrojniSoucasti
         @test T1[:nominal] == 40.0
         @test T1[:druh] == "díra"
         @test T1[:zone] == "H"
-        @test T1[:stupen] == 8
+        @test T1[:stupen] == "8"
         @test T1[:IT] == 0.039
         @test T1[:ES] == 0.039
         @test T1[:EI] == 0.0
@@ -23,10 +23,10 @@ using StrojniSoucasti
     @testset "Valid shaft tolerance (hřídel)" begin
         # Test case for 40 f7 (hřídel)
         t1 = StrojniSoucasti.toleranceHODN(40, "f", "7")
-        @test t1[:nominal] == 40.0
+        @test t1[:nominal] == 40
         @test t1[:druh] == "hřídel"
         @test t1[:zone] == "f"
-        @test t1[:stupen] == 7
+        @test t1[:stupen] == "7"
         @test t1[:IT] == 0.025
         @test t1[:es] ≈ -0.025
         @test t1[:ei] ≈ -0.050
@@ -34,6 +34,24 @@ using StrojniSoucasti
         @test t1[:min] ≈ 39.950
         @test t1[:ES] === nothing
         @test t1[:EI] === nothing
+        t2 = StrojniSoucasti.toleranceHODN(40, "j", "7")
+        @test t2[:nominal] == 40
+        @test t2[:druh] == "hřídel"
+        @test t2[:zone] == "j"
+        @test t2[:stupen] == "7"
+        @test t2[:IT] == 0.025
+        @test t2[:es] ≈ 0.015
+        @test t2[:ei] ≈ -0.01
+        @test t2[:max] ≈ 40.015
+        @test t2[:min] ≈ 39.99
+        @test t2[:ES] === nothing
+        @test t2[:EI] === nothing
+        t3 = StrojniSoucasti.toleranceHODN(40, "js", "7")
+        @test t3[:nominal] == 40
+        @test t3[:druh] == "hřídel"
+        @test t3[:zone] == "js"
+        @test t3[:stupen] == "7"
+        
     end
 
     @testset "Error handling" begin
