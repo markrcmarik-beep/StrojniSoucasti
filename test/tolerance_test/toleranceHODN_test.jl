@@ -1,4 +1,4 @@
-# ver: 2026-08-19
+# ver: 2026-08-20
 using Test
 using StrojniSoucasti
 
@@ -51,6 +51,7 @@ using StrojniSoucasti
         @test t3[:druh] == "hřídel"
         @test t3[:zone] == "js"
         @test t3[:stupen] == "7"
+        @test t3[:IT] == 0.025
         
     end
 
@@ -58,7 +59,7 @@ using StrojniSoucasti
         # Test for invalid zone
         @test_throws ErrorException StrojniSoucasti.toleranceHODN(40, "H7", "7")
         # Test for out-of-range nominal dimension
-        @test_throws ErrorException StrojniSoucasti.toleranceHODN(1000, "H", "8")
+        @test_throws ErrorException StrojniSoucasti.toleranceHODN(-1000, "H", "8")
     end
 
 end

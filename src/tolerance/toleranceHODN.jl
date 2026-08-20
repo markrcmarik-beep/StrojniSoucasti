@@ -1,4 +1,4 @@
-# ver: 2026-08-19
+# ver: 2026-08-20
 ## Funkce: tolerance()
 ## Autor: Martin
 #
@@ -87,6 +87,7 @@ hridel = false
     # Výpočet tolerance
     velkost = length(zone_value)
     dataP = Dict{Symbol,Any}()
+    nalezeno = false
     if velkost == 2
         if hridel
             esZone = zone_value["es"] # horní mez tolerance
@@ -96,98 +97,50 @@ hridel = false
             ESZone = zone_value["ES"] # horní mez tolerance
             EIZone = zone_value["EI"] # horní mez tolerance
         end
+        nalezeno = true
     elseif velkost == 3
-            itZone = zone_value["IT"] # hodnota dovolené IT
+        itZone = zone_value["IT"] # hodnota dovolené IT
+        itZone = replace(itZone, "01" => "-1")
+        casti = split(itZone, "-")
+        a1 = parse(Int, casti[1])
+        a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
+        if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
+            nalezeno = true
+            if hridel
+                esZone = zone_value["es"] # horní mez tolerance
+                eiZone = zone_value["ei"] # horní mez tolerance
+            elseif dira
+                ESZone = zone_value["ES"] # horní mez tolerance
+                EIZone = zone_value["EI"] # horní mez tolerance
+            end
+        else
+            error("Hodnota IT $(gradeIT) není v rozsahu $(itZone) pro zónu $(zone).")
+        end
+    elseif velkost >= 6 && velkost % 3 == 0
+        limit = Int(velkost/3)
+        for cis0 in 1:limit
+            itZone = zone_value[string("IT",cis0)] # hodnota dovolené IT
             itZone = replace(itZone, "01" => "-1")
             casti = split(itZone, "-")
             a1 = parse(Int, casti[1])
             a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
             if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
                 if hridel
-                    esZone = zone_value["es"] # horní mez tolerance
-                    eiZone = zone_value["ei"] # horní mez tolerance
+                    esZone = zone_value[string("es",cis0)] # horní mez tolerance
+                    eiZone = zone_value[string("ei",cis0)] # horní mez tolerance
                 elseif dira
-                    ESZone = zone_value["ES"] # horní mez tolerance
-                    EIZone = zone_value["EI"] # horní mez tolerance
+                    ESZone = zone_value[string("ES",cis0)] # horní mez tolerance
+                    EIZone = zone_value[string("EI",cis0)] # horní mez tolerance
                 end
-            else
-                error("Hodnota IT $(gradeIT) není v rozsahu $(itZone) pro zónu $(zone).")
+                nalezeno == true
+                break
             end
-    elseif velkost == 6
-            itZone = zone_value["IT1"] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value["es1"] # horní mez tolerance
-                    eiZone = zone_value["ei1"] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value["ES1"] # horní mez tolerance
-                    EIZone = zone_value["EI1"] # horní mez tolerance
-                end
-            end
-            itZone = zone_value["IT2"] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value["es2"] # horní mez tolerance
-                    eiZone = zone_value["ei2"] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value["ES2"] # horní mez tolerance
-                    EIZone = zone_value["EI2"] # horní mez tolerance
-                end
-            end
-        elseif velkost == 9
-            itZone = zone_value["IT1"] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value["es1"] # horní mez tolerance
-                    eiZone = zone_value["ei1"] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value["ES1"] # horní mez tolerance
-                    EIZone = zone_value["EI1"] # horní mez tolerance
-                end
-            end
-            itZone = zone_value["IT2"] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value["es2"] # horní mez tolerance
-                    eiZone = zone_value["ei2"] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value["ES2"] # horní mez tolerance
-                    EIZone = zone_value["EI2"] # horní mez tolerance
-                end
-            end
-            itZone = zone_value["IT3"] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value["es3"] # horní mez tolerance
-                    eiZone = zone_value["ei3"] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value["ES3"] # horní mez tolerance
-                    EIZone = zone_value["EI3"] # horní mez tolerance
-                end
-            end
+        end
+
     else
         error("Neznámá struktura zóny v tabulce POLE.")
     end
+    #!nalezeno && return nothing
     IT = it_value
     dataP[:IT] = IT
     if hridel
