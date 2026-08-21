@@ -1,4 +1,4 @@
-﻿# ver: 2026-08-17
+﻿# ver: 2026-08-21
 using Test
 
     # materialy
@@ -53,7 +53,7 @@ using Test
     include("profily_test/polygon2prurezovymodulkrut_test.jl")
     # tolerance
     include("tolerance_test/tolerance_test.jl")
-    include("tolerance_test/toleranceHODN_test.jl")
+    include("tolerance_test/toleranceISOlicovani_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
     # strojni soucasti

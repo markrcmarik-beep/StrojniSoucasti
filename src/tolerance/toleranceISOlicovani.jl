@@ -1,9 +1,9 @@
-# ver: 2026-08-20
+# ver: 2026-08-21
 ## Funkce: tolerance()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/tolerance/toleranceHODN.jl
+# StrojniSoucasti/src/tolerance/toleranceISOlicovani.jl
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
@@ -16,7 +16,7 @@ using TOML
 #const TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceIT.toml"))
 #const TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "tolerancePOLE1.toml"))
 
-function toleranceHODN(nominal::Real, zone::AbstractString, grade::AbstractString)
+function toleranceISOlicovani(nominal::Real, zone::AbstractString, grade::AbstractString)
 
 #---------------------------------------------------------------------
 # pomocné funkce
