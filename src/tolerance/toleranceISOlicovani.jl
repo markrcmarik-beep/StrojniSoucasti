@@ -1,4 +1,4 @@
-# ver: 2026-08-21
+# ver: 2026-08-22
 ## Funkce: tolerance()
 ## Autor: Martin
 #
@@ -28,7 +28,7 @@ function toleranceISOlicovani(nominal::Real, zone::AbstractString, grade::Abstra
     grade_str = strip(grade) # odstraneni mezer z grade stringu
     gradeIT = replace(grade_str, "01" => "-1") # stupeň přesnosti -1 - 18
     gradeIT = parse(Int, gradeIT) # převod stupně na Int
-    TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceIT.toml"))
+    TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceISOlicIT.toml"))
 dira = false
 hridel = false
     if all(isuppercase, zone)
@@ -63,7 +63,7 @@ hridel = false
     it_value = table[grade_str] # Získání hodnoty IT z tabulky
 #-------------------------------------------------------------------
 # ES, EI
-    TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "tolerancePOLE1.toml"))
+    TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "toleranceISOlicPOLE.toml"))
     # Vyhledání klíče rozsahu (size_key) pro jmenovitý rozměr
     size_keyPOLE = ""
     found_size_keyPOLE = false

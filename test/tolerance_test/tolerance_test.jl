@@ -1,20 +1,20 @@
-# ver: 2026-08-21
+# ver: 2026-08-22
 using Test
 using StrojniSoucasti
 
 @testset "tolerance" begin
-    t1 = tolerance("40H8")
-    @test t1[:nominal] == 40.0
-    @test t1[:druh] == "díra"
-    @test t1[:zone] == "H"
-    @test t1[:stupen] == "8"
-    @test t1[:IT] == 0.039
-    @test t1[:ES] == 0.039
-    @test t1[:EI] == 0.0
-    @test t1[:min] ≈ 40.0
-    @test t1[:max] ≈ 40.039
-    @test t1[:es] === nothing
-    @test t1[:ei] === nothing
+    T1 = tolerance("40H8")
+    @test T1[:nominal] == 40.0
+    @test T1[:druh] == "díra"
+    @test T1[:zone] == "H"
+    @test T1[:stupen] == "8"
+    @test T1[:IT] == 0.039
+    @test T1[:ES] == 0.039
+    @test T1[:EI] == 0.0
+    @test T1[:min] ≈ 40.0
+    @test T1[:max] ≈ 40.039
+    @test T1[:es] === nothing
+    @test T1[:ei] === nothing
 
     t2 = tolerance("40f7")
     @test t2[:nominal] == 40.0
@@ -28,6 +28,8 @@ using StrojniSoucasti
     @test t2[:max] ≈ 39.975
     @test t2[:ES] === nothing
     @test t2[:EI] === nothing
+
+    Tt1 = tolerance("40H8/40f7")
 
     @test_throws ErrorException tolerance("ABC")
     @test_throws ErrorException tolerance("-1000H7")
