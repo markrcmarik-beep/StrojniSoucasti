@@ -1,4 +1,4 @@
-# ver: 2026-08-06
+# ver: 2026-08-25
 ## Funkce: zavity()
 ## Autor: Martin
 #
@@ -34,14 +34,6 @@ function get_zavity_db(oznaceniZ::AbstractString)
             ZAVITY_DB_TR_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityTr.toml"))
         end
         return ZAVITY_DB_TR_REF[]
-    end
-end
-function _parse_numeric_smart(s::AbstractString)
-    f_val = parse(Float64, s)
-    if isinteger(f_val)
-        return Int(f_val)
-    else
-        return f_val
     end
 end
 
@@ -86,7 +78,7 @@ function zavity(oznaceni::AbstractString)
     p_hodn = p_hodn_raw isa AbstractArray ? p_hodn_raw : [p_hodn_raw]
     p_norm = get(row, "p_norm", nothing)
 
-    p_val = p === nothing ? nothing : _parse_numeric_smart(p)
+    p_val = p === nothing ? nothing : parse_numeric_smart(p)
 
     if p === nothing 
         p_val = p_norm

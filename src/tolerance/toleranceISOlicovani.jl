@@ -1,5 +1,5 @@
-# ver: 2026-08-22
-## Funkce: tolerance()
+# ver: 2026-08-26
+## Funkce: toleranceISOlicovani()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
@@ -13,205 +13,79 @@
 #
 using TOML
 
-#const TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceIT.toml"))
-#const TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "tolerancePOLE1.toml"))
-
-function toleranceISOlicovani(nominal::Real, zone::AbstractString, grade::AbstractString)
-
+"""
+toleranceISOlicovani
+"""
+function toleranceISOlicovani(spec::AbstractString)
 #---------------------------------------------------------------------
 # pomocné funkce
-
+function zarazeni(VV1, VV2)
+    VV = Dict{Symbol,Any}(
+        :druh1 => VV1[:druh],
+        :druh1_info => "druh tolerance (díra/hřídel)",
+        :rozsahIT1 => VV1[:rozsahIT],
+        :rozsahIT1_info => "rozsah jmenovitého rozměru dle IT",
+        :rozsahPOLE1 => VV1[:rozsahPOLE],
+        :rozsahPOLE1_info => "rozsah jmenovitého rozměru dle POLE",
+        :stupen1 => VV1[:stupen],
+        :stupen1_info => "stupeň tolerance",
+        :IT1 => VV1[:IT],
+        :I1T_info => "hodnota IT pro daný rozsah a stupeň",
+        :nominal1 => VV1[:nominal],
+        :nominal1_info => "jmenovitý rozměr",
+        :zone1 => VV1[:zone],
+        :zone1_info => "zóna tolerance (velká/malá)",
+        :min1 => VV1[:min],
+        :min1_info => "průměr min",
+        :max1 => VV1[:max],
+        :max1_info => "průměr max",
+        :ES1 => VV1[:ES],
+        :EI1 => VV1[:EI],
+        :es1 => nothing,
+        :ei1 => nothing
+    )
+    return VV
+end
 #---------------------------------------------------------------------
 # pomocné funkce konec
-    nominal = Float64(nominal) # převod jmenovitého rozměru na Float64
-    zone = strip(zone) # odstranění mezer ze zóny
-    grade_str = strip(grade) # odstraneni mezer z grade stringu
-    gradeIT = replace(grade_str, "01" => "-1") # stupeň přesnosti -1 - 18
-    gradeIT = parse(Int, gradeIT) # převod stupně na Int
-    TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceISOlicIT.toml"))
-dira = false
-hridel = false
-    if all(isuppercase, zone)
-        druh = "díra"
-        dira = true
-    elseif all(islowercase, zone)
-        druh = "hřídel"
-        hridel = true
-    else
-        error("Zóna musí být velká (díra) nebo malá (hřídel).")
-    end
-#---------------------------------------------------------------------
-# IT
-    # Vyhledání klíče rozsahu (size_key) pro jmenovitý rozměr
-    size_keyIT = ""
-    found_size_keyIT = false
-    for keyIT in TOL_IT["sizesIT"]
-        parts = split(keyIT, "-")
-        a = parse(Float64, parts[1])
-        b = parse(Float64, parts[2])
-        if nominal > a && nominal <= b
-            size_keyIT = keyIT
-            found_size_keyIT = true
-            break
-        end
-    end
-    !found_size_keyIT && error("Rozměr $(nominal) mm je mimo rozsah tabulky IT.")
-    # Získání hodnoty IT na základě sizeIT_key a grade
-    table = TOL_IT[size_keyIT]
-    grade_str = string(grade_str)
-    haskey(table, grade_str) || error("IT$(grade_str) není v tabulce pro rozsah $(size_key).")
-    it_value = table[grade_str] # Získání hodnoty IT z tabulky
-#-------------------------------------------------------------------
-# ES, EI
-    TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "toleranceISOlicPOLE.toml"))
-    # Vyhledání klíče rozsahu (size_key) pro jmenovitý rozměr
-    size_keyPOLE = ""
-    found_size_keyPOLE = false
-    for keyPOLE in TOL_POLE["sizesPOLE"]
-        parts = split(keyPOLE, "-")
-        a = parse(Float64, parts[1])
-        b = parse(Float64, parts[2])
-        if nominal > a && nominal <= b
-            size_keyPOLE = keyPOLE
-            found_size_keyPOLE = true
-            break
-        end
-    end
+    s = replace(strip(spec), "," => ".") # nahrazení čárky tečkou pro desetinné číslo
+    s = replace(s, " " => "") # odstranění mezer
+    rx = r"(\d+(?:\.\d+)?)([A-Za-z]+)(\d+)" # regex pro rozdělení na jmenovitý rozměr, zónu a stupeň
+    m1 = match(Regex("\\A" * rx.pattern * "\\z"), s) # regex pro rozdělení na jmenovitý rozměr, zónu a stupeň
+    m2 = match(Regex("\\A" * rx.pattern * "/" * rx.pattern * "\\z"), s)
 
-    !found_size_keyPOLE && error("Rozměr $(nominal) mm je mimo rozsah tabulky POLE.")
-    # Získání hodnoty z tabulky POLE na základě sizePOLE_key a zone
-    table_pole = TOL_POLE[size_keyPOLE]
-    #println("table_pole: ", table_pole)
-    haskey(table_pole, zone) || error("Zóna $(zone) není v tabulce pro rozsah $(size_keyPOLE).")
-    zone_value = table_pole[zone] # Získání hodnoty z tabulky POLE z tabulky
-    # Výpočet tolerance
-    velkost = length(zone_value)
-    dataP = Dict{Symbol,Any}()
-    nalezeno = false
-    if velkost == 2
-        if hridel
-            esZone = zone_value["es"] # horní mez tolerance
-            eiZone = zone_value["ei"] # horní mez tolerance
-
-        elseif dira
-            ESZone = zone_value["ES"] # horní mez tolerance
-            EIZone = zone_value["EI"] # horní mez tolerance
-        end
-        nalezeno = true
-    elseif velkost == 3
-        itZone = zone_value["IT"] # hodnota dovolené IT
-        itZone = replace(itZone, "01" => "-1")
-        casti = split(itZone, "-")
-        a1 = parse(Int, casti[1])
-        a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-        if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-            nalezeno = true
-            if hridel
-                esZone = zone_value["es"] # horní mez tolerance
-                eiZone = zone_value["ei"] # horní mez tolerance
-            elseif dira
-                ESZone = zone_value["ES"] # horní mez tolerance
-                EIZone = zone_value["EI"] # horní mez tolerance
+    if m1 !== nothing
+        m = m1
+        nominal = parse(Float64, m.captures[1]) # převod jmenovitého rozměru na Float64
+        zone = m.captures[2] # zóna (např. "H" nebo "f")
+        grade = m.captures[3] # stupeň
+        VV = StrojniSoucasti.toleranceISOulozeni(nominal, zone, grade)
+    elseif m2 !== nothing
+        m = m2
+        if length(m) == 6
+            nominal1 = parse(Float64, m.captures[1]) # převod jmenovitého rozměru na Float64
+            zone1 = m.captures[2] # zóna (např. "H" nebo "f")
+            grade1 = m.captures[3] # stupeň
+            VV_1 = StrojniSoucasti.toleranceISOulozeni(nominal1, zone1, grade1)
+            nominal2 = parse(Float64, m.captures[4]) # převod jmenovitého rozměru na Float64
+            zone2 = m.captures[5] # zóna (např. "H" nebo "f")
+            grade2 = m.captures[6] # stupeň
+            VV_2 = StrojniSoucasti.toleranceISOulozeni(nominal2, zone2, grade2)
+            if (VV_1[:druh] == "díra") && (VV_2[:druh] == "hřídel")
+                VV1 = VV_1
+                VV2 = VV_2
+            elseif (VV_1[:druh] == "hřídel") && (VV_2[:druh] == "díra")
+                VV1 = VV_2
+                VV2 = VV_1
             end
-        else
-            error("Hodnota IT $(gradeIT) není v rozsahu $(itZone) pro zónu $(zone).")
+    
         end
-    elseif velkost >= 6 && velkost % 3 == 0
-        limit = Int(velkost/3)
-        for cis0 in 1:limit
-            itZone = zone_value[string("IT",cis0)] # hodnota dovolené IT
-            itZone = replace(itZone, "01" => "-1")
-            casti = split(itZone, "-")
-            a1 = parse(Int, casti[1])
-            a2 = length(casti) == 2 ? parse(Int, casti[2]) : nothing
-            if (a2 === nothing && gradeIT == a1) || (a2 !== nothing && gradeIT >= a1 && gradeIT <= a2)
-                if hridel
-                    esZone = zone_value[string("es",cis0)] # horní mez tolerance
-                    eiZone = zone_value[string("ei",cis0)] # horní mez tolerance
-                elseif dira
-                    ESZone = zone_value[string("ES",cis0)] # horní mez tolerance
-                    EIZone = zone_value[string("EI",cis0)] # horní mez tolerance
-                end
-                nalezeno == true
-                break
-            end
-        end
+        VV = zarazeni(VV1, VV2)
 
     else
-        error("Neznámá struktura zóny v tabulce POLE.")
-    end
-    #!nalezeno && return nothing
-    IT = it_value
-    dataP[:IT] = IT
-    if hridel
-        if !isa(esZone, String)
-            es = esZone
-            dataP[:es] = es
-        end
-        if !isa(eiZone, String)
-            ei = eiZone
-            dataP[:ei] = ei
-        end
-        if isa(esZone, String)
-            es = StrojniSoucasti.vyhodnot_vyraz(esZone, dataP) # převod stringu na číslo
-        end
-        if isa(eiZone, String)
-            ei = StrojniSoucasti.vyhodnot_vyraz(eiZone, dataP) # převod stringu na číslo
-        end
-        D1 = nominal+ei
-        D2 = nominal+es
-    elseif dira
-        if !isa(ESZone, String)
-            ES = ESZone
-            dataP[:ES] = ES
-        end
-        if !isa(EIZone, String)
-            EI = EIZone
-            dataP[:EI] = EI
-        end
-        if isa(ESZone, String)
-            ES = StrojniSoucasti.vyhodnot_vyraz(ESZone, dataP) # převod stringu na číslo
-        elseif !isa(EIZone, String)
-            EI = StrojniSoucasti.vyhodnot_vyraz(EIZone, dataP) # převod stringu na číslo
-        end
-        D1 = nominal+EI
-        D2 = nominal+ES
-    end
-    Dmin = min(D1, D2)
-    Dmax = max(D1, D2)
-#----------------------------------------------------------------------
-# výstupní
-    VV = Dict{Symbol,Any}(
-        :druh => druh,
-        :druh_info => "druh tolerance (díra/hřídel)",
-        :rozsahIT => size_keyIT,
-        :rozsahIT_info => "rozsah jmenovitého rozměru dle IT",
-        :rozsahPOLE => size_keyPOLE,
-        :rozsahPOLE_info => "rozsah jmenovitého rozměru dle POLE",
-        :stupen => grade_str,
-        :stupen_info => "stupeň tolerance",
-        :IT => it_value,
-        :IT_info => "hodnota IT pro daný rozsah a stupeň",
-        :nominal => nominal,
-        :nominal_info => "jmenovitý rozměr",
-        :zone => zone,
-        :zone_info => "zóna tolerance (velká/malá)",
-        :min => Dmin,
-        :min_info => "průměr min",
-        :max => Dmax,
-        :max_info => "průměr max"
-    )
-    if dira
-        VV[:ES] = ES
-        VV[:EI] = EI
-        VV[:es] = nothing
-        VV[:ei] = nothing
-    elseif hridel
-        VV[:es] = es
-        VV[:ei] = ei
-        VV[:ES] = nothing
-        VV[:EI] = nothing
+        error("Neplatné označení tolerance: '$spec'")
     end
 
     return VV
+
 end

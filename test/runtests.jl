@@ -1,6 +1,18 @@
-﻿# ver: 2026-08-21
+﻿# ver: 2026-08-26
 using Test
-
+    # body
+    include("body_test/bdu2b_test.jl")
+    include("body_test/burub2body_test.jl")
+    include("body_test/bux2b_test.jl")
+    include("body_test/buub2b_test.jl")
+    include("body_test/ubru2bb_test.jl")
+    include("body_test/uu2u_test.jl")
+    include("body_test/brsb2body_test.jl")
+    include("body_test/posun_body_test.jl")
+    include("body_test/rotuj_body_test.jl")
+    ## --matematika--
+    include("matematika_test/parse_numeric_smart_test.jl")
+    include("matematika_test/vyhodnot_vyraz_test.jl")
     # materialy
     include("materialy_test/materialy_test.jl")
     include("materialy_test/dovoleneNapeti_test.jl")
@@ -13,16 +25,6 @@ using Test
     include("namahani_test/namahaniohyb_test.jl")
     include("namahani_test/namahaniotl_test.jl")
     include("namahani_test/namahanikombinovane_test.jl")
-    # body
-    include("body_test/bdu2b_test.jl")
-    include("body_test/burub2body_test.jl")
-    include("body_test/bux2b_test.jl")
-    include("body_test/buub2b_test.jl")
-    include("body_test/ubru2bb_test.jl")
-    include("body_test/uu2u_test.jl")
-    include("body_test/brsb2body_test.jl")
-    include("body_test/posun_body_test.jl")
-    include("body_test/rotuj_body_test.jl")
     # profily
     include("profily_test/profily_test.jl")
     include("profily_test/profil_text_lines_test.jl")
@@ -54,11 +56,12 @@ using Test
     # tolerance
     include("tolerance_test/tolerance_test.jl")
     include("tolerance_test/toleranceISOlicovani_test.jl")
+    include("tolerance_test/toleranceISOulozeni_test.jl")
     # zavity
     include("zavity_test/zavity_test.jl")
+
     # strojni soucasti
     include("hridel_test.jl")
     include("ulozvypis_test.jl")
-    include("vyhodnot_vyraz_test.jl")
 
     nothing
