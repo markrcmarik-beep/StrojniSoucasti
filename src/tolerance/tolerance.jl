@@ -1,4 +1,4 @@
-# ver: 2026-08-26
+# ver: 2026-08-27
 ## Funkce: tolerance()
 ## Autor: Martin
 #
