@@ -1,67 +1,13 @@
-﻿## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Vrátí Material struct s vlastnostmi materiálu z databáze.
-# ver: 2026-03-17
+﻿# ver: 2026-08-27
 ## Funkce: materialy()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/materialy/materialy.jl
-#
-## Vzor:
-## vystupni_promenne = materialy(vstupni_promenne)
-## Vstupní proměnné:
-# name::AbstractString
-#   Označení materiálu (např. "S235", "11373", "S235JR+N").
-#   Před vyhledáním se oříznou okraje, odstraní mezery a převádí se na velká písmena.
-## Výstupní proměnné:
-# mat::Union{MaterialOcel, MaterialKovy, MaterialLitina, MaterialPryz, Nothing}
-#   Datová struktura s vlastnostmi materiálu z databází EN10025-2/ČSN,
-#   nebo `nothing`, pokud materiál nebyl nalezen.
-#   Typicky dostupná pole:
-#   - společná pro všechny typy: `name`, `standard`, `druh`, `A`, `A_unit`, `E`, `E_unit`, `G`, `G_unit`, `ny`, `ny_unit`, `rho`, `rho_unit`
-#   - pouze pro `MaterialOcel` a `MaterialKovy`: `Re`, `Re_unit`, `Rm_min`, `Rm_min_unit`, `Rm_max`, `Rm_max_unit`
-#   - pouze pro `MaterialOcel`: `KV`, `T_KV`, `weldable`, `thickness_max`
-#   - pouze pro `MaterialLitina`: `Rm_tah`, `Rm_tlak`, `tau_lim`, `HB_min`, `HB_max` (+ jejich *_unit)
-#   - pouze pro `MaterialPryz`: `hardness`, `hardness_unit`
-#   Příklady čtení:
-#   - `mat.name`::String
-#   - `mat.Re`::Float64 (jen `MaterialOcel`, `MaterialKovy`)
-#   - `mat.Re_unit`::String (jen `MaterialOcel`, `MaterialKovy`)
-#   - `mat.E`::Float64
-#   - `mat.E_unit`::String
-#   - `mat.G`::Float64
-#   - `mat.G_unit`::String
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
 # materialytypes.jl, materialydatabase.toml
-## Příklad:
-# julia
-# vstup:
-# mat = materialy("11373")
-#
-# použití:
-# if mat !== nothing
-#     println(typeof(mat))             # např. MaterialOcel
-#     println("name = ", mat.name)
-#     println("Re = ", mat.Re, " ", mat.Re_unit)   # jen pro MaterialOcel/MaterialKovy
-#     println("E  = ", mat.E,  " MPa")
-#     println("G  = ", mat.G,  " MPa")
-# else
-#     println("Materiál nebyl nalezen.")
-# end
-#
-# očekávaný výstup (pro existující ocel):
-# MaterialOcel
-# name = 11373
-# Re = ... MPa
-# E  = ... MPa
-# G  = ... MPa
-#
-# očekávaný výstup (pro neexistující materiál):
-# Materiál nebyl nalezen.
 ###############################################################
 ## Použité proměnné vnitřní:
 #
