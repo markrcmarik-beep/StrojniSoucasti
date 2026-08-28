@@ -133,3 +133,5 @@ using StrojniSoucasti
     @test mat === nothing
 
 end
+
+nothing

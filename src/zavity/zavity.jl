@@ -1,84 +1,106 @@
-## Funkce Julia v1.12
-###############################################################
-## Popis funkce:
-# Funkce pro vyhledání parametrů závitů podle jejich označení.
-# ver: 2026-01-20
+# ver: 2026-08-25
 ## Funkce: zavity()
+## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/zavity.jl
-#
-## Vzor:
-## vystupni_promenne = zavity(vstupni_promenne)
-## Vstupní proměnné:
-# vstupni_promenne: Oznaceni závitu jako řetězec (např. "M8x1.25", "TR20x4", "G1/2").
-## Výstupní proměnné:
-# vystupni_promenne: Struktura DbRecord obsahující název závitu, 
-#   průměr (d), stoupání (p) a další informace.
+# StrojniSoucasti/src/zavity/zavity.jl
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
 #
-## Příklad:
-# A = zavity("M8x1.25")
-# println("Průměr: ", A.d, " mm, stoupání: ", A.p, " mm")
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-
 using TOML
 include("zavitytypes.jl")
-
-#export zavity, DbRecord
-const ZAVITY_DB = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
+# načtení nápovědy z externího souboru
+const _zavity_NAPOVEDA = read(
+    joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"),
+    String,
+)
+# Používáme Ref pro lazy loading databází.
+# Databáze se načtou až při prvním požadavku na daný typ závitu.
+const ZAVITY_DB_M_REF = Ref{Any}(nothing)
+const ZAVITY_DB_TR_REF = Ref{Any}(nothing)
+# Pomocné funkce pro načítání databází
+function get_zavity_db(oznaceniZ::AbstractString)
+    if oznaceniZ == "M"
+        if ZAVITY_DB_M_REF[] === nothing
+            ZAVITY_DB_M_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
+        end
+        return ZAVITY_DB_M_REF[]
+    elseif oznaceniZ == "Tr"
+        if ZAVITY_DB_TR_REF[] === nothing
+            ZAVITY_DB_TR_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityTr.toml"))
+        end
+        return ZAVITY_DB_TR_REF[]
+    end
+end
 
 """
-    zavity(oznaceni::AbstractString) -> DbRecord
-
-Vyhledá parametry závitu podle jeho označení.
-
-Vstupy:
-- `oznaceni`: označení závitu (např. `"M8x1.25"`, `"TR20x4"`, `"G1/2"`).
-
-Výstup:
-- `DbRecord` s informacemi o závitu (např. `d`, `p`).
-
-Příklad:
-```julia
-z = zavity("M8x1.25")
-z.d
-```
+$_zavity_NAPOVEDA
 """
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
     RX_METRIC = r"^(?:[mM])(\d+(?:\.\d+)?)(?:[xX](\d+(?:\.\d+)?))?$"
     RX_TRAPEZ = r"^(?:TR|Tr|tR|tr)(\d+(?:\.\d+)?)(?:[xX](\d+(?:\.\d+)?))?$"
     # detect type: metric, trapezoidal, pipe (trubkový) or unknown
-    typ = :unknown
+    db = nothing
     # use the compiled regex values directly
     if match(RX_METRIC, oznaceni) !== nothing
-        typ = :metric
+        db = get_zavity_db("M") # Načte databázi M až zde, pokud ještě nebyla načtena
+        m_metric = match(RX_METRIC, oznaceni)
+        D = m_metric.captures[1] # first capture group is the diameter
+        p = m_metric.captures[2] # second capture group is the pitch (stoupání)
+        klic = ("M$D")
+        key = ("M$D")
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
-        typ = :trapez
-    else
-        # pipe/thread patterns: G, R, Rp, NPT, fractional inch (1/2), or inch quotes
-        if match(r"(?i)^(?:G|R|Rp|NPT)\b", oznaceni) !== nothing ||
-           match(r"^\d+\/(?:\d+)", oznaceni) !== nothing ||
-           occursin('"', oznaceni) || occursin("inch", lowercase(oznaceni)) || occursin("bsp", lowercase(oznaceni))
-            typ = :pipe
+        db = get_zavity_db("Tr") # Načte databázi TR až zde, pokud ještě nebyla načtena
+        m_trapez = match(RX_TRAPEZ, oznaceni)
+        D = m_trapez.captures[1] # first capture group is the diameter
+        p = m_trapez.captures[2] # second capture group is the pitch (stoupání)
+        if p !== nothing
+            klic = replace("Tr$D x $p", " " => "")
+            key = ("Tr$D")
+        else
+            return nothing # označení musí obsahovat stoupání pro trapezový závit, jinak vracíme nothing
         end
+    else
+        return nothing
     end
-    # lookup entry in DB; attach detected type into the extra Dict before returning
-    rec = lookup_toml(ZAVITY_DB, oznaceni)
-    return DbRecord(rec.name, rec.d, rec.p)
-end
+    #db === nothing && error("Neznámý typ závitu pro: $oznaceni")
+    db === nothing && return nothing
+    #haskey(db, key) || error("Položka '$key' nebyla nalezena.")
+    haskey(db, klic) || return nothing
+    row = db[klic]
+    d = Float64(row["d"])
+    p_hodn_raw = get(row, "p", nothing)
+    p_hodn = p_hodn_raw isa AbstractArray ? p_hodn_raw : [p_hodn_raw]
+    p_norm = get(row, "p_norm", nothing)
 
-function lookup_toml(db::Dict{String,Any}, key::AbstractString)
-    haskey(db, key) || error("Položka '$key' nebyla nalezena.")
-    row = db[key]
-    return DbRecord(
-        key,
-        row["d"],
-        get(row, "p", nothing)
+    p_val = p === nothing ? nothing : parse_numeric_smart(p)
+
+    if p === nothing 
+        p_val = p_norm
+        name = klic
+    elseif p_val isa Number && p_val in p_hodn # Zajištění, že p_val je číslo před kontrolou `in`
+        name = replace("$key x $p", " " => "")
+    else
+        # If pitch is specified but is neither normal nor fine, return nothing.
+        # This corresponds to the behavior where a thread with the given pitch does not exist in the database.
+        return nothing 
+    end
+
+    VV = Dict{Symbol, Any}(
+        :name => name,
+        :name_info => "označení závitu",
+        :d => d,
+        :d_info => "průměr závitu",
+        :p => p_val, # může být Int nebo Float64
+        :p_info => "stoupání závitu"
     )
+    return VV
+    # lookup entry in DB; attach detected type into the extra Dict before returning
+    #rec = lookup_toml(db, oznaceni)
+    #return rec
 end

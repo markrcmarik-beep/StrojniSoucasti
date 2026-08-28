@@ -1,0 +1,42 @@
+schema_version = "1.0.0"
+# ISO trapezoidal threads
+
+["Tr10x2"]
+d = 10
+p = 2
+
+["Tr12x3"]
+d = 12
+p = 3
+
+["Tr14x3"]
+d = 14
+p = 3
+
+["Tr16x4"]
+d = 16
+p = 4
+
+["Tr18x4"]
+d = 18
+p = 4
+
+["Tr20x4"]
+d = 20
+p = 4
+
+["Tr22x5"]
+d = 22
+p = 5
+
+["Tr24x5"]
+d = 24
+p = 5
+
+["Tr26x5"]
+d = 26
+p = 5
+
+["Tr28x5"]
+d = 28
+p = 5

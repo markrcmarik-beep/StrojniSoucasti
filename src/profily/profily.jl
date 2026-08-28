@@ -1,4 +1,4 @@
-## ver: 2026-07-29
+## ver: 2026-08-04
 # Funkce: profily()
 ## Autor: Martin
 #
@@ -7,7 +7,7 @@
 ## Použité balíčky
 # Unitful
 ## Použité uživatelské funkce:
-# profilyCSN, profilyvlcn
+# profiltvary, profilyvlcn
 ###############################################################
 ## Použité proměnné vnitřní:
 #
