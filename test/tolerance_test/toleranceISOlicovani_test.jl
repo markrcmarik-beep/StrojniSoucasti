@@ -1,4 +1,4 @@
-# ver: 2026-08-26
+# ver: 2026-08-27
 using Test
 using StrojniSoucasti
 
@@ -30,6 +30,12 @@ using StrojniSoucasti
     @test t2[:EI] === nothing
 
     Tt1 = StrojniSoucasti.toleranceISOlicovani("40H8/40f7")
+    Tt2 = StrojniSoucasti.toleranceISOlicovani("40H8/f7")
+    @test Tt2[:nominal1] == 40.0
+    @test Tt2[:druh1] == "díra"
+    @test Tt2[:zone1] == "H"
+    @test Tt2[:stupen1] == "8"
+    @test Tt1 == Tt2
 
     @test_throws ErrorException StrojniSoucasti.toleranceISOlicovani("ABC")
     @test_throws ErrorException StrojniSoucasti.toleranceISOlicovani("-1000H7")
