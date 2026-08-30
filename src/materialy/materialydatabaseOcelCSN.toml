@@ -1,5 +1,26 @@
-
 schema_version = "1.0.0"
+# materiály: ocel dle normy ČSN
+# Kde E je první doplňková číslice (stav materiálu) a F je druhá doplňková číslice (stupeň převálcování nebo zpracování).
+# 1. První doplňková číslice „E“ (Stav materiálu / Tepelné zpracování)Tato číslice definuje, v jakém stavu tepelného zpracování je hutní materiál dodáván.ČísliceVýznam 
+# (Stav materiálu)
+# .X0 - Tepelně nezpracovaný (původní stav po válcování za tepla)
+# .1x - Normalizačně žíhaný
+# .2x - Žíhaný (s blíže určeným způsobem žíhání, např. na odstranění pnutí)
+# .3x - Žíhaný na měkko (časté u nástrojových ocelí pro snazší obrábění)
+# .4x - Kalený nebo kalený a popuštěný při nízkých teplotách
+# .5x - Normalizačně žíhaný a popuštěný
+# .6x - Zušlechtěný na dolní pevnost (obvyklou u dané oceli)
+# .7x - Zušlechtěný na střední pevnost
+# .8x - Zušlechtěný na horní pevnost
+# .9x - Stav podle zvláštního ujednání (stavy, které nelze popsat čísly 0 až 8)
+# 2. Druhá doplňková číslice „F“ (Stupeň přetváření za studena)Pokud za tečkou následuje i druhá číslice, vyjadřuje nejčastěji stupeň zpevnění nebo převálcování za studena (typické pro plechy, pásy nebo dráty).ČísliceVýznam (Stupeň zpevnění)
+# .x0 - Nepřeválcovaný za studena
+# .x1 - Lehce převálcovaný (přemísený, k odstranění meze kluzu)
+# .x2 - Čtvrttvrdý
+# .x3 - Polotvrdý
+# .x4 - Třičtvrtětvrdý
+# .x5 - Tvrdý
+# .x6 - Velmi tvrdý
 
 ["11373"]
 name = "11 373"
