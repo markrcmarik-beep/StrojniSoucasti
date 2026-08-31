@@ -16,6 +16,7 @@ struct MaterialOcel
     KV_unit::String     # jednotka rázové práce
     T_KV::Float64       # teplota zkoušky [°C]
     T_KV_unit::String   # jednotka teploty zkoušky
+    svaritelnost::String# svařitelnost ("výpborná", "omezená", "špatná")
     weldable::Bool      # svařitelnost
     thickness_max::Float64 # maximální tloušťka [mm]
     thickness_max_unit::String # jednotka maximální tloušťky
