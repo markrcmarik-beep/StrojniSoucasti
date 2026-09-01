@@ -1,4 +1,4 @@
-﻿# ver: 2026-08-31
+﻿# ver: 2026-09-01
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -7,7 +7,7 @@
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
-# materialytypes.jl, materialydatabase.toml
+# materialytypes.jl, materialyCSNocel.toml
 ###############################################################
 ## Použité proměnné vnitřní:
 #
@@ -78,14 +78,15 @@ end
     "materialydatabaseLitinaCSN.toml"))
     MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
     "materialydatabasePryz.toml"))
-    
-    if rozpoznej_materialCSNocel(name) !== nothing
+    regex1 = r"^\s*(\d{2})\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    m1 = match(regex1, name)
+    if m1 !== nothing
         oznaceni, index1, index2, poznamky = rozpoznej_materialCSNocel(name)
         MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
         "materialyCSNocel.toml"))
-        row = MATERIALY_DB_CSNocel[name]
+        row = MATERIALY_DB_CSNocel[oznaceni]
         return MaterialOcel(
-        get(row, "name", name)::String, # název materiálu
+        get(row, "name", "")::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
         get(row, "druh", "")::String, # norma (nepovinné)
         Float64(get(row, "Re", 0)), # meze kluzu
