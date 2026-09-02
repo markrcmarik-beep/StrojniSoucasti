@@ -41,8 +41,8 @@ schema_version = "1.0.0"
         ny = 0.3
         rho = 7850
     }
-    "11373 žíhaný" = {
-        name = "11 373 žíhaný"
+    "11373.1 žíhaný" = {
+        name = "11 373.1 žíhaný"
         standard = "ČSN"
         druh = "konstrukční ocel"
         Re = 220

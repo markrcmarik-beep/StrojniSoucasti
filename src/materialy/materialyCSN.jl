@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-01
+﻿# ver: 2026-09-02
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -103,8 +103,9 @@ end
                 if !isempty(strip(p))
             ]
         end
-        celeoznaceni = oznaceni * (index1 !== nothing ? "." * string(index1) : "") *
-        (index2 !== nothing ? "." * string(index2) : "") * (length(poznamky) > 0 ? " " * join(poznamky, ", ") : "")
+        celeoznaceni = oznaceni *
+        (index === nothing ? "" : "." * index) *
+        (isempty(poznamky) ? "" : " " * join(poznamky, ", "))
         
         println(name)
         println("Označení materiálu: $oznaceni")
@@ -114,7 +115,11 @@ end
 
         MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
         "materialyCSNocel.toml"))
-        row = MATERIALY_DB_CSNocel[oznaceni]
+        skupina = get(MATERIALY_DB_CSNocel, oznaceni, nothing)
+        skupina === nothing && return nothing
+
+        row = get(skupina, celeoznaceni, nothing)
+        row === nothing && return nothing
         return MaterialOcel(
         get(row, "name", "")::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
