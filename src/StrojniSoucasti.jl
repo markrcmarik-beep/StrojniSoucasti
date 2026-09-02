@@ -35,8 +35,10 @@ include("matematika/vyhodnot_vyraz.jl")
 #include("materialy/reduction_table.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
+include("materialy/materialytypes.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/materialy.jl")
+include("materialy/materialyCSN.jl")
 include("materialy/mezUnavy.jl") # mez únavy
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem

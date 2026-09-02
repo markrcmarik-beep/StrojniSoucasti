@@ -12,7 +12,6 @@
 ## Použité proměnné vnitřní:
 #
 using TOML
-include("materialytypes.jl")
 
 const _materialy_NAPOVEDA = read(
     joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"),
