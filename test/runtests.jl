@@ -1,4 +1,4 @@
-﻿# ver: 2026-08-26
+﻿# ver: 2026-09-03
 using Test
     # body
     include("body_test/bdu2b_test.jl")
@@ -15,6 +15,7 @@ using Test
     include("matematika_test/vyhodnot_vyraz_test.jl")
     # materialy
     include("materialy_test/materialy_test.jl")
+    include("materialy_test/materialyCSN_test.jl")
     include("materialy_test/dovoleneNapeti_test.jl")
     include("materialy_test/mezUnavy_test.jl")
     # namahani

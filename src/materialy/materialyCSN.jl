@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-02
+﻿# ver: 2026-09-03
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -106,20 +106,14 @@ end
         celeoznaceni = oznaceni *
         (index === nothing ? "" : "." * index) *
         (isempty(poznamky) ? "" : " " * join(poznamky, ", "))
-        
-        println(name)
-        println("Označení materiálu: $oznaceni")
-        println("Indexy: $index1, $index2")
-        println("Poznámky: $poznamky")
-        println("Celé označení materiálu: $celeoznaceni")
 
         MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
-        "materialyCSNocel.toml"))
-        skupina = get(MATERIALY_DB_CSNocel, oznaceni, nothing)
-        skupina === nothing && return nothing
+            "materialyCSNocel.toml"))
+        if haskey(MATERIALY_DB_CSNocel, oznaceni) # materiál existuje v databázi
+            skupina = MATERIALY_DB_CSNocel[oznaceni]
+            if haskey(skupina, celeoznaceni)
+                row = skupina[celeoznaceni]
 
-        row = get(skupina, celeoznaceni, nothing)
-        row === nothing && return nothing
         return MaterialOcel(
         get(row, "name", "")::String, # název materiálu
         get(row, "standard", "")::String, # norma (nepovinné)
@@ -149,6 +143,8 @@ end
         Float64(get(row, "rho", 0)), # hustota
         "kg/m^3" # jednotka hustoty
     )
+            end
+        end
     end
     regex2 = r"^\s*(42)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
     m2 = match(regex2, name)

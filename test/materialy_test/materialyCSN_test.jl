@@ -1,4 +1,4 @@
-# ver: 2026-09-01
+# ver: 2026-09-03
 using Test
 using StrojniSoucasti
 
@@ -23,9 +23,44 @@ using StrojniSoucasti
     @test mat11.rho_unit == "kg/m^3"
 
     mat12 = StrojniSoucasti.materialyCSN("11 373.1")
+    @test mat12 === nothing
+
     mat13 = StrojniSoucasti.materialyCSN("11 373 žíhaný")
-    mat14 = StrojniSoucasti.materialyCSN("11 373 žíhaný, broušeno")
-    mat15 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný, broušeno")
+    @test mat13 === nothing
+
+    mat14 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný")
+    @test mat14 isa StrojniSoucasti.MaterialOcel
+    @test mat14.name == "11 373.1 žíhaný"
+    @test mat14.standard == "ČSN 41 1373"
+    @test mat14.Re == 220
+    @test mat14.Re_unit == "MPa"
+    @test mat14.Rm_min == 350
+    @test mat14.Rm_min_unit == "MPa"
+    @test mat14.Rm_max == 370
+    @test mat14.Rm_max_unit == "MPa"
+    @test mat14.A == 20
+    @test mat14.A_unit == "%"
+    @test mat14.KV == 27
+    @test mat14.KV_unit == "J"
+    @test mat14.T_KV == 20
+    @test mat14.T_KV_unit == "°C"
+    @test mat14.weldable == true
+    @test mat14.thickness_max == 200
+    @test mat14.thickness_max_unit == "mm"
+    @test mat14.E == 210
+    @test mat14.E_unit == "GPa"
+    @test mat14.G == 81
+    @test mat14.G_unit == "GPa"
+    @test mat14.ny == 0.3
+    @test mat14.ny_unit == "-"
+    @test mat14.rho == 7850
+    @test mat14.rho_unit == "kg/m^3"
+
+    mat15 = StrojniSoucasti.materialyCSN("11 373 žíhaný, broušeno")
+    @test mat15 === nothing
+
+    mat16 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný, broušeno")
+    @test mat16 === nothing
 
     ##mat21 = StrojniSoucasti.materialyCSN("42 3001")
     #@test mat21.name == "42 3001"
