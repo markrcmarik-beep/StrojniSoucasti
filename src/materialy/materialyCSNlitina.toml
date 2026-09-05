@@ -1,5 +1,22 @@
 schema_version = "1.0.0"
 
+["vychozi"]
+ny = 0.27
+rho = 7200
+
+["422410"] # neověřeno
+name = "42 2410"
+standard = "ČSN 42 2410"
+druh = "šedá litina"
+Rm_tah = 150
+Rm_tlak = 700
+tau_lim = 80
+A = 0.3
+HB_min = 150
+HB_max = 200
+E = 100
+G = 40
+
 ["422420"]
 name = "42 2420"
 standard = "ČSN 42 2420"
@@ -30,6 +47,19 @@ G = 45
 ny = 0.27
 rho = 7200
 
+["422304"] # neověřeno
+name = "42 2304"
+standard = "ČSN 42 2304"
+druh = "tvárná litina"
+Rm_tah = 400
+Rm_tlak = 1000
+tau_lim = 200
+A = 5
+HB_min = 150
+HB_max = 200
+E = 170
+G = 68
+
 ["422305"]
 name = "42 2305"
 standard = "ČSN 42 2305"
@@ -45,3 +75,17 @@ G = 68
 ny = 0.28
 rho = 7100
 
+["422314"] # neověřeno
+name = "42 2314"
+standard = "ČSN 42 2314"
+druh = "tvárná litina"
+Rm_tah = 600
+Rm_tlak = 1400
+tau_lim = 300
+A = 9
+HB_min = 180
+HB_max = 250
+E = 170
+G = 68
+ny = 0.28
+rho = 7100

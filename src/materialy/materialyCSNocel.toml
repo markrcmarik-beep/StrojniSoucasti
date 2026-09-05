@@ -22,50 +22,43 @@ schema_version = "1.0.0"
 # .x5 - Tvrdý
 # .x6 - Velmi tvrdý
 
-# 11 373
+[vychozi]
+E = 210
+G = 81
+ny = 0.3
+rho = 7850
+
+["vychozi 11373"]
+druh = "konstrukční ocel"
+A = 7
+KV = 27
+T_KV = 20
+svaritelnost = ""
+weldable = true
+thickness_max = 200
 
     ["11373"."11373"]
     name = "11 373"
     standard = "ČSN 41 1373"
-    druh = "konstrukční ocel"
     Re = 250
     Rm_min = 370
     Rm_max = 370
     A = 7
-    KV = 27
-    T_KV = 20
-    svaritelnost = ""
-    weldable = true
-    thickness_max = 200
-    E = 210
-    G = 81
-    ny = 0.3
-    rho = 7850
 
     ["11373"."11373.1 žíhaný"]
     name = "11 373.1 žíhaný"
     standard = "ČSN 41 1373"
-    druh = "konstrukční ocel"
     Re = 220
     Rm_min = 350
     Rm_max = 370
     A = 20
-    KV = 27
-    T_KV = 20
-    svaritelnost = ""
-    weldable = true
-    thickness_max = 200
-    E = 210
-    G = 81
-    ny = 0.3
-    rho = 7850
 
-# 16 440
+["vychozi 16440"]
+druh = "konstrukční ocel"
 
     ["16440"."16440"]
     name = "16 440"
     standard = "ČSN"
-    druh = "konstrukční ocel"
     Re = 400
     Rm_min = 650
     Rm_max = 750
@@ -75,15 +68,10 @@ schema_version = "1.0.0"
     svaritelnost = ""
     weldable = true
     thickness_max = 200
-    E = 210
-    G = 81
-    ny = 0.3
-    rho = 7850
 
     ["16440"."16440 zušlechtěno"]
     name = "16 440 zušlechtěno"
     standard = "ČSN"
-    druh = "konstrukční ocel"
     Re = 700
     Rm_min = 900
     Rm_max = 1100
@@ -93,7 +81,3 @@ schema_version = "1.0.0"
     svaritelnost = ""
     weldable = true
     thickness_max = 200
-    E = 210
-    G = 81
-    ny = 0.3
-    rho = 7850

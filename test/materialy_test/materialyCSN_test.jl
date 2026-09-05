@@ -1,4 +1,4 @@
-# ver: 2026-09-03
+# ver: 2026-09-04
 using Test
 using StrojniSoucasti
 
@@ -7,10 +7,12 @@ using StrojniSoucasti
     mat11 = StrojniSoucasti.materialyCSN("11 373")
     @test mat11.name == "11 373"
     @test mat11.standard == "ČSN 41 1373"
+    @test mat11.druh == "konstrukční ocel"
     @test mat11.Re == 250
     @test mat11.Re_unit == "MPa"
     @test mat11.Rm_min_unit == "MPa"
     @test mat11.Rm_max_unit == "MPa"
+    @test mat11.A == 7
     @test mat11.A_unit == "%"
     @test mat11.KV_unit == "J"
     @test mat11.T_KV_unit == "°C"

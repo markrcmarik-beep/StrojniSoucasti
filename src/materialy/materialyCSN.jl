@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-03
+﻿# ver: 2026-09-04
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -106,41 +106,41 @@ end
         celeoznaceni = oznaceni *
         (index === nothing ? "" : "." * index) *
         (isempty(poznamky) ? "" : " " * join(poznamky, ", "))
-
         MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
             "materialyCSNocel.toml"))
         if haskey(MATERIALY_DB_CSNocel, oznaceni) # materiál existuje v databázi
             skupina = MATERIALY_DB_CSNocel[oznaceni]
+            oznacenivychozi = MATERIALY_DB_CSNocel["vychozi "*oznaceni]
+            vychozi = MATERIALY_DB_CSNocel["vychozi"]
             if haskey(skupina, celeoznaceni)
                 row = skupina[celeoznaceni]
-
         return MaterialOcel(
-        get(row, "name", "")::String, # název materiálu
-        get(row, "standard", "")::String, # norma (nepovinné)
-        get(row, "druh", "")::String, # norma (nepovinné)
-        Float64(get(row, "Re", 0)), # meze kluzu
+        get(row, "name", (get(oznacenivychozi, "name", (get(vychozi, "name", "")))))::String, # název materiálu
+        get(row, "standard", (get(oznacenivychozi, "standard", (get(vychozi, "standard", "")))))::String, # norma (nepovinné)
+        get(row, "druh", (get(oznacenivychozi, "druh", (get(vychozi, "druh", "")))))::String, # druh materiálu
+        Float64(get(row, "Re", (get(oznacenivychozi, "Re", (get(vychozi, "Re", 0)))))), # meze kluzu
         "MPa", # jednotka meze kluzu
-        Float64(get(row, "Rm_min", 0)), # meze pevnosti
+        Float64(get(row, "Rm_min", (get(oznacenivychozi, "Rm_min", (get(vychozi, "Rm_min", 0)))))), # meze pevnosti
         "MPa", # jednotka meze pevnosti
-        Float64(get(row, "Rm_max", 0)), # meze pevnosti max
+        Float64(get(row, "Rm_max", (get(oznacenivychozi, "Rm_max", (get(vychozi, "Rm_max", 0)))))), # meze pevnosti max
         "MPa", # jednotka meze pevnosti max
-        Float64(get(row, "A", 0)), # prodloužení
+        Float64(get(row, "A", (get(oznacenivychozi, "A", (get(vychozi, "A", 0)))))), # prodloužení
         "%", # jednotka prodloužení
-        Float64(get(row, "KV", 0)), # houževnatost KV
+        Float64(get(row, "KV", (get(oznacenivychozi, "KV", (get(vychozi, "KV", 0)))))), # houževnatost KV
         "J", # jednotka houževnatosti KV
-        Float64(get(row, "T_KV", 0)), # teplota KV
+        Float64(get(row, "T_KV", (get(oznacenivychozi, "T_KV", (get(vychozi, "T_KV", 0)))))), # teplota KV
         "°C", # jednotka teploty KV
-        get(row, "svaritelnost", "")::String, # popis svařitelnosti
-        Bool(get(row, "weldable", false)), # svařitelnost
-        Float64(get(row, "thickness_max", 0)), # max tloušťka
+        get(row, "svaritelnost", (get(oznacenivychozi, "svaritelnost", (get(vychozi, "svaritelnost", "")))))::String, # popis svařitelnosti
+        Bool(get(row, "weldable", (get(oznacenivychozi, "weldable", (get(vychozi, "weldable", false)))))), # svařitelnost
+        Float64(get(row, "thickness_max", (get(oznacenivychozi, "thickness_max", (get(vychozi, "thickness_max", 0)))))), # max tloušťka
         "mm", # jednotka max tloušťky
-        Float64(get(row, "E", 0)), # modul pružnosti
+        Float64(get(row, "E", (get(oznacenivychozi, "E", (get(vychozi, "E", 0)))))), # modul pružnosti
         "GPa", # jednotka modulu pružnosti
-        Float64(get(row, "G", 0)), # modul smyku
+        Float64(get(row, "G", (get(oznacenivychozi, "G", (get(vychozi, "G", 0)))))), # modul smyku
         "GPa", # jednotka modulu smyku
-        Float64(get(row, "ny", 0)), # Poissonovo číslo
+        Float64(get(row, "ny", (get(oznacenivychozi, "ny", (get(vychozi, "ny", 0)))))), # Poissonovo číslo
         "-", # jednotka Poissonova čísla
-        Float64(get(row, "rho", 0)), # hustota
+        Float64(get(row, "rho", (get(oznacenivychozi, "rho", (get(vychozi, "rho", 0)))))), # hustota
         "kg/m^3" # jednotka hustoty
     )
             end
