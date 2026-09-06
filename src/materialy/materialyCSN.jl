@@ -21,8 +21,8 @@ const _materialy_NAPOVEDA = read(
 $_materialy_NAPOVEDA
 """
 function materialyCSN(name::AbstractString)::Union{MaterialOcel,
-    MaterialKovy,
     MaterialLitina,
+    MaterialKovy,
     Nothing}
 # ---------------------------------------------------------------------
 # pomocné funkce
@@ -146,36 +146,49 @@ end
             end
         end
     end
-    regex2 = r"^\s*(42)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    regex2 = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
     m2 = match(regex2, name)
     if m2 !== nothing
-        oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
+        #oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
+        # Označení materiálu
+        oznaceni = m2.captures[1] * m2.captures[2]
+        # Indexy
+        index = m2.captures[3]
+        index1 = nothing
+        index2 = nothing
+        if index !== nothing
+            index1 = parse(Int, index[1])
+            if length(index) == 2
+                index2 = parse(Int, index[2])
+            end
+        end
         MATERIALY_DB_CSNlitina = TOML.parsefile(joinpath(@__DIR__, 
         "materialyCSNlitina.toml"))
         row = MATERIALY_DB_CSNlitina[oznaceni]
+        vychozi = MATERIALY_DB_CSNlitina["vychozi"]
         return MaterialLitina(
-        get(row, "name", name)::String, # název materiálu
-        get(row, "standard", "")::String, # norma (nepovinné)
-        get(row, "druh", "")::String, # typ litiny
-        Float64(get(row, "Rm_tah", 0)), # mez pevnosti v tahu
+        get(row, "name", (get(vychozi, "name", name)))::String, # název materiálu
+        get(row, "standard", (get(vychozi, "standard", "")))::String, # norma (nepovinné)
+        get(row, "druh", (get(vychozi, "druh", "")))::String, # typ litiny
+        Float64(get(row, "Rm_tah", (get(vychozi, "Rm_tah", 0)))), # mez pevnosti v tahu
         "MPa", # jednotka meze pevnosti v tahu
-        Float64(get(row, "Rm_tlak", 0)), # mez pevnosti v tlaku
+        Float64(get(row, "Rm_tlak", (get(vychozi, "Rm_tlak", 0)))), # mez pevnosti v tlaku
         "MPa", # jednotka meze pevnosti v tlaku
-        Float64(get(row, "tau_lim", 0.5 * Float64(get(row, "Rm_tah", 0)))), # mez smykové pevnosti
+        Float64(get(row, "tau_lim", (get(vychozi, "tau_lim", 0.5 * Float64(get(row, "Rm_tah", 0)))))), # mez smykové pevnosti
         "MPa", # jednotka meze smykové pevnosti
-        Float64(get(row, "A", 0)), # prodloužení
+        Float64(get(row, "A", (get(vychozi, "A", 0)))), # prodloužení
         "%", # jednotka prodloužení
-        Float64(get(row, "HB_min", 0)), # tvrdost Brinell min
+        Float64(get(row, "HB_min", (get(vychozi, "HB_min", 0)))), # tvrdost Brinell min
         "HB", # jednotka tvrdosti Brinell min
-        Float64(get(row, "HB_max", 0)), # tvrdost Brinell max
+        Float64(get(row, "HB_max", (get(vychozi, "HB_max", 0)))), # tvrdost Brinell max
         "HB", # jednotka tvrdosti Brinell max
-        Float64(get(row, "E", 0)), # modul pružnosti
+        Float64(get(row, "E", (get(vychozi, "E", 0)))), # modul pružnosti
         "GPa", # jednotka modulu pružnosti
-        Float64(get(row, "G", 0)), # modul smyku
+        Float64(get(row, "G", (get(vychozi, "G", 0)))), # modul smyku
         "GPa", # jednotka modulu smyku
-        Float64(get(row, "ny", 0)), # Poissonovo číslo
+        Float64(get(row, "ny", (get(vychozi, "ny", 0)))), # Poissonovo číslo
         "-", # jednotka Poissonova čísla
-        Float64(get(row, "rho", 0)), # hustota
+        Float64(get(row, "rho", (get(vychozi, "rho", 0)))), # hustota
         "kg/m^3" # jednotka hustoty
     )
     end
