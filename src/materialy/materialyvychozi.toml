@@ -1,0 +1,91 @@
+schema_version = "1.0.0"
+
+["MaterialOcel"]
+    name = "ocel"               # název
+    standard = ""               # norma (nepovinné)
+    druh = ""                   # druh oceli (např. "konstrukční", "nástrojová", "nerezová")
+    Re = 0.0                    # nominální mez kluzu [MPa]
+    Re_unit = "MPa"             # jednotka meze kluzu
+    Rm_min = 0.0                # mez pevnosti [MPa]
+    Rm_min_unit = "MPa"         # jednotka meze pevnosti
+    Rm_max = 0.0                # mez pevnosti max. [MPa]
+    Rm_max_unit = "MPa"         # jednotka meze pevnosti max
+    A = 0.0                     # tažnost [%]
+    A_unit = "%"                # jednotka tažnosti
+    KV = 0.0                    # rázová práce [J]
+    KV_unit = "J"               # jednotka rázové práce
+    T_KV = 0.0                  # teplota zkoušky [°C]
+    T_KV_unit = "°C"            # jednotka teploty zkoušky
+    svaritelnost = ""           # svařitelnost ("výpborná", "omezená", "špatná")
+    weldable = false            # svařitelnost
+    thickness_max = 0.0         # maximální tloušťka [mm]
+    thickness_max_unit = "mm"   # jednotka maximální tloušťky
+    E = 0.0                     # Modul pružnosti (Youngův modul) [GPa]
+    E_unit = "GPa"              # jednotka modulu pružnosti
+    G = 0.0                     # Modul smyku [GPa]
+    G_unit = "GPa"              # jednotka modulu smyku
+    ny = 0.0                    # Poissonovo číslo
+    ny_unit = "-"                # jednotka Poissonova čísla
+    rho = 0.0                   # hustota [kg/m^3]
+    rho_unit = "kg/m^3" # jednotka hustoty
+
+["MaterialKovy"]
+    name = ""           # název
+    standard = ""       # norma (nepovinné)
+    druh = ""           # druh kovu (např. "hliník", "měď", "titan")
+    Re = 0.0            # nominální mez kluzu [MPa]
+    Re_unit = "MPa"     # jednotka meze kluzu
+    Rm_min = 0.0        # mez pevnosti [MPa]
+    Rm_min_unit = "MPa" # jednotka meze pevnosti
+    Rm_max = 0.0        # mez pevnosti max. [MPa]
+    Rm_max_unit = "MPa" # jednotka meze pevnosti max
+    A = 0.0             # tažnost [%]
+    A_unit = "%"        # jednotka tažnosti
+    E = 0.0             # Modul pružnosti (Youngův modul) [GPa]
+    E_unit = "GPa"      # jednotka modulu pružnosti
+    G = 0.0             # Modul smyku [GPa]
+    G_unit = "GPa"      # jednotka modulu smyku
+    ny = 0.0            # Poissonovo číslo
+    ny_unit = ""        # jednotka Poissonova čísla
+    rho = 0.0           # hustota [kg/m^3]
+    rho_unit = "kg/m^3" # jednotka hustoty
+
+["MaterialLitina"]
+    name = ""           # název
+    standard = ""       # norma (nepovinné)
+    druh = ""           # typ litiny (např. "šedá", "tvárná", "spheroidalní")
+    Rm_tah = 0.0        # mez pevnosti v tahu [MPa]
+    Rm_tah_unit = "MPa" # jednotka meze pevnosti v tahu
+    Rm_tlak = 0.0       # mez pevnosti v tlaku [MPa]
+    Rm_tlak_unit = "MPa" # jednotka meze pevnosti v tlaku
+    tau_lim = 0.0       # mez smykové pevnosti [MPa]
+    tau_lim_unit = "MPa" # jednotka meze smykové pevnosti
+    A = 0.0             # tažnost [%]
+    A_unit = "%"        # jednotka tažnosti
+    HB_min = 0.0        # minimální tvrdost Brinell [HB]
+    HB_min_unit = "HB"  # jednotka tvrdosti Brinell min
+    HB_max = 0.0        # maximální tvrdost Brinell [HB]
+    HB_max_unit = "HB"  # jednotka tvrdosti Brinell max
+    E = 0.0             # Modul pružnosti (Youngův modul) [GPa]
+    E_unit = "GPa"      # jednotka modulu pružnosti
+    G = 0.0             # Modul smyku [GPa]
+    G_unit = "GPa"      # jednotka modulu smyku
+    ny = 0.0            # Poissonovo číslo
+    ny_unit = ""        # jednotka Poissonova čísla
+    rho = 0.0           # hustota [kg/m^3]
+    rho_unit = "kg/m^3" # jednotka hustoty
+
+["MaterialPryz"]
+    name = ""           # název
+    standard = ""       # norma (nepovinné)
+    druh = ""           # druh pryže (např. "NBR", "EPDM")
+    hardness = 0.0      # tvrdost [ShA]
+    hardness_unit = "ShA" # jednotka tvrdosti
+    E = 0.0             # Modul pružnosti (Youngův modul) [MPa]
+    E_unit = "MPa"      # jednotka modulu pružnosti
+    G = 0.0             # Modul smyku [MPa]
+    G_unit = "MPa"      # jednotka modulu smyku
+    ny = 0.0            # Poissonovo číslo
+    ny_unit = ""        # jednotka Poissonova čísla
+    rho = 0.0           # hustota [kg/m^3]
+    rho_unit = "kg/m^3" # jednotka hustoty

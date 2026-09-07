@@ -1,4 +1,4 @@
-# ver: 2026-09-04
+# ver: 2026-09-07
 using Test
 using StrojniSoucasti
 
@@ -108,8 +108,8 @@ using StrojniSoucasti
     @test mat31.rho == 7200
     @test mat31.rho_unit == "kg/m^3"
 
-    #mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")
-    #@test mat41 === nothing
+    mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")
+    @test mat41 === nothing
 
 end
 
