@@ -1,4 +1,4 @@
-# ver: 2026-09-07
+# ver: 2026-09-08
 using Test
 using StrojniSoucasti
 
@@ -23,6 +23,9 @@ using StrojniSoucasti
     @test mat11.ny_unit == "-"
     @test mat11.rho == 7850
     @test mat11.rho_unit == "kg/m^3"
+
+    mat11_1 = StrojniSoucasti.materialyCSN("11 352") # neexistuje
+    @test mat11_1 === nothing
 
     mat12 = StrojniSoucasti.materialyCSN("11 373.1")
     @test mat12 === nothing
@@ -107,6 +110,9 @@ using StrojniSoucasti
     @test mat31.ny_unit == "-"
     @test mat31.rho == 7200
     @test mat31.rho_unit == "kg/m^3"
+
+    mat31b = StrojniSoucasti.materialyCSN("42 2429")
+    @test mat31b === nothing
 
     mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")
     @test mat41 === nothing
