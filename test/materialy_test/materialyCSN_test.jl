@@ -4,7 +4,7 @@ using StrojniSoucasti
 
 @testset "materialyCSN" begin
 
-    mat11 = StrojniSoucasti.materialyCSN("11 373")
+    mat11 = StrojniSoucasti.materialyCSN("11 373") # konstrukční ocel
     @test mat11.name == "11 373"
     @test mat11.standard == "ČSN 41 1373"
     @test mat11.druh == "konstrukční ocel"
@@ -33,7 +33,7 @@ using StrojniSoucasti
     mat13 = StrojniSoucasti.materialyCSN("11 373 žíhaný")
     @test mat13 === nothing
 
-    mat14 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný")
+    mat14 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný") # konstrukční ocel žíhaná
     @test mat14 isa StrojniSoucasti.MaterialOcel
     @test mat14.name == "11 373.1 žíhaný"
     @test mat14.standard == "ČSN 41 1373"
@@ -87,7 +87,7 @@ using StrojniSoucasti
     #@test mat21.rho == 8930
     #@test mat21.rho_unit == "kg/m^3"
 
-    mat31 = StrojniSoucasti.materialyCSN("42 2420")
+    mat31 = StrojniSoucasti.materialyCSN("42 2420") # šedá litina
     @test mat31 isa StrojniSoucasti.MaterialLitina
     @test mat31.name == "42 2420"
     @test mat31.standard == "ČSN 42 2420"
@@ -111,7 +111,7 @@ using StrojniSoucasti
     @test mat31.rho == 7200
     @test mat31.rho_unit == "kg/m^3"
 
-    mat31b = StrojniSoucasti.materialyCSN("42 2429")
+    mat31b = StrojniSoucasti.materialyCSN("42 2429") # neexistuje
     @test mat31b === nothing
 
     mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")

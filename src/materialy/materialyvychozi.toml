@@ -71,7 +71,7 @@ schema_version = "1.0.0"
     G = 0.0             # Modul smyku [GPa]
     G_unit = "GPa"      # jednotka modulu smyku
     ny = 0.0            # Poissonovo číslo
-    ny_unit = ""        # jednotka Poissonova čísla
+    ny_unit = "-"        # jednotka Poissonova čísla
     rho = 0.0           # hustota [kg/m^3]
     rho_unit = "kg/m^3" # jednotka hustoty
 
