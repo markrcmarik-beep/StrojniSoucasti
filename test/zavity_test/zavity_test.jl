@@ -9,21 +9,21 @@ using StrojniSoucasti, Test
 
     @testset "M8" begin
         A = zavity("M8")
-        @test A[:name] == "M8"
+        @test A[:name] == "M8x1.25"
         @test isa(A[:name_info], String)
         @test A[:d] == 8.0
         @test isa(A[:d_info], String)
         @test A[:p] == 1.25
         @test isa(A[:p_info], String)
 
+        A1 = zavity("m8")
         Ab = zavity("M8x1.25")
         @test Ab[:name] == "M8x1.25"
         @test Ab[:d] == 8.0
         @test Ab[:p] == 1.25
 
-        @test A == zavity("m8")
-        @test Ab == zavity("m8x1.25")
-
+        @test A1 == A
+        @test A1 == Ab
         Ac = zavity("M8x1")
         @test Ac[:name] == "M8x1"
         @test Ac[:d] == 8.0
@@ -32,7 +32,7 @@ using StrojniSoucasti, Test
 
     @testset "M10" begin
         A2 = zavity("M10")
-        @test A2[:name] == "M10"
+        @test A2[:name] == "M10x1.5"
         @test A2[:d] == 10.0
         @test A2[:p] == 1.5
         
