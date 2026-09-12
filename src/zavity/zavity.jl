@@ -1,44 +1,21 @@
-# ver: 2026-08-25
+# ver: 2026-09-11
 ## Funkce: zavity()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/zavity/zavity.jl
 ## Použité balíčky:
-# TOML
+# SQLite
+# DBInterface
 ## Použité uživatelské funkce:
 #
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using TOML
-include("zavitytypes.jl")
-# načtení nápovědy z externího souboru
-const _zavity_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"),
-    String,
-)
-# Používáme Ref pro lazy loading databází.
-# Databáze se načtou až při prvním požadavku na daný typ závitu.
-const ZAVITY_DB_M_REF = Ref{Any}(nothing)
-const ZAVITY_DB_TR_REF = Ref{Any}(nothing)
-# Pomocné funkce pro načítání databází
-function get_zavity_db(oznaceniZ::AbstractString)
-    if oznaceniZ == "M"
-        if ZAVITY_DB_M_REF[] === nothing
-            ZAVITY_DB_M_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityM.toml"))
-        end
-        return ZAVITY_DB_M_REF[]
-    elseif oznaceniZ == "Tr"
-        if ZAVITY_DB_TR_REF[] === nothing
-            ZAVITY_DB_TR_REF[] = TOML.parsefile(joinpath(@__DIR__, "zavityTr.toml"))
-        end
-        return ZAVITY_DB_TR_REF[]
-    end
-end
-
+using DBInterface
+using SQLite
 """
-$_zavity_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"), String))
 """
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
@@ -47,13 +24,19 @@ function zavity(oznaceni::AbstractString)
     # detect type: metric, trapezoidal, pipe (trubkový) or unknown
     db = nothing
     # use the compiled regex values directly
+    db_path = joinpath(@__DIR__, "zavity.db") # Path to the database file
+    isfile(db_path) || error("Databáze závitů nebyla nalezena: $db_path") # Check if the database file exists
+    db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
     if match(RX_METRIC, oznaceni) !== nothing
         db = get_zavity_db("M") # Načte databázi M až zde, pokud ještě nebyla načtena
         m_metric = match(RX_METRIC, oznaceni)
         D = m_metric.captures[1] # first capture group is the diameter
         p = m_metric.captures[2] # second capture group is the pitch (stoupání)
-        klic = ("M$D")
-        key = ("M$D")
+        if p === nothing
+            klic = ("M$D")
+        else
+            klic = replace("M$D x $p", " " => "")
+        end
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
         db = get_zavity_db("Tr") # Načte databázi TR až zde, pokud ještě nebyla načtena
         m_trapez = match(RX_TRAPEZ, oznaceni)
@@ -68,39 +51,105 @@ function zavity(oznaceni::AbstractString)
     else
         return nothing
     end
-    #db === nothing && error("Neznámý typ závitu pro: $oznaceni")
-    db === nothing && return nothing
-    #haskey(db, key) || error("Položka '$key' nebyla nalezena.")
-    haskey(db, klic) || return nothing
-    row = db[klic]
-    d = Float64(row["d"])
-    p_hodn_raw = get(row, "p", nothing)
-    p_hodn = p_hodn_raw isa AbstractArray ? p_hodn_raw : [p_hodn_raw]
-    p_norm = get(row, "p_norm", nothing)
 
-    p_val = p === nothing ? nothing : parse_numeric_smart(p)
+    metric = match(RX_METRIC, oznaceni)
+    trapez = match(RX_TRAPEZ, oznaceni)
+    metric === nothing && trapez === nothing && return nothing
 
-    if p === nothing 
-        p_val = p_norm
-        name = klic
-    elseif p_val isa Number && p_val in p_hodn # Zajištění, že p_val je číslo před kontrolou `in`
-        name = replace("$key x $p", " " => "")
-    else
-        # If pitch is specified but is neither normal nor fine, return nothing.
-        # This corresponds to the behavior where a thread with the given pitch does not exist in the database.
-        return nothing 
+    db_path = joinpath(@__DIR__, "zavity.db")
+    isfile(db_path) || error("Databáze závitů nebyla nalezena: $db_path")
+
+    db = SQLite.DB(db_path)
+    try
+        d = nothing
+        p_val = nothing
+        name = nothing
+        split_schema = !isempty(collect(DBInterface.execute(
+            db,
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'zavit_m' LIMIT 1",
+        )))
+
+        if metric !== nothing
+            d_text, p_text = metric.captures
+            klic = "M$d_text"
+
+            if p_text === nothing
+                query = DBInterface.execute(
+                    db,
+                    split_schema ?
+                    """
+                    SELECT d, p_norm FROM zavit_m WHERE klic = ? LIMIT 1
+                    """ :
+                    """
+                    SELECT d, p_norm FROM zavit WHERE klic = ? AND druh = 'M' LIMIT 1
+                    """,
+                    (klic,),
+                )
+                for row in query
+                    d = Float64(row.d)
+                    p_val = Float64(row.p_norm)
+                    name = klic
+                    break
+                end
+            else
+                p_val = parse(Float64, p_text)
+                query = DBInterface.execute(
+                    db,
+                    split_schema ?
+                    """
+                    SELECT m.d FROM zavit_m AS m
+                    INNER JOIN zavit_m_stoupani AS s ON s.zavit_id = m.id
+                    WHERE m.klic = ? AND s.p = ? LIMIT 1
+                    """ :
+                    """
+                    SELECT z.d FROM zavit AS z
+                    INNER JOIN zavit_stoupani AS s ON s.zavit_id = z.id
+                    WHERE z.klic = ? AND z.druh = 'M' AND s.p = ? LIMIT 1
+                    """,
+                    (klic, p_val),
+                )
+                for row in query
+                    d = Float64(row.d)
+                    name = "$klic" * "x$p_text"
+                    break
+                end
+            end
+        else
+            d_text, p_text = trapez.captures
+            p_text === nothing && return nothing
+
+            p_val = parse(Float64, p_text)
+            klic = "Tr$(d_text)x$(p_text)"
+            query = DBInterface.execute(
+                db,
+                split_schema ?
+                """
+                SELECT d FROM zavit_tr WHERE klic = ? AND p = ? LIMIT 1
+                """ :
+                """
+                SELECT z.d FROM zavit AS z
+                INNER JOIN zavit_stoupani AS s ON s.zavit_id = z.id
+                WHERE z.klic = ? AND z.druh = 'Tr' AND s.p = ? LIMIT 1
+                """,
+                (klic, p_val),
+            )
+            for row in query
+                d = Float64(row.d)
+                name = klic
+                break
+            end
+        end
+
+        d === nothing && return nothing
+        return Dict{Symbol, Any}(
+            :name => name,
+            :name_info => "označení závitu",
+            :d => d,
+            :d_info => "průměr závitu",
+            :p => p_val,
+            :p_info => "stoupání závitu",
+        )
+    finally
+        SQLite.close(db)
     end
-
-    VV = Dict{Symbol, Any}(
-        :name => name,
-        :name_info => "označení závitu",
-        :d => d,
-        :d_info => "průměr závitu",
-        :p => p_val, # může být Int nebo Float64
-        :p_info => "stoupání závitu"
-    )
-    return VV
-    # lookup entry in DB; attach detected type into the extra Dict before returning
-    #rec = lookup_toml(db, oznaceni)
-    #return rec
 end

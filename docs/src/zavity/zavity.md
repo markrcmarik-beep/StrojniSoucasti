@@ -3,7 +3,7 @@
 ###############################################################
 ## Popis funkce:
 Funkce slouží k vyhledání parametrů závitů podle jejich standardního textového označení.
-Podporuje metrické (M) a trapézové (Tr) závity. Data načítá z interních `.toml` databází.
+Podporuje metrické (M) a trapézové (Tr) závity. Data načítá z interní databáze SQLite `zavity.db`.
 
 ## Vzor:
 `vystupni_promenne = zavity(oznaceni)`
@@ -22,7 +22,14 @@ Podporuje metrické (M) a trapézové (Tr) závity. Data načítá z interních 
   - Zápis `TR`, `tR`, `tr` je také akceptován.
 
 **Nepodporované závity:**
-- Funkce v současné verzi nepodporuje trubkové závity (G, R, Rp, NPT, BSP atd.). Při pokusu o jejich použití vyhodí chybu.
+- Funkce v současné verzi nepodporuje trubkové závity (G, R, Rp, NPT, BSP atd.) a vrátí `nothing`.
+
+## Aktualizace databáze
+Data jsou verzována v SQL migracích v `src/zavity/migrations`. Nové závity přidávejte vždy novým, vzestupně číslovaným SQL souborem; již použitou migraci neměňte. Poté databázi aktualizujte příkazem:
+
+```julia
+julia --project=. tools/update_zavity_db.jl
+```
 
 ## Výstupní proměnné:
 - `vystupni_promenne` - Slovník `Dict{Symbol, Any}` obsahující parametry závitu:

@@ -1,8 +1,11 @@
-# ver: 2026-08-07
+# ver: 2026-09-11
+using DBInterface, SQLite
 using StrojniSoucasti, Test
 
 #include("zavit.jl")
 @testset "zavity" begin
+    db_path = joinpath(dirname(pathof(StrojniSoucasti)), "zavity", "zavity.db")
+    @test isfile(db_path)
 
     @testset "M8" begin
         A = zavity("M8")
