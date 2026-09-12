@@ -13,12 +13,8 @@
 #
 using TOML
 
-const _materialy_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"),
-    String,
-)
 """
-$_materialy_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"), String))
 """
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,

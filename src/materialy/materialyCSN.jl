@@ -13,12 +13,8 @@
 #
 using TOML
 
-const _materialyCSN_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"),
-    String,
-)
 """
-$_materialyCSN_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
 """
 function materialyCSN(name::AbstractString)::Union{MaterialOcel,
     MaterialLitina,
