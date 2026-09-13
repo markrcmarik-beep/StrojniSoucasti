@@ -26,11 +26,11 @@ function zavity(oznaceni::AbstractString)
     # use the compiled regex values directly
     db_path = joinpath(@__DIR__, "zavity.db") # Path to the database file
     isfile(db_path) || error("Databáze závitů nebyla nalezena: $db_path") # Check if the database file exists
-    db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
     if match(RX_METRIC, oznaceni) !== nothing
         m_metric = match(RX_METRIC, oznaceni)
         D = m_metric.captures[1] # first capture group is the diameter
         p = m_metric.captures[2] # second capture group is the pitch (stoupání)
+        db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
         if p === nothing
             klic = ("M$D")
             result1 = DBInterface.execute(
@@ -66,6 +66,7 @@ function zavity(oznaceni::AbstractString)
         else
             return nothing # označení musí obsahovat stoupání pro trapezový závit, jinak vracíme nothing
         end
+        db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
                     result = DBInterface.execute(
                 db,
                 "SELECT d, p_norm, klic FROM zavit WHERE klic = ?", (klic,)

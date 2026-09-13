@@ -13,13 +13,9 @@
 ## Použité proměnné vnitřní:
 #
 using Unitful
-# načtení nápovědy z externího souboru
-const _profiltvary_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "profily", "profiltvary.md"),
-    String,
-) 
+
 """
-$_profiltvary_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "profily", "profiltvary.md"), String))
 """
 function profiltvary(inputStr::AbstractString)
     # -----------------------------------------------------------
