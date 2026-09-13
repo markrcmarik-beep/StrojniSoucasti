@@ -1,5 +1,8 @@
 schema_version = "1.0.0"
 
+["vychozi"]
+druh = "pryž"
+
 ["NBR70"]
 name = "NBR70"
 standard = "-"

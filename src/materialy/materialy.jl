@@ -12,14 +12,9 @@
 ## Použité proměnné vnitřní:
 #
 using TOML
-include("materialytypes.jl")
 
-const _materialy_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"),
-    String,
-)
 """
-$_materialy_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"), String))
 """
 function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialKovy,
@@ -60,6 +55,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         "J", # jednotka houževnatosti KV
         Float64(get(row, "T_KV", 0)), # teplota KV
         "°C", # jednotka teploty KV
+        get(row, "svaritelnost", "")::String, # popis svařitelnosti
         Bool(get(row, "weldable", false)), # svařitelnost
         Float64(get(row, "thickness_max", 0)), # max tloušťka
         "mm", # jednotka max tloušťky
@@ -91,6 +87,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         "J", # jednotka houževnatosti KV
         Float64(get(row, "T_KV", 0)), # teplota KV
         "°C", # jednotka teploty KV
+        get(row, "svaritelnost", "")::String, # popis svařitelnosti
         Bool(get(row, "weldable", false)), # svařitelnost
         Float64(get(row, "thickness_max", 0)), # max tloušťka
         "mm", # jednotka max tloušťky

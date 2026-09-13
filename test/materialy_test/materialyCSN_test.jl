@@ -1,0 +1,122 @@
+# ver: 2026-09-08
+using Test
+using StrojniSoucasti
+
+@testset "materialyCSN" begin
+
+    mat11 = StrojniSoucasti.materialyCSN("11 373") # konstrukční ocel
+    @test mat11.name == "11 373"
+    @test mat11.standard == "ČSN 41 1373"
+    @test mat11.druh == "konstrukční ocel"
+    @test mat11.Re == 250
+    @test mat11.Re_unit == "MPa"
+    @test mat11.Rm_min_unit == "MPa"
+    @test mat11.Rm_max_unit == "MPa"
+    @test mat11.A == 7
+    @test mat11.A_unit == "%"
+    @test mat11.KV_unit == "J"
+    @test mat11.T_KV_unit == "°C"
+    @test mat11.weldable == true
+    @test mat11.thickness_max_unit == "mm"
+    @test mat11.E_unit == "GPa"
+    @test mat11.G_unit == "GPa"
+    @test mat11.ny_unit == "-"
+    @test mat11.rho == 7850
+    @test mat11.rho_unit == "kg/m^3"
+
+    mat11_1 = StrojniSoucasti.materialyCSN("11 352") # neexistuje
+    @test mat11_1 === nothing
+
+    mat12 = StrojniSoucasti.materialyCSN("11 373.1")
+    @test mat12 === nothing
+
+    mat13 = StrojniSoucasti.materialyCSN("11 373 žíhaný")
+    @test mat13 === nothing
+
+    mat14 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný") # konstrukční ocel žíhaná
+    @test mat14 isa StrojniSoucasti.MaterialOcel
+    @test mat14.name == "11 373.1 žíhaný"
+    @test mat14.standard == "ČSN 41 1373"
+    @test mat14.Re == 220
+    @test mat14.Re_unit == "MPa"
+    @test mat14.Rm_min == 350
+    @test mat14.Rm_min_unit == "MPa"
+    @test mat14.Rm_max == 370
+    @test mat14.Rm_max_unit == "MPa"
+    @test mat14.A == 20
+    @test mat14.A_unit == "%"
+    @test mat14.KV == 27
+    @test mat14.KV_unit == "J"
+    @test mat14.T_KV == 20
+    @test mat14.T_KV_unit == "°C"
+    @test mat14.weldable == true
+    @test mat14.thickness_max == 200
+    @test mat14.thickness_max_unit == "mm"
+    @test mat14.E == 210
+    @test mat14.E_unit == "GPa"
+    @test mat14.G == 81
+    @test mat14.G_unit == "GPa"
+    @test mat14.ny == 0.3
+    @test mat14.ny_unit == "-"
+    @test mat14.rho == 7850
+    @test mat14.rho_unit == "kg/m^3"
+
+    mat15 = StrojniSoucasti.materialyCSN("11 373 žíhaný, broušeno")
+    @test mat15 === nothing
+
+    mat16 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný, broušeno")
+    @test mat16 === nothing
+
+    ##mat21 = StrojniSoucasti.materialyCSN("42 3001")
+    #@test mat21.name == "42 3001"
+    #@test mat21.standard == "ČSN 42 3001"
+    #@test mat21.Re == 200
+    #@test mat21.Re_unit == "MPa"
+    #@test mat21.Rm_min == 250
+    #@test mat21.Rm_min_unit == "MPa"
+    #@test mat21.Rm_max == 300
+    #@test mat21.Rm_max_unit == "MPa"
+    #@test mat21.A == 20
+    #@test mat21.A_unit == "%"
+    #@test mat21.E == 110
+    #@test mat21.E_unit == "GPa"
+    #@test mat21.G == 42
+    #@test mat21.G_unit == "GPa"
+    #@test mat21.ny == 0.34
+    #@test mat21.ny_unit == "-"
+    #@test mat21.rho == 8930
+    #@test mat21.rho_unit == "kg/m^3"
+
+    mat31 = StrojniSoucasti.materialyCSN("42 2420") # šedá litina
+    @test mat31 isa StrojniSoucasti.MaterialLitina
+    @test mat31.name == "42 2420"
+    @test mat31.standard == "ČSN 42 2420"
+    @test mat31.druh == "šedá litina"
+    @test mat31.Rm_tah == 200
+    @test mat31.Rm_tah_unit == "MPa"
+    @test mat31.Rm_tlak == 800
+    @test mat31.Rm_tlak_unit == "MPa"
+    @test mat31.A == 0.5
+    @test mat31.A_unit == "%"
+    @test mat31.HB_min == 170
+    @test mat31.HB_min_unit == "HB"
+    @test mat31.HB_max == 230
+    @test mat31.HB_max_unit == "HB"
+    @test mat31.E == 110
+    @test mat31.E_unit == "GPa"
+    @test mat31.G == 44
+    @test mat31.G_unit == "GPa"
+    @test mat31.ny == 0.27
+    @test mat31.ny_unit == "-"
+    @test mat31.rho == 7200
+    @test mat31.rho_unit == "kg/m^3"
+
+    mat31b = StrojniSoucasti.materialyCSN("42 2429") # neexistuje
+    @test mat31b === nothing
+
+    mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")
+    @test mat41 === nothing
+
+end
+
+nothing

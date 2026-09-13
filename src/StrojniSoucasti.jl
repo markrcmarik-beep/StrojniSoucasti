@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-08-26
+# ver: 2026-09-10
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -35,9 +35,12 @@ include("matematika/vyhodnot_vyraz.jl")
 #include("materialy/reduction_table.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
+include("materialy/materialytypes.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/materialy.jl")
+include("materialy/materialyCSN.jl")
 include("materialy/mezUnavy.jl") # mez únavy
+include("materialy/_materialy_nacist.jl") # načtení dat z TOML souborů
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
 include("namahani/namahanitahtext.jl")
