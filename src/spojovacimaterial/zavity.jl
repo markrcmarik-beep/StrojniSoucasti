@@ -1,12 +1,11 @@
-# ver: 2026-09-12
+# ver: 2026-09-18
 ## Funkce: zavity()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/zavity/zavity.jl
+# StrojniSoucasti/src/spojovacimaterial/zavity.jl
 ## Použité balíčky:
-# SQLite
-# DBInterface
+# SQLite, DBInterface
 ## Použité uživatelské funkce:
 #
 ###############################################################
@@ -15,7 +14,7 @@
 using DBInterface
 using SQLite
 """
-$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "zavity", "zavity.md"), String))
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "spojovacimaterial", "zavity.md"), String))
 """
 function zavity(oznaceni::AbstractString)
     oznaceni = replace(oznaceni, "," => ".")
@@ -47,7 +46,7 @@ function zavity(oznaceni::AbstractString)
             klic = replace("M$D x $p", " " => "")
             result = DBInterface.execute(
                 db,
-                "SELECT d, p_norm, klic FROM zavit WHERE klic = ?", (klic,)
+                "SELECT d, p, klic FROM zavitM WHERE klic = ?", (klic,)
             )
             if isempty(result)
                 SQLite.close(db)
@@ -55,7 +54,7 @@ function zavity(oznaceni::AbstractString)
             end
             row = first(result) # Get the first row and first column
             d = row.d # Get the first row and first column
-            p_val = row.p_norm # Get the first row and second column
+            p_val = row.p # Get the first row and second column
             nazv = row.klic
     elseif match(RX_TRAPEZ, oznaceni) !== nothing
         m_trapez = match(RX_TRAPEZ, oznaceni)
@@ -69,7 +68,7 @@ function zavity(oznaceni::AbstractString)
         db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
                     result = DBInterface.execute(
                 db,
-                "SELECT d, p_norm, klic FROM zavit WHERE klic = ?", (klic,)
+                "SELECT d, p, klic FROM zavitTr WHERE klic = ?", (klic,)
             )
             if isempty(result)
                 SQLite.close(db)
@@ -77,7 +76,7 @@ function zavity(oznaceni::AbstractString)
             end
             row = first(result) # Get the first row and first column
             d = row.d # Get the first row and first column
-            p_val = row.p_norm # Get the first row and second column
+            p_val = row.p # Get the first row and second column
             nazv = row.klic
     else
         return nothing
