@@ -1,4 +1,4 @@
-# ver: 2026-09-08
+# ver: 2026-09-20
 using Test
 using StrojniSoucasti
 
@@ -61,11 +61,11 @@ using StrojniSoucasti
     @test mat14.rho == 7850
     @test mat14.rho_unit == "kg/m^3"
 
-    mat15 = StrojniSoucasti.materialyCSN("11 373 žíhaný, broušeno")
+    mat15 = StrojniSoucasti.materialyCSN("11 373 žíhaný, z jedné strany broušeno")
     @test mat15 === nothing
 
     mat16 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný, broušeno")
-    @test mat16 === nothing
+    @test mat16 == mat14
 
     ##mat21 = StrojniSoucasti.materialyCSN("42 3001")
     #@test mat21.name == "42 3001"

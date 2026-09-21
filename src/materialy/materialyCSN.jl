@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-10
+﻿# ver: 2026-09-20
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -25,7 +25,7 @@ function materialyCSN(name::AbstractString)::Union{MaterialOcel,
 # ---------------------------------------------------------------------
 function rozpoznej_materialCSN(text::String)
 
-    regex = r"^\s*(\d{2})\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    regex = r"^\s*(\d{2})\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # regex pro rozpoznání materiálu podle ČSN
     #regex = r"^\s*(1[1-6])\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
     #regex = r"^\s*(1[1-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
     m = match(regex, text)
@@ -45,14 +45,13 @@ function rozpoznej_materialCSN(text::String)
         end
     end
     # Poznámky
-    poznamky = String[]
-
+    poznamky = String[] # prázdný seznam poznámek
     if m.captures[4] !== nothing
         poznamky = [
             strip(p)
             for p in split(m.captures[4], ",")
             if !isempty(strip(p))
-        ]
+        ] # odstranění prázdných poznámek
     end
 
     return (
@@ -78,7 +77,7 @@ end
     "materialydatabasePryz.toml"))
     MATERIALY_DB_VYCHOZI = TOML.parsefile(joinpath(@__DIR__,
     "materialyvychozi.toml"))
-    regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli
+    regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
     m1 = match(regex1, name)
     if m1 !== nothing
         #oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
@@ -103,9 +102,22 @@ end
                 if !isempty(strip(p))
             ]
         end
+        println(poznamky)
         celeoznaceni = oznaceni *
-        (index === nothing ? "" : "." * index) *
-        (isempty(poznamky) ? "" : " " * join(poznamky, ", "))
+        (index === nothing ? "" : "." * index)
+        poznamkyD = ""
+        if !isempty(poznamky)
+            povolene_poznamky = ["žíhaný", "tvářený za studena", "tvářený za tepla", "zušlechtěno", "nitridovat", "cementovat"]
+            for p in poznamky
+                if (p in povolene_poznamky)
+                    poznamkyD = isempty(poznamkyD) ? p : poznamkyD * ", " * p # oddělení poznámek čárkou
+                    poznamkyD = join(sort(split(poznamkyD, ", ")), ", ") # seřadit poznámky oddělené čárkou podle abecedy
+                end
+            end
+        end
+        println(poznamkyD)
+        celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
+        println(celeoznaceni)
         MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
             "materialyCSNocel.toml"))
         VV = _materialy_nacist("ocel", (MATERIALY_DB_CSNocel, oznaceni, celeoznaceni), (MATERIALY_DB_CSNocel, "vychozi "*oznaceni), (MATERIALY_DB_CSNocel, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialOcel"))
@@ -113,7 +125,7 @@ end
            return VV
         end
     end
-    regex2 = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    regex2 = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # litiny
     m2 = match(regex2, name)
     if m2 !== nothing
         #oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
@@ -136,12 +148,12 @@ end
            return VV
         end
     end
-    regex3a = r"^\s*(42)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    regex3a = r"^\s*(42)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # kovy
     m3a = match(regex3a, name)
     regex3b = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
     m3b = match(regex3b, name)
     if m3a !== nothing 
-        oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
+        oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name) # rozpoznání materiálu podle ČSN
         MATERIALY_DB_CSNkovy = TOML.parsefile(joinpath(@__DIR__, 
         "materialyCSNkovy.toml"))
         row = MATERIALY_DB_CSNkovy[oznaceni]
