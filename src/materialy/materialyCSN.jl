@@ -66,16 +66,16 @@ end
 # ---------------------------------------------------------------------
 # pomocné funkce konec
 # ---------------------------------------------------------------------
-    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
+    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseOcelEN10025_2.toml"))
     
-    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseKovyCSN.toml"))
-    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
+    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(cesta_materialy,
     "materialydatabaseLitinaCSN.toml"))
-    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
+    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(cesta_materialy,
     "materialydatabasePryz.toml"))
-    MATERIALY_DB_VYCHOZI = TOML.parsefile(joinpath(@__DIR__,
+    MATERIALY_DB_VYCHOZI = TOML.parsefile(joinpath(cesta_materialy,
     "materialyvychozi.toml"))
     regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
     m1 = match(regex1, name)
@@ -102,7 +102,6 @@ end
                 if !isempty(strip(p))
             ]
         end
-        println(poznamky)
         celeoznaceni = oznaceni *
         (index === nothing ? "" : "." * index)
         poznamkyD = ""
@@ -115,10 +114,8 @@ end
                 end
             end
         end
-        println(poznamkyD)
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-        println(celeoznaceni)
-        MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(@__DIR__, 
+        MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(cesta_materialy, 
             "materialyCSNocel.toml"))
         VV = _materialy_nacist("ocel", (MATERIALY_DB_CSNocel, oznaceni, celeoznaceni), (MATERIALY_DB_CSNocel, "vychozi "*oznaceni), (MATERIALY_DB_CSNocel, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialOcel"))
         if VV !== nothing
@@ -141,7 +138,7 @@ end
                 index2 = parse(Int, index[2])
             end
         end
-        MATERIALY_DB_CSNlitina = TOML.parsefile(joinpath(@__DIR__, 
+        MATERIALY_DB_CSNlitina = TOML.parsefile(joinpath(cesta_materialy, 
         "materialyCSNlitina.toml"))
         VV = _materialy_nacist("litina", (MATERIALY_DB_CSNlitina, oznaceni), (MATERIALY_DB_CSNlitina, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialLitina"))
         if VV !== nothing
@@ -154,7 +151,7 @@ end
     m3b = match(regex3b, name)
     if m3a !== nothing 
         oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name) # rozpoznání materiálu podle ČSN
-        MATERIALY_DB_CSNkovy = TOML.parsefile(joinpath(@__DIR__, 
+        MATERIALY_DB_CSNkovy = TOML.parsefile(joinpath(cesta_materialy, 
         "materialyCSNkovy.toml"))
         row = MATERIALY_DB_CSNkovy[oznaceni]
         VV = MaterialKovy(

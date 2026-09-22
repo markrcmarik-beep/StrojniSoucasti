@@ -23,7 +23,7 @@ function zavity(oznaceni::AbstractString)
     # detect type: metric, trapezoidal, pipe (trubkový) or unknown
     db = nothing
     # use the compiled regex values directly
-    db_path = joinpath(@__DIR__, "zavity.db") # Path to the database file
+    db_path = joinpath(cesta_spojovacimaterial, "zavity.db") # Path to the database file
     isfile(db_path) || error("Databáze závitů nebyla nalezena: $db_path") # Check if the database file exists
     if match(RX_METRIC, oznaceni) !== nothing
         m_metric = match(RX_METRIC, oznaceni)

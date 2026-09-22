@@ -1,10 +1,10 @@
-## Balíček Julia v1.12
+## Balíček Julia v1.13
 ###############################################################
 ## Popis balíčku
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-09-18
+# ver: 2026-09-22
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -17,6 +17,8 @@
 module StrojniSoucasti
 
 # Import implementací
+include("_nastaveni.jl") # nastavení balíčku
+include("nastaveni.jl") # funkce nastaveni balíčku
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
 include("body/burub2body.jl") # body mezi dvěma přímkami spojenými kruhovým obloukem

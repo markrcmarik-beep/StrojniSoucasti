@@ -1,8 +1,8 @@
-## Funkce Julia v1.12
+## Funkce Julia v1.13
 ###############################################################
 ## Popis funkce:
 # Vrátí IPE_CSN425553 struct s vlastnostmi IPE profilu z databaze CSN425553.
-# ver: 2026-07-12
+# ver: 2026-09-22
 ## Funkce: profil_IPE_CSN425553()
 ## Autor: Martin
 #
@@ -175,7 +175,7 @@ struct IPE_CSN425553
     T_info::String
 end
 
-const IPE_DB_CSN425553 = TOML.parsefile(joinpath(@__DIR__, "profil_IPE_CSN425553.toml"))
+const IPE_DB_CSN425553 = TOML.parsefile(joinpath(cesta_profily, "profil_IPE_CSN425553.toml"))
 
 function profil_IPE_CSN425553(name::AbstractString)::Union{IPE_CSN425553, Nothing}
     s = uppercase(strip(name))

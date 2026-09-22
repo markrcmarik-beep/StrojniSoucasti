@@ -1,4 +1,4 @@
-# ver: 2026-08-26
+# ver: 2026-09-22
 ## Funkce: tolerance()
 ## Autor: Martin
 #
@@ -13,9 +13,6 @@
 #
 using TOML
 
-#const TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceIT.toml"))
-#const TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "tolerancePOLE1.toml"))
-
 function toleranceISOulozeni(nominal::Real, zone::AbstractString, grade::AbstractString)
 #---------------------------------------------------------------------
 # pomocné funkce
@@ -27,7 +24,7 @@ function toleranceISOulozeni(nominal::Real, zone::AbstractString, grade::Abstrac
     grade_str = strip(grade) # odstraneni mezer z grade stringu
     gradeIT = replace(grade_str, "01" => "-1") # stupeň přesnosti -1 - 18
     gradeIT = parse(Int, gradeIT) # převod stupně na Int
-    TOL_IT = TOML.parsefile(joinpath(@__DIR__, "toleranceISOulozIT.toml"))
+    TOL_IT = TOML.parsefile(joinpath(cesta_tolerance, "toleranceISOulozIT.toml"))
 dira = false
 hridel = false
     if all(isuppercase, zone)
@@ -62,7 +59,7 @@ hridel = false
     it_value = table[grade_str] # Získání hodnoty IT z tabulky
 #-------------------------------------------------------------------
 # ES, EI
-    TOL_POLE = TOML.parsefile(joinpath(@__DIR__, "toleranceISOulozPOLE.toml"))
+    TOL_POLE = TOML.parsefile(joinpath(cesta_tolerance, "toleranceISOulozPOLE.toml"))
     # Vyhledání klíče rozsahu (size_key) pro jmenovitý rozměr
     size_keyPOLE = ""
     found_size_keyPOLE = false

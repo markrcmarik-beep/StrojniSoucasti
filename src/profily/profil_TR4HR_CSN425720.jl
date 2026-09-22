@@ -1,8 +1,8 @@
-## Funkce Julia v1.12
+## Funkce Julia v1.13
 ###############################################################
 ## Popis funkce:
 # Vrátí TR4HR_CSN425720 struct s vlastnostmi profilu TR4HR z databáze.
-# ver: 2026-06-17
+# ver: 2026-09-22
 ## Funkce: profilTR4HR()
 ## Autor: Martin
 #
@@ -113,7 +113,7 @@ struct TR4HR_CSN425720
     Imax_info::String # popis maximálního momentu setrvačnosti
 end
 
-const TR4HR_DB = TOML.parsefile(joinpath(@__DIR__, "profil_TR4HR_CSN425720.toml")) # Načtení databáze TR4HR z TOML souboru
+const TR4HR_DB = TOML.parsefile(joinpath(cesta_profily, "profil_TR4HR_CSN425720.toml")) # Načtení databáze TR4HR z TOML souboru
 const _RHO_OCEL_KG_NA_M_NA_MM2 = 0.00785 # hustota oceli v kg/mm^3 (7.85 g/cm^3 = 0.00785 kg/mm^3)
 const _KOEF_ROHU_TR4HR = 4 - pi # koeficient pro výpočet plochy zaoblení rohů TR4HR (A_roh = _KOEF_ROHU_TR4HR * R^2)
 

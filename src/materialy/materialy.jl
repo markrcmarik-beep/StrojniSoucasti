@@ -22,15 +22,15 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialPryz,
     Nothing}
 
-    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(@__DIR__, 
+    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseOcelEN10025_2.toml"))
-    MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseOcelCSN.toml"))
-    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(@__DIR__, 
+    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseKovyCSN.toml"))
-    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(@__DIR__,
+    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(cesta_materialy,
     "materialydatabaseLitinaCSN.toml"))
-    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(@__DIR__,
+    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(cesta_materialy,
     "materialydatabasePryz.toml"))
 
     name = uppercase(strip(name)) # velká písmena

@@ -1,8 +1,8 @@
-## Funkce Julia v1.12
+## Funkce Julia v1.13
 ###############################################################
 ## Popis funkce:
 # Vrati I_CSN425550 struct s vlastnostmi I profilu z databaze CSN425550.
-# ver: 2026-06-22
+# ver: 2026-09-22
 ## Funkce: profil_I_CSN425550()
 ## Autor: Martin
 #
@@ -187,7 +187,7 @@ struct I_CSN425550
     T_info::String
 end
 
-const I_DB_CSN425550 = TOML.parsefile(joinpath(@__DIR__, "profil_I_CSN425550.toml"))
+const I_DB_CSN425550 = TOML.parsefile(joinpath(cesta_profily, "profil_I_CSN425550.toml"))
 
 function profil_I_CSN425550(name::AbstractString)::Union{I_CSN425550, Nothing}
     s = uppercase(strip(name))
