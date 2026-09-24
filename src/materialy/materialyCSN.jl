@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-20
+﻿# ver: 2026-09-22
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -12,11 +12,13 @@
 ## Použité proměnné vnitřní:
 #
 using TOML
+using DBInterface
+using SQLite
 
 """
 $(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
 """
-function materialyCSN(name::AbstractString)::Union{MaterialOcel,
+function materialyCSN(name::AbstractString)::Union{Dict{String, Any}, MaterialOcel,
     MaterialLitina,
     MaterialKovy,
     Nothing}
@@ -115,9 +117,65 @@ end
             end
         end
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-        MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(cesta_materialy, 
-            "materialyCSNocel.toml"))
-        VV = _materialy_nacist("ocel", (MATERIALY_DB_CSNocel, oznaceni, celeoznaceni), (MATERIALY_DB_CSNocel, "vychozi "*oznaceni), (MATERIALY_DB_CSNocel, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialOcel"))
+        db_path = joinpath(cesta_materialy, "materialy.db")
+        #MATERIALY_DB_CSNocel = TOML.parsefile(joinpath(cesta_materialy, 
+        #    "materialyCSNocel.toml"))
+
+        #VV = _materialy_nacist("ocel", (MATERIALY_DB_CSNocel, oznaceni, celeoznaceni), (MATERIALY_DB_CSNocel, "vychozi "*oznaceni), (MATERIALY_DB_CSNocel, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialOcel"))
+        db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+        result = DBInterface.execute(
+            db,
+            "SELECT name_CSN, standard, druh, Re_MPa, Rm_min_MPa, Rm_max_MPa, 
+                A_proc, KV_J, T_KV_degC, svaritelnost, E_GPa, G_GPa, ny, rho_kg_m3
+            FROM ocel WHERE name_CSN = ?", (celeoznaceni,)
+            )
+        rows = [NamedTuple(row) for row in result]
+        SQLite.close(db)
+        isempty(rows) && return nothing
+        sqlite_row = first(rows)
+        row = (
+            name_CSN = sqlite_row.name_CSN,
+            standard = sqlite_row.standard,
+            druh = sqlite_row.druh,
+            Re_MPa = sqlite_row.Re_MPa,
+            Rm_min_MPa = sqlite_row.Rm_min_MPa,
+            Rm_max_MPa = sqlite_row.Rm_max_MPa,
+            A_proc = sqlite_row.A_proc,
+            KV_J = sqlite_row.KV_J,
+            T_KV_degC = sqlite_row.T_KV_degC,
+            svaritelnost = sqlite_row.svaritelnost,
+            E_GPa = sqlite_row.E_GPa,
+            G_GPa = sqlite_row.G_GPa,
+            ny = sqlite_row.ny,
+            rho_kg_m3 = sqlite_row.rho_kg_m3
+        )
+        VV = Dict{String, Any}(
+            "name" => row.name_CSN,
+            "standard" => row.standard,
+            "druh" => row.druh,
+            "Re" => row.Re_MPa,
+            "Re_unit" => "MPa",
+            "Rm_min" => row.Rm_min_MPa,
+            "Rm_min_unit" => "MPa",
+            "Rm_max" => row.Rm_max_MPa,
+            "Rm_max_unit" => "MPa",
+            "A" => row.A_proc,
+            "A_unit" => "%",
+            "KV" => row.KV_J,
+            "KV_unit" => "J",
+            "T_KV" => row.T_KV_degC,
+            "T_KV_unit" => "°C",
+            "svaritelnost" => row.svaritelnost,
+            "E" => row.E_GPa,
+            "E_unit" => "GPa",
+            "G" => row.G_GPa,
+            "G_uni" => "GPa",
+            "ny" => row.ny,
+            "ny_unit" => "-",
+            "rho" => row.rho_kg_m3,
+            "rho_unit" => "kg/m^3"
+        )
+        println(VV)
         if VV !== nothing
            return VV
         end
