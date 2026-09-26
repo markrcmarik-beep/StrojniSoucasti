@@ -169,13 +169,13 @@ end
             "E" => row.E_GPa,
             "E_unit" => "GPa",
             "G" => row.G_GPa,
-            "G_uni" => "GPa",
+            "G_unit" => "GPa",
             "ny" => row.ny,
             "ny_unit" => "-",
             "rho" => row.rho_kg_m3,
             "rho_unit" => "kg/m^3"
         )
-        println(VV)
+
         if VV !== nothing
            return VV
         end

@@ -8,7 +8,7 @@ using StrojniSoucasti
     @test mat11["name"] == "11373"
     @test mat11["standard"] == "ČSN 41 1373"
     @test mat11["druh"] == "konstrukční ocel"
-    @test mat11["Re"] == 186
+    @test mat11["Re"] == 250
     @test mat11["Re_unit"] == "MPa"
     @test mat11["Rm_min_unit"] == "MPa"
     @test mat11["Rm_max_unit"] == "MPa"
@@ -16,7 +16,7 @@ using StrojniSoucasti
     @test mat11["A_unit"] == "%"
     @test mat11["KV_unit"] == "J"
     @test mat11["T_KV_unit"] == "°C"
-    @test mat11["weldable"] == "zaručená"
+    @test mat11["svaritelnost"] == "zaručená"
     @test mat11["E_unit"] == "GPa"
     @test mat11["G_unit"] == "GPa"
     @test mat11["ny_unit"] == "-"
@@ -39,15 +39,15 @@ using StrojniSoucasti
     @test mat14["Re_unit"] == "MPa"
     @test mat14["Rm_min"] == 350
     @test mat14["Rm_min_unit"] == "MPa"
-    @test mat14["Rm_max"] == 370
+    @test mat14["Rm_max"] == 510
     @test mat14["Rm_max_unit"] == "MPa"
     @test mat14["A"] == 20
     @test mat14["A_unit"] == "%"
-    @test mat14["KV"] == 27
+    @test mat14["KV"] == 35
     @test mat14["KV_unit"] == "J"
     @test mat14["T_KV"] == 20
     @test mat14["T_KV_unit"] == "°C"
-    @test mat14["weldable"] == true
+    @test mat14["svaritelnost"] == "zaručená"
     @test mat14["E"] == 210
     @test mat14["E_unit"] == "GPa"
     @test mat14["G"] == 81
