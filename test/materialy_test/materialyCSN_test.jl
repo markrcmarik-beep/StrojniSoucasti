@@ -1,12 +1,15 @@
 # ver: 2026-09-27
 using Test
 using StrojniSoucasti
+using SQLite
 
 @testset "materialyCSN" begin
-
+    
+    db_path = joinpath(StrojniSoucasti.cesta_materialy, "materialy.db")
+    db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
     @testset "ocel" begin
         
-    mat11 = StrojniSoucasti.materialyCSN("11 373") # konstrukční ocel
+    mat11 = StrojniSoucasti.materialyCSN(db, "11 373") # konstrukční ocel
     @test mat11["name"] == "11373"
     @test mat11["standard"] == "ČSN"
     @test mat11["norma"] == "ČSN 41 1373"
@@ -26,16 +29,16 @@ using StrojniSoucasti
     @test mat11["rho"] == 7850
     @test mat11["rho_unit"] == "kg/m^3"
 
-    mat11_1 = StrojniSoucasti.materialyCSN("11 352") # neexistuje
+    mat11_1 = StrojniSoucasti.materialyCSN(db, "11 352") # neexistuje
     @test mat11_1 === nothing
 
-    mat12 = StrojniSoucasti.materialyCSN("11 373.1")
+    mat12 = StrojniSoucasti.materialyCSN(db, "11 373.1")
     @test mat12 === nothing
 
-    mat13 = StrojniSoucasti.materialyCSN("11 373 žíhaný")
+    mat13 = StrojniSoucasti.materialyCSN(db, "11 373 žíhaný")
     @test mat13 === nothing
 
-    mat14 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný") # konstrukční ocel žíhaná
+    mat14 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíhaný") # konstrukční ocel žíhaná
     @test mat14["name"] == "11373.1 žíhaný"
     @test mat14["standard"] == "ČSN"
     @test mat14["norma"] == "ČSN 41 1373"
@@ -61,15 +64,15 @@ using StrojniSoucasti
     @test mat14["rho"] == 7850
     @test mat14["rho_unit"] == "kg/m^3"
 
-    mat15 = StrojniSoucasti.materialyCSN("11 373 žíhaný, z jedné strany broušeno")
+    mat15 = StrojniSoucasti.materialyCSN(db, "11 373 žíhaný, z jedné strany broušeno")
     @test mat15 === nothing
 
-    mat16 = StrojniSoucasti.materialyCSN("11 373.1 žíhaný, broušeno")
+    mat16 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíhaný, broušeno")
     @test mat16 == mat14
 
     end # konec ocel
 
-    ##mat21 = StrojniSoucasti.materialyCSN("42 3001")
+    ##mat21 = StrojniSoucasti.materialyCSN(db, "42 3001")
     #@test mat21.name == "42 3001"
     #@test mat21.standard == "ČSN 42 3001"
     #@test mat21.Re == 200
@@ -91,7 +94,7 @@ using StrojniSoucasti
 
     @testset "litina" begin
 
-    mat31 = StrojniSoucasti.materialyCSN("42 2420") # šedá litina
+    mat31 = StrojniSoucasti.materialyCSN(db, "42 2420") # šedá litina
     #@test mat31 isa StrojniSoucasti.MaterialLitina
     @test mat31["name"] == "422420"
     @test mat31["standard"] == "ČSN"
@@ -116,14 +119,14 @@ using StrojniSoucasti
     @test mat31["rho"] == 7200
     @test mat31["rho_unit"] == "kg/m^3"
 
-    mat31b = StrojniSoucasti.materialyCSN("42 2429") # neexistuje
+    mat31b = StrojniSoucasti.materialyCSN(db, "42 2429") # neexistuje
     @test mat31b === nothing
 
-    mat41 = StrojniSoucasti.materialyCSN("nonexistent_material")
+    mat41 = StrojniSoucasti.materialyCSN(db, "nonexistent_material")
     @test mat41 === nothing
 
     end # konec litina
-
+    SQLite.close(db)
 end # konec materialyCSN
 
 nothing

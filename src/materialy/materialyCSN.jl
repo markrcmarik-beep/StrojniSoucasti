@@ -13,13 +13,12 @@
 #
 using TOML
 using DBInterface
-using SQLite
+#using SQLite
 
 """
 $(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
 """
-function materialyCSN(name::AbstractString)::Union{Dict{String, Any},
-    MaterialLitina,
+function materialyCSN(db, name::AbstractString)::Union{Dict{String, Any},
     MaterialKovy,
     Nothing}
 # ---------------------------------------------------------------------
@@ -117,8 +116,7 @@ end
             end
         end
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-        db_path = joinpath(cesta_materialy, "materialy.db")
-        db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+
         result = DBInterface.execute(
             db,
             "SELECT name_CSN, znacka_EN, cislo_EN, norma_CSN, druh, Re_MPa, Rm_min_MPa, Rm_max_MPa, 
@@ -126,7 +124,7 @@ end
             FROM ocel WHERE name_CSN = ?", (celeoznaceni,)
             )
         rows = [NamedTuple(row) for row in result]
-        SQLite.close(db)
+        
         isempty(rows) && return nothing
         sqlite_row = first(rows)
         row = (
@@ -200,8 +198,7 @@ end
                 index2 = parse(Int, index[2])
             end
         end
-        db_path = joinpath(cesta_materialy, "materialy.db")
-        db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+
         result = DBInterface.execute(
             db,
             "SELECT name_CSN, norma_CSN, druh, Rm_tah_MPa, Rm_tlak_MPa, A_proc, 
@@ -209,7 +206,7 @@ end
             FROM litina WHERE name_CSN = ?", (oznaceni,)
             )
         rows = [NamedTuple(row) for row in result]
-        SQLite.close(db)
+
         isempty(rows) && return nothing
         sqlite_row = first(rows)
         row = (
