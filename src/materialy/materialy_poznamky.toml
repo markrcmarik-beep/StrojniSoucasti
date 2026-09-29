@@ -1,0 +1,11 @@
+schema_version = "1.0.0"
+
+[zamena]
+"žíháno" = ["žíhaný", "žíhat"]
+"tepelně nezpracováno" = ["tepelně nezpracováný", "nezpracovaný"]
+"tvářený za studena" = []
+"tvářený za tepla" = []
+"zušlechtěno" = []
+"kaleno" = []
+"nitridovat" = []
+"cementovat" = []

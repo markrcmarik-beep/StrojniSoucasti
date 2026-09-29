@@ -1,4 +1,4 @@
-# ver: 2026-09-27
+# ver: 2026-09-28
 using Test
 using StrojniSoucasti
 using SQLite
@@ -10,7 +10,7 @@ using SQLite
     @testset "ocel" begin
         
     mat11 = StrojniSoucasti.materialyCSN(db, "11 373") # konstrukční ocel
-    @test mat11["name"] == "11373"
+    @test mat11["name_CSN"] == "11373"
     @test mat11["standard"] == "ČSN"
     @test mat11["norma"] == "ČSN 41 1373"
     @test mat11["druh"] == "konstrukční ocel"
@@ -38,8 +38,8 @@ using SQLite
     mat13 = StrojniSoucasti.materialyCSN(db, "11 373 žíhaný")
     @test mat13 === nothing
 
-    mat14 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíhaný") # konstrukční ocel žíhaná
-    @test mat14["name"] == "11373.1 žíhaný"
+    mat14 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíháno") # konstrukční ocel žíhaná
+    @test mat14["name_CSN"] == "11373.1 žíháno"
     @test mat14["standard"] == "ČSN"
     @test mat14["norma"] == "ČSN 41 1373"
     @test mat14["Re"] == 220
@@ -64,10 +64,12 @@ using SQLite
     @test mat14["rho"] == 7850
     @test mat14["rho_unit"] == "kg/m^3"
 
-    mat15 = StrojniSoucasti.materialyCSN(db, "11 373 žíhaný, z jedné strany broušeno")
-    @test mat15 === nothing
+    mat15a = StrojniSoucasti.materialyCSN(db, "11 373 žíháno, z jedné strany broušeno")
+    @test mat15a === nothing
+    mat15b = StrojniSoucasti.materialyCSN(db, "11 373.1 kaleno")
+    @test mat15b === nothing
 
-    mat16 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíhaný, broušeno")
+    mat16 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíháno, broušeno")
     @test mat16 == mat14
 
     end # konec ocel
@@ -96,7 +98,7 @@ using SQLite
 
     mat31 = StrojniSoucasti.materialyCSN(db, "42 2420") # šedá litina
     #@test mat31 isa StrojniSoucasti.MaterialLitina
-    @test mat31["name"] == "422420"
+    @test mat31["name_CSN"] == "422420"
     @test mat31["standard"] == "ČSN"
     @test mat31["norma"] == "ČSN 42 2420"
     @test mat31["druh"] == "šedá litina"

@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-27
+﻿# ver: 2026-09-28
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -67,17 +67,6 @@ end
 # ---------------------------------------------------------------------
 # pomocné funkce konec
 # ---------------------------------------------------------------------
-    MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(cesta_materialy, 
-    "materialydatabaseOcelEN10025_2.toml"))
-    
-    MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(cesta_materialy, 
-    "materialydatabaseKovyCSN.toml"))
-    MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(cesta_materialy,
-    "materialydatabaseLitinaCSN.toml"))
-    MATERIALY_DB_PRYZ = TOML.parsefile(joinpath(cesta_materialy,
-    "materialydatabasePryz.toml"))
-    MATERIALY_DB_VYCHOZI = TOML.parsefile(joinpath(cesta_materialy,
-    "materialyvychozi.toml"))
     regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
     m1 = match(regex1, name)
     if m1 !== nothing
@@ -107,8 +96,15 @@ end
         (index === nothing ? "" : "." * index)
         poznamkyD = ""
         if !isempty(poznamky)
-            povolene_poznamky = ["žíhaný", "tvářený za studena", "tvářený za tepla", "zušlechtěno", "nitridovat", "cementovat"]
+            zamena = TOML.parsefile(joinpath(StrojniSoucasti.cesta_materialy, "materialy_poznamky.toml"))["zamena"]
+            povolene_poznamky = collect(keys(zamena))
             for p in poznamky
+                for (cil, varianty) in zamena
+                    if p in varianty
+                        p = cil
+                        break
+                    end
+                end
                 if (p in povolene_poznamky)
                     poznamkyD = isempty(poznamkyD) ? p : poznamkyD * ", " * p # oddělení poznámek čárkou
                     poznamkyD = join(sort(split(poznamkyD, ", ")), ", ") # seřadit poznámky oddělené čárkou podle abecedy
@@ -147,7 +143,7 @@ end
             rho_kg_m3 = sqlite_row.rho_kg_m3
         )
         VV = Dict{String, Any}(
-            "name" => row.name_CSN,
+            "name_CSN" => row.name_CSN,
             "znacka_EN" => row.znacka_EN,
             "cislo_EN" => row.cislo_EN,
             "standard" => "ČSN",
@@ -225,7 +221,7 @@ end
             rho_kg_m3 = sqlite_row.rho_kg_m3
         )
         VV = Dict{String, Any}(
-            "name" => row.name_CSN,
+            "name_CSN" => row.name_CSN,
             "standard" => "ČSN",
             "norma" => row.norma_CSN,
             "druh" => row.druh,

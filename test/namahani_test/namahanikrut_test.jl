@@ -1,4 +1,4 @@
-﻿# ver: 2026-06-09
+﻿# ver: 2026-09-29
 # Testovací skript pro funkci namahanikrut.jl
 # Testuje namáhání v krutu s různými typy zatížení
 
@@ -49,7 +49,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt3 = """Výpočet namáhání v krutu
 ----------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil:
 zatížení: statický
 ----------------------------------------------------------------
@@ -69,7 +69,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt4 = """Výpočet namáhání v krutu
 ----------------------------------------------------------------
-materiál: 16 440
+materiál: 16440.6 zušlechtěno
 profil: TRKR 40x5
   D = 40 mm
   d = 30 mm
@@ -81,7 +81,7 @@ Mk = 300 m N   Krouticí moment
 k = 5   Uživatelský požadavek bezpečnosti
 Wk = π/16*(D⁴ - d⁴)/D = 8590.29 mm^3   Průřezový modul v krutu
 J = π/32*(D⁴ - d⁴) = 171806 mm^4   Polární moment setrvačnosti
-tauDk = 72.1688 MPa   Dovolené napětí v krutu
+tauDk = 106.088 MPa   Dovolené napětí v krutu
 G = 81 GPa   Smykový modul
 -----------------------------------------------------------------
 výpočet:
@@ -90,7 +90,7 @@ phi = (Mk * L0) / (G * J) = 0.00194017 rad   Úhel zkroucení
 phi = 0.111164°   Úhel zkroucení
 theta = Mk / (G * J) = 0.0215575 rad m^-1   Poměrné zkroucení
 theta = 1.23515 ° m^-1   Poměrné zkroucení
-k = tauDk / tau = 2.0665   Součinitel bezpečnosti
+k = tauDk / tau = 3.03776   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj není bezpečný!"""
 
     expected_txt5 = """Výpočet namáhání v krutu
@@ -237,7 +237,7 @@ Bezpečnost spoje: Spoj není bezpečný!"""
 
     # Test 4: Výpočet s profilem a délkou (úhel zkroucení)
     @testset "výpočet s profilem a délkou" begin
-        VV, txt = namahanikrut(Mk=300u"N*m", profil="TRKR 40x5", mat="16440", L0=90u"mm", zatizeni="rázový", k=5)
+        VV, txt = namahanikrut(Mk=300u"N*m", profil="TRKR 40x5", mat="16440.6 zušlechtěno", L0=90u"mm", zatizeni="rázový", k=5)
         @test haskey(VV, :tau)
         @test haskey(VV, :Wk)
         @test haskey(VV, :J)
@@ -345,3 +345,4 @@ Bezpečnost spoje: Spoj není bezpečný!"""
 
 end
 
+nothing

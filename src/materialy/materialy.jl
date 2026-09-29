@@ -1,4 +1,4 @@
-﻿# ver: 2026-08-27
+﻿# ver: 2026-09-28
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -21,11 +21,49 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
     MaterialLitina,
     MaterialPryz,
     Nothing}
+    db_path = joinpath(StrojniSoucasti.cesta_materialy, "materialy.db")
+    DB = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+    VV = StrojniSoucasti.materialyCSN(DB, name)
+    if VV !== nothing
+        if get(VV, "druh", "") in ["konstrukční ocel", "ocel"]
+        return MaterialOcel(
+        get(VV, "name_CSN", name)::String, # název materiálu
+        get(VV, "norma", "")::String, # norma (nepovinné)
+        get(VV, "druh", "")::String, # norma (nepovinné)
+        Float64(get(VV, "Re", 0)), # meze kluzu
+        "MPa", # jednotka meze kluzu
+        Float64(get(VV, "Rm_min", 0)), # meze pevnosti
+        "MPa", # jednotka meze pevnosti
+        Float64(get(VV, "Rm_max", 0)), # meze pevnosti max
+        "MPa", # jednotka meze pevnosti max
+        Float64(get(VV, "A", 0)), # prodloužení
+        "%", # jednotka prodloužení
+        Float64(get(VV, "KV", 0)), # houževnatost KV
+        "J", # jednotka houževnatosti KV
+        Float64(get(VV, "T_KV", 0)), # teplota KV
+        "°C", # jednotka teploty KV
+        get(VV, "svaritelnost", "")::String, # popis svařitelnosti
+        Bool(get(VV, "weldable", false)), # svařitelnost
+        Float64(get(VV, "thickness_max", 0)), # max tloušťka
+        "mm", # jednotka max tloušťky
+        Float64(get(VV, "E", 0)), # modul pružnosti
+        "GPa", # jednotka modulu pružnosti
+        Float64(get(VV, "G", 0)), # modul smyku
+        "GPa", # jednotka modulu smyku
+        Float64(get(VV, "ny", 0)), # Poissonovo číslo
+        "-", # jednotka Poissonova čísla
+        Float64(get(VV, "rho", 0)), # hustota
+        "kg/m^3" # jednotka hustoty
+        )
+        elseif get(VV, "druh", "") in ["šedá litina", "litina"]
+
+        end
+    end
 
     MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseOcelEN10025_2.toml"))
-    MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(cesta_materialy, 
-    "materialydatabaseOcelCSN.toml"))
+    #MATERIALY_DB_OCEL_CSN = TOML.parsefile(joinpath(cesta_materialy, 
+    #"materialydatabaseOcelCSN.toml"))
     MATERIALY_DB_KOVY_CSN = TOML.parsefile(joinpath(cesta_materialy, 
     "materialydatabaseKovyCSN.toml"))
     MATERIALY_DB_LITINA_CSN = TOML.parsefile(joinpath(cesta_materialy,
@@ -68,7 +106,7 @@ function materialy(name::AbstractString)::Union{MaterialOcel,
         Float64(get(row, "rho", 0)), # hustota
         "kg/m^3" # jednotka hustoty
     )
-    elseif haskey(MATERIALY_DB_OCEL_CSN, name) # materiál existuje v databázi ČSN ocelí
+    elseif false # materiál existuje v databázi ČSN ocelí
         
         row = MATERIALY_DB_OCEL_CSN[name]
         return MaterialOcel(

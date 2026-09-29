@@ -1,4 +1,4 @@
-# ver: 2026-03-17
+# ver: 2026-09-28
 using Test
 using StrojniSoucasti
 
@@ -53,7 +53,7 @@ using StrojniSoucasti
 
     mat = materialy("11 373")
 
-    @test mat.name == "11 373"
+    @test mat.name == "11373"
     @test mat.standard == "ČSN 41 1373"
     @test mat.Re == 250
     @test mat.Re_unit == "MPa"
@@ -62,7 +62,7 @@ using StrojniSoucasti
     @test mat.A_unit == "%"
     @test mat.KV_unit == "J"
     @test mat.T_KV_unit == "°C"
-    @test mat.weldable == true
+    @test mat.svaritelnost == "zaručená"
     @test mat.thickness_max_unit == "mm"
     @test mat.E_unit == "GPa"
     @test mat.G_unit == "GPa"

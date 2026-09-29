@@ -1,4 +1,4 @@
-﻿# ver: 2026-07-03
+﻿# ver: 2026-09-28
 # Testovací skript pro funkci namahanitlak.jl
 # Testuje namáhání v tlaku s různými typy zatížení
 
@@ -50,7 +50,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt3 = """Výpočet namáhání v tlaku
 ----------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil:
 zatížení: statický
 ----------------------------------------------------------------
