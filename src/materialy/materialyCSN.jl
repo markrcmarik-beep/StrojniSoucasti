@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-28
+﻿# ver: 2026-09-30
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -112,11 +112,18 @@ end
             end
         end
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-
+#haskey(db, "ocel", "name_CSN")
+sloupce = [NamedTuple(row).name for row in DBInterface.execute(db, "PRAGMA table_info(ocel)")]
+ma_name_csn = "name_CSN" in sloupce # ověří existenci sloupce
         result = DBInterface.execute(
             db,
-            "SELECT name_CSN, znacka_EN, cislo_EN, norma_CSN, druh, Re_MPa, Rm_min_MPa, Rm_max_MPa, 
-                A_proc, KV_J, T_KV_degC, svaritelnost, E_GPa, G_GPa, alfa_1_K, ny, rho_kg_m3
+            "SELECT name_CSN, znacka_EN, cislo_EN, stav, zpracovani, norma_CSN, 
+                druh, vlastnosti, pouziti, Re_min_MPa, Re_MPa, Re_max_MPa, 
+                Rp0_2_MPa, Rp0_1_MPa, Rm_min_MPa, Rm_max_MPa, A_proc, KV_J, 
+                T_KV_degC, svaritelnost, obrobitelnost, E_GPa, G_GPa, alfa_1_K, ny, 
+                rho_kg_m3, tvrdost_HB, tvrdost_HV, tvrdost_HRC, k_cementovani, 
+                k_nitridovani, k_zuslechtovani, k_povrchovemu_kaleni, Re_do16, 
+                Re_nad16do40
             FROM ocel WHERE name_CSN = ?", (celeoznaceni,)
             )
         rows = [NamedTuple(row) for row in result]
