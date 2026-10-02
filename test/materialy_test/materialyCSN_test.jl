@@ -11,23 +11,60 @@ using SQLite
         
     mat11 = StrojniSoucasti.materialyCSN(db, "11 373") # konstrukční ocel
     @test mat11["name_CSN"] == "11373"
+    @test mat11["znacka_EN"] == "S235JRG1"
+    @test mat11["cislo_EN"] == "1.0036"
     @test mat11["standard"] == "ČSN"
     @test mat11["norma"] == "ČSN 41 1373"
     @test mat11["druh"] == "konstrukční ocel"
     @test mat11["Re"] == 250
     @test mat11["Re_unit"] == "MPa"
+    @test mat11["Re_min"] == 250
+    @test mat11["Re_min_unit"] == "MPa"
+    @test mat11["Rm_min"] == 340
     @test mat11["Rm_min_unit"] == "MPa"
+    @test mat11["Rm_max"] == 440
     @test mat11["Rm_max_unit"] == "MPa"
     @test mat11["A"] == 7
     @test mat11["A_unit"] == "%"
+    @test mat11["KV"] == 27
     @test mat11["KV_unit"] == "J"
+    @test mat11["T_KV"] == 20
     @test mat11["T_KV_unit"] == "°C"
     @test mat11["svaritelnost"] == "zaručená"
+    @test mat11["E"] == 210
     @test mat11["E_unit"] == "GPa"
+    @test mat11["G"] == 81
     @test mat11["G_unit"] == "GPa"
+    @test mat11["alfa"] == 1.2e-5
+    @test mat11["alfa_unit"] == "1/K"
+    @test mat11["ny"] == 0.3
     @test mat11["ny_unit"] == "-"
     @test mat11["rho"] == 7850
     @test mat11["rho_unit"] == "kg/m^3"
+    @test mat11["stav"] == "tepelně nezpracováno"
+    @test mat11["zpracovani"] == ""
+    @test !isempty(mat11["vlastnosti"])
+    @test !isempty(mat11["pouziti"])
+    @test mat11["obrobitelnost"] == "dobrá"
+    @test mat11["k_cementovani"] == "ne"
+    @test mat11["k_nitridovani"] == "ne"
+    @test mat11["k_zuslechtovani"] == "ne"
+    @test mat11["k_povrchovemu_kaleni"] == "ne"
+    @test mat11["korozivzdorna"] == "ne"
+    @test mat11["obvykla_jakost"] == "ano"
+    @test mat11["tvrdost_HB"] == 225
+    @test mat11["tvrdost_HB_unit"] == "HB"
+    @test mat11["tvrdost_HV"] == 0.0
+    @test mat11["tvrdost_HV_unit"] == "HV"
+    @test mat11["tvrdost_HRC"] == 0.0
+    @test mat11["tvrdost_HRC_unit"] == "HRC"
+    @test mat11["Rp0_2"] == 0.0
+    @test mat11["Rp0_2_unit"] == "MPa"
+    @test mat11["Rp0_1"] == 0.0
+    @test mat11["Rp0_1_unit"] == "MPa"
+    @test any(rozsah -> rozsah.rozsah_od_mm == 16 &&
+        rozsah.rozsah_do_mm == 40 && rozsah.Re_min_MPa == 240,
+        mat11["Re_rozsahy"])
 
     mat11_1 = StrojniSoucasti.materialyCSN(db, "11 352") # neexistuje
     @test mat11_1 === nothing
@@ -44,6 +81,8 @@ using SQLite
     @test mat14["norma"] == "ČSN 41 1373"
     @test mat14["Re"] == 220
     @test mat14["Re_unit"] == "MPa"
+    @test mat14["Re_max"] == 280
+    @test mat14["Re_max_unit"] == "MPa"
     @test mat14["Rm_min"] == 350
     @test mat14["Rm_min_unit"] == "MPa"
     @test mat14["Rm_max"] == 510
@@ -71,6 +110,10 @@ using SQLite
 
     mat16 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíháno, broušeno")
     @test mat16 == mat14
+
+    mat17 = StrojniSoucasti.materialyCSN(db, "14 220.4")
+    @test mat17["tvrdost_HV"] == 200
+    @test mat17["tvrdost_HV_unit"] == "HV"
 
     end # konec ocel
 

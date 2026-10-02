@@ -32,7 +32,6 @@ function rozpoznej_materialCSN(text::String)
     m = match(regex, text)
     # Označení nebylo rozpoznáno
     m === nothing && return nothing
-    # Označení materiálu
     oznaceni = m.captures[1] * m.captures[2]
     # Indexy
     index = m.captures[3]
@@ -69,6 +68,7 @@ end
 # ---------------------------------------------------------------------
     regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
     m1 = match(regex1, name)
+    dalsi_vlastnosti = Dict{String, Any}()
     if m1 !== nothing
         #oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
         # Označení materiálu
@@ -76,7 +76,6 @@ end
         # Indexy
         index = m1.captures[3]
         index1 = nothing
-        index2 = nothing
         if index !== nothing
             index1 = parse(Int, index[1])
             if length(index) == 2
@@ -112,52 +111,112 @@ end
             end
         end
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-#haskey(db, "ocel", "name_CSN")
-sloupce = [NamedTuple(row).name for row in DBInterface.execute(db, "PRAGMA table_info(ocel)")]
-ma_name_csn = "name_CSN" in sloupce # ověří existenci sloupce
-        result = DBInterface.execute(
-            db,
-            "SELECT name_CSN, znacka_EN, cislo_EN, stav, zpracovani, norma_CSN, 
-                druh, vlastnosti, pouziti, Re_min_MPa, Re_MPa, Re_max_MPa, 
-                Rp0_2_MPa, Rp0_1_MPa, Rm_min_MPa, Rm_max_MPa, A_proc, KV_J, 
-                T_KV_degC, svaritelnost, obrobitelnost, E_GPa, G_GPa, alfa_1_K, ny, 
-                rho_kg_m3, tvrdost_HB, tvrdost_HV, tvrdost_HRC, k_cementovani, 
-                k_nitridovani, k_zuslechtovani, k_povrchovemu_kaleni, Re_do16, 
-                Re_nad16do40
-            FROM ocel WHERE name_CSN = ?", (celeoznaceni,)
+        tabulky = Set(row.name for row in DBInterface.execute(
+            db, "SELECT name FROM sqlite_master WHERE type = 'table'"))
+        if "ocel_velicina" in tabulky
+            steel_result = DBInterface.execute(
+                db,
+                "SELECT id, name_CSN, znacka_EN, cislo_EN, norma_CSN, druh, stav, " *
+                "zpracovani, vlastnosti, pouziti, svaritelnost, obrobitelnost, " *
+                "k_cementovani, k_nitridovani, k_zuslechtovani, " *
+                "k_povrchovemu_kaleni, korozivzdorna, obvykla_jakost " *
+                "FROM ocel WHERE name_CSN = ? LIMIT 1", (celeoznaceni,))
+            steel_rows = [NamedTuple(row) for row in steel_result]
+            isempty(steel_rows) && return nothing
+            steel = first(steel_rows)
+
+            properties = Dict{Tuple{String, String}, Any}()
+            for prop in DBInterface.execute(
+                db,
+                "SELECT v.kod, ov.varianta, ov.hodnota " *
+                "FROM ocel_velicina ov " *
+                "JOIN velicina v ON v.id = ov.velicina_id " *
+                "WHERE ov.ocel_id = ? AND ov.rozsah_od_mm IS NULL " *
+                "AND ov.rozsah_do_mm IS NULL", (steel.id,))
+                properties[(prop.kod, prop.varianta)] = prop.hodnota
+            end
+
+            property = function (kod, varianta = "zakladni", zalozni = nothing)
+                hodnota = get(properties, (kod, varianta), nothing)
+                if (hodnota === nothing || ismissing(hodnota)) && zalozni !== nothing
+                    hodnota = get(properties, (kod, zalozni), nothing)
+                end
+                hodnota === nothing || ismissing(hodnota) ? 0.0 : hodnota
+            end
+            textvalue = value -> ismissing(value) ? "" : value
+            re_rozsahy = [
+                (rozsah_od_mm = prop.rozsah_od_mm,
+                    rozsah_do_mm = prop.rozsah_do_mm,
+                    Re_min_MPa = prop.hodnota)
+                for prop in DBInterface.execute(
+                    db,
+                    "SELECT ov.rozsah_od_mm, ov.rozsah_do_mm, ov.hodnota " *
+                    "FROM ocel_velicina ov " *
+                    "JOIN velicina v ON v.id = ov.velicina_id " *
+                    "WHERE ov.ocel_id = ? AND v.kod = 'Re' " *
+                    "AND ov.varianta = 'min' " *
+                    "AND (ov.rozsah_od_mm IS NOT NULL OR ov.rozsah_do_mm IS NOT NULL) " *
+                    "ORDER BY ov.rozsah_od_mm", (steel.id,))
+            ]
+
+            row = (
+                name_CSN = steel.name_CSN,
+                znacka_EN = ismissing(steel.znacka_EN) ? "" : steel.znacka_EN,
+                cislo_EN = ismissing(steel.cislo_EN) ? "" : steel.cislo_EN,
+                norma_CSN = ismissing(steel.norma_CSN) ? "" : steel.norma_CSN,
+                druh = steel.druh,
+                Re_MPa = property("Re", "zakladni"), # vrací hodnotu meze kluzu v MPa, pokud není k dispozici, vrací 0.0
+                Re_min_MPa = property("Re", "min"),
+                Rm_min_MPa = property("Rm", "min"),
+                Rm_max_MPa = property("Rm", "max"),
+                A_proc = property("A"),
+                KV_J = property("KV"),
+                T_KV_degC = property("T_KV"),
+                svaritelnost = ismissing(steel.svaritelnost) ? "" : steel.svaritelnost,
+                E_GPa = property("E"),
+                G_GPa = property("G"),
+                alfa_1_K = property("alfa"),
+                ny = property("nu"),
+                rho_kg_m3 = property("rho")
             )
-        rows = [NamedTuple(row) for row in result]
-        
-        isempty(rows) && return nothing
-        sqlite_row = first(rows)
-        row = (
-            name_CSN = sqlite_row.name_CSN,
-            znacka_EN = sqlite_row.znacka_EN,
-            cislo_EN = sqlite_row.cislo_EN,
-            norma_CSN = sqlite_row.norma_CSN,
-            druh = sqlite_row.druh,
-            Re_MPa = sqlite_row.Re_MPa,
-            Rm_min_MPa = sqlite_row.Rm_min_MPa,
-            Rm_max_MPa = sqlite_row.Rm_max_MPa,
-            A_proc = sqlite_row.A_proc,
-            KV_J = sqlite_row.KV_J,
-            T_KV_degC = sqlite_row.T_KV_degC,
-            svaritelnost = sqlite_row.svaritelnost,
-            E_GPa = sqlite_row.E_GPa,
-            G_GPa = sqlite_row.G_GPa,
-            alfa_1_K = sqlite_row.alfa_1_K,
-            ny = sqlite_row.ny,
-            rho_kg_m3 = sqlite_row.rho_kg_m3
-        )
+            dalsi_vlastnosti = Dict{String, Any}(
+                "stav" => textvalue(steel.stav),
+                "zpracovani" => textvalue(steel.zpracovani),
+                "vlastnosti" => textvalue(steel.vlastnosti),
+                "pouziti" => textvalue(steel.pouziti),
+                "obrobitelnost" => textvalue(steel.obrobitelnost),
+                "k_cementovani" => textvalue(steel.k_cementovani),
+                "k_nitridovani" => textvalue(steel.k_nitridovani),
+                "k_zuslechtovani" => textvalue(steel.k_zuslechtovani),
+                "k_povrchovemu_kaleni" => textvalue(steel.k_povrchovemu_kaleni),
+                "korozivzdorna" => textvalue(steel.korozivzdorna),
+                "obvykla_jakost" => textvalue(steel.obvykla_jakost),
+                "Re_max" => property("Re", "max"),
+                "Re_max_unit" => "MPa",
+                "Rp0_2" => property("Rp0.2"),
+                "Rp0_2_unit" => "MPa",
+                "Rp0_1" => property("Rp0.1"),
+                "Rp0_1_unit" => "MPa",
+                "tvrdost_HB" => property("HB"),
+                "tvrdost_HB_unit" => "HB",
+                "tvrdost_HV" => property("HV"),
+                "tvrdost_HV_unit" => "HV",
+                "tvrdost_HRC" => property("HRC"),
+                "tvrdost_HRC_unit" => "HRC",
+                "Re_rozsahy" => re_rozsahy
+            )
+        end
         VV = Dict{String, Any}(
             "name_CSN" => row.name_CSN,
             "znacka_EN" => row.znacka_EN,
             "cislo_EN" => row.cislo_EN,
-            "standard" => "ČSN",
+            "standard" => "ČSN", # hledáno z tabulky ČSN, proto je standard ČSN
             "norma" => row.norma_CSN,
             "druh" => row.druh,
             "Re" => row.Re_MPa,
             "Re_unit" => "MPa",
+            "Re_min" => row.Re_min_MPa,
+            "Re_min_unit" => "MPa",
             "Rm_min" => row.Rm_min_MPa,
             "Rm_min_unit" => "MPa",
             "Rm_max" => row.Rm_max_MPa,
@@ -180,6 +239,7 @@ ma_name_csn = "name_CSN" in sloupce # ověří existenci sloupce
             "rho" => row.rho_kg_m3,
             "rho_unit" => "kg/m^3"
         )
+        merge!(VV, dalsi_vlastnosti)
 
         if VV !== nothing
            return VV
@@ -202,31 +262,72 @@ ma_name_csn = "name_CSN" in sloupce # ověří existenci sloupce
             end
         end
 
-        result = DBInterface.execute(
-            db,
-            "SELECT name_CSN, norma_CSN, druh, Rm_tah_MPa, Rm_tlak_MPa, A_proc, 
-                HB_min, HB_max, E_GPa, G_GPa, ny, alfa_1_K, rho_kg_m3
-            FROM litina WHERE name_CSN = ?", (oznaceni,)
-            )
-        rows = [NamedTuple(row) for row in result]
+        litina_tabulky = Set(row.name for row in DBInterface.execute(
+            db, "SELECT name FROM sqlite_master WHERE type = 'table'"))
+        if "litina_velicina" in litina_tabulky
+            result = DBInterface.execute(
+                db,
+                "SELECT id, name_CSN, norma_CSN, druh " *
+                "FROM litina WHERE name_CSN = ? LIMIT 1", (oznaceni,))
+            rows = [NamedTuple(row) for row in result]
+            isempty(rows) && return nothing
+            litina = first(rows)
 
-        isempty(rows) && return nothing
-        sqlite_row = first(rows)
-        row = (
-            name_CSN = sqlite_row.name_CSN,
-            norma_CSN = sqlite_row.norma_CSN,
-            druh = sqlite_row.druh,
-            Rm_tah_MPa = sqlite_row.Rm_tah_MPa,
-            Rm_tlak_MPa = sqlite_row.Rm_tlak_MPa,
-            A_proc = sqlite_row.A_proc,
-            HB_min = sqlite_row.HB_min,
-            HB_max = sqlite_row.HB_max,
-            E_GPa = sqlite_row.E_GPa,
-            G_GPa = sqlite_row.G_GPa,
-            alfa_1_K = sqlite_row.alfa_1_K,
-            ny = sqlite_row.ny,
-            rho_kg_m3 = sqlite_row.rho_kg_m3
-        )
+            vlastnosti = Dict{Tuple{String, String}, Any}()
+            for value in DBInterface.execute(
+                db,
+                "SELECT v.kod, lv.varianta, lv.hodnota " *
+                "FROM litina_velicina lv " *
+                "JOIN velicina v ON v.id = lv.velicina_id " *
+                "WHERE lv.litina_id = ? AND lv.rozsah_od_mm IS NULL " *
+                "AND lv.rozsah_do_mm IS NULL", (litina.id,))
+                vlastnosti[(value.kod, value.varianta)] = value.hodnota
+            end
+            property_litina = function (kod, varianta = "zakladni")
+                value = get(vlastnosti, (kod, varianta), 0.0)
+                value === nothing || ismissing(value) ? 0.0 : value
+            end
+
+            row = (
+                name_CSN = litina.name_CSN,
+                norma_CSN = litina.norma_CSN,
+                druh = litina.druh,
+                Rm_tah_MPa = property_litina("Rm"),
+                Rm_tlak_MPa = property_litina("Rm_tlak"),
+                A_proc = property_litina("A"),
+                HB_min = property_litina("HB", "min"),
+                HB_max = property_litina("HB", "max"),
+                E_GPa = property_litina("E"),
+                G_GPa = property_litina("G"),
+                alfa_1_K = property_litina("alfa"),
+                ny = property_litina("nu"),
+                rho_kg_m3 = property_litina("rho")
+            )
+        else
+            result = DBInterface.execute(
+                db,
+                "SELECT name_CSN, norma_CSN, druh, Rm_tah_MPa, Rm_tlak_MPa, A_proc, 
+                    HB_min, HB_max, E_GPa, G_GPa, ny, alfa_1_K, rho_kg_m3
+                FROM litina WHERE name_CSN = ?", (oznaceni,))
+            rows = [NamedTuple(row) for row in result]
+            isempty(rows) && return nothing
+            sqlite_row = first(rows)
+            row = (
+                name_CSN = sqlite_row.name_CSN,
+                norma_CSN = sqlite_row.norma_CSN,
+                druh = sqlite_row.druh,
+                Rm_tah_MPa = sqlite_row.Rm_tah_MPa,
+                Rm_tlak_MPa = sqlite_row.Rm_tlak_MPa,
+                A_proc = sqlite_row.A_proc,
+                HB_min = sqlite_row.HB_min,
+                HB_max = sqlite_row.HB_max,
+                E_GPa = sqlite_row.E_GPa,
+                G_GPa = sqlite_row.G_GPa,
+                alfa_1_K = sqlite_row.alfa_1_K,
+                ny = sqlite_row.ny,
+                rho_kg_m3 = sqlite_row.rho_kg_m3
+            )
+        end
         VV = Dict{String, Any}(
             "name_CSN" => row.name_CSN,
             "standard" => "ČSN",
