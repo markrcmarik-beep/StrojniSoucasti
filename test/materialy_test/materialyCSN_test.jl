@@ -10,9 +10,11 @@ using SQLite
     @testset "ocel" begin
         
     mat11 = StrojniSoucasti.materialyCSN(db, "11 373") # konstrukční ocel
-    @test mat11["name_CSN"] == "11373"
+    @test mat11["name_ISO"] == ""
     @test mat11["znacka_EN"] == "S235JRG1"
     @test mat11["cislo_EN"] == "1.0036"
+    @test mat11["name_CSN"] == "11373"
+    @test mat11["name_DIN"] == ""
     @test mat11["standard"] == "ČSN"
     @test mat11["norma"] == "ČSN 41 1373"
     @test mat11["druh"] == "konstrukční ocel"
@@ -76,7 +78,11 @@ using SQLite
     @test mat13 === nothing
 
     mat14 = StrojniSoucasti.materialyCSN(db, "11 373.1 žíháno") # konstrukční ocel žíhaná
+    @test mat14["name_ISO"] == ""
+    @test mat14["znacka_EN"] == ""
+    @test mat14["cislo_EN"] == ""
     @test mat14["name_CSN"] == "11373.1 žíháno"
+    @test mat14["name_DIN"] == ""
     @test mat14["standard"] == "ČSN"
     @test mat14["norma"] == "ČSN 41 1373"
     @test mat14["Re"] == 220
@@ -141,7 +147,11 @@ using SQLite
 
     mat31 = StrojniSoucasti.materialyCSN(db, "42 2420") # šedá litina
     #@test mat31 isa StrojniSoucasti.MaterialLitina
+    @test mat31["name_ISO"] == ""
+    @test mat31["znacka_EN"] == "EN-GJL-200"
+    @test mat31["cislo_EN"] == "5.1300"
     @test mat31["name_CSN"] == "422420"
+    @test mat31["name_DIN"] == ""
     @test mat31["standard"] == "ČSN"
     @test mat31["norma"] == "ČSN 42 2420"
     @test mat31["druh"] == "šedá litina"

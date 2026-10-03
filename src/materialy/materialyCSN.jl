@@ -116,7 +116,7 @@ end
         if "ocel_velicina" in tabulky
             steel_result = DBInterface.execute(
                 db,
-                "SELECT id, name_CSN, znacka_EN, cislo_EN, norma_CSN, druh, stav, " *
+                "SELECT id, name_ISO, znacka_EN, cislo_EN, name_CSN, name_DIN, norma_CSN, druh, stav, " *
                 "zpracovani, vlastnosti, pouziti, svaritelnost, obrobitelnost, " *
                 "k_cementovani, k_nitridovani, k_zuslechtovani, " *
                 "k_povrchovemu_kaleni, korozivzdorna, obvykla_jakost " *
@@ -160,9 +160,11 @@ end
             ]
 
             row = (
-                name_CSN = steel.name_CSN,
+                name_ISO = ismissing(steel.name_ISO) ? "" : steel.name_ISO,
                 znacka_EN = ismissing(steel.znacka_EN) ? "" : steel.znacka_EN,
                 cislo_EN = ismissing(steel.cislo_EN) ? "" : steel.cislo_EN,
+                name_CSN = ismissing(steel.name_CSN) ? "" : steel.name_CSN,
+                name_DIN = ismissing(steel.name_DIN) ? "" : steel.name_DIN,
                 norma_CSN = ismissing(steel.norma_CSN) ? "" : steel.norma_CSN,
                 druh = steel.druh,
                 Re_MPa = property("Re", "zakladni"), # vrací hodnotu meze kluzu v MPa, pokud není k dispozici, vrací 0.0
@@ -207,9 +209,11 @@ end
             )
         end
         VV = Dict{String, Any}(
-            "name_CSN" => row.name_CSN,
+            "name_ISO" => row.name_ISO,
             "znacka_EN" => row.znacka_EN,
             "cislo_EN" => row.cislo_EN,
+            "name_CSN" => row.name_CSN,
+            "name_DIN" => row.name_DIN,
             "standard" => "ČSN", # hledáno z tabulky ČSN, proto je standard ČSN
             "norma" => row.norma_CSN,
             "druh" => row.druh,
@@ -267,7 +271,7 @@ end
         if "litina_velicina" in litina_tabulky
             result = DBInterface.execute(
                 db,
-                "SELECT id, name_CSN, norma_CSN, druh " *
+                "SELECT id, name_ISO, oznaceni_EN, cislo_EN, name_CSN, name_DIN, norma_CSN, druh " *
                 "FROM litina WHERE name_CSN = ? LIMIT 1", (oznaceni,))
             rows = [NamedTuple(row) for row in result]
             isempty(rows) && return nothing
@@ -289,7 +293,11 @@ end
             end
 
             row = (
-                name_CSN = litina.name_CSN,
+                name_ISO = ismissing(litina.name_ISO) ? "" : litina.name_ISO,
+                znacka_EN = ismissing(litina.oznaceni_EN) ? "" : litina.oznaceni_EN,
+                cislo_EN = ismissing(litina.cislo_EN) ? "" : litina.cislo_EN,
+                name_CSN = ismissing(litina.name_CSN) ? "" : litina.name_CSN,
+                name_DIN = ismissing(litina.name_DIN) ? "" : litina.name_DIN,
                 norma_CSN = litina.norma_CSN,
                 druh = litina.druh,
                 Rm_tah_MPa = property_litina("Rm"),
@@ -303,33 +311,13 @@ end
                 ny = property_litina("nu"),
                 rho_kg_m3 = property_litina("rho")
             )
-        else
-            result = DBInterface.execute(
-                db,
-                "SELECT name_CSN, norma_CSN, druh, Rm_tah_MPa, Rm_tlak_MPa, A_proc, 
-                    HB_min, HB_max, E_GPa, G_GPa, ny, alfa_1_K, rho_kg_m3
-                FROM litina WHERE name_CSN = ?", (oznaceni,))
-            rows = [NamedTuple(row) for row in result]
-            isempty(rows) && return nothing
-            sqlite_row = first(rows)
-            row = (
-                name_CSN = sqlite_row.name_CSN,
-                norma_CSN = sqlite_row.norma_CSN,
-                druh = sqlite_row.druh,
-                Rm_tah_MPa = sqlite_row.Rm_tah_MPa,
-                Rm_tlak_MPa = sqlite_row.Rm_tlak_MPa,
-                A_proc = sqlite_row.A_proc,
-                HB_min = sqlite_row.HB_min,
-                HB_max = sqlite_row.HB_max,
-                E_GPa = sqlite_row.E_GPa,
-                G_GPa = sqlite_row.G_GPa,
-                alfa_1_K = sqlite_row.alfa_1_K,
-                ny = sqlite_row.ny,
-                rho_kg_m3 = sqlite_row.rho_kg_m3
-            )
         end
         VV = Dict{String, Any}(
+            "name_ISO" => row.name_ISO,
+            "znacka_EN" => row.znacka_EN,
+            "cislo_EN" => row.cislo_EN,
             "name_CSN" => row.name_CSN,
+            "name_DIN" => row.name_DIN,
             "standard" => "ČSN",
             "norma" => row.norma_CSN,
             "druh" => row.druh,
