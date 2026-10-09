@@ -41,6 +41,7 @@ include("materialy/materialytypes.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/materialy.jl")
 include("materialy/materialyCSN.jl")
+include("materialy/materialyNactiDB.jl")
 include("materialy/mezUnavy.jl") # mez únavy
 include("materialy/_materialy_nacist.jl") # načtení dat z TOML souborů
 ## --- namáhání ---
