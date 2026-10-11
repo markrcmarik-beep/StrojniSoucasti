@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-30
+﻿# ver: 2026-10-11
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -17,62 +17,23 @@ using TOML
 $(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
 """
 function materialyCSN(db, name::AbstractString)::Union{Dict{String, Any},
-    MaterialKovy,
     Nothing}
 # ---------------------------------------------------------------------
 # pomocné funkce
-# ---------------------------------------------------------------------
-function rozpoznej_materialCSN(text::String)
 
-    regex = r"^\s*(\d{2})\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # regex pro rozpoznání materiálu podle ČSN
-    #regex = r"^\s*(1[1-6])\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
-    #regex = r"^\s*(1[1-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
-    m = match(regex, text)
-    # Označení nebylo rozpoznáno
-    m === nothing && return nothing
-    oznaceni = m.captures[1] * m.captures[2]
-    # Indexy
-    index = m.captures[3]
-    index1 = nothing
-    index2 = nothing
-    if index !== nothing
-        index1 = parse(Int, index[1])
-
-        if length(index) == 2
-            index2 = parse(Int, index[2])
-        end
-    end
-    # Poznámky
-    poznamky = String[] # prázdný seznam poznámek
-    if m.captures[4] !== nothing
-        poznamky = [
-            strip(p)
-            for p in split(m.captures[4], ",")
-            if !isempty(strip(p))
-        ] # odstranění prázdných poznámek
-    end
-
-    return (
-        oznaceni = oznaceni,
-        index1 = index1,
-        index2 = index2,
-        poznamky = poznamky
-    )
-end
-#VV = _materialy_nacist("ocel", (MATERIALY_DB_CSNocel, oznaceni, celeoznaceni), (MATERIALY_DB_CSNocel, "vychozi"), (MATERIALY_DB_VYCHOZI, "MaterialOcel"))
-
-# ---------------------------------------------------------------------
 # pomocné funkce konec
 # ---------------------------------------------------------------------
-    regex1 = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
-    m1 = match(regex1, name)
-    
-    if m1 !== nothing
+    # -----------------------------------------------------
+    # OCEL (11-17, 19), Ocel na lití (42)
+    # -----------------------------------------------------
+    regex1a = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # oceli (11-17, 19)
+    m1a = match(regex1a, name)
+    if m1a !== nothing
         #oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name)
         # Označení materiálu
-        oznaceni = m1.captures[1] * m1.captures[2]
+        oznaceni = m1a.captures[1] * m1a.captures[2]
         # Indexy
-        index = m1.captures[3]
+        index = m1a.captures[3]
         index1 = nothing
         if index !== nothing
             index1 = parse(Int, index[1])
@@ -82,10 +43,10 @@ end
         end
         # Poznámky
         poznamky = String[]
-        if m1.captures[4] !== nothing
+        if m1a.captures[4] !== nothing
             poznamky = [
                 strip(p)
-                for p in split(m1.captures[4], ",")
+                for p in split(m1a.captures[4], ",")
                 if !isempty(strip(p))
             ]
         end
@@ -109,12 +70,61 @@ end
             end
         end
         celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
-        VV = StrojniSoucasti.materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "ocel")
+        VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "ocel")
 
         if VV !== nothing
            return VV
         end
     end
+    regex1b = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # Ocel na lití
+    m1b = match(regex1b, name)
+    if m1b !== nothing
+        oznaceni = m1b.captures[1] * m1b.captures[2]
+        index = m1b.captures[3]
+        index1 = nothing
+        if index !== nothing
+            index1 = parse(Int, index[1])
+            if length(index) == 2
+                index2 = parse(Int, index[2])
+            end
+        end
+        poznamky = String[]
+        if m1b.captures[4] !== nothing
+            poznamky = [
+                strip(p)
+                for p in split(m1b.captures[4], ",")
+                if !isempty(strip(p))
+            ]
+        end
+        celeoznaceni = oznaceni *
+        (index === nothing ? "" : "." * index)
+        poznamkyD = ""
+        if !isempty(poznamky)
+            zamena = TOML.parsefile(joinpath(StrojniSoucasti.cesta_materialy, "materialy_poznamky.toml"))["zamena"]
+            povolene_poznamky = collect(keys(zamena))
+            for p in poznamky
+                for (cil, varianty) in zamena
+                    if p in varianty
+                        p = cil
+                        break
+                    end
+                end
+                if (p in povolene_poznamky)
+                    poznamkyD = isempty(poznamkyD) ? p : poznamkyD * ", " * p # oddělení poznámek čárkou
+                    poznamkyD = join(sort(split(poznamkyD, ", ")), ", ") # seřadit poznámky oddělené čárkou podle abecedy
+                end
+            end
+        end
+        celeoznaceni = celeoznaceni * (isempty(poznamkyD) ? "" : " " * poznamkyD)
+        VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "ocel")
+
+        if VV !== nothing
+           return VV
+        end
+    end
+    # -----------------------------------------------------
+    # LITINA (42)
+    # -----------------------------------------------------
     regex2 = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # litiny
     m2 = match(regex2, name)
     if m2 !== nothing
@@ -133,42 +143,62 @@ end
         end
 
         celeoznaceni = oznaceni * (index === nothing ? "" : "." * index)
-        VV = StrojniSoucasti.materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "litina")
+        VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "litina")
 
         if VV !== nothing
            return VV
         end
     end
-    regex3a = r"^\s*(42)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # kovy
+    # -----------------------------------------------------
+    # PRYŽ (42)
+    # -----------------------------------------------------
+    regex3a = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # pryže
     m3a = match(regex3a, name)
-    regex3b = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
-    m3b = match(regex3b, name)
-    if m3a !== nothing 
-        oznaceni, index1, index2, poznamky = rozpoznej_materialCSN(name) # rozpoznání materiálu podle ČSN
-        MATERIALY_DB_CSNkovy = TOML.parsefile(joinpath(cesta_materialy, 
-        "materialyCSNkovy.toml"))
-        row = MATERIALY_DB_CSNkovy[oznaceni]
-        VV = MaterialKovy(
-        get(row, "name", name)::String, # název materiálu
-        get(row, "standard", "")::String, # norma (nepovinné)
-        get(row, "druh", "")::String, # norma (nepovinné)
-        Float64(get(row, "Re", 0)), # meze kluzu
-        "MPa", # jednotka meze kluzu
-        Float64(get(row, "Rm_min", 0)), # meze pevnosti
-        "MPa", # jednotka meze pevnosti
-        Float64(get(row, "Rm_max", 0)), # meze pevnosti max
-        "MPa", # jednotka meze pevnosti max
-        Float64(get(row, "A", 0)), # prodloužení
-        "%", # jednotka prodloužení
-        Float64(get(row, "E", 0)), # modul pružnosti
-        "GPa", # jednotka modulu pružnosti
-        Float64(get(row, "G", 0)), # modul smyku
-        "GPa", # jednotka modulu smyku
-        Float64(get(row, "ny", 0)), # Poissonovo číslo
-        "-", # jednotka Poissonova čísla
-        Float64(get(row, "rho", 0)), # hustota
-        "kg/m^3" # jednotka hustoty
-    )
+    if m3a !== nothing
+        oznaceni = m3a.captures[1] * m3a.captures[2]
+        index = m3a.captures[3]
+        index1 = nothing
+        if index !== nothing
+            index1 = parse(Int, index[1])
+            if length(index) == 2
+                index2 = parse(Int, index[2])
+            end
+        end
+        celeoznaceni = oznaceni * (index === nothing ? "" : "." * index)
+        VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "pryz")
+
+        if VV !== nothing
+           return VV
+        end
+    end
+    # -----------------------------------------------------
+    # NEŽELEZNÉ KOVY
+    # -----------------------------------------------------
+    regex4a = r"^\s*(42)\s?(\d{4})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$" # kovy
+    m4a = match(regex4a, name)
+    regex4b = r"^\s*(1[0-7]|19)\s?(\d{3})(?:\.(\d{1,2}))?(?:\s+(.+?))?\s*$"
+    m4b = match(regex4b, name)
+    if m4a !== nothing || m4b !== nothing
+        m4 = m4a === nothing ? m4b : m4a
+        celeoznaceni = m4.captures[1] * m4.captures[2] *
+            (m4.captures[3] === nothing ? "" : "." * m4.captures[3])
+        VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", celeoznaceni, "ČSN", "nezelezne kovy")
+        if VV !== nothing
+            return VV
+        end
+    end
+    # -----------------------------------------------------
+    # PLASTY
+    # -----------------------------------------------------
+    
+    # -----------------------------------------------------
+    # nestandartni
+    # -----------------------------------------------------
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "ocel")
+    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "litina") : VV
+    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "pryz") : VV
+    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "nezelezne kovy") : VV
+    if VV !== nothing
         return VV
     end
     return nothing

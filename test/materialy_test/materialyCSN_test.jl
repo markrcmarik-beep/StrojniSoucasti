@@ -1,12 +1,12 @@
-# ver: 2026-09-28
+# ver: 2026-10-10
 using Test
 using StrojniSoucasti
 using SQLite
 
 @testset "materialyCSN" begin
     
-    db_path = joinpath(StrojniSoucasti.cesta_materialy, "materialy.db")
-    db = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+    db_path = joinpath(@__DIR__, "..", "..", "src", "materialy", "materialy.db")
+    db = SQLite.DB(db_path) # Načte databázi
     @testset "ocel" begin
         
     mat11 = StrojniSoucasti.materialyCSN(db, "11 373") # konstrukční ocel
@@ -40,7 +40,7 @@ using SQLite
     @test mat11["alfa"] == 1.2e-5
     @test mat11["alfa_unit"] == "1/K"
     @test mat11["ny"] == 0.3
-    @test mat11["ny_unit"] == "-"
+    @test mat11["ny_unit"] == "1"
     @test mat11["rho"] == 7850
     @test mat11["rho_unit"] == "kg/m^3"
     @test mat11["stav"] == "tepelně nezpracováno"
@@ -105,7 +105,7 @@ using SQLite
     @test mat14["G"] == 81
     @test mat14["G_unit"] == "GPa"
     @test mat14["ny"] == 0.3
-    @test mat14["ny_unit"] == "-"
+    @test mat14["ny_unit"] == "1"
     @test mat14["rho"] == 7850
     @test mat14["rho_unit"] == "kg/m^3"
 
@@ -123,15 +123,15 @@ using SQLite
 
     end # konec ocel
 
-    ##mat21 = StrojniSoucasti.materialyCSN(db, "42 3001")
-    #@test mat21.name == "42 3001"
-    #@test mat21.standard == "ČSN 42 3001"
-    #@test mat21.Re == 200
-    #@test mat21.Re_unit == "MPa"
-    #@test mat21.Rm_min == 250
-    #@test mat21.Rm_min_unit == "MPa"
-    #@test mat21.Rm_max == 300
-    #@test mat21.Rm_max_unit == "MPa"
+    mat21 = StrojniSoucasti.materialyCSN(db, "42 3001")
+    @test mat21["name_CSN"] == "423001"
+    @test mat21["standard"] == "ČSN"
+    @test mat21["Rp0_2"] == 50
+    @test mat21["Rp0_2_unit"] == "MPa"
+    #@test mat21["Rm_min"] == 250
+    #@test mat21["Rm_min_unit"] == "MPa"
+    #@test mat21["Rm_max"] == 300
+    #@test mat21["Rm_max_unit"] == "MPa"
     #@test mat21.A == 20
     #@test mat21.A_unit == "%"
     #@test mat21.E == 110
@@ -170,7 +170,7 @@ using SQLite
     @test mat31["G"] == 44
     @test mat31["G_unit"] == "GPa"
     @test mat31["ny"] == 0.27
-    @test mat31["ny_unit"] == "-"
+    @test mat31["ny_unit"] == "1"
     @test mat31["rho"] == 7200
     @test mat31["rho_unit"] == "kg/m^3"
 
@@ -181,6 +181,32 @@ using SQLite
     @test mat41 === nothing
 
     end # konec litina
+
+    @testset "neželezné kovy" begin
+        mat_kov = StrojniSoucasti.materialyCSN(db, "42 3001")
+        @test mat_kov["name_CSN"] == "423001"
+        @test mat_kov["name_ISO"] == "Cu-ETP"
+        @test mat_kov["znacka_EN"] == "CW004A"
+        @test mat_kov["druh"] == "Elektrolytická měď"
+        @test mat_kov["Rp0_2"] == 50
+        @test mat_kov["Rp0_2_unit"] == "MPa"
+        @test mat_kov["Rm_min"] == 200
+        @test mat_kov["Rm_min_unit"] == "MPa"
+        @test mat_kov["Rm_max"] == 280
+        @test mat_kov["Rm_max_unit"] == "MPa"
+        @test mat_kov["A"] == 30
+        @test mat_kov["A_unit"] == "%"
+        @test mat_kov["E"] == 115
+        @test mat_kov["E_unit"] == "GPa"
+        @test mat_kov["G"] == 42
+        @test mat_kov["G_unit"] == "GPa"
+        @test mat_kov["ny"] == 0.35
+        @test mat_kov["ny_unit"] == "1"
+        @test mat_kov["rho"] == 8930
+        @test mat_kov["rho_unit"] == "kg/m^3"
+        @test mat_kov["stav"] == "žíhaný; mechanické hodnoty orientační"
+    end # konec neželezné kovy
+
     SQLite.close(db)
 end # konec materialyCSN
 

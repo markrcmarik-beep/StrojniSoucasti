@@ -1,4 +1,4 @@
-# ver: 2026-03-17
+# ver: 2026-10-10
 
 struct MaterialOcel
     name::String        # název
@@ -31,12 +31,12 @@ struct MaterialOcel
     #extra::Dict{Symbol, Any}
 end
 
-struct MaterialKovy
+struct MaterialNezelezneKovy
     name::String        # název
     standard::String    # norma (nepovinné)
     druh::String        # druh kovu (např. "hliník", "měď", "titan")
-    Re::Float64         # nominální mez kluzu [MPa]
-    Re_unit::String     # jednotka meze kluzu
+    Rp0_2::Float64         # nominální mez kluzu [MPa]
+    Rp0_2_unit::String     # jednotka meze kluzu
     Rm_min::Float64     # mez pevnosti [MPa]
     Rm_min_unit::String # jednotka meze pevnosti
     Rm_max::Float64     # mez pevnosti max. [MPa]
@@ -96,3 +96,18 @@ struct MaterialPryz
     rho_unit::String    # jednotka hustoty
 end
 
+struct MaterialPlast
+    name::String        # název
+    standard::String    # norma (nepovinné)
+    druh::String        # druh plastu (např. "PE", "PP", "PVC")
+    hardness::Float64   # tvrdost [ShD]
+    hardness_unit::String # jednotka tvrdosti
+    E::Float64          # Modul pružnosti (Youngův modul) [MPa]
+    E_unit::String      # jednotka modulu pružnosti
+    G::Float64          # Modul smyku [MPa]
+    G_unit::String      # jednotka modulu smyku
+    ny::Float64         # Poissonovo číslo
+    ny_unit::String     # jednotka Poissonova čísla
+    rho::Float64        # hustota [kg/m^3]
+    rho_unit::String    # jednotka hustoty
+end

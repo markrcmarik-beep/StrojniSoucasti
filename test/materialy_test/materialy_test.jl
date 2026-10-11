@@ -1,4 +1,4 @@
-# ver: 2026-09-28
+# ver: 2026-10-10
 using Test
 using StrojniSoucasti
 
@@ -72,21 +72,22 @@ using StrojniSoucasti
 
     mat = materialy("42 3001")
 
+    @test mat isa StrojniSoucasti.MaterialNezelezneKovy
     @test mat.name == "42 3001"
     @test mat.standard == "ČSN"
-    @test mat.Re == 200
-    @test mat.Re_unit == "MPa"
-    @test mat.Rm_min == 250
+    @test mat.Rp0_2 == 50
+    @test mat.Rp0_2_unit == "MPa"
+    @test mat.Rm_min == 200
     @test mat.Rm_min_unit == "MPa"
-    @test mat.Rm_max == 300
+    @test mat.Rm_max == 280
     @test mat.Rm_max_unit == "MPa"
-    @test mat.A == 20
+    @test mat.A == 30
     @test mat.A_unit == "%"
-    @test mat.E == 110
+    @test mat.E == 115
     @test mat.E_unit == "GPa"
     @test mat.G == 42
     @test mat.G_unit == "GPa"
-    @test mat.ny == 0.34
+    @test mat.ny == 0.35
     @test mat.ny_unit == "-"
     @test mat.rho == 8930
     @test mat.rho_unit == "kg/m^3"
@@ -94,7 +95,7 @@ using StrojniSoucasti
     mat = materialy("42 2420")
 
     @test mat isa StrojniSoucasti.MaterialLitina
-    @test mat.name == "42 2420"
+    @test mat.name == "422420"
     @test mat.standard == "ČSN 42 2420"
     @test mat.druh == "šedá litina"
     @test mat.Rm_tah == 200
