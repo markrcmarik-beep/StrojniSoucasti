@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-11
+﻿# ver: 2026-10-13
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -7,7 +7,7 @@
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
-# materialytypes.jl, materialyCSNocel.toml
+# _materialyNactiDB.jl
 ###############################################################
 ## Použité proměnné vnitřní:
 #
@@ -195,9 +195,25 @@ function materialyCSN(db, name::AbstractString)::Union{Dict{String, Any},
     # nestandartni
     # -----------------------------------------------------
     VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "ocel")
-    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "litina") : VV
-    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "pryz") : VV
-    VV = VV === nothing ? StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "nezelezne kovy") : VV
+    if VV !== nothing
+        return VV
+    end
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "litina")
+    if VV !== nothing
+        return VV
+    end
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "pryz")
+    if VV !== nothing
+        return VV
+    end
+    if VV !== nothing
+        return VV
+    end
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "nezelezne kovy")
+    if VV !== nothing
+        return VV
+    end
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_CSN", name, "ČSN", "plasty")
     if VV !== nothing
         return VV
     end

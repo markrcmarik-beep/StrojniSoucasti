@@ -5,13 +5,13 @@
 ## Cesta uvnitř balíčku:
 # balicek/src/materialy/materialy.jl
 ## Použité balíčky:
-# TOML
+# SQLite
 ## Použité uživatelské funkce:
-# materialytypes.jl, materialydatabase.toml
+# materialytypes.jl, materialy.db
 ###############################################################
 ## Použité proměnné vnitřní:
 #
-using TOML
+using SQLite
 
 """
 $(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialy.md"), String))
@@ -23,7 +23,7 @@ function materialy(name::AbstractString)
         Base.invokelatest(getfield, @__MODULE__, type), args...)
 
     db_path = joinpath(StrojniSoucasti.cesta_materialy, "materialy.db")
-    DB = SQLite.DB(db_path) # Načte databázi závitů, pokud ještě nebyla načtena
+    DB = SQLite.DB(db_path) # Načte databázi
     # ------------------------------------------------------------
     # ČSN materiály
     VV = StrojniSoucasti.materialyCSN(DB, name)
@@ -151,6 +151,7 @@ function materialy(name::AbstractString)
             return nothing
         end
     end
+    SQLite.close(DB)
     # ------------------------------------------------------------
     # Databáze materiálů
     MATERIALY_DB_OCEL_EN10025_2 = TOML.parsefile(joinpath(cesta_materialy, 
