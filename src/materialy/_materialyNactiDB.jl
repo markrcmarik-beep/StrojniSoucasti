@@ -1,4 +1,4 @@
-# ver: 2026-10-13
+# ver: 2026-10-15
 ## Funkce: materialyCSN()
 ## Autor: Martin
 #
@@ -99,6 +99,56 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 alfa_1_K=property("alfa"),
                 ny=property("ny"),
                 rho_kg_m3=property("rho")
+            )
+            VVnames = Dict{String,Any}(
+                "name_ISO" => row.name_ISO,
+                "znacka_EN" => row.znacka_EN,
+                "cislo_EN" => row.cislo_EN,
+                "name_CSN" => row.name_CSN,
+                "name_DIN" => row.name_DIN,
+                "standard" => standard, # hledáno z tabulky ČSN, proto je standard ČSN
+                "norma" => row.norma_CSN,
+                "druh" => row.druh
+            )
+            VVnamesOcel = Dict{String,Any}(
+                "stav" => textvalue(steel.stav),
+                "zpracovani" => textvalue(steel.zpracovani),
+                "vlastnosti" => textvalue(steel.vlastnosti),
+                "pouziti" => textvalue(steel.pouziti),
+                "svaritelnost" => textvalue(steel.svaritelnost),
+                "obrobitelnost" => textvalue(steel.obrobitelnost),
+                "k_cementovani" => textvalue(steel.k_cementovani),
+                "k_nitridovani" => textvalue(steel.k_nitridovani),
+                "k_zuslechtovani" => textvalue(steel.k_zuslechtovani),
+                "k_povrchovemu_kaleni" => textvalue(steel.k_povrchovemu_kaleni),
+                "korozivzdorna" => textvalue(steel.korozivzdorna),
+                "obvykla_jakost" => textvalue(steel.obvykla_jakost)
+            )
+            VVvelicina = Dict{String,Any}(
+                "Re" => row.Re_MPa,
+                "Re_unit" => jednotka("Re"),
+                "Re_min" => row.Re_min_MPa,
+                "Re_min_unit" => jednotka("Re"),
+                "Rm_min" => row.Rm_min_MPa,
+                "Rm_min_unit" => jednotka("Rm"),
+                "Rm_max" => row.Rm_max_MPa,
+                "Rm_max_unit" => jednotka("Rm"),
+                "A" => row.A_proc,
+                "A_unit" => jednotka("A"),
+                "KV" => row.KV_J,
+                "KV_unit" => jednotka("KV"),
+                "T_KV" => row.T_KV_degC,
+                "T_KV_unit" => jednotka("T_KV"),
+                "E" => row.E_GPa,
+                "E_unit" => jednotka("E"),
+                "G" => row.G_GPa,
+                "G_unit" => jednotka("G"),
+                "alfa" => row.alfa_1_K,
+                "alfa_unit" => jednotka("alfa"),
+                "ny" => row.ny,
+                "ny_unit" => jednotka("ny"),
+                "rho" => row.rho_kg_m3,
+                "rho_unit" => jednotka("rho")
             )
             dalsi_vlastnosti = Dict{String,Any}(
                 "stav" => textvalue(steel.stav),
@@ -291,6 +341,16 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "standard" => standard,
             "norma" => textvalue(pryz.norma_CSN),
             "druh" => textvalue(pryz.druh),
+            "hardness" => property_pryz("tvrdost_ShA"),
+            "hardness_unit" => jednotka("tvrdost_ShA"),
+            "E" => property_pryz("E"),
+            "E_unit" => jednotka("E"),
+            "G" => property_pryz("G"),
+            "G_unit" => jednotka("G"),
+            "ny" => property_pryz("ny"),
+            "ny_unit" => jednotka("ny"),
+            "rho" => property_pryz("rho"),
+            "rho_unit" => jednotka("rho"),
             "stav" => textvalue(pryz.stav),
             "zpracovani" => textvalue(pryz.zpracovani),
             "vlastnosti" => textvalue(pryz.vlastnosti),

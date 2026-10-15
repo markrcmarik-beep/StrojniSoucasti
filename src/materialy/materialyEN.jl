@@ -5,7 +5,7 @@
 ## Cesta uvnitř balíčku:
 # balicek/src/materialy/materialyEN.jl
 ## Použité balíčky:
-# TOML
+#
 ## Použité uživatelské funkce:
 # _materialyNactiDB.jl
 ###############################################################

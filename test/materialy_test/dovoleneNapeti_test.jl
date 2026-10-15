@@ -1,4 +1,4 @@
-# ver: 2026-02-21
+# ver: 2026-10-15
 # Testovací skript pro funkci dovoleneNapeti.jl
 # Testuje výpočet dovolených napětí s různými kombinacemi namáhání a zatížení
 
@@ -271,8 +271,9 @@ using StrojniSoucasti, Unitful, Test
 
     # Test 38: Re lze předat jako výstup z materialy() pro ocel
     @testset "Re z materialy() - ocel" begin
-        mat = materialy("S235")
+        mat = materialy("S235JRG1")
         #println(mat)
+        @test mat isa StrojniSoucasti.MaterialOcel
         sigma = dovoleneNapeti("tah", "statický"; mat=mat)
         @test sigma isa Quantity
         @test sigma > 0u"MPa"

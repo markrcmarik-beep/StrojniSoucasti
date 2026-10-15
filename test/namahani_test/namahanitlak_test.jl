@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-28
+﻿# ver: 2026-10-15
 # Testovací skript pro funkci namahanitlak.jl
 # Testuje namáhání v tlaku s různými typy zatížení
 
@@ -69,7 +69,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt4 = """Výpočet namáhání v tlaku
 ----------------------------------------------------------------
-materiál: S235
+materiál: S235JRG1
 profil: PLO 20x20
   a = 20 mm
   b = 20 mm
@@ -79,9 +79,9 @@ zadání:
 F = 6000 N   Zatěžující síla
 k = 5   Uživatelský požadavek bezpečnosti
 S = a*b - 4*S(R) = 400 mm^2   Plocha průřezu
-sigmaDt = 180.769 MPa   Dovolené napětí v tlaku
+sigmaDt = 192.308 MPa   Dovolené napětí v tlaku
 L0 = 90 mm   Délka namáhaného profilu
-Re = 235 MPa   Mez kluzu
+Re = 250 MPa   Mez kluzu
 E = 210 GPa   Youngův modul (tlak)
 ----------------------------------------------------------------
 výpočet:
@@ -89,7 +89,7 @@ sigma = F / S = 15 MPa   Napětí v tlaku
 epsilon = sigma / E = 7.14286 %   Poměrné zkrácení
 deltaL = -epsilon * L0 = -6.42857 mm   Skutečné zkrácení
 L = L0 + deltaL = 83.5714 mm   Délka po deformaci
-k = sigmaDt / sigma = 12.0513   Součinitel bezpečnosti
+k = sigmaDt / sigma = 12.8205   Součinitel bezpečnosti
 Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt5 = """Výpočet namáhání v tlaku
@@ -250,7 +250,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     # Test 5: Výpočet s profilem a délkou
     @testset "výpočet s profilem a délkou" begin
-        VV, txt = namahanitlak(F=6000u"N", profil="PLO 20x20", mat="S235", L0=90u"mm", k=5)
+        VV, txt = namahanitlak(F=6000u"N", profil="PLO 20x20", mat="S235JRG1", L0=90u"mm", k=5)
         @test haskey(VV, :sigma)
         @test haskey(VV, :S)
         @test haskey(VV, :deltaL)
@@ -342,8 +342,8 @@ Bezpečnost spoje: Spoj je bezpečný"""
         @test occursin("bezpečný", VV[:verdict])
     end
 
-    # Test 14: Bezpečnost - hranice bezpeÄŤnosti
-    @testset "hranice bezpeÄŤnosti" begin
+    # Test 14: Bezpečnost - hranice bezpečnosti
+    @testset "hranice bezpečnosti" begin
         VV, txt = namahanitlak(F=24000u"N", S=400u"mm^2", sigmaDt=80u"MPa")
         @test VV[:bezpecnost] >= 1.0 && VV[:bezpecnost] < 1.5
         @test occursin("na hranici", VV[:verdict])
@@ -356,8 +356,8 @@ Bezpečnost spoje: Spoj je bezpečný"""
         @test occursin("není bezpečný", VV[:verdict])
     end
 
-    # Test 16: Vlastní požadavek bezpeÄŤnosti
-    @testset "vlastnĂ­ požadavek bezpeÄŤnosti" begin
+    # Test 16: Vlastní požadavek bezpečnosti
+    @testset "vlastnĂ­ požadavek bezpečnosti" begin
         VV, txt = namahanitlak(F=6000u"N", S=400u"mm^2", Re=240u"MPa", k=3)
         @test haskey(VV, :k)
         @test VV[:k] == 3
