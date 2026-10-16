@@ -12,7 +12,7 @@ using SQLite
         podle_cisla = StrojniSoucasti.materialyEN(db, "1.0036")
 
         @test podle_znacky isa Dict{String,Any}
-        @test podle_znacky == podle_cisla
+        @test isequal(podle_znacky, podle_cisla)
         @test podle_znacky["znacka_EN"] == "S235JRG1"
         @test podle_znacky["cislo_EN"] == "1.0036"
         @test podle_znacky["druh"] == "konstrukční ocel"

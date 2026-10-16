@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-15
+﻿# ver: 2026-10-16
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -21,6 +21,7 @@ function materialy(name::AbstractString)
     include(joinpath(@__DIR__, "materialytypes.jl"))
     construct = (type, args...) -> Base.invokelatest(
         Base.invokelatest(getfield, @__MODULE__, type), args...)
+    tofloat = value -> ismissing(value) ? missing : Float64(value)
 
     db_path = joinpath(StrojniSoucasti.cesta_materialy, "materialy.db")
     DB = SQLite.DB(db_path) # Načte databázi
@@ -85,31 +86,31 @@ function materialy(name::AbstractString)
                 get(VV, "name_DIN", "")::String, # název materiálu DIN
                 get(VV, "cislo_EN", "")::String, # název materiálu EN
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
-                get(VV, "norma", "")::String, # norma (nepovinné)
+                get(VV, "norma_CSN", "")::String, # norma (nepovinné)
                 get(VV, "druh", "")::String, # norma (nepovinné)
-                Float64(get(VV, "Re", 0)), # meze kluzu
+                tofloat(get(VV, "Re", 0)), # meze kluzu
                 "MPa", # jednotka meze kluzu
-                Float64(get(VV, "Rm_min", 0)), # meze pevnosti
+                tofloat(get(VV, "Rm_min", 0)), # meze pevnosti
                 "MPa", # jednotka meze pevnosti
-                Float64(get(VV, "Rm_max", 0)), # meze pevnosti max
+                tofloat(get(VV, "Rm_max", 0)), # meze pevnosti max
                 "MPa", # jednotka meze pevnosti max
-                Float64(get(VV, "A", 0)), # prodloužení
+                tofloat(get(VV, "A", 0)), # prodloužení
                 "%", # jednotka prodloužení
-                Float64(get(VV, "KV", 0)), # houževnatost KV
+                tofloat(get(VV, "KV", 0)), # houževnatost KV
                 "J", # jednotka houževnatosti KV
-                Float64(get(VV, "T_KV", 0)), # teplota KV
+                tofloat(get(VV, "T_KV", 0)), # teplota KV
                 "°C", # jednotka teploty KV
                 get(VV, "svaritelnost", "")::String, # popis svařitelnosti
                 Bool(get(VV, "weldable", false)), # svařitelnost
-                Float64(get(VV, "thickness_max", 0)), # max tloušťka
+                tofloat(get(VV, "thickness_max", 0)), # max tloušťka
                 "mm", # jednotka max tloušťky
-                Float64(get(VV, "E", 0)), # modul pružnosti
+                tofloat(get(VV, "E", 0)), # modul pružnosti
                 "GPa", # jednotka modulu pružnosti
-                Float64(get(VV, "G", 0)), # modul smyku
+                tofloat(get(VV, "G", 0)), # modul smyku
                 "GPa", # jednotka modulu smyku
-                Float64(get(VV, "ny", 0)), # Poissonovo číslo
+                tofloat(get(VV, "ny", 0)), # Poissonovo číslo
                 "-", # jednotka Poissonova čísla
-                Float64(get(VV, "rho", 0)), # hustota
+                tofloat(get(VV, "rho", 0)), # hustota
                 "kg/m^3" # jednotka hustoty
             )
         elseif get(VV, "druh", "") in ["šedá litina", "litina", "tvárná litina", 
@@ -128,27 +129,27 @@ function materialy(name::AbstractString)
                 get(VV, "name_DIN", "")::String, # název materiálu DIN
                 get(VV, "cislo_EN", "")::String, # název materiálu EN
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
-                get(VV, "norma", "")::String, # norma (nepovinné)
+                get(VV, "norma_CSN", "")::String, # norma (nepovinné)
                 get(VV, "druh", "")::String, # typ litiny
-                Float64(get(VV, "Rm_tah", 0)), # mez pevnosti v tahu
+                tofloat(get(VV, "Rm_tah", 0)), # mez pevnosti v tahu
                 "MPa", # jednotka meze pevnosti v tahu
-                Float64(get(VV, "Rm_tlak", 0)), # mez pevnosti v tlaku
+                tofloat(get(VV, "Rm_tlak", 0)), # mez pevnosti v tlaku
                 "MPa", # jednotka meze pevnosti v tlaku
-                Float64(get(VV, "tau_lim", 0.5 * Float64(get(VV, "Rm_tah", 0)))), # mez smykové pevnosti
+                tofloat(get(VV, "tau_lim", 0.5 * tofloat(get(VV, "Rm_tah", 0)))), # mez smykové pevnosti
                 "MPa", # jednotka meze smykové pevnosti
-                Float64(get(VV, "A", 0)), # prodloužení
+                tofloat(get(VV, "A", 0)), # prodloužení
                 "%", # jednotka prodloužení
-                Float64(get(VV, "HB_min", 0)), # tvrdost Brinell min
+                tofloat(get(VV, "HB_min", 0)), # tvrdost Brinell min
                 "HB", # jednotka tvrdosti Brinell min
-                Float64(get(VV, "HB_max", 0)), # tvrdost Brinell max
+                tofloat(get(VV, "HB_max", 0)), # tvrdost Brinell max
                 "HB", # jednotka tvrdosti Brinell max
-                Float64(get(VV, "E", 0)), # modul pružnosti
+                tofloat(get(VV, "E", 0)), # modul pružnosti
                 "GPa", # jednotka modulu pružnosti
-                Float64(get(VV, "G", 0)), # modul smyku
+                tofloat(get(VV, "G", 0)), # modul smyku
                 "GPa", # jednotka modulu smyku
-                Float64(get(VV, "ny", 0)), # Poissonovo číslo
+                tofloat(get(VV, "ny", 0)), # Poissonovo číslo
                 "-", # jednotka Poissonova čísla
-                Float64(get(VV, "rho", 0)), # hustota
+                tofloat(get(VV, "rho", 0)), # hustota
                 "kg/m^3" # jednotka hustoty
             )
         elseif get(VV, "druh", "") in ["Slitina mědi", "Elektrolytická měď", "Měď", 
@@ -170,21 +171,21 @@ function materialy(name::AbstractString)
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
                 get(VV, "standard", "")::String, # norma
                 get(VV, "druh", "")::String, # druh kovu
-                Float64(get(VV, "Rp0_2", 0)), # mez kluzu
+                tofloat(get(VV, "Rp0_2", 0)), # mez kluzu
                 "MPa", # jednotka meze kluzu
-                Float64(get(VV, "Rm_min", 0)), # minimální mez pevnosti
+                tofloat(get(VV, "Rm_min", 0)), # minimální mez pevnosti
                 "MPa", # jednotka minimální meze pevnosti
-                Float64(get(VV, "Rm_max", 0)), # maximální mez pevnosti
+                tofloat(get(VV, "Rm_max", 0)), # maximální mez pevnosti
                 "MPa", # jednotka maximální meze pevnosti
-                Float64(get(VV, "A", 0)), # prodloužení
+                tofloat(get(VV, "A", 0)), # prodloužení
                 "%", # jednotka prodloužení
-                Float64(get(VV, "E", 0)), # modul pružnosti
+                tofloat(get(VV, "E", 0)), # modul pružnosti
                 "GPa", # jednotka modulu pružnosti
-                Float64(get(VV, "G", 0)), # modul smyku
+                tofloat(get(VV, "G", 0)), # modul smyku
                 "GPa", # jednotka modulu smyku
-                Float64(get(VV, "ny", 0)), # Poissonovo číslo
+                tofloat(get(VV, "ny", 0)), # Poissonovo číslo
                 "-", # jednotka Poissonova čísla
-                Float64(get(VV, "rho", 0)), # hustota
+                tofloat(get(VV, "rho", 0)), # hustota
                 "kg/m^3" # jednotka hustoty
             )
         elseif get(VV, "druh", "") in ["pryž", "guma", "kaučuk", "NBR", "EPDM", 
@@ -201,17 +202,17 @@ function materialy(name::AbstractString)
                 get(VV, "name_DIN", "")::String, # název materiálu DIN
                 get(VV, "cislo_EN", "")::String, # název materiálu EN
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
-                get(VV, "norma", "")::String, # norma (nepovinné)
+                get(VV, "norma_CSN", "")::String, # norma (nepovinné)
                 get(VV, "druh", "")::String, # typ pryžového materiálu
-                Float64(get(VV, "hardness", 0)), # tvrdost Shore A
+                tofloat(get(VV, "hardness", 0)), # tvrdost Shore A
                 get(VV, "hardness_unit", "ShA")::String, # jednotka tvrdosti
-                Float64(get(VV, "E", 0)), # modul pružnosti
+                tofloat(get(VV, "E", 0)), # modul pružnosti
                 get(VV, "E_unit", "GPa")::String, # jednotka modulu pružnosti
-                Float64(get(VV, "G", 0)), # modul smyku
+                tofloat(get(VV, "G", 0)), # modul smyku
                 get(VV, "G_unit", "GPa")::String, # jednotka modulu smyku
-                Float64(get(VV, "ny", 0)), # Poissonovo číslo
+                tofloat(get(VV, "ny", 0)), # Poissonovo číslo
                 get(VV, "ny_unit", "-")::String, # jednotka Poissonova čísla
-                Float64(get(VV, "rho", 0)), # hustota
+                tofloat(get(VV, "rho", 0)), # hustota
                 get(VV, "rho_unit", "kg/m^3")::String # jednotka hustoty
             )
         elseif get(VV, "druh", "") in ["plast", "polymer", "PE", "PP", "PVC", 
@@ -228,15 +229,15 @@ function materialy(name::AbstractString)
                 get(VV, "name_DIN", "")::String, # název materiálu DIN
                 get(VV, "cislo_EN", "")::String, # název materiálu EN
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
-                get(VV, "norma", "")::String, # norma (nepovinné)
+                get(VV, "norma_CSN", "")::String, # norma (nepovinné)
                 get(VV, "druh", "")::String, # typ plastového materiálu
-                Float64(get(VV, "E", 0)), # modul pružnosti
+                tofloat(get(VV, "E", 0)), # modul pružnosti
                 "GPa", # jednotka modulu pružnosti
-                Float64(get(VV, "G", 0)), # modul smyku
+                tofloat(get(VV, "G", 0)), # modul smyku
                 "GPa", # jednotka modulu smyku
-                Float64(get(VV, "ny", 0)), # Poissonovo číslo
+                tofloat(get(VV, "ny", 0)), # Poissonovo číslo
                 "-", # jednotka Poissonova čísla
-                Float64(get(VV, "rho", 0)), # hustota
+                tofloat(get(VV, "rho", 0)), # hustota
                 "kg/m^3" # jednotka hustoty
             )
         else

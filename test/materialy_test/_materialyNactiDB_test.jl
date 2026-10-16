@@ -12,6 +12,44 @@ using SQLite
             db, "name_CSN", "11373", "ČSN", "ocel")
 
         @test ocel isa Dict{String,Any}
+    # names
+    @test ocel["name"] isa AbstractString # název materiálu
+    @test ocel["name_ISO"] isa AbstractString
+    @test ocel["znacka_EN"] isa AbstractString
+    @test ocel["cislo_EN"] isa AbstractString
+    @test ocel["name_CSN"] isa AbstractString
+    @test ocel["name_DIN"] isa AbstractString
+    @test ocel["standard"] isa AbstractString
+    @test ocel["norma_CSN"] isa AbstractString
+    @test ocel["druh"] isa AbstractString
+    # namesOcel
+    @test ocel["stav"] isa AbstractString
+    @test ocel["zpracovani"] isa AbstractString
+    @test ocel["vlastnosti"] isa AbstractString
+    @test ocel["pouziti"] isa AbstractString
+    @test ocel["svaritelnost"] isa AbstractString
+    @test ocel["obrobitelnost"] isa AbstractString
+    @test ocel["k_cementovani"] isa AbstractString
+    @test ocel["k_nitridovani"] isa AbstractString
+    @test ocel["k_zuslechtovani"] isa AbstractString
+    @test ocel["k_povrchovemu_kaleni"] isa AbstractString
+    @test ocel["korozivzdorna"] isa AbstractString
+    @test ocel["obvykla_jakost"] isa AbstractString
+    # veliciny
+    @test ocel["Re"] isa Float64 || ismissing(ocel["Re"])
+    @test ocel["Re_unit"] isa AbstractString
+    @test ocel["Re_min"] isa Float64 || ismissing(ocel["Re_min"])
+    @test ocel["Re_min_unit"] isa AbstractString
+    @test ocel["Rp0_2"] isa Float64 || ismissing(ocel["Rp0_2"])
+    @test ocel["Rp0_2_unit"] isa AbstractString
+    @test ocel["Rm_min"] isa Float64 || ismissing(ocel["Rm_min"])
+    @test ocel["Rm_max"] isa Float64 || ismissing(ocel["Rm_max"])
+
+    @test ocel["E"] isa Float64 || ismissing(ocel["E"])
+    @test ocel["E_unit"] isa AbstractString
+
+    @test ocel["Re_rozsahy"] isa AbstractVector{<:NamedTuple}
+
         @test ocel["name_CSN"] == "11373"
         @test ocel["standard"] == "ČSN"
         @test ocel["Re"] == 250

@@ -30,7 +30,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
         if (hodnota === nothing || ismissing(hodnota)) && zalozni !== nothing
             hodnota = get(properties, (kod, zalozni), nothing)
         end
-        hodnota === nothing || ismissing(hodnota) ? 0.0 : hodnota
+        hodnota === nothing || ismissing(hodnota) ? missing : hodnota
     end
     # ---------------------------------------------------------------------
     names = ["name", "name_ISO", "znacka_EN", "cislo_EN", "name_CSN", "name_DIN", "norma_CSN", "druh"]
@@ -79,6 +79,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             ]
 
             row = (
+                name=ismissing(steel.name) ? "" : steel.name,
                 name_ISO=ismissing(steel.name_ISO) ? "" : steel.name_ISO,
                 znacka_EN=ismissing(steel.znacka_EN) ? "" : steel.znacka_EN,
                 cislo_EN=ismissing(steel.cislo_EN) ? "" : steel.cislo_EN,
@@ -101,13 +102,14 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 rho_kg_m3=property("rho")
             )
             VVnames = Dict{String,Any}(
-                "name_ISO" => row.name_ISO,
-                "znacka_EN" => row.znacka_EN,
-                "cislo_EN" => row.cislo_EN,
-                "name_CSN" => row.name_CSN,
-                "name_DIN" => row.name_DIN,
+                "name" => name, # název materiálu
+                "name_ISO" => row.name_ISO, # název ISO
+                "znacka_EN" => row.znacka_EN, # název EN značka
+                "cislo_EN" => row.cislo_EN, # název EN číslo
+                "name_CSN" => row.name_CSN, # název ČSN
+                "name_DIN" => row.name_DIN, # název DIN
                 "standard" => standard, # hledáno z tabulky ČSN, proto je standard ČSN
-                "norma" => row.norma_CSN,
+                "norma_CSN" => row.norma_CSN,
                 "druh" => row.druh
             )
             VVnamesOcel = Dict{String,Any}(
@@ -125,29 +127,37 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 "obvykla_jakost" => textvalue(steel.obvykla_jakost)
             )
             VVvelicina = Dict{String,Any}(
-                "Re" => row.Re_MPa,
+                "Re" => property("Re", "zakladni"),
                 "Re_unit" => jednotka("Re"),
-                "Re_min" => row.Re_min_MPa,
+                "Re_min" => property("Re", "min"),
                 "Re_min_unit" => jednotka("Re"),
-                "Rm_min" => row.Rm_min_MPa,
+                "Re_max" => property("Re", "max"),
+                "Re_max_unit" => jednotka("Re"),
+                "Rm" => property("Rm", "zakladni"),
+                "Rm_unit" => jednotka("Rm"),
+                "Rm_min" => property("Rm", "min"),
                 "Rm_min_unit" => jednotka("Rm"),
-                "Rm_max" => row.Rm_max_MPa,
+                "Rm_max" => property("Rm", "max"),
                 "Rm_max_unit" => jednotka("Rm"),
-                "A" => row.A_proc,
+                "Rp0_2" => property("Rp0_2", "zakladni"),
+                "Rp0_2_unit" => jednotka("Rp0_2"),
+                "Rp0_1" => property("Rp0_1", "zakladni"),
+                "Rp0_1_unit" => jednotka("Rp0_1"),
+                "A" => property("A"),
                 "A_unit" => jednotka("A"),
-                "KV" => row.KV_J,
+                "KV" => property("KV"),
                 "KV_unit" => jednotka("KV"),
-                "T_KV" => row.T_KV_degC,
+                "T_KV" => property("T_KV"),
                 "T_KV_unit" => jednotka("T_KV"),
-                "E" => row.E_GPa,
+                "E" => property("E"),
                 "E_unit" => jednotka("E"),
-                "G" => row.G_GPa,
+                "G" => property("G"),
                 "G_unit" => jednotka("G"),
-                "alfa" => row.alfa_1_K,
+                "alfa" => property("alfa"),
                 "alfa_unit" => jednotka("alfa"),
-                "ny" => row.ny,
+                "ny" => property("ny"),
                 "ny_unit" => jednotka("ny"),
-                "rho" => row.rho_kg_m3,
+                "rho" => property("rho"),
                 "rho_unit" => jednotka("rho")
             )
             dalsi_vlastnosti = Dict{String,Any}(
@@ -178,13 +188,14 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             )
         end
         VV = Dict{String,Any}(
+            "name" => row.name, # název materiálu
             "name_ISO" => row.name_ISO,
             "znacka_EN" => row.znacka_EN,
             "cislo_EN" => row.cislo_EN,
             "name_CSN" => row.name_CSN,
             "name_DIN" => row.name_DIN,
             "standard" => standard, # hledáno z tabulky ČSN, proto je standard ČSN
-            "norma" => row.norma_CSN,
+            "norma_CSN" => row.norma_CSN,
             "druh" => row.druh,
             "Re" => row.Re_MPa,
             "Re_unit" => jednotka("Re"),
@@ -274,7 +285,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "name_CSN" => row.name_CSN,
             "name_DIN" => row.name_DIN,
             "standard" => standard,
-            "norma" => row.norma_CSN,
+            "norma_CSN" => row.norma_CSN,
             "druh" => row.druh,
             "Rm_tah" => row.Rm_tah_MPa,
             "Rm_tah_unit" => jednotka("Rm"),
