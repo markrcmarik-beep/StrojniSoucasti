@@ -13,7 +13,7 @@
 #
 using DBInterface
 
-function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
+function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
 
     # ---------------------------------------------------------------------
     # pomocné funkce
@@ -24,7 +24,10 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
     end
     jednotka = kod -> get(jednotky, kod, "")
 
-
+    VVvstup = Dict{String,Any}(
+        "VVnormy" => VVnormy, # doplněno
+        "VVdruh" => VVdruh # doplněno
+    )
     property = function (kod, varianta="zakladni", zalozni=nothing)
         hodnota = get(properties, (kod, varianta), nothing)
         if (hodnota === nothing || ismissing(hodnota)) && zalozni !== nothing
@@ -34,7 +37,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
     end
     # ---------------------------------------------------------------------
     names = ["name", "name_ISO", "znacka_EN", "cislo_EN", "name_CSN", "name_DIN", "norma_CSN", "druh"]
-    if druh == "ocel"
+    if VVdruh == "ocel"
         namesOcel = ["stav", "zpracovani", "vlastnosti", "pouziti", "svaritelnost", "obrobitelnost",
             "k_cementovani", "k_nitridovani", "k_zuslechtovani", "k_povrchovemu_kaleni",
             "korozivzdorna", "obvykla_jakost"]
@@ -108,9 +111,8 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 "cislo_EN" => row.cislo_EN, # název EN číslo
                 "name_CSN" => row.name_CSN, # název ČSN
                 "name_DIN" => row.name_DIN, # název DIN
-                "standard" => standard, # hledáno z tabulky ČSN, proto je standard ČSN
                 "norma_CSN" => row.norma_CSN,
-                "druh" => row.druh
+                "druh" => row.druh,
             )
             VVnamesOcel = Dict{String,Any}(
                 "stav" => textvalue(steel.stav),
@@ -139,10 +141,10 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 "Rm_min_unit" => jednotka("Rm"),
                 "Rm_max" => property("Rm", "max"),
                 "Rm_max_unit" => jednotka("Rm"),
-                "Rp0_2" => property("Rp0_2", "zakladni"),
-                "Rp0_2_unit" => jednotka("Rp0_2"),
-                "Rp0_1" => property("Rp0_1", "zakladni"),
-                "Rp0_1_unit" => jednotka("Rp0_1"),
+                "Rp0_1" => property("Rp0.1", "zakladni"),
+                "Rp0_1_unit" => jednotka("Rp0.1"),
+                "Rp0_2" => property("Rp0.2", "zakladni"),
+                "Rp0_2_unit" => jednotka("Rp0.2"),
                 "A" => property("A"),
                 "A_unit" => jednotka("A"),
                 "KV" => property("KV"),
@@ -158,7 +160,45 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 "ny" => property("ny"),
                 "ny_unit" => jednotka("ny"),
                 "rho" => property("rho"),
-                "rho_unit" => jednotka("rho")
+                "rho_unit" => jednotka("rho"),
+                "tvrdost_HB" => property("HB"),
+                "tvrdost_HB_unit" => jednotka("HB"),
+                "tvrdost_HV" => property("HV"),
+                "tvrdost_HV_unit" => jednotka("HV"),
+                "tvrdost_HRC" => property("HRC"),
+                "tvrdost_HRC_unit" => jednotka("HRC"),
+                "Rm_tlak" => property("Rm_tlak"),
+                "Rm_tlak_unit" => jednotka("Rm_tlak"),
+                "M100" => property("M100"),
+                "M100_unit" => jednotka("M100"),
+                "TS" => property("TS"),
+                "TS_unit" => jednotka("TS"),
+                "tvrdost_ShA" => property("tvrdost_ShA"),
+                "tvrdost_ShA_unit" => jednotka("tvrdost_ShA"),
+                "T_min" => property("T_min"),
+                "T_min_unit" => jednotka("T_min"),
+                "T_max" => property("T_max"),
+                "T_max_unit" => jednotka("T_max"),
+                "compression_set" => property("compression_set"),
+                "compression_set_unit" => jednotka("compression_set"),
+                "A_break" => property("A_break"),
+                "A_break_unit" => jednotka("A_break"),
+                "E_tah" => property("E_tah"),
+                "E_tah_unit" => jednotka("E_tah"),
+                "Rm_tlak_1" => property("Rm_tlak_1"),
+                "Rm_tlak_1_unit" => jednotka("Rm_tlak_1"),
+                "Rm_tlak_2" => property("Rm_tlak_2"),
+                "Rm_tlak_2_unit" => jednotka("Rm_tlak_2"),
+                "Rm_tlak_5" => property("Rm_tlak_5"),
+                "Rm_tlak_5_unit" => jednotka("Rm_tlak_5"),
+                "creep_1000h" => property("creep_1000h"),
+                "creep_1000h_unit" => jednotka("creep_1000h"),
+                "KV_charpy" => property("KV_charpy"),
+                "KV_charpy_unit" => jednotka("KV_charpy"),
+                "tvrdost_kulicka" => property("tvrdost_kulicka"),
+                "tvrdost_kulicka_unit" => jednotka("tvrdost_kulicka"),
+                "mu_smyk" => property("mu_smyk"),
+                "mu_smyk_unit" => jednotka("tvrdosmu_smykt_kulicka")
             )
             dalsi_vlastnosti = Dict{String,Any}(
                 "stav" => textvalue(steel.stav),
@@ -183,7 +223,9 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
                 "tvrdost_HV" => property("HV"),
                 "tvrdost_HV_unit" => jednotka("HV"),
                 "tvrdost_HRC" => property("HRC"),
-                "tvrdost_HRC_unit" => jednotka("HRC"),
+                "tvrdost_HRC_unit" => jednotka("HRC")
+            )
+            VVrozsahy = Dict{String,Any}(
                 "Re_rozsahy" => re_rozsahy
             )
         end
@@ -194,7 +236,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "cislo_EN" => row.cislo_EN,
             "name_CSN" => row.name_CSN,
             "name_DIN" => row.name_DIN,
-            "standard" => standard, # hledáno z tabulky ČSN, proto je standard ČSN
+            "normy" => VVnormy, # hledáno z tabulky ČSN, proto je normy ČSN
             "norma_CSN" => row.norma_CSN,
             "druh" => row.druh,
             "Re" => row.Re_MPa,
@@ -223,13 +265,14 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "rho" => row.rho_kg_m3,
             "rho_unit" => jednotka("rho")
         )
-        merge!(VV, dalsi_vlastnosti)
-        if VV !== nothing
-            return VV
-        else
-            return nothing
-        end
-    elseif druh == "litina"
+        VV=merge(VVvstup, VVnames, VVnamesOcel, VVvelicina, VVrozsahy)
+        return VV
+        #if VVnames !== nothing
+        #    return VV
+        #else
+        #    return nothing
+        #end
+    elseif VVdruh == "litina"
         namesLitina = ["stav", "zpracovani", "vlastnosti", "pouziti", "svaritelnost",
             "obrobitelnost", "korozivzdorna"]
         tabulky = Set(row.name for row in DBInterface.execute(
@@ -284,7 +327,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "cislo_EN" => row.cislo_EN,
             "name_CSN" => row.name_CSN,
             "name_DIN" => row.name_DIN,
-            "standard" => standard,
+            "normy" => VVnormy,
             "norma_CSN" => row.norma_CSN,
             "druh" => row.druh,
             "Rm_tah" => row.Rm_tah_MPa,
@@ -313,7 +356,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
         else
             return nothing
         end
-    elseif druh == "pryz"
+    elseif VVdruh == "pryz"
         namesPryz = ["stav", "zpracovani", "vlastnosti", "pouziti", "odolnost_olej", 
             "odolnost_ozon", "odolnost_oder"]
         result = DBInterface.execute(
@@ -349,7 +392,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "cislo_EN" => textvalue(pryz.cislo_EN),
             "name_CSN" => textvalue(pryz.name_CSN),
             "name_DIN" => textvalue(pryz.name_DIN),
-            "standard" => standard,
+            "normy" => VVnormy,
             "norma" => textvalue(pryz.norma_CSN),
             "druh" => textvalue(pryz.druh),
             "hardness" => property_pryz("tvrdost_ShA"),
@@ -375,7 +418,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
         else
             return nothing
         end
-    elseif druh == "nezelezne kovy"
+    elseif VVdruh == "nezelezne kovy"
         namesNezelezneKovy = ["stav", "zpracovani", "vlastnosti", "pouziti", "svaritelnost",
             "obrobitelnost", "korozivzdorna"]
         result = DBInterface.execute(
@@ -411,7 +454,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "cislo_EN" => textvalue(kov.cislo_EN),
             "name_CSN" => textvalue(kov.name_CSN),
             "name_DIN" => textvalue(kov.name_DIN),
-            "standard" => standard,
+            "normy" => VVnormy,
             "norma" => textvalue(kov.norma_CSN),
             "druh" => textvalue(kov.druh),
             "Rp0_2" => property_kov("Rp0.2", "min"),
@@ -447,7 +490,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
         else
             return nothing
         end
-    elseif druh == "plasty"
+    elseif VVdruh == "plasty"
         namesPlasty = ["stav", "skupina", "zpracovani", "vlastnosti", "pouziti",
             "chemicka_odolnost", "odolnost_uv", "horlavost"]
         result = DBInterface.execute(
@@ -483,7 +526,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "cislo_EN" => textvalue(plast.cislo_EN),
             "name_CSN" => textvalue(plast.name_CSN),
             "name_DIN" => textvalue(plast.name_DIN),
-            "standard" => standard,
+            "normy" => VVnormy,
             "norma" => textvalue(plast.norma_CSN),
             "druh" => textvalue(plast.druh),
             "E" => property_plast("E"),
@@ -506,7 +549,7 @@ function _materialyNactiDB(db, name, celeoznaceni, standard, druh)
             "horlavost" => textvalue(plast.horlavost)
         )
     else
-        error("Unsupported material type: $druh")
+        error("Unsupported material type: $VVdruh")
     end
 
 end

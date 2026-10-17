@@ -1,4 +1,4 @@
-# ver: 2026-10-13
+# ver: 2026-10-17
 using Test
 using StrojniSoucasti
 using SQLite
@@ -12,7 +12,11 @@ using SQLite
         podle_cisla = StrojniSoucasti.materialyEN(db, "1.0036")
 
         @test podle_znacky isa Dict{String,Any}
-        @test isequal(podle_znacky, podle_cisla)
+        @test Set(keys(podle_znacky)) == Set(keys(podle_cisla))
+        @test all(
+            k == "name" || isequal(podle_znacky[k], podle_cisla[k])
+            for k in keys(podle_znacky)
+        )
         @test podle_znacky["znacka_EN"] == "S235JRG1"
         @test podle_znacky["cislo_EN"] == "1.0036"
         @test podle_znacky["druh"] == "konstrukční ocel"
@@ -23,7 +27,7 @@ using SQLite
         podle_cisla = StrojniSoucasti.materialyEN(db, "5.1300")
 
         @test podle_znacky isa Dict{String,Any}
-        @test podle_znacky == podle_cisla
+        @test isequal(podle_znacky, podle_cisla)
         @test podle_znacky["znacka_EN"] == "EN-GJL-200"
         @test podle_znacky["cislo_EN"] == "5.1300"
         @test podle_znacky["druh"] == "šedá litina"

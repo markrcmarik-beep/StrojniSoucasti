@@ -169,7 +169,7 @@ function materialy(name::AbstractString)
                 get(VV, "name_DIN", "")::String, # název materiálu DIN
                 get(VV, "cislo_EN", "")::String, # název materiálu EN
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
-                get(VV, "standard", "")::String, # norma
+                get(VV, "normy", "")::String, # hledaný sloupec v databázi (např. ČSN, EN, DIN, ISO, -)
                 get(VV, "druh", "")::String, # druh kovu
                 tofloat(get(VV, "Rp0_2", 0)), # mez kluzu
                 "MPa", # jednotka meze kluzu

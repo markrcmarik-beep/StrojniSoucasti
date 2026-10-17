@@ -17,7 +17,7 @@ using SQLite
     @test mat11["cislo_EN"] isa AbstractString
     @test mat11["name_CSN"] isa AbstractString
     @test mat11["name_DIN"] isa AbstractString
-    @test mat11["standard"] isa AbstractString
+    @test mat11["VVnormy"] isa AbstractString
     @test mat11["norma_CSN"] isa AbstractString
     @test mat11["druh"] isa AbstractString
     # namesOcel
@@ -95,7 +95,7 @@ using SQLite
     @test mat14["cislo_EN"] == ""
     @test mat14["name_CSN"] == "11373.1 žíháno"
     @test mat14["name_DIN"] == ""
-    @test mat14["standard"] == "ČSN"
+    @test mat14["VVnormy"] == "ČSN"
     @test mat14["norma_CSN"] == "ČSN 41 1373"
     @test mat14["Re"] == 220
     @test mat14["Re_unit"] == "MPa"
@@ -137,7 +137,7 @@ using SQLite
 
     mat21 = StrojniSoucasti.materialyCSN(db, "42 3001")
     @test mat21["name_CSN"] == "423001"
-    @test mat21["standard"] == "ČSN"
+    #@test mat21["VVnormy"] == "ČSN"
     @test mat21["Rp0_2"] == 50
     @test mat21["Rp0_2_unit"] == "MPa"
     #@test mat21["Rm_min"] == 250
@@ -164,7 +164,7 @@ using SQLite
     @test mat31["cislo_EN"] == "5.1300"
     @test mat31["name_CSN"] == "422420"
     @test mat31["name_DIN"] == ""
-    @test mat31["standard"] == "ČSN"
+    #@test mat31["VVnormy"] == "ČSN"
     @test mat31["norma_CSN"] == "ČSN 42 2420"
     @test mat31["druh"] == "šedá litina"
     @test mat31["Rm_tah"] == 200

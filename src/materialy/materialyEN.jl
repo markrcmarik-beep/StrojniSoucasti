@@ -25,55 +25,55 @@ function materialyEN(db, name::AbstractString)::Union{Dict{String, Any},
     # -----------------------------------------------------
     # Ocel , Ocel na lití
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "-", "ocel")
+    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "EN", "ocel")
     if VV !== nothing
         return VV
     end
-    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "-", "ocel")
+    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "EN", "ocel")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # litina
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "-", "litina")
+    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "EN", "litina")
     if VV !== nothing
         return VV
     end
-    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "-", "litina")
+    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "EN", "litina")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # pryž
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "-", "pryz")
+    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "EN", "pryz")
     if VV !== nothing
         return VV
     end
-    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "-", "pryz")
+    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "EN", "pryz")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # meželezné kovy
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "-", "nezelezne kovy")
+    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "EN", "nezelezne kovy")
     if VV !== nothing
         return VV
     end
-    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "-", "nezelezne kovy")
+    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "EN", "nezelezne kovy")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # plasty
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "-", "plasty")
+    VV = StrojniSoucasti._materialyNactiDB(db, "znacka_EN", name, "EN", "plasty")
     if VV !== nothing
         return VV
     end
-    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "-", "plasty")
+    VV = StrojniSoucasti._materialyNactiDB(db, "cislo_EN", name, "EN", "plasty")
     if VV !== nothing
         return VV
     end

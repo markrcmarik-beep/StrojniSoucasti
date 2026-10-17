@@ -12,6 +12,8 @@ using SQLite
             db, "name_CSN", "11373", "ČSN", "ocel")
 
         @test ocel isa Dict{String,Any}
+    @test ocel["VVnormy"] isa AbstractString
+    @test ocel["VVdruh"] isa AbstractString
     # names
     @test ocel["name"] isa AbstractString # název materiálu
     @test ocel["name_ISO"] isa AbstractString
@@ -19,7 +21,7 @@ using SQLite
     @test ocel["cislo_EN"] isa AbstractString
     @test ocel["name_CSN"] isa AbstractString
     @test ocel["name_DIN"] isa AbstractString
-    @test ocel["standard"] isa AbstractString
+    
     @test ocel["norma_CSN"] isa AbstractString
     @test ocel["druh"] isa AbstractString
     # namesOcel
@@ -45,13 +47,15 @@ using SQLite
     @test ocel["Rm_min"] isa Float64 || ismissing(ocel["Rm_min"])
     @test ocel["Rm_max"] isa Float64 || ismissing(ocel["Rm_max"])
 
+    #println(ocel)
+
     @test ocel["E"] isa Float64 || ismissing(ocel["E"])
     @test ocel["E_unit"] isa AbstractString
 
     @test ocel["Re_rozsahy"] isa AbstractVector{<:NamedTuple}
 
         @test ocel["name_CSN"] == "11373"
-        @test ocel["standard"] == "ČSN"
+        @test ocel["VVnormy"] == "ČSN"
         @test ocel["Re"] == 250
         @test ocel["Re_unit"] == "MPa"
         @test ocel["E"] == 210

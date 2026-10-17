@@ -25,35 +25,35 @@ function materialyISO(db, name::AbstractString)::Union{Dict{String, Any},
     # -----------------------------------------------------
     # Ocel , Ocel na lití
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "-", "ocel")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "ocel")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # litina
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "-", "litina")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "litina")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # pryž
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "-", "pryz")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "pryz")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # meželezné kovy
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "-", "nezelezne kovy")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "nezelezne kovy")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # plasty
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "-", "plasty")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "plasty")
     if VV !== nothing
         return VV
     end
