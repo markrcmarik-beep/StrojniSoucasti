@@ -279,7 +279,7 @@ using StrojniSoucasti, Unitful, Test
         @test sigma > 0u"MPa"
     end
 
-    # Test 39: Litina z materialy() - tah/tlak/střih s tau_lim
+    # Test 39: Litina z materialy() - nulové tau_lim se bere jako neuvedené
     @testset "Re z materialy() - litina" begin
         mat = materialy("422420")
         @test !isnothing(mat)
@@ -290,7 +290,11 @@ using StrojniSoucasti, Unitful, Test
 
         @test isapprox(sigma_tah, (200/1.3)u"MPa"; rtol=1e-12)
         @test isapprox(sigma_tlak, (800/1.3)u"MPa"; rtol=1e-12)
-        @test isapprox(sigma_strih, (100/1.5)u"MPa"; rtol=1e-12)
+        @test isapprox(sigma_strih, ((200/sqrt(3))/1.5)u"MPa"; rtol=1e-12)
+
+        mat_with_tau = (; Rm_tah=200.0, tau_lim=100.0)
+        sigma_strih_tau = dovoleneNapeti("střih", "statický"; mat=mat_with_tau)
+        @test isapprox(sigma_strih_tau, (100/1.5)u"MPa"; rtol=1e-12)
     end
 
     # Test 40: Litina bez tau_lim - fallback na Rm_tah/sqrt(3)

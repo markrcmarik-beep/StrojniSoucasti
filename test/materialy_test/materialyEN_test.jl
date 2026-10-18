@@ -13,10 +13,7 @@ using SQLite
 
         @test podle_znacky isa Dict{String,Any}
         @test Set(keys(podle_znacky)) == Set(keys(podle_cisla))
-        @test all(
-            k == "name" || isequal(podle_znacky[k], podle_cisla[k])
-            for k in keys(podle_znacky)
-        )
+        @test isequal(podle_znacky, podle_cisla)
         @test podle_znacky["znacka_EN"] == "S235JRG1"
         @test podle_znacky["cislo_EN"] == "1.0036"
         @test podle_znacky["druh"] == "konstrukční ocel"

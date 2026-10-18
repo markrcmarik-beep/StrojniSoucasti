@@ -1,6 +1,7 @@
 # ver: 2026-10-16
 
 struct MaterialOcel
+    tabulka::String             # název tabulky
     name::String                # název
     nameObecne::String          # název obecný
     nameISO::String             # název ISO (nepovinné)
@@ -38,6 +39,7 @@ struct MaterialOcel
 end
 
 struct MaterialNezelezneKovy
+    tabulka::String             # název tabulky
     name::String                # název
     nameObecne::String          # název obecný
     nameISO::String             # název ISO (nepovinné)
@@ -67,6 +69,7 @@ struct MaterialNezelezneKovy
 end
 
 struct MaterialLitina
+    tabulka::String         # název tabulky
     name::String            # název
     nameObecne::String      # název obecný
     nameISO::String         # název ISO (nepovinné)
@@ -99,6 +102,7 @@ struct MaterialLitina
 end
 
 struct MaterialPryz
+    tabulka::String         # název tabulky
     name::String            # název
     nameObecne::String      # název obecný
     nameISO::String         # název ISO (nepovinné)
@@ -121,6 +125,7 @@ struct MaterialPryz
 end
 
 struct MaterialPlast
+    tabulka::String         # název tabulky
     name::String            # název
     nameObecne::String      # název obecný
     nameISO::String         # název ISO (nepovinné)

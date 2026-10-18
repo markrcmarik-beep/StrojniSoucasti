@@ -23,6 +23,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
         jednotky[velicina.kod] = hodnota
     end
     jednotka = kod -> get(jednotky, kod, "")
+    textvalue = value -> ismissing(value) ? "" : value
 
     VVvstup = Dict{String,Any}(
         "VVnormy" => VVnormy, # doplněno
@@ -64,7 +65,6 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                 properties[(prop.kod, prop.varianta)] = prop.hodnota
             end
 
-            textvalue = value -> ismissing(value) ? "" : value
             re_rozsahy = [
                 (rozsah_od_mm=prop.rozsah_od_mm,
                     rozsah_do_mm=prop.rozsah_do_mm,
@@ -105,7 +105,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                 rho_kg_m3=property("rho")
             )
             VVnames = Dict{String,Any}(
-                "name" => name, # název materiálu
+                "name" => row.name, # název materiálu
                 "name_ISO" => row.name_ISO, # název ISO
                 "znacka_EN" => row.znacka_EN, # název EN značka
                 "cislo_EN" => row.cislo_EN, # název EN číslo
@@ -163,6 +163,10 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                 "rho_unit" => jednotka("rho"),
                 "tvrdost_HB" => property("HB"),
                 "tvrdost_HB_unit" => jednotka("HB"),
+                "tvrdost_HB_min" => property("HB", "min"),
+                "tvrdost_HB_min_unit" => jednotka("HB"),
+                "tvrdost_HB_max" => property("HB", "max"),
+                "tvrdost_HB_max_unit" => jednotka("HB"),
                 "tvrdost_HV" => property("HV"),
                 "tvrdost_HV_unit" => jednotka("HV"),
                 "tvrdost_HRC" => property("HRC"),
@@ -198,73 +202,14 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                 "tvrdost_kulicka" => property("tvrdost_kulicka"),
                 "tvrdost_kulicka_unit" => jednotka("tvrdost_kulicka"),
                 "mu_smyk" => property("mu_smyk"),
-                "mu_smyk_unit" => jednotka("tvrdosmu_smykt_kulicka")
+                "mu_smyk_unit" => jednotka("mu_smyk")
             )
-            dalsi_vlastnosti = Dict{String,Any}(
-                "stav" => textvalue(steel.stav),
-                "zpracovani" => textvalue(steel.zpracovani),
-                "vlastnosti" => textvalue(steel.vlastnosti),
-                "pouziti" => textvalue(steel.pouziti),
-                "obrobitelnost" => textvalue(steel.obrobitelnost),
-                "k_cementovani" => textvalue(steel.k_cementovani),
-                "k_nitridovani" => textvalue(steel.k_nitridovani),
-                "k_zuslechtovani" => textvalue(steel.k_zuslechtovani),
-                "k_povrchovemu_kaleni" => textvalue(steel.k_povrchovemu_kaleni),
-                "korozivzdorna" => textvalue(steel.korozivzdorna),
-                "obvykla_jakost" => textvalue(steel.obvykla_jakost),
-                "Re_max" => property("Re", "max"),
-                "Re_max_unit" => jednotka("Re"),
-                "Rp0_2" => property("Rp0.2"),
-                "Rp0_2_unit" => jednotka("Rp0.2"),
-                "Rp0_1" => property("Rp0.1"),
-                "Rp0_1_unit" => jednotka("Rp0.1"),
-                "tvrdost_HB" => property("HB"),
-                "tvrdost_HB_unit" => jednotka("HB"),
-                "tvrdost_HV" => property("HV"),
-                "tvrdost_HV_unit" => jednotka("HV"),
-                "tvrdost_HRC" => property("HRC"),
-                "tvrdost_HRC_unit" => jednotka("HRC")
-            )
+
             VVrozsahy = Dict{String,Any}(
                 "Re_rozsahy" => re_rozsahy
             )
         end
-        VV = Dict{String,Any}(
-            "name" => row.name, # název materiálu
-            "name_ISO" => row.name_ISO,
-            "znacka_EN" => row.znacka_EN,
-            "cislo_EN" => row.cislo_EN,
-            "name_CSN" => row.name_CSN,
-            "name_DIN" => row.name_DIN,
-            "normy" => VVnormy, # hledáno z tabulky ČSN, proto je normy ČSN
-            "norma_CSN" => row.norma_CSN,
-            "druh" => row.druh,
-            "Re" => row.Re_MPa,
-            "Re_unit" => jednotka("Re"),
-            "Re_min" => row.Re_min_MPa,
-            "Re_min_unit" => jednotka("Re"),
-            "Rm_min" => row.Rm_min_MPa,
-            "Rm_min_unit" => jednotka("Rm"),
-            "Rm_max" => row.Rm_max_MPa,
-            "Rm_max_unit" => jednotka("Rm"),
-            "A" => row.A_proc,
-            "A_unit" => jednotka("A"),
-            "KV" => row.KV_J,
-            "KV_unit" => jednotka("KV"),
-            "T_KV" => row.T_KV_degC,
-            "T_KV_unit" => jednotka("T_KV"),
-            "svaritelnost" => row.svaritelnost,
-            "E" => row.E_GPa,
-            "E_unit" => jednotka("E"),
-            "G" => row.G_GPa,
-            "G_unit" => jednotka("G"),
-            "alfa" => row.alfa_1_K,
-            "alfa_unit" => jednotka("alfa"),
-            "ny" => row.ny,
-            "ny_unit" => jednotka("ny"),
-            "rho" => row.rho_kg_m3,
-            "rho_unit" => jednotka("rho")
-        )
+
         VV=merge(VVvstup, VVnames, VVnamesOcel, VVvelicina, VVrozsahy)
         return VV
         #if VVnames !== nothing
@@ -286,7 +231,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             isempty(rows) && return nothing
             litina = first(rows)
 
-            vlastnosti = Dict{Tuple{String,String},Any}()
+            properties = Dict{Tuple{String,String},Any}()
             for value in DBInterface.execute(
                 db,
                 "SELECT v.kod, lv.varianta, lv.hodnota " *
@@ -294,14 +239,11 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                     "JOIN velicina v ON v.id = lv.velicina_id " *
                     "WHERE lv.litina_id = ? AND lv.rozsah_od_mm IS NULL " *
                     "AND lv.rozsah_do_mm IS NULL", (litina.id,))
-                vlastnosti[(value.kod, value.varianta)] = value.hodnota
-            end
-            property_litina = function (kod, varianta="zakladni")
-                value = get(vlastnosti, (kod, varianta), 0.0)
-                value === nothing || ismissing(value) ? 0.0 : value
+                    properties[(value.kod, value.varianta)] = value.hodnota
             end
 
             row = (
+                name=ismissing(litina.name) ? "" : litina.name,
                 name_ISO=ismissing(litina.name_ISO) ? "" : litina.name_ISO,
                 znacka_EN=ismissing(litina.znacka_EN) ? "" : litina.znacka_EN,
                 cislo_EN=ismissing(litina.cislo_EN) ? "" : litina.cislo_EN,
@@ -309,53 +251,129 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
                 name_DIN=ismissing(litina.name_DIN) ? "" : litina.name_DIN,
                 norma_CSN=litina.norma_CSN,
                 druh=litina.druh,
-                Rm_tah_MPa=property_litina("Rm"),
-                Rm_tlak_MPa=property_litina("Rm_tlak"),
-                A_proc=property_litina("A"),
-                HB_min=property_litina("HB", "min"),
-                HB_max=property_litina("HB", "max"),
-                E_GPa=property_litina("E"),
-                G_GPa=property_litina("G"),
-                alfa_1_K=property_litina("alfa"),
-                ny=property_litina("ny"),
-                rho_kg_m3=property_litina("rho")
+                Rm_tah_MPa=property("Rm"),
+                Rm_tlak_MPa=property("Rm_tlak"),
+                A_proc=property("A"),
+                HB_min=property("HB", "min"),
+                HB_max=property("HB", "max"),
+                E_GPa=property("E"),
+                G_GPa=property("G"),
+                alfa_1_K=property("alfa"),
+                ny=property("ny"),
+                rho_kg_m3=property("rho")
             )
         end
-        VV = Dict{String,Any}(
-            "name_ISO" => row.name_ISO,
-            "znacka_EN" => row.znacka_EN,
-            "cislo_EN" => row.cislo_EN,
-            "name_CSN" => row.name_CSN,
-            "name_DIN" => row.name_DIN,
-            "normy" => VVnormy,
-            "norma_CSN" => row.norma_CSN,
-            "druh" => row.druh,
-            "Rm_tah" => row.Rm_tah_MPa,
-            "Rm_tah_unit" => jednotka("Rm"),
-            "Rm_tlak" => row.Rm_tlak_MPa,
-            "Rm_tlak_unit" => jednotka("Rm_tlak"),
-            "A" => row.A_proc,
-            "A_unit" => jednotka("A"),
-            "HB_min" => row.HB_min,
-            "HB_min_unit" => jednotka("HB"),
-            "HB_max" => row.HB_max,
-            "HB_max_unit" => jednotka("HB"),
-            "E" => row.E_GPa,
-            "E_unit" => jednotka("E"),
-            "G" => row.G_GPa,
-            "G_unit" => jednotka("G"),
-            "alfa" => row.alfa_1_K,
-            "alfa_unit" => jednotka("alfa"),
-            "ny" => row.ny,
-            "ny_unit" => jednotka("ny"),
-            "rho" => row.rho_kg_m3,
-            "rho_unit" => jednotka("rho")
-        )
-        if VV !== nothing
-            return VV
-        else
-            return nothing
-        end
+            VVnames = Dict{String,Any}(
+                "name" => row.name, # název materiálu
+                "name_ISO" => row.name_ISO, # název ISO
+                "znacka_EN" => row.znacka_EN, # název EN značka
+                "cislo_EN" => row.cislo_EN, # název EN číslo
+                "name_CSN" => row.name_CSN, # název ČSN
+                "name_DIN" => row.name_DIN, # název DIN
+                "norma_CSN" => row.norma_CSN,
+                "druh" => row.druh,
+            )
+            VVnamesLitina = Dict{String,Any}(
+                "stav" => textvalue(litina.stav),
+                "zpracovani" => textvalue(litina.zpracovani),
+                "vlastnosti" => textvalue(litina.vlastnosti),
+                "pouziti" => textvalue(litina.pouziti),
+                "svaritelnost" => textvalue(litina.svaritelnost),
+                "obrobitelnost" => textvalue(litina.obrobitelnost),
+                "korozivzdorna" => textvalue(litina.korozivzdorna),
+            )
+            VVvelicina = Dict{String,Any}(
+                "Re" => property("Re", "zakladni"),
+                "Re_unit" => jednotka("Re"),
+                "Re_min" => property("Re", "min"),
+                "Re_min_unit" => jednotka("Re"),
+                "Re_max" => property("Re", "max"),
+                "Re_max_unit" => jednotka("Re"),
+                "Rm" => property("Rm", "zakladni"),
+                "Rm_unit" => jednotka("Rm"),
+                "Rm_min" => property("Rm", "min"),
+                "Rm_min_unit" => jednotka("Rm"),
+                "Rm_max" => property("Rm", "max"),
+                "Rm_max_unit" => jednotka("Rm"),
+                "Rp0_1" => property("Rp0.1", "zakladni"),
+                "Rp0_1_unit" => jednotka("Rp0.1"),
+                "Rp0_2" => property("Rp0.2", "zakladni"),
+                "Rp0_2_unit" => jednotka("Rp0.2"),
+                "A" => property("A"),
+                "A_unit" => jednotka("A"),
+                "KV" => property("KV"),
+                "KV_unit" => jednotka("KV"),
+                "T_KV" => property("T_KV"),
+                "T_KV_unit" => jednotka("T_KV"),
+                "E" => property("E"),
+                "E_unit" => jednotka("E"),
+                "G" => property("G"),
+                "G_unit" => jednotka("G"),
+                "alfa" => property("alfa"),
+                "alfa_unit" => jednotka("alfa"),
+                "ny" => property("ny"),
+                "ny_unit" => jednotka("ny"),
+                "rho" => property("rho"),
+                "rho_unit" => jednotka("rho"),
+                "tvrdost_HB" => property("HB"),
+                "tvrdost_HB_unit" => jednotka("HB"),
+                "tvrdost_HB_min" => property("HB", "min"),
+                "tvrdost_HB_min_unit" => jednotka("HB"),
+                "tvrdost_HB_max" => property("HB", "max"),
+                "tvrdost_HB_max_unit" => jednotka("HB"),
+                "tvrdost_HV" => property("HV"),
+                "tvrdost_HV_unit" => jednotka("HV"),
+                "tvrdost_HRC" => property("HRC"),
+                "tvrdost_HRC_unit" => jednotka("HRC"),
+                "Rm_tlak" => property("Rm_tlak"),
+                "Rm_tlak_unit" => jednotka("Rm_tlak"),
+                "M100" => property("M100"),
+                "M100_unit" => jednotka("M100"),
+                "TS" => property("TS"),
+                "TS_unit" => jednotka("TS"),
+                "tvrdost_ShA" => property("tvrdost_ShA"),
+                "tvrdost_ShA_unit" => jednotka("tvrdost_ShA"),
+                "T_min" => property("T_min"),
+                "T_min_unit" => jednotka("T_min"),
+                "T_max" => property("T_max"),
+                "T_max_unit" => jednotka("T_max"),
+                "compression_set" => property("compression_set"),
+                "compression_set_unit" => jednotka("compression_set"),
+                "A_break" => property("A_break"),
+                "A_break_unit" => jednotka("A_break"),
+                "E_tah" => property("E_tah"),
+                "E_tah_unit" => jednotka("E_tah"),
+                "Rm_tlak_1" => property("Rm_tlak_1"),
+                "Rm_tlak_1_unit" => jednotka("Rm_tlak_1"),
+                "Rm_tlak_2" => property("Rm_tlak_2"),
+                "Rm_tlak_2_unit" => jednotka("Rm_tlak_2"),
+                "Rm_tlak_5" => property("Rm_tlak_5"),
+                "Rm_tlak_5_unit" => jednotka("Rm_tlak_5"),
+                "creep_1000h" => property("creep_1000h"),
+                "creep_1000h_unit" => jednotka("creep_1000h"),
+                "KV_charpy" => property("KV_charpy"),
+                "KV_charpy_unit" => jednotka("KV_charpy"),
+                "tvrdost_kulicka" => property("tvrdost_kulicka"),
+                "tvrdost_kulicka_unit" => jednotka("tvrdost_kulicka"),
+                "mu_smyk" => property("mu_smyk"),
+                "mu_smyk_unit" => jednotka("mu_smyk")
+            )
+            VVvelicinaLitina = Dict{String,Any}(
+                "Rm_tah" => property("Rm"),
+                "Rm_tah_unit" => jednotka("Rm"),
+                #"HB_min" => property("HB_min"),
+                #"HB_min_unit" => jednotka("HB"),
+                #"HB_max" => property("HB_max"),
+                #"HB_max_unit" => jednotka("HB")
+            )
+
+        VV=merge(VVvstup, VVnames, VVnamesLitina, VVvelicina)
+        return VV
+        #if VV !== nothing
+        #    return VV
+        #else
+        #    return nothing
+        #end
     elseif VVdruh == "pryz"
         namesPryz = ["stav", "zpracovani", "vlastnosti", "pouziti", "odolnost_olej", 
             "odolnost_ozon", "odolnost_oder"]
@@ -386,7 +404,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             hodnota === nothing || ismissing(hodnota) ? 0.0 : hodnota
         end
         textvalue = value -> ismissing(value) ? "" : value
-        VV = Dict{String,Any}(
+        VV = merge(VVvstup, Dict{String,Any}(
             "name_ISO" => textvalue(pryz.name_ISO),
             "znacka_EN" => textvalue(pryz.znacka_EN),
             "cislo_EN" => textvalue(pryz.cislo_EN),
@@ -412,7 +430,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             "odolnost_olej" => textvalue(pryz.odolnost_olej),
             "odolnost_ozon" => textvalue(pryz.odolnost_ozon),
             "odolnost_oder" => textvalue(pryz.odolnost_oder)
-        )
+        ))
         if VV !== nothing
             return VV
         else
@@ -448,7 +466,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             hodnota === nothing || ismissing(hodnota) ? 0.0 : hodnota
         end
         textvalue = value -> ismissing(value) ? "" : value
-        VV = Dict{String,Any}(
+        VV = merge(VVvstup, Dict{String,Any}(
             "name_ISO" => textvalue(kov.name_ISO),
             "znacka_EN" => textvalue(kov.znacka_EN),
             "cislo_EN" => textvalue(kov.cislo_EN),
@@ -484,7 +502,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             "svaritelnost" => textvalue(kov.svaritelnost),
             "obrobitelnost" => textvalue(kov.obrobitelnost),
             "korozivzdorna" => textvalue(kov.korozivzdorna)
-        )
+        ))
         if VV !== nothing
             return VV
         else
@@ -520,7 +538,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             hodnota === nothing || ismissing(hodnota) ? 0.0 : hodnota
         end
         textvalue = value -> ismissing(value) ? "" : value
-        VV = Dict{String,Any}(
+        VV = merge(VVvstup, Dict{String,Any}(
             "name_ISO" => textvalue(plast.name_ISO),
             "znacka_EN" => textvalue(plast.znacka_EN),
             "cislo_EN" => textvalue(plast.cislo_EN),
@@ -547,7 +565,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             "chemicka_odolnost" => textvalue(plast.chemicka_odolnost),
             "odolnost_uv" => textvalue(plast.odolnost_uv),
             "horlavost" => textvalue(plast.horlavost)
-        )
+        ))
     else
         error("Unsupported material type: $VVdruh")
     end

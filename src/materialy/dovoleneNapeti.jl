@@ -166,9 +166,14 @@ end # konec if
 tau_lim = nothing
 if mat !== nothing && hasproperty(mat, :tau_lim)
     tau_lim = getproperty(mat, :tau_lim)
-    if tau_lim isa Number
+    if tau_lim isa Unitful.Quantity
+        tau_lim = uconvert(u"MPa", tau_lim)
+    elseif tau_lim isa Number
         tau_lim = tau_lim * u"MPa"
-    elseif !(tau_lim isa Unitful.Quantity)
+    else
+        tau_lim = nothing
+    end
+    if tau_lim !== nothing && (!isfinite(ustrip(tau_lim)) || ustrip(tau_lim) <= 0)
         tau_lim = nothing
     end
 end

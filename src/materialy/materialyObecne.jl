@@ -25,35 +25,35 @@ function materialyObecne(db, name::AbstractString)::Union{Dict{String, Any},
     # -----------------------------------------------------
     # Ocel , Ocel na lití
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "-", "ocel")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "obecne", "ocel")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # litina
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "-", "litina")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "obecne", "litina")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # pryž
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "-", "pryz")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "obecne", "pryz")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # meželezné kovy
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "-", "nezelezne kovy")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "obecne", "nezelezne kovy")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # plasty
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "-", "plasty")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name", name, "obecne", "plasty")
     if VV !== nothing
         return VV
     end

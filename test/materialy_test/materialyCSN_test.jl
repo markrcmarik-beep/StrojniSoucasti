@@ -167,16 +167,16 @@ using SQLite
     #@test mat31["VVnormy"] == "ČSN"
     @test mat31["norma_CSN"] == "ČSN 42 2420"
     @test mat31["druh"] == "šedá litina"
-    @test mat31["Rm_tah"] == 200
-    @test mat31["Rm_tah_unit"] == "MPa"
+    @test mat31["Rm"] == 200
+    @test mat31["Rm_unit"] == "MPa"
     @test mat31["Rm_tlak"] == 800
     @test mat31["Rm_tlak_unit"] == "MPa"
     @test mat31["A"] == 0.5
     @test mat31["A_unit"] == "%"
-    @test mat31["HB_min"] == 170
-    @test mat31["HB_min_unit"] == "HB"
-    @test mat31["HB_max"] == 230
-    @test mat31["HB_max_unit"] == "HB"
+    @test mat31["tvrdost_HB_min"] == 170
+    @test mat31["tvrdost_HB_min_unit"] == "HB"
+    @test mat31["tvrdost_HB_max"] == 230
+    @test mat31["tvrdost_HB_max_unit"] == "HB"
     @test mat31["E"] == 110
     @test mat31["E_unit"] == "GPa"
     @test mat31["G"] == 44

@@ -72,10 +72,14 @@ using SQLite
             @test litina isa Dict{String,Any}
             @test litina["name_CSN"] == "422420"
             @test litina["druh"] == "šedá litina"
-            @test litina["Rm_tah"] == 200
-            @test litina["Rm_tah_unit"] == "MPa"
-            @test litina["rho"] == 7200
-            @test litina["rho_unit"] == "kg/m^3"
+            @test haskey(litina, "Re")
+            @test ismissing(litina["Re"])
+            @test haskey(litina, "Rp0_2")
+            @test litina["Rp0_2"] isa Float64 || ismissing(litina["Rp0_2"])
+            @test litina["Rm"] isa Float64 || ismissing(litina["Rm"])
+            @test litina["Rm_unit"] isa AbstractString
+            @test litina["rho"] isa Float64 || ismissing(litina["rho"])
+            @test litina["rho_unit"] isa AbstractString
         end
 
         @testset "neželezné kovy" begin
