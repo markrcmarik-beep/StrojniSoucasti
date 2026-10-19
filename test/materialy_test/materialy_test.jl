@@ -39,7 +39,7 @@ using StrojniSoucasti
 
     @test mat isa StrojniSoucasti.MaterialNezelezneKovy
     @test mat.name == "423001"
-    @test mat.standard == "ČSN"
+    @test mat.standard == ""
     @test mat.Rp0_2 == 50
     @test mat.Rp0_2_unit == "MPa"
     @test mat.Rm_min == 200

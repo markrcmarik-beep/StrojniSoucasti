@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-18
+﻿# ver: 2026-10-19
 ## Funkce: materialy()
 ## Autor: Martin
 #
@@ -209,8 +209,8 @@ function materialy(name::AbstractString)
                 get(VV, "znacka_EN", "")::String, # název materiálu DIN
                 get(VV, "norma_CSN", "")::String, # norma (nepovinné)
                 get(VV, "druh", "")::String, # typ pryžového materiálu
-                tofloat(get(VV, "hardness", 0)), # tvrdost Shore A
-                get(VV, "hardness_unit", "ShA")::String, # jednotka tvrdosti
+                tofloat(get(VV, "tvrdost_ShA", 0)), # tvrdost Shore A
+                get(VV, "tvrdost_ShA_unit", "ShA")::String, # jednotka tvrdosti
                 tofloat(get(VV, "E", 0)), # modul pružnosti
                 get(VV, "E_unit", "GPa")::String, # jednotka modulu pružnosti
                 tofloat(get(VV, "G", 0)), # modul smyku
