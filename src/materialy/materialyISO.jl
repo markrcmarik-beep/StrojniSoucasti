@@ -60,7 +60,10 @@ function materialyISO(db, name::AbstractString)::Union{Dict{String, Any},
     # -----------------------------------------------------
     # dřevo
     # -----------------------------------------------------
-    
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_ISO", name, "ISO", "drevo")
+    if VV !== nothing
+        return VV
+    end
     # -----------------------------------------------------
     # nestandartni
     # -----------------------------------------------------

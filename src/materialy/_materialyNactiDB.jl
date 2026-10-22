@@ -337,7 +337,7 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
         end
 
             VVnames = nazvy(plast)
-            VVnamesKov = Dict{String,Any}(
+            VVnamesPlast = Dict{String,Any}(
                 "stav" => textvalue(plast.stav),
                 "zpracovani" => textvalue(plast.zpracovani),
                 "vlastnosti" => textvalue(plast.vlastnosti),
@@ -348,7 +348,44 @@ function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
             )
             VVvelicina = veliciny()
 
-        VV=merge(VVvstup, VVnames, VVnamesKov, VVvelicina)
+        VV=merge(VVvstup, VVnames, VVnamesPlast, VVvelicina)
+        return VV
+    elseif VVdruh == "drevo"
+        namesDrevo = ["stav", "skupina", "zpracovani", "vlastnosti", "pouziti",
+            "trvanlivost", "odolnost_vlhkost", "odolnost_houby_hmyz"]
+        result = DBInterface.execute(
+            db,
+            "SELECT " * join(vcat(["id"], names, namesDrevo), ", ") *
+                " FROM drevo WHERE " * name * " = ? LIMIT 1",
+            (celeoznaceni,))
+        rows = [NamedTuple(row) for row in result]
+        isempty(rows) && return nothing
+        plast = first(rows)
+
+        properties = Dict{Tuple{String,String},Any}()
+        for value in DBInterface.execute(
+            db,
+            "SELECT v.kod, pv.varianta, pv.hodnota " *
+                "FROM drevo_velicina pv " *
+                "JOIN velicina v ON v.id = pv.velicina_id " *
+                "WHERE pv.drevo_id = ? AND pv.rozsah_od_mm IS NULL " *
+                "AND pv.rozsah_do_mm IS NULL", (drevo.id,))
+            properties[(value.kod, value.varianta)] = value.hodnota
+        end
+
+            VVnames = nazvy(drevo)
+            VVnamesDrevo = Dict{String,Any}(
+                "stav" => textvalue(drevo.stav),
+                "zpracovani" => textvalue(drevo.zpracovani),
+                "vlastnosti" => textvalue(drevo.vlastnosti),
+                "pouziti" => textvalue(drevo.pouziti),
+                "chemicka_odolnost" => textvalue(drevo.chemicka_odolnost),
+                "odolnost_uv" => textvalue(drevo.odolnost_uv),
+                "horlavost" => textvalue(drevo.horlavost)
+            )
+            VVvelicina = veliciny()
+
+        VV=merge(VVvstup, VVnames, VVnamesDrevo, VVvelicina)
         return VV
     else
         error("Unsupported material type: $VVdruh")

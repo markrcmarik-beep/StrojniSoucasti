@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-13
+﻿# ver: 2026-10-22
 using Test
     # body
     include("body_test/bdu2b_test.jl")
@@ -18,6 +18,7 @@ using Test
     include("materialy_test/_materialyNactiDB_test.jl")
     include("materialy_test/materialyObecne_test.jl")
     include("materialy_test/materialyCSN_test.jl")
+    include("materialy_test/materialyDIN_test.jl")
     include("materialy_test/materialyEN_test.jl")
     include("materialy_test/materialyISO_test.jl")
     include("materialy_test/dovoleneNapeti_test.jl")

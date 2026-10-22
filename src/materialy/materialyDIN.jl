@@ -25,42 +25,45 @@ function materialyDIN(db, name::AbstractString)::Union{Dict{String, Any},
     # -----------------------------------------------------
     # Ocel , Ocel na lití
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "-", "ocel")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "ocel")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # litina
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "-", "litina")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "litina")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # pryž
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "-", "pryz")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "pryz")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # meželezné kovy
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "-", "nezelezne kovy")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "nezelezne kovy")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # plasty
     # -----------------------------------------------------
-    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "-", "plasty")
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "plasty")
     if VV !== nothing
         return VV
     end
     # -----------------------------------------------------
     # dřevo
     # -----------------------------------------------------
-    
+    VV = StrojniSoucasti._materialyNactiDB(db, "name_DIN", name, "DIN", "drevo")
+    if VV !== nothing
+        return VV
+    end
     # -----------------------------------------------------
     # nestandartni
     # -----------------------------------------------------
