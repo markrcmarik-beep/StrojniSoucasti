@@ -1,9 +1,9 @@
-# ver: 2026-10-19
-## Funkce: materialyCSN()
+# ver: 2026-10-27
+## Funkce: _materialyNactiDB()
 ## Autor: Martin
 #
 ## Cesta uvnitř balíčku:
-# balicek/src/materialy/materialyCSN.jl
+# balicek/src/materialy/_materialyNactiDB.jl
 ## Použité balíčky:
 # TOML
 ## Použité uživatelské funkce:
@@ -12,7 +12,9 @@
 ## Použité proměnné vnitřní:
 #
 using DBInterface
-
+"""
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "_materialyNactiDB.md"), String))
+"""
 function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
 
     # ---------------------------------------------------------------------

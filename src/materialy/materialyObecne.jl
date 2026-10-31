@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-13
+﻿# ver: 2026-10-27
 ## Funkce: materialyObecne()
 ## Autor: Martin
 #
@@ -13,7 +13,7 @@
 #
 
 """
-$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyObecne.md"), String))
 """
 function materialyObecne(db, name::AbstractString)::Union{Dict{String, Any},
     Nothing}

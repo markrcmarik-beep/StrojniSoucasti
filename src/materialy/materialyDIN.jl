@@ -1,4 +1,4 @@
-﻿# ver: 2026-10-14
+﻿# ver: 2026-10-27
 ## Funkce: materialyDIN()
 ## Autor: Martin
 #
@@ -13,7 +13,7 @@
 #
 
 """
-$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyCSN.md"), String))
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "materialyDIN.md"), String))
 """
 function materialyDIN(db, name::AbstractString)::Union{Dict{String, Any},
     Nothing}
