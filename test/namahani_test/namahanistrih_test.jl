@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-16
+﻿# ver: 2026-09-29
 # Testovací skript pro funkci namahanistrih.jl
 # Testuje namáhání ve střihu s různými typy zatížení
 
@@ -50,7 +50,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt3 = """Výpočet namáhání ve střihu
 --------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil:
 zatížení: statický
 --------------------------------------------------------------
@@ -69,7 +69,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt4 = """Výpočet namáhání ve střihu
 --------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil: TRKR 52x5
   D = 52 mm
   d = 42 mm
@@ -357,3 +357,4 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
 end
 
+nothing

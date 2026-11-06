@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-16
+﻿# ver: 2026-09-29
 # Testovací skript pro funkci namahaniohyb.jl
 # Testuje namáhání v ohybu s různými typy zatížení
 
@@ -52,7 +52,7 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
     expected_txt3 = """Výpočet namáhání v ohybu
 ----------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil:
 zatížení: statický
 ----------------------------------------------------------------
@@ -73,7 +73,7 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
     expected_txt4 = """Výpočet namáhání v ohybu
 ----------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil: TRKR 76x5
   D = 76 mm
   d = 66 mm
@@ -418,3 +418,4 @@ Závěr posouzení bezpečnosti: Součást není bezpečná!"""
 
 end
 
+nothing

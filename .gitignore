@@ -10,6 +10,9 @@ Manifest.toml
 # Složka pro artefakty (pokud používáte Pkg.Artifacts)
 artifacts/
 
+# Lokální prostředí vytvořené CondaPkg/OdsIO
+.CondaPkg/
+
 # --- VS Code nastavení ---
 # Často je lepší nesdílet své osobní nastavení editoru (barvičky, cesty)
 .vscode/

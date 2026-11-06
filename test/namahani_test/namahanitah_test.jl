@@ -1,4 +1,4 @@
-﻿# ver: 2026-05-16
+﻿# ver: 2026-09-28
 # Testovací skript pro funkci namahanitah.jl
 # Testuje namáhání v tahu s různými typy zatížení
 
@@ -75,7 +75,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt4 = """Výpočet namáhání v tahu
 --------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil:
 zatížení: statický
 --------------------------------------------------------------
@@ -94,7 +94,7 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
     expected_txt5 = """Výpočet namáhání v tahu
 --------------------------------------------------------------
-materiál: 11 373
+materiál: 11373
 profil: TRKR 76x5
   D = 76 mm
   d = 66 mm
@@ -482,16 +482,4 @@ Bezpečnost spoje: Spoj je bezpečný"""
 
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+nothing

@@ -1,10 +1,10 @@
-## Balíček Julia v1.12
+## Balíček Julia v1.13
 ###############################################################
 ## Popis balíčku
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-09-10
+# ver: 2026-11-03
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -14,9 +14,14 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+"""
+$(read(joinpath(@__DIR__, "..", "docs", "src", "StrojniSoucasti.md"), String))
+"""
 module StrojniSoucasti
 
 # Import implementací
+include("_nastaveni.jl") # nastavení balíčku
+include("nastaveni.jl") # funkce nastaveni balíčku
 ## --- body ---
 include("body/bdu2b.jl") # souřadnice bodu B z bodu A, vzdálenosti a úhlu (2D)
 include("body/burub2body.jl") # body mezi dvěma přímkami spojenými kruhovým obloukem
@@ -35,12 +40,17 @@ include("matematika/vyhodnot_vyraz.jl")
 #include("materialy/reduction_table.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
-include("materialy/materialytypes.jl")
+#include("materialy/materialytypes.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/materialy.jl")
+include("materialy/materialyDIN.jl")
+include("materialy/materialyISO.jl")
+include("materialy/materialyEN.jl")
 include("materialy/materialyCSN.jl")
+include("materialy/_materialyNactiDB.jl")
+include("materialy/materialyObecne.jl")
 include("materialy/mezUnavy.jl") # mez únavy
-include("materialy/_materialy_nacist.jl") # načtení dat z TOML souborů
+#include("materialy/_materialy_nacist.jl") # načtení dat z TOML souborů
 ## --- namáhání ---
 include("namahani/namahanitah.jl") # namáhání tahem
 include("namahani/namahanitahtext.jl")
@@ -93,8 +103,8 @@ include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bo
 include("tolerance/tolerance.jl") # tolerance
 include("tolerance/toleranceISOlicovani.jl") # 
 include("tolerance/toleranceISOulozeni.jl") # toleranceHODN
-## --zavity--
-include("zavity/zavity.jl") # závity
+## --spojovacimaterial--
+include("spojovacimaterial/zavity.jl") # závity
 
 include("hridel.jl")
 include("hrideltext.jl")

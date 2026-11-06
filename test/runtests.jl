@@ -1,4 +1,4 @@
-﻿# ver: 2026-09-03
+﻿# ver: 2026-10-22
 using Test
     # body
     include("body_test/bdu2b_test.jl")
@@ -15,7 +15,12 @@ using Test
     include("matematika_test/vyhodnot_vyraz_test.jl")
     # materialy
     include("materialy_test/materialy_test.jl")
+    include("materialy_test/_materialyNactiDB_test.jl")
+    include("materialy_test/materialyObecne_test.jl")
     include("materialy_test/materialyCSN_test.jl")
+    include("materialy_test/materialyDIN_test.jl")
+    include("materialy_test/materialyEN_test.jl")
+    include("materialy_test/materialyISO_test.jl")
     include("materialy_test/dovoleneNapeti_test.jl")
     include("materialy_test/mezUnavy_test.jl")
     # namahani
@@ -58,8 +63,8 @@ using Test
     include("tolerance_test/tolerance_test.jl")
     include("tolerance_test/toleranceISOlicovani_test.jl")
     include("tolerance_test/toleranceISOulozeni_test.jl")
-    # zavity
-    include("zavity_test/zavity_test.jl")
+    # spojovacimaterial
+    include("spojovacimaterial_test/zavity_test.jl")
 
     # strojni soucasti
     include("hridel_test.jl")

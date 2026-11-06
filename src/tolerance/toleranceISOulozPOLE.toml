@@ -1,5 +1,5 @@
 schema_version = "1.0.0"
-# Tabulková data tolerancí es, ei,  podle norem ČSN/ISO.
+# Tabulková data tolerancí es, ei, ES, EI podle norem ČSN/ISO.
 # Jednotky: mm
 
 sizesPOLE = ["0-3", "3-6", "6-10", "10-14", "14-18", "18-24", "24-30", 

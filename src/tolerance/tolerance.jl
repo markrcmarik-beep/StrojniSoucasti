@@ -12,12 +12,8 @@
 ## Použité proměnné vnitřní:
 #
 
-const _tolerance_NAPOVEDA = read(
-    joinpath(@__DIR__, "..", "..", "docs", "src", "tolerance", "tolerance.md"),
-    String,
-)
 """
-$_tolerance_NAPOVEDA
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "tolerance", "tolerance.md"), String))
 """
 function tolerance(spec::AbstractString)
 #---------------------------------------------------------------------

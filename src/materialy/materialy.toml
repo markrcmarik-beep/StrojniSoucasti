@@ -1,0 +1,128 @@
+# schema_version = "1.0.0"
+
+[ocel]
+    "name" = "označení oceli (např. S355J2, 16MnCr5, 1.4301)"
+    "standard" = "norma oceli (např. EN 10025-2, ISO 4957)"
+    "druh" = "druh oceli (konstrukční ocel, nástrojová ocel, nerezová ocel)"
+    "vlastnosti" = "slovní popis vlastností"
+    "pouziti" = "hlavní oblasti použití"
+    "stav" = "stav tepelného zpracování (např. +N, +QT, +A, surový)",
+    "Re_min [MPa]" = "minimální mez kluzu [MPa]"
+    "Re [MPa]" = "mez kluzu [MPa]"
+    "Re_max [MPa]" = "maximální mez kluzu [MPa]"
+    "Rp0,2 [MPa]" =
+    "Rp0,1 [MPa]" =
+    "rozmer_rozsah [mm]" =
+    "Rm_min [MPa]" = "minimální mez pevnosti [MPa]"
+    "Rm_max [MPa]" = "maximální mez pevnosti [MPa]"
+    "A [%]" = "prodloužení [%]"
+    "KV [J]"  = "Charpyho zkouška rázem [J]"
+    "T_KV [°C]" = "teplota Charpyho zkoušky [°C]"
+    "svaritelnost" = "svaritelnost oceli (zaručená, dobrá, podmíněná, obtížná, nevhodná)"
+    "obrobitelnost" = obrobitelnost oceli (vynikající, velmi dobrá, dobrá, zhoršená, obtížná, špatná, velmi obtížná)
+    "E [GPa]" = "modul pružnosti (Youngův modul) [GPa]"
+    "G [GPa]" = "modul smyku [GPa]"
+    "ny" = "Poissonovo číslo []"
+    "rho [kg/m^3]" = "hustota [kg/m^3]"
+    "tvrdost HB" = "tvrdost podle Brinella"
+    "tvrdost HV" = "tvrdost podle Vickerse"
+    "tvrdost HRC" = "tvrdost podle Rockwella"
+    "k cementovani" = "možnost cementovat (ano/ne)"
+    "k nitridovani" = "možnost nitridovat (ano/ne)"
+    "k zuslechtovani" = "možnost zušlechťovat (ano/ne)"
+    "k povrchovemu kaleni" = "možnost kalit povrchově (ano/ne)"
+    "korozivzdorna" = "korozivzdornost (ano/ne)"
+    "obvykla jakost" = "ocel obvyklé jakosti / běžná komerční dostupnost (ano/ne)"
+
+[pryz]
+    "name" = "name" = "označení pryže (např. SBR 65, NBR 70, EPDM)"
+    "standard" = "norma pryže / zkušební normy (např. ISO 37, ISO 48, ASTM D2000)"
+    "druh" = "základní elastomer (SBR, NBR, EPDM, FKM/Viton, CR/Neopren, Silikon, NR)"
+    "vlastnosti" = "slovní popis vlastností"
+    "poziti" = "hlavní oblasti použití"
+    "M100 [MPa]" = "tahový modul při 100% prodloužení [MPa]"
+    "TS [MPa]" = "pevnost v tahu (Tensile Strength) [MPa]"
+    "A [%]" = "prodloužení [%]
+    "tvrdost [ShA]" = "tvrdost [ShA]"
+    "T_min [°C]" = "minimální pracovní teplota [°C]"
+    "T_max [°C]" = "maximální pracovní teplota [°C]"
+    "compression_set [%]" = "trvalá deformace v tlaku [%]"
+    "odolnost olej" = "odolnost vůči olejům a palivům (vynikající, dobrá, podmíněná, nevhodná)"
+    "odolnost ozon" = "odolnost vůči ozónu a povětrnostním vlivům (vynikající, dobrá, špatná)"
+    "odolnost oder" = "odolnost proti oděru / otěru (vysoká, standardní, nízká)"
+    "E [MPa]" = "modul pružnosti (Youngův modul) [MPa]"
+    "G [MPa]" = "modul smyku [MPa]"
+    "ny" = "Poissonovo číslo []"
+    "rho [kg/m^3]" = "hustota [kg/m^3]"
+
+[litina_uprav]
+    "name" = "označení oceli (např. S355J2, 16MnCr5, 1.4301)"
+    "standard" = "norma oceli (např. EN 10025-2, ISO 4957)"
+    "druh" = "druh oceli (konstrukční ocel, nástrojová ocel, nerezová ocel)"
+    "vlastnosti" = "slovní popis vlastností"
+    "pouziti" = "hlavní oblasti použití"
+    "stav" = "stav tepelného zpracování (např. +N, +QT, +A, surový)",
+    "Re_min [MPa]" = "minimální mez kluzu [MPa]"
+    "Re [MPa]" = "mez kluzu [MPa]"
+    "Re_max [MPa]" = "maximální mez kluzu [MPa]"
+    "Rp0,2 [MPa]" =
+    "Rp0,1 [MPa]" =
+    "rozmer_rozsah [mm]" =
+    "Rm_min [MPa]" = "minimální mez pevnosti [MPa]"
+    "Rm_max [MPa]" = "maximální mez pevnosti [MPa]"
+    "A [%]" = "prodloužení [%]"
+    "KV [J]"  = "Charpyho zkouška rázem [J]"
+    "T_KV [°C]" = "teplota Charpyho zkoušky [°C]"
+    "svaritelnost" = "svaritelnost oceli (zaručená, dobrá, podmíněná, obtížná, nevhodná)"
+    "obrobitelnost" = obrobitelnost oceli (vynikající, velmi dobrá, dobrá, zhoršená, obtížná, špatná, velmi obtížná)
+    "E [GPa]" = "modul pružnosti (Youngův modul) [GPa]"
+    "G [GPa]" = "modul smyku [GPa]"
+    "ny" = "Poissonovo číslo []"
+    "rho [kg/m^3]" = "hustota [kg/m^3]"
+    "tvrdost HB" = "tvrdost podle Brinella"
+    "tvrdost HV" = "tvrdost podle Vickerse"
+    "tvrdost HRC" = "tvrdost podle Rockwella"
+    "k cementovani" = "možnost cementovat (ano/ne)"
+    "k nitridovani" = "možnost nitridovat (ano/ne)"
+    "k zuslechtovani" = "možnost zušlechťovat (ano/ne)"
+    "k povrchovemu kaleni" = "možnost kalit povrchově (ano/ne)"
+    "korozivzdorna" = "korozivzdornost (ano/ne)"
+    "obvykla jakost" = "ocel obvyklé jakosti / běžná komerční dostupnost (ano/ne)"
+
+
+[ocel]
+    "name": "označení oceli (např. S355J2, 16MnCr5, 1.4301)",
+    "standard": "norma oceli (např. EN 10025-2, ISO 4957)",
+    "druh": "druh oceli (konstrukční, nástrojová, nerezová, cementační, k zušlechtění)",
+    "stav_dodani": "stav tepelného zpracování (např. +N, +QT, +A, surový)",
+    "rozmer_limit_mm": "platnost mechanických hodnot pro tloušťku do [mm] (např. d <= 16mm)",
+    
+    "vlastnosti": "slovní popis vlastností",
+    "pouziti": "hlavní oblasti použití",
+    
+    "Re_min_MPa": "minimální mez kluzu / smluvní mez kluzu Rp0.2 [MPa]",
+    "Rm_min_MPa": "minimální mez pevnosti v tahu [MPa]",
+    "Rm_max_MPa": "maximální mez pevnosti v tahu [MPa]",
+    "A_procenta": "prodloužení / tažnost A5 [%]",
+    "KV_J": "nárazová práce / Charpyho zkouška rázem [J]",
+    "T_KV_C": "teplota Charpyho zkoušky [°C]",
+    
+    "svaritelnost": "svaritelnost oceli (zaručená, dobrá, podmíněná, obtížná, nevhodná)",
+    "obrobitelnost": "obrobitelnost oceli (vynikající, velmi dobrá, zhoršená, obtížná, špatná, velmi obtížná)",
+    
+    "E_GPa": "modul pružnosti (Youngův modul) [GPa]",
+    "G_GPa": "modul smyku [GPa]",
+    "ny": "Poissonovo číslo [] (pro ocel typicky 0.27 až 0.30)",
+    "rho_kg_m3": "hustota [kg/m^3] (pro ocel typicky 7850)",
+    
+    "tvrdost_HB": "tvrdost podle Brinella [HB] (typicky pro žíhané/měkké stavy)",
+    "tvrdost_HV": "tvrdost podle Vickerse [HV]",
+    "tvrdost_HRC": "tvrdost podle Rockwella [HRC] (typicky pro zakalené stavy)",
+    
+    "k_cementovani": "vhodnost k cementování (ano/ne)",
+    "k_nitridovani": "vhodnost k nitridování (ano/ne)",
+    "k_zuslechtovani": "vhodnost k zušlechťování (ano/ne)",
+    "k_povrchovemu_kaleni": "možnost kalit povrchově (ano/ne)",
+    "korozivzdorna": "korozivzdornost (ano/ne)",
+    "obvykla_jakost": "ocel obvyklé jakosti / běžná komerční dostupnost (ano/ne)"
+
