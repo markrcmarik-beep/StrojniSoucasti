@@ -4,7 +4,7 @@
 # Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
 # strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
 # kombinovaně a na otlačení.
-# ver: 2026-10-14
+# ver: 2026-11-03
 ## Autor: Martin
 ## Cesta uvnitř balíčku:
 # StrojniSoucasti/src/StrojniSoucasti.jl
@@ -14,6 +14,9 @@
 ###############################################################
 ## Použité proměnné vnitřní:
 #
+"""
+$(read(joinpath(@__DIR__, "..", "docs", "src", "StrojniSoucasti.md"), String))
+"""
 module StrojniSoucasti
 
 # Import implementací
