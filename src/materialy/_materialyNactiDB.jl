@@ -1,4 +1,4 @@
-# ver: 2026-10-27
+# ver: 2026-11-14
 ## Funkce: _materialyNactiDB()
 ## Autor: Martin
 #
@@ -15,10 +15,10 @@ using DBInterface
 """
 $(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "_materialyNactiDB.md"), String))
 """
-function _materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
+function _materialyNactiDB(db::SQLite.DB, name::String, celeoznaceni::String, VVnormy::String, VVdruh::String)
 
-    # ---------------------------------------------------------------------
-    # pomocné funkce
+# ---------------------------------------------------------------------
+# pomocné funkce
     jednotky = Dict{String,String}()
     for velicina in DBInterface.execute(db, "SELECT kod, jednotka FROM velicina")
         hodnota = ismissing(velicina.jednotka) ? "" : string(velicina.jednotka)

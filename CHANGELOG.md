@@ -2,6 +2,13 @@
 
 Přehled změn balíčku `StrojniSoucasti` podle verzí zaznamenaných v historii `Project.toml`. Změny mezi vydáními jsou shrnuté podle historie repozitáře.
 
+## [nové] - 2026-__-__
+
+### Přidáno
+
+### Upraveno
+- nápověda pro `dovoleneNapeti, _materialyNactiDB`
+
 ## [0.1.25] - 2026-11-06
 
 ### Přidáno

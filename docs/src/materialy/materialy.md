@@ -26,6 +26,8 @@ Všechny uvedené typy mají mimo jiné pole `name`, `standard`, `druh`, `E`,
 specifické pro typ patří například `Re` u oceli, `Rp0_2` u neželezných kovů,
 `Rm_tah` u litiny a `hardness` u pryže a plastů. Jednotky veličin jsou uvedeny
 v odpovídajících polích s příponou `_unit`.
+
+Databáze materiálů je uložena v souboru `materialy.db`.
 ## Vzor:
 `mat = materialy(name)`
 ## Vstupní proměnné:
@@ -44,23 +46,3 @@ if mat isa StrojniSoucasti.MaterialOcel
     println("Mez kluzu: ", mat.Re, " ", mat.Re_unit)
 end
 ```
-
-## Funkce `materialy`
-
-```@docs
-materialy
-```
-
-
-## Příklad
-
-```julia
-using StrojniSoucasti
-
-mat = materialy("11 373")
-if mat isa StrojniSoucasti.MaterialOcel
-    println("Mez kluzu: ", mat.Re, " ", mat.Re_unit)
-end
-```
-
-Databáze materiálů je uložena v souboru `materialy.db`.

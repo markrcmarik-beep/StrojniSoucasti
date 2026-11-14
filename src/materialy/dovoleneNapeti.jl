@@ -1,8 +1,8 @@
-﻿## Funkce Julia v1.12
+﻿## Funkce Julia v1.13
 ###############################################################
 ## Popis funkce:
 # Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2026-09-18
+# ver: 2026-11-14
 ## Funkce: dovoleneNapeti()
 ## Autor: Martin
 #
@@ -12,55 +12,50 @@
 ## Vzor:
 ## sigma = dovoleneNapeti(Re, N::AbstractString, Z::AbstractString)
 ## Vstupní proměnné:
-# Re - mez kluzu materiálu s jednotkou (např. 250u"MPa")
 # N - druh namáhání jako řetězec: "tah", "tlak", "střih", "ohyb", "krut"
 # Z - způsob zatížení jako řetězec: "statický", "pulzní", "dynamický", "rázový"
+# Dobrovolně zadané parametry:
+#   Re - mez kluzu materiálu s jednotkou (např. 250u"MPa")
+#   Rm - mez pevnosti materiálu s jednotkou (např. 400u"MPa")
 ## Výstupní proměnné:
 # sigma - dovolené napětí materiálu s jednotkou (MPa)
 ## Použité balíčky
 # Unitful, TOML
 ## Použité uživatelské funkce:
 #
-## Příklad:
-# dovoleneNapeti(250u"MPa", "tah", "statický")
-#   vrátí dovolené napětí pro materiál s mezí kluzu 250 MPa při statickém tahu
-#   => 192.3076923076923 MPa
-# dovoleneNapeti(250u"MPa", "střih", "dynamický")
-#   vrátí dovolené napětí pro materiál s mezí kluzu 250 MPa při dynamickém střihu
-#   => 57.73502691896258 MPa
-
 ###############################################################
 ## Použité proměnné vnitřní:
 #
 using Unitful, TOML
-
-
-
 """
-    dovoleneNapeti(Re, N::AbstractString, Z::AbstractString="statický") -> Quantity
-
-Vrátí dovolené napětí materiálu podle meze kluzu `Re`, druhu namáhání `N`
-a způsobu zatížení `Z`.
-
-Vstupy:
-- `Re`: mez kluzu s jednotkou (např. `250u"MPa"`). Pokud je bez jednotky,
-  jednotka MPa se doplní.
-- `mat`: výstup z `materialy(...)`. Pokud není zadáno `Re`, použije se `mat.Re`.
-- `N`: druh namáhání jako řetězec (např. `"tah"`, `"tlak"`, `"střih"`,
-  `"ohyb"`, `"krut"`, kombinace jako `"tah-střih"`).
-- `Z`: způsob zatížení jako řetězec (např. `"statický"`, `"pulzní"`,
-  `"dynamický"`, `"rázový"`, kombinace jako `"statický-dynamický"`).
-
-Výstup:
-- `sigma`: dovolené napětí s jednotkou (MPa).
-
-Příklad:
-```julia
-dovoleneNapeti(250u"MPa", "tah", "statický")
-dovoleneNapeti(250u"MPa", "střih", "dynamický")
-```
+$(read(joinpath(@__DIR__, "..", "..", "docs", "src", "materialy", "dovoleneNapeti.md"), String))
 """
-function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing, mat=nothing)
+function dovoleneNapeti(N::AbstractString, Z::AbstractString="statický"; Re=nothing, Rm=nothing, Re0_1=nothing, mat=nothing)
+# -----------------------------------------------------------------------
+# vnitřní funkce start
+# -----------------------------------------------------------------------
+function gammaM_funkce(Z::AbstractString, N::AbstractString)
+    # Pokud uživatel zadá jednosložkové zatížení (např. "statický")
+    # a druh namáhání je kombinovaný (např. "tah-střih"),
+    # zkusíme normalizovat Z na dvojici ve tvaru "Z-Z".
+    key = (Z, N)
+    if haskey(GAMMA_M, key)
+        return GAMMA_M[key]
+    end # konec if
+    # Pokus o normalizaci: pokud je Z jednosložkové a N kombinované,
+    # vyzkoušíme klíč ("Z-Z", N)
+    if !occursin("-", Z) && occursin("-", N)
+        key2 = (string(Z, "-", Z), N)
+        if haskey(GAMMA_M, key2)
+            return GAMMA_M[key2]
+        end # konec if
+    end # konec if
+    # Pokud nebylo nalezeno, vypiš srozumitelnou chybu
+    error("Neznámá kombinace zatížení: Z=$Z, N=$N")
+end # konec funkce gammaM_funkce
+# -----------------------------------------------------------------------
+# vnitřní funkce konec
+# -----------------------------------------------------------------------
 # Načtení základní tabulky gammaM z externího TOML.
 GAMMA_M_BASE = begin # Blok pro načtení a zpracování dat z gammaM.toml
     raw = TOML.parsefile(joinpath(@__DIR__, "gammaM.toml")) # Načtení dat z gammaM.toml do slovníku raw
@@ -94,7 +89,7 @@ GAMMA_M = begin # Blok pro generování kompletního slovníku GAMMA_M s kombina
         G[(Z, N)] = v
     end # konec for
 
-    combo_factor = 1.15
+    combo_factor = 1.15 # Faktor pro kombinace zatížení a namáhání, který je použit při výpočtu hodnot gammaM pro kombinace zatížení Z1-Z2 a kombinace namáhání a-b. Tento faktor zohledňuje zvýšené riziko při kombinovaném zatížení a namáhání, což je běžná praxe v inženýrských normách.
     for Z1 in ZS, Z2 in ZS
         Zkey = string(Z1, "-", Z2)
         for N in NS_SIMPLE
@@ -117,31 +112,7 @@ end # konec bloku GAMMA_M
 
 POVOLENE_N = sort!(unique([n for (_, n) in keys(GAMMA_M)])) # Seznam unikátních hodnot N pro validaci vstupů do funkce dovoleneNapeti, získaný z klíčů slovníku GAMMA_M, který obsahuje všechny povolené kombinace zatížení a namáhání.
 POVOLENE_Z = sort!(unique([z for (z, _) in keys(GAMMA_M)]))
-# -----------------------------------------------------------------------
-# vnitřní funkce start
-# -----------------------------------------------------------------------
-function gammaM_funkce(Z::AbstractString, N::AbstractString)
-    # Pokud uživatel zadá jednosložkové zatížení (např. "statický")
-    # a druh namáhání je kombinovaný (např. "tah-střih"),
-    # zkusíme normalizovat Z na dvojici ve tvaru "Z-Z".
-    key = (Z, N)
-    if haskey(GAMMA_M, key)
-        return GAMMA_M[key]
-    end # konec if
-    # Pokus o normalizaci: pokud je Z jednosložkové a N kombinované,
-    # vyzkoušíme klíč ("Z-Z", N)
-    if !occursin("-", Z) && occursin("-", N)
-        key2 = (string(Z, "-", Z), N)
-        if haskey(GAMMA_M, key2)
-            return GAMMA_M[key2]
-        end # konec if
-    end # konec if
-    # Pokud nebylo nalezeno, vypiš srozumitelnou chybu
-    error("Neznámá kombinace zatížení: Z=$Z, N=$N")
-end # konec funkce gammaM_funkce
-# -----------------------------------------------------------------------
-# vnitřní funkce konec
-# -----------------------------------------------------------------------
+
 if Re === nothing && mat !== nothing
     if hasproperty(mat, :Re)
         Re = getproperty(mat, :Re)

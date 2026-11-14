@@ -9,25 +9,28 @@ a sestaví je do slovníku. Funkce je používána vyhledávacími funkcemi
 `materialyCSN`, `materialyEN`, `materialyDIN`, `materialyISO` a
 `materialyObecne`; pro běžné použití se doporučuje volat jednu z nich.
 ## Vzor:
-`mat = StrojniSoucasti._materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)`
+```julia
+mat = StrojniSoucasti._materialyNactiDB(db, name, celeoznaceni, VVnormy, VVdruh)
+```
 ## Vstupní proměnné:
 - `db` – otevřená databáze SQLite obsahující tabulky materiálů a veličin.
 - `name` – název sloupce použitý pro vyhledání. Podle používané
-  vyhledávací funkce jde například o `name`, `name_CSN`, `name_ISO`,
-  `name_DIN`, `znacka_EN` nebo `cislo_EN`.
-- `celeoznaceni` – hodnota, která se hledá v uvedeném sloupci.
+  vyhledávací funkce jde například: `name_CSN`, `name_ISO`,
+  `name_DIN`, `znacka_EN`, `cislo_EN`.
+- `celeoznaceni` – hodnota názvu materiálu, která se hledá v uvedeném sloupci
+  dle uvedené `name`.
 - `VVnormy` – označení zdroje, které se vloží do výsledku jako `VVnormy`
   (například `"ČSN"`, `"EN"`, `"DIN"`, `"ISO"` nebo `"obecne"`).
 - `VVdruh` – kategorie materiálu, která se vloží do výsledku jako `VVdruh`.
   Podporované hodnoty jsou `"ocel"`, `"litina"`, `"pryz"`,
-  `"nezelezne kovy"`, `"plasty"` a `"drevo"`.
+  `"nezelezne kovy"`, `"plasty"`, `"drevo"`.
 ## Výstupní proměnné:
 - `mat::Union{Dict{String, Any}, Nothing}` – slovník údajů nalezeného
   materiálu, nebo `nothing`, pokud záznam v databázi neexistuje.
   Nepodporovaná hodnota `VVdruh` vyvolá chybu.
 
 Výsledek obsahuje klíče pro označení (`name`, `name_ISO`, `znacka_EN`,
-`cislo_EN`, `name_CSN`, `name_DIN`), `norma_CSN`, `druh`, `VVnormy` a
+`cislo_EN`, `name_CSN`, `name_DIN`), `norma_CSN`, `druh`, `VVnormy`,
 `VVdruh`. Podle kategorie zahrnuje také popisné údaje a měřené vlastnosti,
 například `Re`, `Rm_min`, `A`, `E`, `G`, `ny` a `rho`, s příslušnými klíči
 jednotek `_unit`. Nedostupné číselné hodnoty jsou `missing`; nevyplněné textové
@@ -47,26 +50,13 @@ if mat !== nothing
 end
 ```
 
-
-
-
-# Materialy
-
-## Funkce `_materialyNactiDB`
-
-```@docs
-StrojniSoucasti._materialyNactiDB
-```
-
-## Poznamky k databazim
-- Funkce pracuje s tabulkami materiálů a veličin v databázi `materialy.db`.
-- Jde o interní pomocnou funkci; pro vyhledávání materiálů používejte
-  uživatelské funkce podle požadovaného typu označení.
-
-## Priklad
-
 ```julia
 mat = StrojniSoucasti._materialyNactiDB(
     db, "name_CSN", "422420", "ČSN", "litina")
 mat["druh"]
 ```
+
+## Poznamky k databazim
+- Funkce uzpůsobena pro tabulku materiálů a veličin v databázi `materialy.db`.
+- Jde o interní pomocnou funkci; pro vyhledávání materiálů používejte
+  uživatelské funkce podle požadovaného typu označení.
