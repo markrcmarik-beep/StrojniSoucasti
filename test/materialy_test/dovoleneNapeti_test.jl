@@ -1,330 +1,168 @@
-# ver: 2026-10-15
+# ver: 2026-11-16
 # Testovací skript pro funkci dovoleneNapeti.jl
-# Testuje výpočet dovolených napětí s různými kombinacemi namáhání a zatížení
 
 using StrojniSoucasti, Unitful, Test
 
 @testset "dovoleneNapeti" begin
-
-    # Test 0: hodnoty načtené z gammaM.toml
-    @testset "gammaM.toml - načtení dat" begin
-        sigma_simple = dovoleneNapeti("tah", "statický"; Re=260u"MPa")
-        @test sigma_simple ≈ 200.0u"MPa" rtol=1e-12
-
-        sigma_combo = dovoleneNapeti("tah-střih", "statický-pulzní"; Re=230u"MPa")
-        @test sigma_combo ≈ 100.0u"MPa" rtol=1e-12
+    @testset "faktory z gammaM.toml" begin
+        @test isapprox(
+            dovoleneNapeti("tah", "statický"; Re=260u"MPa"),
+            200u"MPa";
+            rtol=1e-12,
+        )
+        @test isapprox(
+            dovoleneNapeti("tah-střih", "statický-pulzní"; Re=230u"MPa"),
+            100u"MPa";
+            rtol=1e-12,
+        )
     end
 
-    # Test 1: Tah - statický
-    @testset "tah - statický" begin
-        sigma = dovoleneNapeti("tah", "statický", Re=250u"MPa")
-        @test sigma isa Quantity
-        @test sigma > 0u"MPa"
-        @test unit(sigma) == u"MPa"
+    @testset "základní namáhání a zatížení" begin
+        namahani = ("tah", "tlak", "střih", "krut", "ohyb", "otlačení")
+        zatizeni = ("statický", "pulzní", "dynamický", "rázový")
+
+        for N in namahani, Z in zatizeni
+            @testset "$N / $Z" begin
+                sigma = dovoleneNapeti(N, Z; Re=250u"MPa")
+                @test sigma isa Quantity
+                @test unit(sigma) == u"MPa"
+                @test ustrip(uconvert(u"MPa", sigma)) > 0
+            end
+        end
     end
 
-    # Test 2: Tah - pulzní
-    @testset "tah - pulzní" begin
-        sigma = dovoleneNapeti("tah", "pulzní"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-        # Pulzní by mělo mít menší hodnotu než statické
-        sigma_stat = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 3: Tah - dynamický
-    @testset "tah - dynamický" begin
-        sigma = dovoleneNapeti("tah", "dynamický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 4: Tah - rázový
-    @testset "tah - rázový" begin
-        sigma = dovoleneNapeti("tah", "rázový"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 5: Tlak - statický
-    @testset "tlak - statický" begin
-        sigma = dovoleneNapeti("tlak", "statický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 6: Tlak - dynamický
-    @testset "tlak - dynamický" begin
-        sigma = dovoleneNapeti("tlak", "dynamický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("tlak", "statický"; Re=250u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 7: Ohyb - statický
-    @testset "ohyb - statický" begin
-        sigma = dovoleneNapeti("ohyb", "statický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 8: Ohyb - pulzní
-    @testset "ohyb - pulzní" begin
-        sigma = dovoleneNapeti("ohyb", "pulzní"; Re=300u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("ohyb", "statický"; Re=300u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 9: Ohyb - rázový
-    @testset "ohyb - rázový" begin
-        sigma = dovoleneNapeti("ohyb", "rázový"; Re=450u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("ohyb", "statický"; Re=450u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 10: Střih - statický
-    @testset "střih - statický" begin
-        sigma = dovoleneNapeti("střih", "statický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 11: Střih - dynamický
-    @testset "střih - dynamický" begin
-        sigma = dovoleneNapeti("střih", "dynamický"; Re=350u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("střih", "statický"; Re=350u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 12: Krut - statický
-    @testset "krut - statický" begin
-        sigma = dovoleneNapeti("krut", "statický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 13: Krut - dynamický
-    @testset "krut - dynamický" begin
-        sigma = dovoleneNapeti("krut", "dynamický"; Re=400u"MPa")
-        @test sigma > 0u"MPa"
-        sigma_stat = dovoleneNapeti("krut", "statický"; Re=400u"MPa")
-        @test sigma < sigma_stat
-    end
-
-    # Test 14: Otlačení - statický
-    @testset "otlačení - statický" begin
-        sigma = dovoleneNapeti("otlačení", "statický"; Re=250u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 15: Otlačení - bez parametru zatížení (výchozí statický)
-    @testset "otlačení - výchozí" begin
-        sigma1 = dovoleneNapeti("otlačení"; Re=600u"MPa")
-        sigma2 = dovoleneNapeti("otlačení", "statický"; Re=600u"MPa")
-        @test sigma1 == sigma2
-    end
-
-    # Test 16: Bez jednotek u Re (automatický přepis)
-    @testset "bez jednotek u Re" begin
-        sigma = dovoleneNapeti("tah", "statický"; Re=250)
-        @test sigma isa Quantity
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 17: Tah-střih - statický-statický
-    @testset "tah-střih - statický-statický" begin
-        sigma = dovoleneNapeti("tah-střih", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 18: Tlak-střih - statický-statický
-    @testset "tlak-střih - statický-statický" begin
-        sigma = dovoleneNapeti("tlak-střih", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 19: Tah-střih - různá zatížení
-    @testset "tah-střih - statický-pulzní" begin
-        sigma = dovoleneNapeti("tah-střih", "statický-pulzní"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 20: Tah-krut - kombinované zatížení
-    @testset "tah-krut - statický" begin
-        sigma = dovoleneNapeti("tah-krut", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 21: Tlak-krut - kombinované zatížení
-    @testset "tlak-krut - statický" begin
-        sigma = dovoleneNapeti("tlak-krut", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 22: Tah-ohyb - kombinované zatížení
-    @testset "tah-ohyb - statický" begin
-        sigma = dovoleneNapeti("tah-ohyb", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 23: Tlak-ohyb - kombinované zatížení
-    @testset "tlak-ohyb - statický" begin
-        sigma = dovoleneNapeti("tlak-ohyb", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 24: Střih-krut - kombinované zatížení
-    @testset "střih-krut - statický-statický" begin
-        sigma = dovoleneNapeti("střih-krut", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 25: Střih-krut - různá zatížení
-    @testset "střih-krut - pulzní-dynamický" begin
-        sigma = dovoleneNapeti("střih-krut", "pulzní-dynamický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 26: Střih-ohyb - kombinované zatížení
-    @testset "střih-ohyb - statický" begin
-        sigma = dovoleneNapeti("střih-ohyb", "statický-statický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 27: Krut-ohyb - kombinované zatížení
-    @testset "krut-ohyb - dynamický-dynamický" begin
-        sigma = dovoleneNapeti("krut-ohyb", "dynamický-dynamický"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 28: Krut-ohyb - různá zatížení
-    @testset "krut-ohyb - pulzní-rázový" begin
-        sigma = dovoleneNapeti("krut-ohyb", "pulzní-rázový"; Re=500u"MPa")
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 29: Monotónní pokles s rostoucím zatížením
-    @testset "monotónní pokles zatížení - tah" begin
+    @testset "výpočet pro statické zatížení" begin
         Re = 250u"MPa"
-        sigma_stat = dovoleneNapeti("tah", "statický"; Re=Re)
-        sigma_pulz = dovoleneNapeti("tah", "pulzní"; Re=Re)
-        sigma_dyn = dovoleneNapeti("tah", "dynamický"; Re=Re)
-        sigma_raz = dovoleneNapeti("tah", "rázový"; Re=Re)
-        @test sigma_stat > sigma_pulz > sigma_dyn > sigma_raz
+        ocekavane = (
+            ("tah", Re / 1.3),
+            ("tlak", Re / 1.3),
+            ("ohyb", Re / 1.5),
+            ("střih", (Re / sqrt(3)) / 1.5),
+            ("krut", (Re / sqrt(3)) / 1.7),
+            ("otlačení", Re),
+        )
+        for (N, sigma_ocek) in ocekavane
+            @test isapprox(
+                dovoleneNapeti(N, "statický"; Re=Re),
+                sigma_ocek;
+                rtol=1e-12,
+            )
+        end
     end
 
-    # Test 30: Různé hodnoty Re
-    @testset "různé hodnoty Re" begin
-        sigma_low = dovoleneNapeti("tah", "statický"; Re=200u"MPa")
-        sigma_high = dovoleneNapeti("tah", "statický"; Re=300u"MPa")
-        @test sigma_low < sigma_high
+    @testset "kombinace namáhání" begin
+        kombinace = (
+            ("tah-střih", "statický-statický"),
+            ("tlak-střih", "statický-statický"),
+            ("tah-střih", "statický-pulzní"),
+            ("tah-krut", "statický-statický"),
+            ("tlak-krut", "statický-statický"),
+            ("tah-ohyb", "statický-statický"),
+            ("tlak-ohyb", "statický-statický"),
+            ("střih-krut", "statický-statický"),
+            ("střih-krut", "pulzní-dynamický"),
+            ("střih-ohyb", "statický-statický"),
+            ("krut-ohyb", "dynamický-dynamický"),
+            ("krut-ohyb", "pulzní-rázový"),
+        )
+
+        for (N, Z) in kombinace
+            @testset "$N / $Z" begin
+                sigma = dovoleneNapeti(N, Z; Re=500u"MPa")
+                @test sigma isa Quantity
+                @test sigma > 0u"MPa"
+            end
+        end
+
+        sigma_jednotne = dovoleneNapeti(
+            "tah-střih", "statický"; Re=500u"MPa",
+        )
+        sigma_dvojite = dovoleneNapeti(
+            "tah-střih", "statický-statický"; Re=500u"MPa",
+        )
+        @test sigma_jednotne == sigma_dvojite
     end
 
-    # Test 31: Vysoká mez kluzu
-    @testset "vysoká mez kluzu" begin
-        sigma = dovoleneNapeti("tah", "statický"; Re=600u"MPa")
-        @test sigma > 0u"MPa"
+    @testset "výchozí zatížení, jednotky a změna Re" begin
+        @test dovoleneNapeti("otlačení"; Re=600u"MPa") ==
+              dovoleneNapeti("otlačení", "statický"; Re=600u"MPa")
+
+        sigma_s_jednotkou = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
+        sigma_bez_jednotky = dovoleneNapeti("tah", "statický"; Re=250)
+        @test sigma_bez_jednotky isa Quantity
+        @test sigma_bez_jednotky == sigma_s_jednotkou
+
+        sigma_nizke = dovoleneNapeti("tah", "statický"; Re=200u"MPa")
+        sigma_vysoke = dovoleneNapeti("tah", "statický"; Re=300u"MPa")
+        @test sigma_nizke < sigma_vysoke
     end
 
-    # Test 32: Velmi nízká mez kluzu
-    @testset "velmi nízká mez kluzu" begin
-        sigma = dovoleneNapeti("ohyb", "statický"; Re=100u"MPa")
-        @test sigma > 0u"MPa"
+    @testset "vyšší zatížení snižuje dovolené napětí" begin
+        for N in ("tah", "tlak", "střih", "krut", "ohyb", "otlačení")
+            sigma = map(
+                Z -> dovoleneNapeti(N, Z; Re=250u"MPa"),
+                ("statický", "pulzní", "dynamický", "rázový"),
+            )
+            @test sigma[1] > sigma[2] > sigma[3] > sigma[4]
+        end
     end
 
-    # Test 33: Normalizace jednotek (MPa vs N/mm²)
-    @testset "jednotky MPa" begin
-        sigma1 = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        sigma2 = uconvert(u"MPa", sigma1)
-        @test unit(sigma2) == u"MPa"
-        @test ustrip(sigma2) > 0
+    @testset "materiálové vlastnosti" begin
+        ocel = materialy("S235JRG1")
+        @test ocel isa StrojniSoucasti.MaterialOcel
+        @test dovoleneNapeti("tah", "statický"; mat=ocel) ≈
+              dovoleneNapeti("tah", "statický"; Re=ocel.Re)
+
+        litina = materialy("422420")
+        @test !isnothing(litina)
+        @test isapprox(
+            dovoleneNapeti("tah", "statický"; mat=litina),
+            (200 / 1.3)u"MPa";
+            rtol=1e-12,
+        )
+        @test isapprox(
+            dovoleneNapeti("tlak", "statický"; mat=litina),
+            (800 / 1.3)u"MPa";
+            rtol=1e-12,
+        )
+        @test isapprox(
+            dovoleneNapeti("střih", "statický"; mat=litina),
+            ((200 / sqrt(3)) / 1.5)u"MPa";
+            rtol=1e-12,
+        )
+
+        mat_s_tau = (; Rm_tah=200.0, tau_lim=100.0)
+        @test isapprox(
+            dovoleneNapeti("střih", "statický"; mat=mat_s_tau),
+            (100 / 1.5)u"MPa";
+            rtol=1e-12,
+        )
+
+        mat_bez_tau = (; Rm_tah=200.0, Rm_tlak=800.0)
+        @test isapprox(
+            dovoleneNapeti("střih", "statický"; mat=mat_bez_tau),
+            ((200 / sqrt(3)) / 1.5)u"MPa";
+            rtol=1e-12,
+        )
+
+        neznamy_material = materialy("NEEXISTUJICI_MATERIAL")
+        @test isnothing(neznamy_material)
+        @test_throws ErrorException dovoleneNapeti(
+            "tah", "statický"; mat=neznamy_material,
+        )
     end
 
-    # Test 34: Srovnání namáhání - tah vs tlak (stejné hodnoty)
-    @testset "tah vs tlak - stejné Re" begin
-        sigma_tah = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        sigma_tlak = dovoleneNapeti("tlak", "statický"; Re=250u"MPa")
-        @test sigma_tah ≈ sigma_tlak rtol=5
+    @testset "neplatné vstupy" begin
+        @test_throws ErrorException dovoleneNapeti(
+            "zkrutování", "statický"; Re=250u"MPa",
+        )
+        @test_throws ErrorException dovoleneNapeti(
+            "tah", "cyklické"; Re=250u"MPa",
+        )
+        @test_throws ErrorException dovoleneNapeti(
+            "tah", "statický"; Re=250u"MPa", mat=(; Re=250.0),
+        )
     end
-
-    # Test 35: Srovnání namáhání - ohyb vs tah
-    @testset "ohyb vs tah - stejné Re" begin
-        sigma_tah = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        sigma_ohyb = dovoleneNapeti("ohyb", "statický"; Re=250u"MPa")
-        @test sigma_tah ≈ sigma_ohyb rtol=50
-    end
-
-    # Test 36: Srovnání namáhání - střih vs krut
-    @testset "střih vs krut - stejné Re" begin
-        sigma_strih = dovoleneNapeti("střih", "statický"; Re=250u"MPa")
-        sigma_krut = dovoleneNapeti("krut", "statický"; Re=250u"MPa")
-        @test sigma_strih ≈ sigma_krut rtol=50
-    end
-
-    # Test 37: Otlačení je méně bezpečné
-    @testset "otlačení - nižší bezpečnost" begin
-        sigma_tah = dovoleneNapeti("tah", "statický"; Re=250u"MPa")
-        sigma_otl = dovoleneNapeti("otlačení", "statický"; Re=250u"MPa")
-        @test sigma_otl > sigma_tah  # Otlačení má nižší faktor bezpečnosti
-    end
-
-    # Test 38: Re lze předat jako výstup z materialy() pro ocel
-    @testset "Re z materialy() - ocel" begin
-        mat = materialy("S235JRG1")
-        #println(mat)
-        @test mat isa StrojniSoucasti.MaterialOcel
-        sigma = dovoleneNapeti("tah", "statický"; mat=mat)
-        @test sigma isa Quantity
-        @test sigma > 0u"MPa"
-    end
-
-    # Test 39: Litina z materialy() - nulové tau_lim se bere jako neuvedené
-    @testset "Re z materialy() - litina" begin
-        mat = materialy("422420")
-        @test !isnothing(mat)
-
-        sigma_tah = dovoleneNapeti("tah", "statický"; mat=mat)
-        sigma_tlak = dovoleneNapeti("tlak", "statický"; mat=mat)
-        sigma_strih = dovoleneNapeti("střih", "statický"; mat=mat)
-
-        @test isapprox(sigma_tah, (200/1.3)u"MPa"; rtol=1e-12)
-        @test isapprox(sigma_tlak, (800/1.3)u"MPa"; rtol=1e-12)
-        @test isapprox(sigma_strih, ((200/sqrt(3))/1.5)u"MPa"; rtol=1e-12)
-
-        mat_with_tau = (; Rm_tah=200.0, tau_lim=100.0)
-        sigma_strih_tau = dovoleneNapeti("střih", "statický"; mat=mat_with_tau)
-        @test isapprox(sigma_strih_tau, (100/1.5)u"MPa"; rtol=1e-12)
-    end
-
-    # Test 40: Litina bez tau_lim - fallback na Rm_tah/sqrt(3)
-    @testset "litina fallback bez tau_lim" begin
-        mat_no_tau = (; Rm_tah=200.0, Rm_tlak=800.0)
-        sigma_strih = dovoleneNapeti("střih", "statický"; mat=mat_no_tau)
-        @test isapprox(sigma_strih, ((200/sqrt(3))/1.5)u"MPa"; rtol=1e-12)
-    end
-
-    # Test 41: Neznamy material (materialy() => nothing)
-    @testset "Re z materialy() - nothing" begin
-        mat = materialy("NEEXISTUJICI_MATERIAL")
-        @test isnothing(mat)
-    end
-
-    # Test 41: Chybné namáhání
-    @testset "chybné namáhání - výjimka" begin
-        @test_throws ErrorException dovoleneNapeti("zkrutování", "statický"; Re=250u"MPa")
-    end
-
-    # Test 42: Chybné zatížení
-    @testset "chybné zatížení - výjimka" begin
-        @test_throws ErrorException dovoleneNapeti("tah", "cyklické"; Re=250u"MPa")
-    end
-
-    # Test 43: Neznámá kombinace
-    @testset "neznámá kombinace - výjimka" begin
-        @test_throws ErrorException dovoleneNapeti("neznámé-namáhání", "statický"; Re=250u"MPa")
-    end
-
 end
 
 nothing

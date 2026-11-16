@@ -1,6 +1,5 @@
 ## funkce `dovoleneNapeti` 
 ## soubor `dovoleneNapeti.jl`
-## Funkce Julia v1.13
 ###############################################################
 ## Popis funkce:
 Vrátí dovolené napětí materiálu podle jedné z veličin v daném pořadí

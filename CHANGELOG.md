@@ -8,6 +8,7 @@ Přehled změn balíčku `StrojniSoucasti` podle verzí zaznamenaných v histori
 
 ### Upraveno
 - nápověda pro `dovoleneNapeti, _materialyNactiDB`
+- funkce `dovoleneNapeti` nyní podporuje vstup Re, Rm, Rp0.1, Rp0.2 s jednotkou i bez jednotky (MPa se doplní automaticky)
 
 ## [0.1.25] - 2026-11-06
 

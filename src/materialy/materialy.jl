@@ -1,6 +1,7 @@
-﻿# ver: 2026-10-19
+﻿# ver: 2026-11-17
 ## Funkce: materialy()
 ## Autor: Martin
+## Funkce Julia v1.13
 #
 ## Cesta uvnitř balíčku:
 # balicek/src/materialy/materialy.jl

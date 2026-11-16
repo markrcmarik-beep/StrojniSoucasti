@@ -1,25 +1,11 @@
-﻿## Funkce Julia v1.13
-###############################################################
-## Popis funkce:
-# Vrátí hodnotu dovoleného napětí materiálu.
-# ver: 2026-11-14
-## Funkce: dovoleneNapeti()
+﻿# ver: 2026-11-16
+## Funkce _nazevFunkce_()
 ## Autor: Martin
+## Funkce Julia v1.13
 #
 ## Cesta uvnitř balíčku:
-# StrojniSoucasti/src/dovoleneNapeti.jl
-#
-## Vzor:
-## sigma = dovoleneNapeti(Re, N::AbstractString, Z::AbstractString)
-## Vstupní proměnné:
-# N - druh namáhání jako řetězec: "tah", "tlak", "střih", "ohyb", "krut"
-# Z - způsob zatížení jako řetězec: "statický", "pulzní", "dynamický", "rázový"
-# Dobrovolně zadané parametry:
-#   Re - mez kluzu materiálu s jednotkou (např. 250u"MPa")
-#   Rm - mez pevnosti materiálu s jednotkou (např. 400u"MPa")
-## Výstupní proměnné:
-# sigma - dovolené napětí materiálu s jednotkou (MPa)
-## Použité balíčky
+# _nazevBalicku_/src/_nazevFunkce_.jl
+## Použité balíčky:
 # Unitful, TOML
 ## Použité uživatelské funkce:
 #
