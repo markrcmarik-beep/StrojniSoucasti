@@ -17,6 +17,9 @@ sigma = dovoleneNapeti(mez, N, Z)
   `"dynamický"`, `"rázový"`, kombinace jako `"statický-dynamický"`).
 ## Výstupní proměnné:
 - `sigma` - dovolené napětí s jednotkou [`MPa`].
+## Bezpečnostní faktor:
+Samostatná funkce `gammaM(Z, N)` vrátí faktor γM pro způsob zatížení a druh
+namáhání. Argumenty lze zadat i v opačném pořadí: `gammaM(N, Z)`.
 ## Příklad:
 ```julia
 dovoleneNapeti(250u"MPa", "tah", "statický")

@@ -1,9 +1,17 @@
-# ver: 2026-11-16
+# ver: 2026-11-21
 # Testovací skript pro funkci dovoleneNapeti.jl
 
 using StrojniSoucasti, Unitful, Test
 
 @testset "dovoleneNapeti" begin
+    @testset "gammaM" begin
+        @test StrojniSoucasti.gammaM("statický", "tah") == 1.3
+        @test StrojniSoucasti.gammaM("tah", "statický") == 1.3
+        @test StrojniSoucasti.gammaM("statický", "tah-střih") == 1.72
+        @test StrojniSoucasti.gammaM("statický-statický", "tah-střih") == 1.72
+        @test_throws ErrorException StrojniSoucasti.gammaM("cyklické", "tah")
+    end
+
     @testset "faktory z gammaM.toml" begin
         @test isapprox(
             dovoleneNapeti("tah", "statický"; Re=260u"MPa"),
@@ -95,6 +103,12 @@ using StrojniSoucasti, Unitful, Test
         sigma_nizke = dovoleneNapeti("tah", "statický"; Re=200u"MPa")
         sigma_vysoke = dovoleneNapeti("tah", "statický"; Re=300u"MPa")
         @test sigma_nizke < sigma_vysoke
+
+        @test isapprox(
+            dovoleneNapeti("tah", "statický"; Re=0.25u"GPa"),
+            250u"MPa" / 1.3;
+            rtol=1e-12,
+        )
     end
 
     @testset "vyšší zatížení snižuje dovolené napětí" begin
@@ -110,8 +124,7 @@ using StrojniSoucasti, Unitful, Test
     @testset "materiálové vlastnosti" begin
         ocel = materialy("S235JRG1")
         @test ocel isa StrojniSoucasti.MaterialOcel
-        @test dovoleneNapeti("tah", "statický"; mat=ocel) ≈
-              dovoleneNapeti("tah", "statický"; Re=ocel.Re)
+        @test dovoleneNapeti("tah", "statický"; mat=ocel) ≈ 192.3076923076923u"MPa"
 
         litina = materialy("422420")
         @test !isnothing(litina)
@@ -131,14 +144,14 @@ using StrojniSoucasti, Unitful, Test
             rtol=1e-12,
         )
 
-        mat_s_tau = (; Rm_tah=200.0, tau_lim=100.0)
+        mat_s_tau = (;tabulka="litina", Rm_tah=200.0, tau_lim=100.0)
         @test isapprox(
             dovoleneNapeti("střih", "statický"; mat=mat_s_tau),
             (100 / 1.5)u"MPa";
             rtol=1e-12,
         )
 
-        mat_bez_tau = (; Rm_tah=200.0, Rm_tlak=800.0)
+        mat_bez_tau = (;tabulka="litina", Rm_tah=200.0, Rm_tlak=800.0)
         @test isapprox(
             dovoleneNapeti("střih", "statický"; mat=mat_bez_tau),
             ((200 / sqrt(3)) / 1.5)u"MPa";
@@ -153,6 +166,9 @@ using StrojniSoucasti, Unitful, Test
     end
 
     @testset "neplatné vstupy" begin
+        @test_throws ErrorException dovoleneNapeti(
+            "tah", "statický"; Re="250 MPa",
+        )
         @test_throws ErrorException dovoleneNapeti(
             "zkrutování", "statický"; Re=250u"MPa",
         )

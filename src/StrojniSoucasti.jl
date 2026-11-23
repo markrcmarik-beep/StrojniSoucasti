@@ -1,8 +1,8 @@
 ## Balíček Julia v1.13
 ###############################################################
 ## Popis balíčku
-# Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání 
-# strojních součástí v tahu, tlaku, krutu, střihu, ohybu, 
+# Balíček StrojniSoucasti obsahuje funkce pro výpočet namáhání
+# strojních součástí v tahu, tlaku, krutu, střihu, ohybu,
 # kombinovaně a na otlačení.
 # ver: 2026-11-03
 ## Autor: Martin
@@ -41,6 +41,7 @@ include("matematika/vyhodnot_vyraz.jl")
 #include("materialy/reduction.jl")
 #include("materialy/select.jl")
 #include("materialy/materialytypes.jl")
+include("materialy/gammaM.jl")
 include("materialy/dovoleneNapeti.jl") # dovolená napětí
 include("materialy/materialy.jl")
 include("materialy/materialyDIN.jl")
@@ -101,7 +102,7 @@ include("profily/polygon2eonatoceni.jl") # vzdalenost nejvzdalenejsiho vlakna od
 include("profily/polygon2prurezovymodulkrut.jl") # modul v krutu z obrysovych bodu
 ## --tolerance--
 include("tolerance/tolerance.jl") # tolerance
-include("tolerance/toleranceISOlicovani.jl") # 
+include("tolerance/toleranceISOlicovani.jl") #
 include("tolerance/toleranceISOulozeni.jl") # toleranceHODN
 ## --spojovacimaterial--
 include("spojovacimaterial/zavity.jl") # závity
@@ -114,13 +115,13 @@ include("ulozvypis.jl") #
 # Export funkcí
 export hridel, ulozvypis,
 # body
-bddb2b, bdu2b, brsb2body, burub2body, buub2b, bux2b, 
+bddb2b, bdu2b, brsb2body, burub2body, buub2b, bux2b,
 posun_body, rotuj_body, ubru2bb, uu2u,
 # materialy
-dovoleneNapeti, materialy, mezUnavy, 
+dovoleneNapeti, materialy, mezUnavy,
 # namahani
-namahanitah, namahanitlak, namahanikrut, namahanistrih, 
-namahaniohyb, namahaniotl, namahanikombinovane, 
+namahanitah, namahanitlak, namahanikrut, namahanistrih,
+namahaniohyb, namahaniotl, namahanikombinovane,
 # profily
 profily,
 # tolerance
@@ -129,5 +130,3 @@ tolerance,
 zavity
 
 end # module StrojniSoucasti
-
-

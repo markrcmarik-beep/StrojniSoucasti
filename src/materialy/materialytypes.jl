@@ -1,7 +1,7 @@
-# ver: 2026-10-16
+# ver: 2026-11-17
 
 struct MaterialOcel
-    tabulka::String             # název tabulky
+    tabulka::String             # název tabulky ["ocel", "pryz", "litina", "nezelezne kovy", "plasty", "drevo"]
     name::String                # název
     nameObecne::String          # název obecný
     nameISO::String             # název ISO (nepovinné)
